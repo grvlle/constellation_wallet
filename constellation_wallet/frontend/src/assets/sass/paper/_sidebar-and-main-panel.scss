@@ -32,7 +32,7 @@
 .wrapper .sidebar {
   width: 260px;
   display: block;
-  font-weight: 200;
+  font-weight: 600;
 
   .logo {
     padding: 13px 0;
@@ -48,24 +48,25 @@
     .simple-text {
       padding: $padding-small-vertical $padding-zero;
       display: block;
-      font-size: $font-size-base;
-      text-align: center;
-      font-weight: $font-weight-bold;
-      line-height: 50px;
+      font-size: 15px;
+      //text-align: center;
+      // font-weight: $font-weight-bold;
+      line-height: 46px;
       text-align: left;
 
       .logo-img{
-          width: 50px;
+          width: 150px;
           display: inline-block;
-          height: 50px;
-          margin-left: 0px;
-          margin-right: 10px;
-          background: white;
-          border-radius: 40px;
+          height: 150px;
+          margin-left: 27px;
+          // margin-right: 10px;
+          background: transparent;
+          border-radius: 120px;
           text-align: center;
 
         img{
-            max-width: 41px;
+            margin-top: 4px;
+            max-width: 140px;
         }
       }
     }
@@ -97,13 +98,14 @@
     p {
       margin: 0;
       line-height: 30px;
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 200;
+      font-family: Poppins;
       text-transform: uppercase;
     }
 
     i {
-      font-size: 24px;
+      font-size: 18px;
       float: left;
       margin-right: 15px;
       line-height: 30px;

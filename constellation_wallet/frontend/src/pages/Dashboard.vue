@@ -2,13 +2,36 @@
   <div>
 
     <!--Stats cards-->
+
+
     <div class="row">
-      <div class="col-md-6 col-xl-3" v-for="stats in statsCards" :key="stats.title">
+      <div class="col-md-6 col-xl-12" v-for="wallet in walletAddress" :key="wallet.address">
+        <stats-card>
+
+          <div class="numbers text-center col-17" style="margin-top: -30px" slot="footer">
+            <!-- <div class="icon-big text-center col-12" :class="`icon-${wallet.type}`" style="margin-top: -30px" slot="footer">
+            <i :class="wallet.icon"></i>
+          </div> -->
+            <p>{{wallet.title}}</p>
+            <hr/>
+            {{wallet.address}} <a href="#"><i class="ti-layers"></i></a>
+
+
+          </div>
+          <!-- <div class="stats text-center" slot="footer">
+            <i :class="wallet.footerIcon"></i> {{wallet.footerText}}
+          </div> -->
+        </stats-card>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 col-xl-4" v-for="stats in statsCards" :key="stats.title">
         <stats-card>
           <div class="icon-big text-center" :class="`icon-${stats.type}`" slot="header">
             <i :class="stats.icon"></i>
           </div>
-          <div class="numbers" slot="content">
+          <div class="numbers text-center" slot="content">
             <p>{{stats.title}}</p>
             {{stats.value}}
           </div>
@@ -23,18 +46,18 @@
     <div class="row">
 
       <div class="col-12">
-        <chart-card title="Users behavior"
+        <chart-card title="Network Throughput (tps)"
                     sub-title="24 Hours performance"
                     :chart-data="usersChart.data"
                     :chart-options="usersChart.options">
           <span slot="footer">
             <i class="ti-reload"></i> Updated 3 minutes ago
           </span>
-          <div slot="legend">
+          <!-- <div slot="legend">
             <i class="fa fa-circle text-info"></i> Open
             <i class="fa fa-circle text-danger"></i> Click
             <i class="fa fa-circle text-warning"></i> Click Second Time
-          </div>
+          </div> -->
         </chart-card>
       </div>
 
@@ -87,14 +110,6 @@ export default {
     return {
       statsCards: [
         {
-          type: "warning",
-          icon: "ti-server",
-          title: "Capacity",
-          value: "105GB",
-          footerText: "Updated now",
-          footerIcon: "ti-reload"
-        },
-        {
           type: "success",
           icon: "ti-wallet",
           title: "$DAG Tokens",
@@ -112,13 +127,23 @@ export default {
         },
         {
           type: "info",
-          icon: "ti-twitter-alt",
-          title: "Followers",
+          icon: "ti-package",
+          title: "Blocks",
           value: "+45",
           footerText: "Updated now",
           footerIcon: "ti-reload"
         }
       ],
+      walletAddress: {
+        data: {
+          type: "info",
+          icon: "ti-clipboard",
+          title: "Wallet Address",
+          address: "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee",
+          footerText: "In the last hour",
+          footerIcon: "ti-timer"
+        }
+      },
       usersChart: {
         data: {
           labels: [

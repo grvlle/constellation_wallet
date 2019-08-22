@@ -29,30 +29,39 @@
     margin: $navbar-margin-brand;
     padding: $navbar-padding-brand;
     font-size: $font-size-base;
-    color: $default-color;
+    color: #403D39;
+    transition: 0.3s;
     text-transform: uppercase;
+  }
+  .navbar-brand:hover{
+    opacity: 1;
   }
   .nav-link{
     i{
       font-size: 16px;
       position: relative;
-      top: 4px;
-      right: 3px;
+      top: 3px;
+      right: 4px;
     }
     [class^="fa"]{
       top: 2px;
     }
     p{
       margin: 0px 0px;
-      color: #9A9A9A !important;
+      color: #403D39 !important;
       text-transform: uppercase;
-      font-weight: 600;
-      font-size: 12px;
-      line-height: 1.5em;
+      font-weight: 200;
+      font-size: 14px;
+      line-height: 1em;
       padding: 15px 0;
+      transition: 0.3s;
+      font-family: Poppins;
     }
     p:hover{
-      color: #403D39 !important;
+      opacity: 1;
+    }
+    p:active{
+      color: #5fd1fa
     }
   }
   .navbar-nav{
@@ -61,13 +70,20 @@
       margin: $navbar-margin-a;
       padding: $navbar-padding-a;
       opacity: .8;
-      font-size: $font-size-small;
       text-transform: uppercase;
-      font-weight: 600;
-      color: $default-color;
+      font-weight: 200;
+      font-size: 14px;
+      line-height: 1em;
+      color: #403D39 !important;
+      transition: 0.3s;
+      font-family: Poppins;
 
       &:hover{
-        color: $font-color;
+        opacity: 1
+      }
+
+      &:active{
+        color: #5fd1fa
       }
     }
     .nav-item .nav-link.btn{

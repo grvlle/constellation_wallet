@@ -11,9 +11,11 @@
       <div class="logo">
         <a href="#" class="simple-text">
             <div class="logo-img">
-                <img src="@/assets/img/spots4.png" alt="">
+                <img src="@/assets/img/spots.png" alt="">
             </div>
+          <a style="font-size: 10px; 10px; margin-left: 5px;">WELCOME TO YOUR</a>
           {{title}}
+          <a style="font-size: 10px;">WALLET</a>
         </a>
       </div>
       <slot>
@@ -43,7 +45,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: "$DAG WALLET"
+      default: "$DAG"
     },
     backgroundColor: {
       type: String,

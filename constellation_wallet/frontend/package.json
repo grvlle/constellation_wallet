@@ -1,0 +1,64 @@
+{
+  "name": "constellation_wallet",
+  "author": "vito<gralle89@gmail.com>",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "chartist": "^0.11.0",
+    "core-js": "^2.6.4",
+    "es6-promise": "^4.2.8",
+    "jquery": "^3.4.1",
+    "node-libs-browser": "^2.2.1",
+    "popper": "^1.0.1",
+    "punycode": "^2.1.1",
+    "sass-loader": "^7.3.1",
+    "strip-ansi": "^5.2.0",
+    "vue": "^2.5.22",
+    "vue-clickaway": "^2.1.0",
+    "vue-notifyjs": "^0.3.0",
+    "vue-router": "^3.1.2",
+    "webpack": "^4.39.2",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-eslint": "^3.4.0",
+    "@vue/cli-service": "^3.4.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "eventsource-polyfill": "^0.9.6",
+    "node-sass": "^4.12.0",
+    "vue-template-compiler": "^2.5.21",
+    "webpack-hot-middleware": "^2.24.3"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}

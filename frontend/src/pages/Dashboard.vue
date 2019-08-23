@@ -3,26 +3,14 @@
 
     <!--Stats cards-->
 
-
     <div class="row">
       <div class="col-md-6 col-xl-12" v-for="wallet in walletAddress" :key="wallet.address">
-        <stats-card>
-
-          <div class="numbers text-center col-17" style="margin-top: -30px" slot="footer">
-            <!-- <div class="icon-big text-center col-12" :class="`icon-${wallet.type}`" style="margin-top: -30px" slot="footer">
-            <i :class="wallet.icon"></i>
-          </div> -->
+        <wide-card>
+          <div class="numbers text-center col-17" slot="content">
             <p>{{wallet.title}}</p>
-            <hr/>
-            <p class="h6" style="color: #d8d8d8;">{{wallet.address}} <p-button icon @click.native="notifyVue('top', 'right')"><i class="ti-layers"></i></p-button></p>
-            
-
-
+            <p style="color: #d8d8d8; padding-top: 15px; padding-bottom: 10px; font-size: 20px; font-family: 'Press Start 2p';">{{wallet.address}} <p-button type="info" icon @click.native="notifyVue('top', 'right')"><i class="fa fa-copy"></i></p-button></p>
           </div>
-          <!-- <div class="stats text-center" slot="footer">
-            <i :class="wallet.footerIcon"></i> {{wallet.footerText}}
-          </div> -->
-        </stats-card>
+        </wide-card>
       </div>
     </div>
 
@@ -97,13 +85,14 @@
   </div>
 </template>
 <script>
-import { StatsCard, ChartCard } from "@/components/index";
+import { StatsCard, ChartCard, WideCard } from "@/components/index";
 import Chartist from 'chartist';
 import NotificationTemplate from './Notifications/NotificationTemplate';
 
 export default {
   components: {
     StatsCard,
+    WideCard,
     ChartCard
   },
   methods: {

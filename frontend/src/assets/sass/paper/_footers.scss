@@ -29,7 +29,7 @@
   }
   .copyright {
     color: $font-color;
-    padding: 10px 15px;
+    padding: 25px 15px;
     font-size: 14px;
     white-space: nowrap;
     margin: 15px 3px;
@@ -37,5 +37,30 @@
   }
   .heart {
     color: $danger-color;
+  }
+}
+
+$fade-white : #403D39;
+$white : #ccc;
+
+a.social {
+  color: #403D39;
+  text-decoration: none;
+  margin-left: 15px;
+  transition: 0.3s;
+  font-weight: 200;
+  font-size: 14px;
+  line-height: 1em;
+  opacity: .8;
+  font-family: Poppins;
+
+  &:visited{
+    text-decoration: none;
+  }
+  &:hover{
+    opacity: 1;
+  }
+  &:active{
+    color: #5fd1fa;
   }
 }

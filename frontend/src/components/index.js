@@ -7,6 +7,7 @@ import Button from "./Button";
 import Card from "./Cards/Card.vue";
 import ChartCard from "./Cards/ChartCard.vue";
 import StatsCard from "./Cards/StatsCard.vue";
+import WideCard from "./Cards/WideCard.vue";
 
 import SidebarPlugin from "./SidebarPlugin/index";
 
@@ -15,6 +16,7 @@ let components = {
   Card,
   ChartCard,
   StatsCard,
+  WideCard,
   PaperTable,
   DropDown,
   SidebarPlugin
@@ -27,6 +29,7 @@ export {
   Card,
   ChartCard,
   StatsCard,
+  WideCard,
   PaperTable,
   DropDown,
   Button,

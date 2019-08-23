@@ -18,8 +18,8 @@ func main() {
 	css := mewn.String("./frontend/dist/app.css")
 
 	app := wails.CreateApp(&wails.AppConfig{
-		Width:  1524,
-		Height: 968,
+		Width:  1424,
+		Height: 768,
 		Title:  "Constellation Wallet",
 		JS:     js,
 		CSS:    css,

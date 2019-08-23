@@ -1,26 +1,23 @@
 <template>
   <card class="card-user">
     <div slot="image">
-      <img src="@/assets/img/background.jpg" alt="...">
+      <img src="@/assets/img/dotz.png" style="margin-top: -155px" alt="...">
     </div>
     <div>
       <div class="author">
-        <img class="avatar border-white" src="@/assets/img/faces/face-2.jpg" alt="...">
-        <h4 class="title">Chet Faker
+        <img class="avatar border-white" src="@/assets/img/faces/face-0.jpg" alt="...">
+        <h4 class="title">user@email.com
           <br>
-          <a href="#">
-            <small>@chetfaker</small>
-          </a>
+            <small>0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee</small>
         </h4>
       </div>
       <p class="description text-center">
-        "I like the way you work it
-        <br> No diggity
-        <br> I wanna bag it up"
+        <br> <br>
       </p>
     </div>
     <hr>
     <div class="text-center">
+      <br>
       <div class="row">
         <div v-for="(info, index) in details" :key="index" :class="getClasses(index)">
           <h5>{{info.title}}
@@ -39,15 +36,15 @@ export default {
       details: [
         {
           title: "12",
-          subTitle: "Files"
+          subTitle: "Transactions"
         },
         {
-          title: "2GB",
-          subTitle: "Used"
+          title: "12512351",
+          subTitle: "$DAG"
         },
         {
-          title: "24,6$",
-          subTitle: "Spent"
+          title: "24024,6$",
+          subTitle: "USD"
         }
       ]
     };

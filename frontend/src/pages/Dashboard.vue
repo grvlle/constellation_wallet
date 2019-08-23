@@ -8,7 +8,8 @@
         <wide-card>
           <div class="numbers text-center col-17" slot="content">
             <p>{{wallet.title}}</p>
-            <p style="color: #d8d8d8; padding-top: 15px; padding-bottom: 10px; font-size: 20px; font-family: 'Press Start 2p';">{{wallet.address}} <p-button type="info" icon @click.native="notifyVue('top', 'right')"><i class="fa fa-copy"></i></p-button></p>
+            <hr>
+            <p style="color: #d8d8d8; padding-bottom: 10px; font-size: 22px; font-family: 'Press Start 2p';">{{wallet.address}} <p-button type="info" icon @click.native="notifyVue('top', 'right')"><i class="fa fa-copy"></i></p-button></p>
           </div>
         </wide-card>
       </div>
@@ -59,8 +60,8 @@
             <i class="ti-timer"></i> Updated 2 days ago</span>
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> Foundation Nodes
-            <i class="fa fa-circle text-danger"></i> Medium Nodes
-            <i class="fa fa-circle text-warning"></i> Light Nodes
+            <i class="fa fa-circle text-success"></i> Medium Nodes
+            <i class="fa fa-circle text-danger"></i> Light Nodes
           </div>
         </chart-card>
       </div>
@@ -74,8 +75,8 @@
             <i class="ti-check"></i> Data information certified
           </span>
           <div slot="legend">
-            <i class="fa fa-circle text-info"></i>TX
-            <i class="fa fa-circle text-warning"></i> RX
+            <i class="fa fa-circle text-info"></i> TX
+            <i class="fa fa-circle text-success"></i> RX
           </div>
         </chart-card>
       </div>
@@ -97,10 +98,11 @@ export default {
   },
   methods: {
     notifyVue(verticalAlign, horizontalAlign) {
-      const color = Math.floor(Math.random() * 4 + 1);
+      // const color = Math.floor(Math.random() * 4 + 1);
+      const color = 2;
       this.$notify({
         component: NotificationTemplate,
-        icon: "ti-gift",
+        icon: "ti-check",
         horizontalAlign: horizontalAlign,
         verticalAlign: verticalAlign,
         type: this.type[color]
@@ -168,8 +170,7 @@ export default {
           ],
           series: [
             [287, 385, 490, 562, 594, 626, 698, 895, 952],
-            [67, 152, 193, 240, 387, 435, 535, 642, 744],
-            [23, 113, 67, 108, 190, 239, 307, 410, 410]
+            [67, 152, 193, 240, 387, 435, 535, 642, 744]
           ]
         },
         options: {

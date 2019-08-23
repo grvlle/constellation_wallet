@@ -68,9 +68,9 @@ $ct-include-alternative-responsive-containers: $ct-include-classes !default;
 $ct-series-names: (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) !default;
 $ct-series-colors: (
   $info-color,
-  $warning-color,
-  $danger-color,
   $success-color,
+  $danger-color,
+  $warning-color,
   $primary-color,
   rgba($info-color, .8),
   rgba($success-color, .8),

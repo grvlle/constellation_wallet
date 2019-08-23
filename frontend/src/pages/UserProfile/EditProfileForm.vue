@@ -1,16 +1,17 @@
 <template>
-  <card class="card" title="Edit Profile">
+  <card class="card">
     <div>
       <form @submit.prevent>
         <div class="row">
-          <div class="col-md-5">
+          <div class="col-md-12">
             <fg-input type="text"
-                      label="Company"
+                      label="Wallet Address"
                       :disabled="true"
-                      placeholder="Paper dashboard"
+                      placeholder="0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee"
                       v-model="user.company">
             </fg-input>
           </div>
+          <!-- <div class="row">
           <div class="col-md-3">
 
             <fg-input type="text"
@@ -26,20 +27,25 @@
                       v-model="user.email">
             </fg-input>
           </div>
+        </div> -->
         </div>
 
-        <div class="row">
-          <div class="col-md-6">
+          <div class="row">
+          <div class="col-md-12">
             <fg-input type="text"
-                      label="First Name"
-                      placeholder="First Name"
+                      label="Nonce"
+                      :disabled="true"
+                      placeholder="0"
                       v-model="user.firstName">
             </fg-input>
           </div>
-          <div class="col-md-6">
+          </div>
+          <div class="row">
+          <div class="col-md-12">
             <fg-input type="text"
-                      label="Last Name"
-                      placeholder="Last Name"
+                      label="Total Balance"
+                      :disabled="true"
+                      placeholder="0"
                       v-model="user.lastName">
             </fg-input>
           </div>
@@ -48,29 +54,35 @@
         <div class="row">
           <div class="col-md-12">
             <fg-input type="text"
-                      label="Address"
-                      placeholder="Home Address"
+                      label="Delegated"
+                      :disabled="true"
+                      placeholder="0"
                       v-model="user.address">
             </fg-input>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-12">
             <fg-input type="text"
-                      label="City"
-                      placeholder="City"
+                      label="Deposit"
+                      :disabled="true"
+                      placeholder="0"
                       v-model="user.city">
             </fg-input>
           </div>
-          <div class="col-md-4">
+        </div>
+          <div class="row">
+          <div class="col-md-12">
             <fg-input type="text"
-                      label="Country"
-                      placeholder="Country"
+                      label="Available Balance"
+                      :disabled="true"
+                      placeholder="0"
                       v-model="user.country">
             </fg-input>
           </div>
-          <div class="col-md-4">
+          </div>
+          <!-- <div class="col-md-4">
             <fg-input type="number"
                       label="Postal Code"
                       placeholder="ZIP Code"
@@ -97,7 +109,7 @@
                     @click.native.prevent="updateProfile">
             Update Profile
           </p-button>
-        </div>
+        </div> -->
         <div class="clearfix"></div>
       </form>
     </div>
@@ -108,15 +120,13 @@ export default {
   data() {
     return {
       user: {
-        company: "Paper Dashboard",
-        username: "michael23",
-        email: "",
-        firstName: "Chet",
-        lastName: "Faker",
-        address: "Melbourne, Australia",
-        city: "Melbourne",
-        postalCode: "",
-        aboutMe: `We must accept finite disappointment, but hold on to infinite hope.`
+        company: "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee",
+        username: "12",
+        city: "2523523",
+        firstName: "325",
+        lastName: "21",
+        address: "53",
+        country: "12512351235"
       }
     };
   },

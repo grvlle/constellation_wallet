@@ -1,7 +1,8 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">{{routeName}}</a>
+      <img src="https://constellationlabs.io/wp-content/uploads/2019/08/Constellation-Logo-1.png" style="max-height: 100px; max-width: 200px;" />
+      <!-- <a class="navbar-brand" href="#">{{routeName}}</a> -->
       <button class="navbar-toggler navbar-burger"
               type="button"
               @click="toggleSidebar"
@@ -21,7 +22,6 @@
             <a class="dropdown-item" href="#">Notification 2</a>
             <a class="dropdown-item" href="#">Notification 3</a>
             <a class="dropdown-item" href="#">Notification 4</a>
-            <a class="dropdown-item" href="#">Another notification</a>
           </drop-down>
           <li class="nav-item">
             <a href="#" class="nav-link">

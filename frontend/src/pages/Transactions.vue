@@ -2,11 +2,12 @@
     <div class="row">
       <div class="col-12">
         <card :title="table1.title" :subTitle="table1.subTitle">
-          <div slot="raw-content" class="table-responsive">
+          <!-- <div slot="raw-content" class="table-responsive">
             <paper-table :data="table1.data" :columns="table1.columns">
 
             </paper-table>
-          </div>
+          </div> -->
+          <br><br>
         </card>
       </div>
 
@@ -25,42 +26,42 @@
 </template>
 <script>
 import { PaperTable } from "@/components";
-const tableColumns = ["Id", "Name", "Salary", "Country", "City"];
+const tableColumns = ["Id", "Amount", "Hash", "Block", "Date"];
 const tableData = [
   {
     id: 1,
-    name: "Dakota Rice",
-    salary: "$36.738",
-    country: "Niger",
-    city: "Oud-Turnhout"
+    date: "2019-02-13 10:12 AM",
+    amount: "$36.738",
+    hash: "Niger",
+    block: "Oud-Turnhout"
   },
   {
     id: 2,
-    name: "Minerva Hooper",
-    salary: "$23,789",
-    country: "Curaçao",
-    city: "Sinaai-Waas"
+    date: "2019-02-13 10:12 AM",
+    amount: "$23,789",
+    hash: "Curaçao",
+    block: "Sinaai-Waas"
   },
   {
     id: 3,
-    name: "Sage Rodriguez",
-    salary: "$56,142",
-    country: "Netherlands",
-    city: "Baileux"
+    date: "2019-02-13 10:12 AM",
+    amount: "$56,142",
+    hash: "Netherlands",
+    block: "Baileux"
   },
   {
     id: 4,
-    name: "Philip Chaney",
-    salary: "$38,735",
-    country: "Korea, South",
-    city: "Overland Park"
+    date: "2019-02-13 10:12 AM",
+    amount: "$38,735",
+    hash: "Korea, South",
+    block: "Overland Park"
   },
   {
     id: 5,
-    name: "Doris Greene",
-    salary: "$63,542",
-    country: "Malawi",
-    city: "Feldkirchen in Kärnten"
+    date: "2019-02-13 10:12 AM",
+    amount: "$63,542",
+    hash: "Malawi",
+    block: "Feldkirchen in Kärnten"
   }
 ];
 
@@ -71,8 +72,8 @@ export default {
   data() {
     return {
       table1: {
-        title: "Stripped Table",
-        subTitle: "Here is a subtitle for this table",
+        title: "Transactions",
+        subTitle: "Submit a $DAG Transaction",
         columns: [...tableColumns],
         data: [...tableData]
       },

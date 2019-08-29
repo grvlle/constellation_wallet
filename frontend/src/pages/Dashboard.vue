@@ -62,8 +62,8 @@
       </div>
       </div>
 
-        <div class="row">
-      <div class="col-md-6 col-xl-12" v-for="wallet in walletAddress" :key="wallet.address">
+      <div class="row">
+      <div class="col-md-6 col-xl-12">
         <wide-card>
           <div class="numbers text-center col-17" slot="content">
             <p>{{wallet.title}}</p>  
@@ -187,7 +187,13 @@ export default {
         notifications: {
         topCenter: false
         },
-      
+        wallet: {
+        
+          type: "info",
+          title: "Wallet Address",
+          address: "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee"
+
+        },
       usersChart: {
         data: {
           labels: [

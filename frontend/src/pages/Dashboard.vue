@@ -3,53 +3,83 @@
 
     <!--Stats cards-->
 
+
+
     <div class="row">
+      <div class="col-md-6 col-xl-4">
+        <stats-card title="asf">
+          <div class="icon-big text-center" :class="`icon-success`" slot="header">
+            <i class="ti-wallet"></i>
+          </div>
+          <div class="numbers text-center" slot="content">
+            <p>$DAG Tokens</p>
+            {{tokenAmount}}
+            
+            
+          </div>
+          <div class="stats" slot="footer">
+            <i class="ti-reload"></i> Updated 42 seconds ago
+          </div>
+        </stats-card>
+      </div>
+    
+
+
+      <div class="col-md-6 col-xl-4">
+        <stats-card title="asf">
+          <div class="icon-big text-center" :class="`icon-danger`" slot="header">
+            <i class="ti-pulse"></i>
+          </div>
+          <div class="numbers text-center" slot="content">
+            <p>USD value</p>
+            {{tokenAmount}}
+            
+            
+          </div>
+          <div class="stats" slot="footer">
+            <i class="ti-timer"></i> In the last hour
+          </div>
+        </stats-card>
+      </div>
+
+
+
+      <div class="col-md-6 col-xl-4">
+        <stats-card title="asf">
+          <div class="icon-big text-center" :class="`icon-info`" slot="header">
+            <i class="ti-package"></i>
+          </div>
+          <div class="numbers text-center" slot="content">
+            <p>Blocks</p>
+            {{blocks}}
+            
+            
+          </div>
+          <div class="stats" slot="footer">
+            <i class="ti-reload"></i> Updated now
+          </div>
+        </stats-card>
+      </div>
+      </div>
+
+        <div class="row">
       <div class="col-md-6 col-xl-12" v-for="wallet in walletAddress" :key="wallet.address">
         <wide-card>
           <div class="numbers text-center col-17" slot="content">
-            <p>{{wallet.title}}</p>
+            <p>{{wallet.title}}</p>  
             <hr>
-            <p style="color: #d8d8d8; padding-bottom: 10px; font-size: 22px; font-family: 'Press Start 2p';">{{wallet.address}} <p-button type="info" icon @click.native="notifyVue('top', 'right')"><i class="fa fa-copy"></i></p-button></p>
+            <p style="color: #c4c4c4; padding-top: 15px; background-color: #f7f7f7; font-size: 25px; font-weight: 100; font-family: 'Inconsolata';">
+              {{wallet.address}} 
+            <p-button type="info" style="margin-bottom: 25px;" icon @click.native="notifyVue('top', 'right')"><i class="fa fa-copy"></i>
+            </p-button>
+            </p>
           </div>
         </wide-card>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-md-6 col-xl-4" v-for="stats in statsCards" :key="stats.title">
-        <stats-card>
-          <div class="icon-big text-center" :class="`icon-${stats.type}`" slot="header">
-            <i :class="stats.icon"></i>
-          </div>
-          <div class="numbers text-center" slot="content">
-            <p>{{stats.title}}</p>
-            {{stats.value}}
-          </div>
-          <div class="stats" slot="footer">
-            <i :class="stats.footerIcon"></i> {{stats.footerText}}
-          </div>
-        </stats-card>
-      </div>
-    </div>
-
     <!--Charts-->
     <div class="row">
-
-      <div class="col-12">
-        <chart-card title="Network Throughput (tps)"
-                    sub-title="24 Hours performance"
-                    :chart-data="usersChart.data"
-                    :chart-options="usersChart.options">
-          <span slot="footer">
-            <i class="ti-reload"></i> Updated 3 minutes ago
-          </span>
-          <!-- <div slot="legend">
-            <i class="fa fa-circle text-info"></i> Open
-            <i class="fa fa-circle text-danger"></i> Click
-            <i class="fa fa-circle text-warning"></i> Click Second Time
-          </div> -->
-        </chart-card>
-      </div>
 
       <div class="col-md-6 col-12">
         <chart-card title="Nodes Online"
@@ -81,6 +111,24 @@
         </chart-card>
       </div>
 
+    
+
+      <div class="col-12">
+        <chart-card title="Network Throughput (tps)"
+                    sub-title="24 Hours performance"
+                    :chart-data="usersChart.data"
+                    :chart-options="usersChart.options">
+          <span slot="footer">
+            <i class="ti-reload"></i> Updated 3 minutes ago
+          </span>
+          <!-- <div slot="legend">
+            <i class="fa fa-circle text-info"></i> Open
+            <i class="fa fa-circle text-danger"></i> Click
+            <i class="fa fa-circle text-warning"></i> Click Second Time
+          </div> -->
+        </chart-card>
+      </div>
+
     </div>
 
   </div>
@@ -108,53 +156,32 @@ export default {
         type: this.type[color]
       })
     }
+    
+  },
+  mounted() {
+    window.wails.events.on("error", (currency, number) => {
+      let result = number * 2;
+      this.tokenAmount = `${currency} ${number}`;
+    });
+    window.wails.events.on("blocks", (number) => {
+      this.blocks = number;
+    });
+    this.tokenAmount();
+    this.blockAmount();
   },
 
   /**
    * Chart data used to render stats, charts. Should be replaced with server data
    */
+
   data() {
     return {
+        tokenAmount: "NaN",
+        blocks: "NaN",
         type: ["", "info", "success", "warning", "danger"],
         notifications: {
         topCenter: false
         },
-      statsCards: [
-        {
-          type: "success",
-          icon: "ti-wallet",
-          title: "$DAG Tokens",
-          value: "10345",
-          footerText: "Updated 42 seconds ago",
-          footerIcon: "ti-reload"
-        },
-        {
-          type: "danger",
-          icon: "ti-pulse",
-          title: "USD value",
-          value: "$23040",
-          footerText: "In the last hour",
-          footerIcon: "ti-timer"
-        },
-        {
-          type: "info",
-          icon: "ti-package",
-          title: "Blocks",
-          value: "+45",
-          footerText: "Updated now",
-          footerIcon: "ti-reload"
-        }
-      ],
-      walletAddress: {
-        data: {
-          type: "info",
-          icon: "ti-clipboard",
-          title: "Wallet Address",
-          address: "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee",
-          footerText: "In the last hour",
-          footerIcon: "ti-timer"
-        }
-      },
       
       usersChart: {
         data: {

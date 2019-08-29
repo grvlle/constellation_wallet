@@ -32,7 +32,7 @@
           </div>
           <div class="numbers text-center" slot="content">
             <p>USD value</p>
-            {{tokenAmount}}
+            {{usdValue}}
             
             
           </div>
@@ -159,13 +159,17 @@ export default {
     
   },
   mounted() {
-    window.wails.events.on("error", (currency, number) => {
-      let result = number * 2;
-      this.tokenAmount = `${currency} ${number}`;
+    window.wails.events.on("token", (number1) => {
+      this.tokenAmount = number1;
     });
     window.wails.events.on("blocks", (number) => {
       this.blocks = number;
     });
+    window.wails.events.on("price", (currency, dagRate) => {
+      let result = dagRate * this.tokenAmount;
+      this.usdValue = `${currency} ${(result).toFixed(2)}`;
+    });
+    this.pricePoller();
     this.tokenAmount();
     this.blockAmount();
   },
@@ -177,6 +181,7 @@ export default {
   data() {
     return {
         tokenAmount: "NaN",
+        usdValue: "NaN",
         blocks: "NaN",
         type: ["", "info", "success", "warning", "danger"],
         notifications: {

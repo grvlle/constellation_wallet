@@ -24,6 +24,7 @@ type Wallet struct {
 	}
 }
 
+// WailsInit initializes the Client and Server side bindings
 func (w *Wallet) WailsInit(runtime *wails.Runtime) error {
 	w.RT = runtime
 	w.BlockAmount()
@@ -32,24 +33,28 @@ func (w *Wallet) WailsInit(runtime *wails.Runtime) error {
 	return nil
 }
 
+// TokenAmount polls the token balance and stores it in the Wallet.Balance object
 func (w *Wallet) TokenAmount() {
 	var randomNumber int
 	go func() {
 		for {
-			randomNumber = rand.Intn(3000000000)
+			randomNumber = rand.Intn(3000000)
 			w.RT.Events.Emit("token", randomNumber)
+			w.UpdateTokenCounter(20)
 			time.Sleep(20 * time.Second)
 		}
 	}()
 }
 
+// BlockAmount is a temporary function
 func (w *Wallet) BlockAmount() {
 	var randomNumber int
 	go func() {
 		for {
 			randomNumber = rand.Intn(300)
 			w.RT.Events.Emit("blocks", randomNumber)
-			time.Sleep(2 * time.Second)
+			w.UpdateBlockCounter(5)
+			time.Sleep(5 * time.Second)
 		}
 	}()
 }
@@ -78,6 +83,28 @@ func (w *Wallet) PricePoller() {
 			w.RT.Events.Emit("price", "$", w.TokenPrice.DAG.USD)
 
 			time.Sleep(20 * time.Second)
+		}
+	}()
+}
+
+// UpdateTokenCounter will count up from the last time a card was updated.
+func (w *Wallet) UpdateTokenCounter(countFrom int) {
+	go func() {
+		for i := countFrom; i > 0; i-- {
+			w.RT.Events.Emit("counter", i)
+			time.Sleep(time.Second)
+			continue
+		}
+	}()
+}
+
+// UpdateBlockCounter will count up from the last time a card was updated.
+func (w *Wallet) UpdateBlockCounter(countFrom int) {
+	go func() {
+		for i := countFrom; i > 0; i-- {
+			w.RT.Events.Emit("block_counter", i)
+			time.Sleep(time.Second)
+			continue
 		}
 	}()
 }

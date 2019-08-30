@@ -18,10 +18,12 @@
     "punycode": "^2.1.1",
     "sass-loader": "^7.3.1",
     "strip-ansi": "^5.2.0",
+    "sweetalert2": "^8.16.4",
     "vue": "^2.5.22",
     "vue-clickaway": "^2.1.0",
     "vue-notifyjs": "^0.3.0",
     "vue-router": "^3.1.2",
+    "vue-sweetalert2": "^2.1.1",
     "webpack": "^4.39.2",
     "webpack-dev-server": "^3.8.0"
   },

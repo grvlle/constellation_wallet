@@ -18,7 +18,7 @@
             
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-reload"></i> Updated 42 seconds ago
+            <i class="ti-reload"></i> Updated {{count}} seconds ago
           </div>
         </stats-card>
       </div>
@@ -37,7 +37,7 @@
             
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-timer"></i> In the last hour
+            <i class="ti-timer"></i> Updated {{count}} seconds ago
           </div>
         </stats-card>
       </div>
@@ -56,7 +56,7 @@
             
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-reload"></i> Updated now
+            <i class="ti-reload"></i> Updated {{blockCount}} seconds ago
           </div>
         </stats-card>
       </div>
@@ -159,8 +159,8 @@ export default {
     
   },
   mounted() {
-    window.wails.events.on("token", (number1) => {
-      this.tokenAmount = number1;
+    window.wails.events.on("token", (amount) => {
+      this.tokenAmount = amount;
     });
     window.wails.events.on("blocks", (number) => {
       this.blocks = number;
@@ -169,9 +169,17 @@ export default {
       let result = dagRate * this.tokenAmount;
       this.usdValue = `${currency} ${(result).toFixed(2)}`;
     });
+    window.wails.events.on("counter", (count) => {
+      this.count = count;
+    });
+    window.wails.events.on("block_counter", (blockCount) => {
+      this.blockCount = blockCount;
+    });
     this.pricePoller();
     this.tokenAmount();
     this.blockAmount();
+    this.updateBlockCounter();
+    this.updateTokenCounter();
   },
 
   /**
@@ -183,6 +191,8 @@ export default {
         tokenAmount: "NaN",
         usdValue: "NaN",
         blocks: "NaN",
+        count: "0",
+        blockCount: "0",
         type: ["", "info", "success", "warning", "danger"],
         notifications: {
         topCenter: false

@@ -7,18 +7,17 @@
 
     <div class="row">
       <div class="col-md-6 col-xl-4">
-        <stats-card title="asf">
+        <stats-card>
           <div class="icon-big text-center" :class="`icon-success`" slot="header">
             <i class="ti-wallet"></i>
           </div>
           <div class="numbers text-center" slot="content">
             <p>$DAG Tokens</p>
             {{tokenAmount}}
-            
-            
+        
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-reload"></i> Updated 42 seconds ago
+            <i class="ti-reload"></i> Updated {{count}} seconds ago
           </div>
         </stats-card>
       </div>
@@ -26,18 +25,18 @@
 
 
       <div class="col-md-6 col-xl-4">
-        <stats-card title="asf">
+        <stats-card>
           <div class="icon-big text-center" :class="`icon-danger`" slot="header">
             <i class="ti-pulse"></i>
           </div>
           <div class="numbers text-center" slot="content">
             <p>USD value</p>
-            {{tokenAmount}}
+            {{usdValue}}
             
             
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-timer"></i> In the last hour
+            <i class="ti-timer"></i> Updated {{count}} seconds ago
           </div>
         </stats-card>
       </div>
@@ -45,7 +44,7 @@
 
 
       <div class="col-md-6 col-xl-4">
-        <stats-card title="asf">
+        <stats-card>
           <div class="icon-big text-center" :class="`icon-info`" slot="header">
             <i class="ti-package"></i>
           </div>
@@ -56,14 +55,14 @@
             
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-reload"></i> Updated now
+            <i class="ti-reload"></i> Updated {{blockCount}} seconds ago
           </div>
         </stats-card>
       </div>
       </div>
 
-        <div class="row">
-      <div class="col-md-6 col-xl-12" v-for="wallet in walletAddress" :key="wallet.address">
+      <div class="row">
+      <div class="col-md-6 col-xl-12">
         <wide-card>
           <div class="numbers text-center col-17" slot="content">
             <p>{{wallet.title}}</p>  
@@ -145,6 +144,16 @@ export default {
     ChartCard
   },
   methods: {
+    persist() {
+      let amount;
+      this.tokenAmount = amount;
+    },
+    getTokens: function() {
+      var self = this
+      window.backend.retrieveTokenAmount().then(result => {
+        self.tokenAmount = result;
+      });
+    },
     notifyVue(verticalAlign, horizontalAlign) {
       // const color = Math.floor(Math.random() * 4 + 1);
       const color = 2;
@@ -159,15 +168,22 @@ export default {
     
   },
   mounted() {
-    window.wails.events.on("error", (currency, number) => {
-      let result = number * 2;
-      this.tokenAmount = `${currency} ${number}`;
+    window.wails.Events.On("token", (amount) => {
+      this.tokenAmount = amount;
     });
-    window.wails.events.on("blocks", (number) => {
+    window.wails.Events.On("blocks", (number) => {
       this.blocks = number;
     });
-    this.tokenAmount();
-    this.blockAmount();
+    window.wails.Events.On("price", (currency, dagRate) => {
+      let result = dagRate * this.tokenAmount;
+      this.usdValue = `${currency} ${(result).toFixed(2)}`;
+    });
+    window.wails.Events.On("counter", (count) => {
+      this.count = count;
+    });
+    window.wails.Events.On("block_counter", (blockCount) => {
+      this.blockCount = blockCount;
+    });
   },
 
   /**
@@ -177,12 +193,21 @@ export default {
   data() {
     return {
         tokenAmount: "NaN",
+        usdValue: "NaN",
         blocks: "NaN",
+        count: "0",
+        blockCount: "0",
         type: ["", "info", "success", "warning", "danger"],
         notifications: {
         topCenter: false
         },
-      
+        wallet: {
+        
+          type: "info",
+          title: "Wallet Address",
+          address: "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee"
+
+        },
       usersChart: {
         data: {
           labels: [

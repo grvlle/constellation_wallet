@@ -23,7 +23,7 @@
             </fg-input>
           </div>
           <div class="col-md-1">
-            <p-button type="info" block style="margin-top: 28px; overflow: visible;">
+            <p-button type="info" block @click.native="showAlert()" style="margin-top: 28px; overflow: visible;">
             <span style="width: 80px; margin-left: -20px; overflow: hidden; white-space: nowrap; display: block; text-overflow: ellipsis;"><i class="fa fa-paper-plane"></i> SEND</span>
             </p-button>
           </div>
@@ -36,21 +36,31 @@
 <script>
 export default {
   data() {
-    return {
-      user: {
-        company: "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee",
-        username: "12",
-        city: "2523523",
-        firstName: "325",
-        lastName: "21",
-        address: "53",
-        country: "12512351235"
-      }
-    };
+    return {};
   },
   methods: {
     updateProfile() {
       alert("Your data: " + JSON.stringify(this.user));
+    },
+    showAlert(){
+      // Generate confirmation pop-up for transactions
+      this.$swal({
+        title: 'Are you sure you wish to send this transaction?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085D6',
+        cancelButtonColor: '#EA896E',
+        confirmButtonText: 'Yes, send it!'
+        }).then((result) => {
+        if (result.value) {
+          this.$swal({
+            title: 'Sent!',
+            text: 'Your $DAG transaction has been sent.',
+            type: 'success'}
+          )
+        }
+      });
     }
   }
 };

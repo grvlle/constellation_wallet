@@ -1,61 +1,33 @@
 package main
 
 import (
-	"fmt"
-	"math/rand"
-	"time"
-
 	"github.com/leaanthony/mewn"
 	"github.com/wailsapp/wails"
 )
 
-type FrontEnd struct {
-	runtime *wails.Runtime
-	logger  *wails.CustomLogger
+// WRT stands for Wails Runtime that is the Client/Server event bus
+type WRT struct {
+	RT *wails.Runtime
 }
 
-func (f *FrontEnd) WailsInit(runtime *wails.Runtime) error {
-	f.logger = runtime.Log.New("FrontEnd")
-	f.logger.Info("I'm here")
-	f.runtime = runtime
-	f.BlockAmount()
-	f.TokenAmount()
+// WailsInit initializes the Client and Server side bindings
+func (w *Wallet) WailsInit(runtime *wails.Runtime) error {
+	WailsRuntimeObject := &WRT{}
+	WailsRuntimeObject.RT = runtime
+
+	runtime.Window.SetTitle("Constellation Desktop Wallet")
+
+	w.BlockAmount(runtime)
+	w.TokenAmount(runtime)
+	w.PricePoller(runtime)
 
 	return nil
-}
-
-func (f *FrontEnd) BlockAmount() error {
-	var randomNumber int
-	go func() {
-		for {
-			randomNumber = rand.Intn(300)
-			f.runtime.Events.Emit("blocks", randomNumber)
-			time.Sleep(2 * time.Second)
-		}
-	}()
-	return nil
-}
-
-func (f *FrontEnd) TokenAmount() error {
-	var randomNumber int
-	go func() {
-		for {
-			randomNumber = rand.Intn(3000)
-			f.runtime.Events.Emit("error", "$", randomNumber)
-			time.Sleep(2 * time.Second)
-		}
-	}()
-	return nil
-}
-
-func basic() string {
-	fmt.Println("Hej!!")
-	return "Tjo!"
 }
 
 func main() {
 
-	fe := &FrontEnd{}
+	wallet := NewWallet()
+	wallet.GetAddress()
 
 	js := mewn.String("./frontend/dist/app.js")
 	css := mewn.String("./frontend/dist/app.css")
@@ -68,6 +40,7 @@ func main() {
 		CSS:    css,
 		Colour: "#131313",
 	})
-	app.Bind(fe)
+
+	app.Bind(wallet)
 	app.Run()
 }

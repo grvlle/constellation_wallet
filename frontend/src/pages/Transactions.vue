@@ -89,7 +89,8 @@ export default {
         data: [...tableData]
       }
     };
-  }
+  },
+
 };
 </script>
 <style>

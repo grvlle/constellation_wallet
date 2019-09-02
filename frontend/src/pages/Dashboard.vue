@@ -184,12 +184,6 @@ export default {
     window.wails.Events.On("block_counter", (blockCount) => {
       this.blockCount = blockCount;
     });
-    // this.pricePoller();
-    // this.tokenAmount();
-    // this.blockAmount();
-    // this.updateBlockCounter();
-    // this.updateTokenCounter();
-    // this.retrieveTokenAmount(); // Temp
   },
 
   /**

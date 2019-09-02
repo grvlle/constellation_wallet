@@ -1,38 +1,25 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"math/rand"
-	"net/http"
-	"time"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
+	"crypto/sha256"
+	"fmt"
+	"log"
 
-	"github.com/wailsapp/wails"
+	"golang.org/x/crypto/ripemd160"
 )
 
-// WRT stands for Wails Runtime that is the Client/Server event bus
-type WRT struct {
-	RT *wails.Runtime
-}
-
-// WailsInit initializes the Client and Server side bindings
-func (w *Wallet) WailsInit(runtime *wails.Runtime) error {
-	WailsRuntimeObject := &WRT{}
-	WailsRuntimeObject.RT = runtime
-
-	runtime.Window.SetTitle("Constellation Desktop Wallet")
-
-	w.BlockAmount(runtime)
-	w.TokenAmount(runtime)
-	w.PricePoller(runtime)
-
-	return nil
-}
+const (
+	checksumLength = 4
+	version        = byte(0x00) // Number zero
+)
 
 // Wallet holds all wallet information.
 type Wallet struct {
 	Balance    int    `json:"balance"`
-	Address    string `json:"address"`
+	Address    []byte `json:"address"`
 	TokenPrice struct {
 		DAG struct {
 			BTC float64 `json:"BTC"`
@@ -40,94 +27,72 @@ type Wallet struct {
 			EUR float64 `json:"EUR"`
 		} `json:"DAG"`
 	}
+	PrivateKey ecdsa.PrivateKey
+	PublicKey  []byte
 }
 
 // NewWallet initates a new dummy wallet
 func NewWallet() *Wallet {
-	wallet := &Wallet{
-		Balance: 100,
-		Address: "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee",
+	private, public := NewKeyPair()
+	wallet := Wallet{
+		Balance:    0,
+		PrivateKey: private,
+		PublicKey:  public,
 	}
-	return wallet
+	return &wallet
 }
 
-// TokenAmount polls the token balance and stores it in the Wallet.Balance object
-func (w *Wallet) TokenAmount(runtime *wails.Runtime) {
-	go func() {
-		for {
-			w.Balance = rand.Intn(3000000)
-			runtime.Events.Emit("token", w.Balance)
-			w.UpdateTokenCounter(10, runtime)
-			time.Sleep(10 * time.Second)
-		}
-	}()
+// GetAddress returns the address in human readable.
+func (w Wallet) GetAddress() []byte {
+	pubHash := PublicKeyHash(w.PublicKey)
+
+	versionedHash := append([]byte{version}, pubHash...)
+	checksum := Checksum(versionedHash)
+
+	fullHash := append(versionedHash, checksum...)
+	address := Base58Encode(fullHash)
+
+	fmt.Printf("Public Key: %x\n", w.PublicKey)
+	fmt.Printf("Public Hash: %x\n", pubHash)
+	fmt.Printf("Address: %x\n", address)
+
+	return address
 }
 
-// RetrieveTokenAmount is a user initiated function for updating current balance
-func (w *Wallet) RetrieveTokenAmount() int {
-	w.Balance = rand.Intn(3000000)
-	return w.Balance
+// NewKeyPair is used to generate a new pub/priv key using ECDSA. This
+// function is called when a NewWallet() is created.
+func NewKeyPair() (ecdsa.PrivateKey, []byte) {
+	curve := elliptic.P256()
+
+	private, err := ecdsa.GenerateKey(curve, rand.Reader)
+	if err != nil {
+		log.Panic(err)
+	}
+	pub := append(private.PublicKey.X.Bytes(), private.PublicKey.Y.Bytes()...)
+
+	return *private, pub
 }
 
-// BlockAmount is a temporary function
-func (w *Wallet) BlockAmount(runtime *wails.Runtime) {
-	var randomNumber int
-	go func() {
-		for {
-			randomNumber = rand.Intn(300)
-			runtime.Events.Emit("blocks", randomNumber)
-			w.UpdateBlockCounter(10, runtime)
-			time.Sleep(5 * time.Second)
-		}
-	}()
+// PublicKeyHash produces a ripemd160 hash from the sha256 encrypted
+// public key.
+func PublicKeyHash(pubKey []byte) []byte {
+	pubHash := sha256.Sum256(pubKey)
+
+	hasher := ripemd160.New()
+	_, err := hasher.Write(pubHash[:])
+	if err != nil {
+		log.Panic(err)
+	}
+	publicRipMD := hasher.Sum(nil)
+
+	return publicRipMD
 }
 
-// PricePoller polls the min-api.cryptocompare REST API for DAG token value.
-// Once polled, it'll Emit the token value to Dashboard.vue for full token
-// balance evaluation against USD.
-func (w *Wallet) PricePoller(runtime *wails.Runtime) {
+// Checksum will perform a double hash on the payload and
+// return a checksum
+func Checksum(payload []byte) []byte {
+	firstHash := sha256.Sum256(payload)
+	secondHash := sha256.Sum256(firstHash[:])
 
-	const (
-		apiKey string = "17b10afdddc411087e2140ec91bd73d88d0c20294541838b192255fc574b1cb7"
-		ticker string = "DAG"
-		url    string = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=" + ticker + "&tsyms=BTC,USD,EUR&api_key=" + apiKey
-	)
-
-	go func() {
-		for {
-			resp, err := http.Get(url)
-			if err != nil {
-				// handle error
-			}
-			defer resp.Body.Close()
-			body, err := ioutil.ReadAll(resp.Body)
-			json.Unmarshal([]byte(body), &w.TokenPrice)
-
-			runtime.Events.Emit("price", "$", w.TokenPrice.DAG.USD)
-
-			time.Sleep(10 * time.Second)
-		}
-	}()
-}
-
-// UpdateTokenCounter will count up from the last time a card was updated.
-func (w *Wallet) UpdateTokenCounter(countFrom int, runtime *wails.Runtime) {
-	go func() {
-		for i := countFrom; i > 0; i-- {
-			runtime.Events.Emit("counter", i)
-			time.Sleep(time.Second)
-			continue
-		}
-	}()
-}
-
-// UpdateBlockCounter will count up from the last time a card was updated.
-func (w *Wallet) UpdateBlockCounter(countFrom int, runtime *wails.Runtime) {
-	go func() {
-		for i := countFrom; i > 0; i-- {
-			runtime.Events.Emit("block_counter", i)
-			time.Sleep(time.Second)
-			continue
-		}
-	}()
+	return secondHash[:checksumLength]
 }

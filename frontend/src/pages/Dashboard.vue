@@ -7,15 +7,14 @@
 
     <div class="row">
       <div class="col-md-6 col-xl-4">
-        <stats-card title="asf">
+        <stats-card>
           <div class="icon-big text-center" :class="`icon-success`" slot="header">
             <i class="ti-wallet"></i>
           </div>
           <div class="numbers text-center" slot="content">
             <p>$DAG Tokens</p>
             {{tokenAmount}}
-            
-            
+        
           </div>
           <div class="stats" slot="footer">
             <i class="ti-reload"></i> Updated {{count}} seconds ago
@@ -26,7 +25,7 @@
 
 
       <div class="col-md-6 col-xl-4">
-        <stats-card title="asf">
+        <stats-card>
           <div class="icon-big text-center" :class="`icon-danger`" slot="header">
             <i class="ti-pulse"></i>
           </div>
@@ -45,7 +44,7 @@
 
 
       <div class="col-md-6 col-xl-4">
-        <stats-card title="asf">
+        <stats-card>
           <div class="icon-big text-center" :class="`icon-info`" slot="header">
             <i class="ti-package"></i>
           </div>
@@ -145,6 +144,16 @@ export default {
     ChartCard
   },
   methods: {
+    persist() {
+      let amount;
+      this.tokenAmount = amount;
+    },
+    getTokens: function() {
+      var self = this
+      window.backend.retrieveTokenAmount().then(result => {
+        self.tokenAmount = result;
+      });
+    },
     notifyVue(verticalAlign, horizontalAlign) {
       // const color = Math.floor(Math.random() * 4 + 1);
       const color = 2;
@@ -159,27 +168,28 @@ export default {
     
   },
   mounted() {
-    window.wails.events.on("token", (amount) => {
+    window.wails.Events.On("token", (amount) => {
       this.tokenAmount = amount;
     });
-    window.wails.events.on("blocks", (number) => {
+    window.wails.Events.On("blocks", (number) => {
       this.blocks = number;
     });
-    window.wails.events.on("price", (currency, dagRate) => {
+    window.wails.Events.On("price", (currency, dagRate) => {
       let result = dagRate * this.tokenAmount;
       this.usdValue = `${currency} ${(result).toFixed(2)}`;
     });
-    window.wails.events.on("counter", (count) => {
+    window.wails.Events.On("counter", (count) => {
       this.count = count;
     });
-    window.wails.events.on("block_counter", (blockCount) => {
+    window.wails.Events.On("block_counter", (blockCount) => {
       this.blockCount = blockCount;
     });
-    this.pricePoller();
-    this.tokenAmount();
-    this.blockAmount();
-    this.updateBlockCounter();
-    this.updateTokenCounter();
+    // this.pricePoller();
+    // this.tokenAmount();
+    // this.blockAmount();
+    // this.updateBlockCounter();
+    // this.updateTokenCounter();
+    // this.retrieveTokenAmount(); // Temp
   },
 
   /**

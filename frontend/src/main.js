@@ -5,7 +5,7 @@ import router from "./router/index";
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 
-import Bridge from "./wailsbridge";
+import Wails from '@wailsapp/runtime';
 import PaperDashboard from "./plugins/paperDashboard";
 import "vue-notifyjs/themes/default.css";
 import VueNotify from 'vue-notifyjs'
@@ -15,7 +15,7 @@ Vue.use(VueNotify);
 Vue.use(PaperDashboard);
 Vue.use(VueSweetalert2);
 
-Bridge.Start(() => {
+Wails.Init(() => {
   new Vue({
     router,
     render: h => h(App)

@@ -43,7 +43,7 @@ export default {
       alert("Your data: " + JSON.stringify(this.user));
     },
     showAlert(){
-      // Use sweetalret2
+      // Generate confirmation pop-up for transactions
       this.$swal({
         title: 'Are you sure you wish to send this transaction?',
         text: "You won't be able to revert this!",
@@ -54,10 +54,10 @@ export default {
         confirmButtonText: 'Yes, send it!'
         }).then((result) => {
         if (result.value) {
-          this.$swal(
-            'Sent!',
-            'Your $DAG transaction has been sent.',
-            'success'
+          this.$swal({
+            title: 'Sent!',
+            text: 'Your $DAG transaction has been sent.',
+            type: 'success'}
           )
         }
       });

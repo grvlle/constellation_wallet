@@ -10,11 +10,29 @@ import (
 	"github.com/wailsapp/wails"
 )
 
+// WRT stands for Wails Runtime that is the Client/Server event bus
+type WRT struct {
+	RT *wails.Runtime
+}
+
+// WailsInit initializes the Client and Server side bindings
+func (w *Wallet) WailsInit(runtime *wails.Runtime) error {
+	WailsRuntimeObject := &WRT{}
+	WailsRuntimeObject.RT = runtime
+
+	runtime.Window.SetTitle("Constellation Desktop Wallet")
+
+	w.BlockAmount(runtime)
+	w.TokenAmount(runtime)
+	w.PricePoller(runtime)
+
+	return nil
+}
+
 // Wallet holds all wallet information.
 type Wallet struct {
-	RT         *wails.Runtime // Client/Server Event Bus
-	Balance    int            `json:"balance"`
-	Address    string         `json:"address"`
+	Balance    int    `json:"balance"`
+	Address    string `json:"address"`
 	TokenPrice struct {
 		DAG struct {
 			BTC float64 `json:"BTC"`
@@ -24,36 +42,41 @@ type Wallet struct {
 	}
 }
 
-// WailsInit initializes the Client and Server side bindings
-func (w *Wallet) WailsInit(runtime *wails.Runtime) error {
-	w.RT = runtime
-	w.BlockAmount()
-	w.TokenAmount()
-	w.PricePoller()
-	return nil
+// NewWallet initates a new dummy wallet
+func NewWallet() *Wallet {
+	wallet := &Wallet{
+		Balance: 100,
+		Address: "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee",
+	}
+	return wallet
 }
 
 // TokenAmount polls the token balance and stores it in the Wallet.Balance object
-func (w *Wallet) TokenAmount() {
-	var randomNumber int
+func (w *Wallet) TokenAmount(runtime *wails.Runtime) {
 	go func() {
 		for {
-			randomNumber = rand.Intn(3000000)
-			w.RT.Events.Emit("token", randomNumber)
-			w.UpdateTokenCounter(20)
-			time.Sleep(20 * time.Second)
+			w.Balance = rand.Intn(3000000)
+			runtime.Events.Emit("token", w.Balance)
+			w.UpdateTokenCounter(10, runtime)
+			time.Sleep(10 * time.Second)
 		}
 	}()
 }
 
+// RetrieveTokenAmount is a user initiated function for updating current balance
+func (w *Wallet) RetrieveTokenAmount() int {
+	w.Balance = rand.Intn(3000000)
+	return w.Balance
+}
+
 // BlockAmount is a temporary function
-func (w *Wallet) BlockAmount() {
+func (w *Wallet) BlockAmount(runtime *wails.Runtime) {
 	var randomNumber int
 	go func() {
 		for {
 			randomNumber = rand.Intn(300)
-			w.RT.Events.Emit("blocks", randomNumber)
-			w.UpdateBlockCounter(5)
+			runtime.Events.Emit("blocks", randomNumber)
+			w.UpdateBlockCounter(10, runtime)
 			time.Sleep(5 * time.Second)
 		}
 	}()
@@ -62,7 +85,7 @@ func (w *Wallet) BlockAmount() {
 // PricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token
 // balance evaluation against USD.
-func (w *Wallet) PricePoller() {
+func (w *Wallet) PricePoller(runtime *wails.Runtime) {
 
 	const (
 		apiKey string = "17b10afdddc411087e2140ec91bd73d88d0c20294541838b192255fc574b1cb7"
@@ -80,18 +103,18 @@ func (w *Wallet) PricePoller() {
 			body, err := ioutil.ReadAll(resp.Body)
 			json.Unmarshal([]byte(body), &w.TokenPrice)
 
-			w.RT.Events.Emit("price", "$", w.TokenPrice.DAG.USD)
+			runtime.Events.Emit("price", "$", w.TokenPrice.DAG.USD)
 
-			time.Sleep(20 * time.Second)
+			time.Sleep(10 * time.Second)
 		}
 	}()
 }
 
 // UpdateTokenCounter will count up from the last time a card was updated.
-func (w *Wallet) UpdateTokenCounter(countFrom int) {
+func (w *Wallet) UpdateTokenCounter(countFrom int, runtime *wails.Runtime) {
 	go func() {
 		for i := countFrom; i > 0; i-- {
-			w.RT.Events.Emit("counter", i)
+			runtime.Events.Emit("counter", i)
 			time.Sleep(time.Second)
 			continue
 		}
@@ -99,10 +122,10 @@ func (w *Wallet) UpdateTokenCounter(countFrom int) {
 }
 
 // UpdateBlockCounter will count up from the last time a card was updated.
-func (w *Wallet) UpdateBlockCounter(countFrom int) {
+func (w *Wallet) UpdateBlockCounter(countFrom int, runtime *wails.Runtime) {
 	go func() {
 		for i := countFrom; i > 0; i-- {
-			w.RT.Events.Emit("block_counter", i)
+			runtime.Events.Emit("block_counter", i)
 			time.Sleep(time.Second)
 			continue
 		}

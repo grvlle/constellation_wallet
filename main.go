@@ -7,7 +7,6 @@ import (
 
 func main() {
 
-	wallet := &Wallet{}
 	js := mewn.String("./frontend/dist/app.js")
 	css := mewn.String("./frontend/dist/app.css")
 
@@ -20,6 +19,6 @@ func main() {
 		Colour: "#131313",
 	})
 
-	app.Bind(wallet)
+	app.Bind(NewWallet())
 	app.Run()
 }

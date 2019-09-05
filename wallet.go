@@ -31,7 +31,7 @@ type Wallet struct {
 	PublicKey  []byte
 }
 
-// NewWallet initates a new dummy wallet
+// NewWallet initates a new wallet object
 func NewWallet() *Wallet {
 	private, public := NewKeyPair()
 	wallet := Wallet{

@@ -10,21 +10,27 @@ import (
 	"github.com/wailsapp/wails"
 )
 
+const (
+	dummyValue           = 300000
+	updateIntervalToken  = 10
+	updateIntervalBlocks = 5
+)
+
 // TokenAmount polls the token balance and stores it in the Wallet.Balance object
 func (w *Wallet) TokenAmount(runtime *wails.Runtime) {
 	go func() {
 		for {
-			w.Balance = rand.Intn(3000000)
+			w.Balance = rand.Intn(dummyValue)
 			runtime.Events.Emit("token", w.Balance)
-			w.UpdateTokenCounter(10, runtime)
-			time.Sleep(10 * time.Second)
+			w.UpdateTokenCounter(updateIntervalToken, runtime)
+			time.Sleep(updateIntervalToken * time.Second)
 		}
 	}()
 }
 
 // RetrieveTokenAmount is a user initiated function for updating current balance
 func (w *Wallet) RetrieveTokenAmount() int {
-	w.Balance = rand.Intn(3000000)
+	w.Balance = rand.Intn(dummyValue)
 	return w.Balance
 }
 
@@ -33,10 +39,10 @@ func (w *Wallet) BlockAmount(runtime *wails.Runtime) {
 	var randomNumber int
 	go func() {
 		for {
-			randomNumber = rand.Intn(300)
+			randomNumber = rand.Intn(dummyValue)
 			runtime.Events.Emit("blocks", randomNumber)
-			w.UpdateBlockCounter(10, runtime)
-			time.Sleep(5 * time.Second)
+			w.UpdateBlockCounter(updateIntervalBlocks, runtime)
+			time.Sleep(updateIntervalBlocks * time.Second)
 		}
 	}()
 }
@@ -63,8 +69,7 @@ func (w *Wallet) PricePoller(runtime *wails.Runtime) {
 			json.Unmarshal([]byte(body), &w.TokenPrice)
 
 			runtime.Events.Emit("price", "$", w.TokenPrice.DAG.USD)
-
-			time.Sleep(10 * time.Second)
+			time.Sleep(updateIntervalToken * time.Second)
 		}
 	}()
 }

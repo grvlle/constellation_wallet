@@ -42,5 +42,6 @@ func main() {
 	})
 
 	app.Bind(wallet)
+	app.Bind(sendTransaction)
 	app.Run()
 }

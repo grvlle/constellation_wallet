@@ -12,8 +12,8 @@ import (
 
 const (
 	dummyValue           = 300000
-	updateIntervalToken  = 10
-	updateIntervalBlocks = 5
+	updateIntervalToken  = 10 // Seconds
+	updateIntervalBlocks = 5  // Seconds
 )
 
 // TokenAmount polls the token balance and stores it in the Wallet.Balance object

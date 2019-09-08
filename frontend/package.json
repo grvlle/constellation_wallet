@@ -8,7 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@wailsapp/runtime": "^1.0.0",
+    "@wailsapp/runtime": "^1.0.2",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
     "bootstrap": "^4.3.1",
     "chartist": "^0.11.3",

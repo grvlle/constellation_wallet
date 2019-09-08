@@ -65,7 +65,7 @@
             <div class="col-md-6 col-xl-12">
                 <wide-card>
                     <div class="numbers text-center col-17" slot="content">
-                        <p>{{wallet.title}}</p>
+                        <p>{{walletCard.title}}</p>
                         <hr>
                         <p style="color: #c4c4c4; padding-top: 15px; background-color: #f7f7f7; font-size: 25px; font-weight: 100; font-family: 'Inconsolata';">
                             {{wallet.address}}
@@ -128,6 +128,7 @@
 import { StatsCard, ChartCard, WideCard } from "@/components/index";
 import Chartist from 'chartist';
 import WalletCopiedNotification from './Notifications/WalletCopied';
+import Wallet from "../../../JSONdata/wallet.json"
 
 export default {
     components: {
@@ -183,8 +184,9 @@ export default {
 
     data() {
         return {
-            tokenAmount: "NaN",
-            usdValue: "NaN",
+            wallet: Wallet,
+            tokenAmount: Wallet.balance,
+            usdValue: "$ " + (Wallet.balance * Wallet.token_price.DAG.USD).toFixed(2),
             blocks: "NaN",
             count: "0",
             blockCount: "0",
@@ -192,11 +194,11 @@ export default {
             notifications: {
                 topCenter: false
             },
-            wallet: {
+            walletCard: {
 
                 type: "info",
                 title: "Wallet Address",
-                address: "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee"
+                address: Wallet.Address
 
             },
             usersChart: {

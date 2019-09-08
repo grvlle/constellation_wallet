@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 	"time"
 )
 
@@ -21,32 +19,19 @@ func sendTransaction(amount int, address string) *Transaction {
 
 	tx := &Transaction{
 		Amount:  amount,
-		Address: address, //"0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee",
+		Address: address, // "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee",
 		TS:      time.Now().Format("Mon Jan _2 15:04:05 2006"),
 	}
 
 	tx.ID++
-	err := transactionConfirmed(tx)
+
+	err := writeToJSON("tx", tx) // Temporary solution
 	if err != nil {
 		fmt.Println("Unable to write transaction data to tx.json.")
 		tx.Status = err
 	}
 
 	return tx
-}
-
-// transactionConfirmed will create a json file and populate the
-// transaction in json format. This is a temp function.
-func transactionConfirmed(tx *Transaction) error {
-	txJSON, err := json.Marshal(tx)
-	f, err := os.Create("tx.json")
-	defer f.Close()
-	if err != nil {
-		return err
-	}
-	f.Write(txJSON)
-
-	return nil
 }
 
 // func (w *Wallet) RecieveTransaction() {

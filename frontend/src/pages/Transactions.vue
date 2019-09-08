@@ -52,7 +52,7 @@ const tableColumns = ["Id", "Amount", "Address", "Date"];
 let tableData = [];
 
 import TxSentNotification from './Notifications/TxSent';
-import Transactions from '../../../tx.json'
+import Transactions from '../../../JSONdata/tx.json'
 
 export default {
     components: {

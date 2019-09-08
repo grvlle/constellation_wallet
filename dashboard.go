@@ -12,7 +12,7 @@ import (
 
 const (
 	dummyValue           = 300000
-	updateIntervalToken  = 10 // Seconds
+	updateIntervalToken  = 60 // Seconds
 	updateIntervalBlocks = 5  // Seconds
 )
 
@@ -20,7 +20,7 @@ const (
 func (w *Wallet) TokenAmount(runtime *wails.Runtime) {
 	go func() {
 		for {
-			w.Balance = rand.Intn(dummyValue)
+			//w.Balance = rand.Intn(dummyValue)
 			runtime.Events.Emit("token", w.Balance)
 			w.UpdateTokenCounter(updateIntervalToken, runtime)
 			time.Sleep(updateIntervalToken * time.Second)
@@ -70,6 +70,7 @@ func (w *Wallet) PricePoller(runtime *wails.Runtime) {
 
 			runtime.Events.Emit("price", "$", w.TokenPrice.DAG.USD)
 			time.Sleep(updateIntervalToken * time.Second)
+			w.GetAddress() // This will update wallet.json with the tokenprice
 		}
 	}()
 }

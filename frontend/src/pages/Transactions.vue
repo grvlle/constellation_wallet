@@ -9,14 +9,14 @@
                         <div class="row">
                             <div class="col-md-1"></div>
                             <div class="col-md-4">
-                                <fg-input type="text" label="Submit the amount of $DAG you wish to send" :disabled="false" placeholder="0">
+                                <fg-input v-model.number="amountSubmitted" type="text" label="Submit the amount of $DAG you wish to send" placeholder="0">
                                 </fg-input>
                             </div>
                             <div class="col-md-1">
                                 <i class="fa fa-chevron-circle-right" style="color: #6DECBB; font-size: 40px; padding: 28px;"></i>
                             </div>
                             <div class="col-md-4">
-                                <fg-input type="text" label="Wallet Address of Recipient" :disabled="false" placeholder="Enter Recipients Wallet Address">
+                                <fg-input v-model="txAddress" type="text" label="Wallet Address of Recipient" placeholder="Enter Recipients Wallet Address">
                                 </fg-input>
                             </div>
                             <div class="col-md-1">
@@ -51,14 +51,8 @@ import { PaperTable } from "@/components";
 const tableColumns = ["Id", "Amount", "Address", "Date"];
 let tableData = [];
 
-// Temp dummy numbers for transaction
-let amount = 123;
-let address = "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee";
-
 import TxSentNotification from './Notifications/TxSent';
 import Transactions from '../../../tx.json'
-
-//this.table2.data = []
 
 export default {
     components: {
@@ -68,8 +62,9 @@ export default {
         tx: function() {
             var self = this
             this.tokenSendInit(
+              
                 this.$swal({
-                    title: 'You are about to send ' + self.txAmount + ' $DAG tokens to ' + self.txAddress,
+                    title: 'You are about to send ' + self.amountSubmitted + ' $DAG tokens to ' + self.txAddress,
                     text: "Are you sure you wish to send this transaction?",
                     type: 'warning',
                     showCancelButton: true,
@@ -78,14 +73,16 @@ export default {
                     confirmButtonText: 'Yes, send it!'
                 }).then((result) => {
                     if (result.value) {
+                        let amount = self.amountSubmitted
+                        let address = self.txAddress
                         window.backend.sendTransaction(amount, address).then(transaction => {
-                            self.txFull = transaction;
-                            self.txAmount = transaction.Amount;
-                            self.txAddress = transaction.Address;
+                            // self.txFull = transaction;
+                            // self.txAmount = transaction.Amount;
+                            //self.txAddress = transaction.Address;
                         })
                         this.$swal({
                                 title: 'Success!',
-                                text: 'You have sent ' + self.txAmount + ' $DAG tokens to address ' + self.txAddress + '.',
+                                text: 'You have sent ' + self.amountSubmitted + ' $DAG tokens to address ' + self.txAddress + '.',
                                 type: 'success'
                             }),
                             this.$notify({
@@ -102,6 +99,7 @@ export default {
     },
     data() {
         return {
+            amountSubmitted: 0,
             txFull: {},
             txAmount: '',
             txAddress: '',

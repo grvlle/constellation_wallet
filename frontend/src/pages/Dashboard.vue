@@ -69,7 +69,7 @@
                         <hr>
                         <p style="color: #c4c4c4; padding-top: 15px; background-color: #f7f7f7; font-size: 25px; font-weight: 100; font-family: 'Inconsolata';">
                             {{wallet.address}}
-                            <p-button type="info" style="margin-bottom: 25px;" icon @click.native="notifyVue('top', 'right')"><i class="fa fa-copy"></i>
+                            <p-button type="info" style="margin-bottom: 15px" icon @click.native="notifyVue('top', 'right')"><i class="fa fa-copy"></i>
                             </p-button>
                         </p>
                     </div>

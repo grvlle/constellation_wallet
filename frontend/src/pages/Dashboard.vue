@@ -13,7 +13,7 @@
                     </div>
                     <div class="numbers text-center" slot="content">
                         <p>$DAG Tokens</p>
-                        {{tokenAmount}}
+                        {{wallet2.tokenAmount}}
     
                     </div>
                     <div class="stats" slot="footer">
@@ -31,7 +31,7 @@
                     </div>
                     <div class="numbers text-center" slot="content">
                         <p>USD value</p>
-                        {{usdValue}}
+                        {{wallet2.usdValue}}
     
     
                     </div>
@@ -50,7 +50,7 @@
                     </div>
                     <div class="numbers text-center" slot="content">
                         <p>Blocks</p>
-                        {{blocks}}
+                        {{wallet2.blocks}}
     
     
                     </div>
@@ -68,7 +68,7 @@
                         <p>{{walletCard.title}}</p>
                         <hr>
                         <p style="color: #c4c4c4; padding-top: 15px; background-color: #f7f7f7; font-size: 25px; font-weight: 100; font-family: 'Inconsolata';">
-                            {{wallet.address}}
+                            {{wallet2.address}}
                             <p-button type="info" style="margin-bottom: 15px" icon @click.native="notifyVue('top', 'right')"><i class="fa fa-copy"></i>
                             </p-button>
                         </p>
@@ -83,7 +83,7 @@
             <div class="col-md-6 col-12">
                 <chart-card title="Nodes Online" sub-title="Since last 24 hours" :chart-data="preferencesChart.data" chart-type="Pie">
                     <span slot="footer">
-                <i class="ti-timer"></i> Updated 2 days ago</span>
+                            <i class="ti-timer"></i> Updated {{pieChartCount}} hours ago</span>
                     <div slot="legend">
                         <i class="fa fa-circle text-info"></i> Foundation Nodes
                         <i class="fa fa-circle text-success"></i> Medium Nodes
@@ -93,11 +93,11 @@
             </div>
     
             <div class="col-md-6 col-12">
-                <chart-card title="Transactions" sub-title="The amount of transactions sent vs. recieved over the last year" :chart-data="activityChart.data" :chart-options="activityChart.options">
+                <chart-card title="Transactions" sub-title="The amount of transactions sent vs. received over the last year" :chart-data="activityChart.data" :chart-options="activityChart.options">
                     <span slot="footer">
-                <i class="ti-check"></i> Data information certified
-              </span>
-                    <div slot="legend">
+                            <i class="ti-check"></i> Data information certified
+                          </span>
+                    <div slot="legend">Days
                         <i class="fa fa-circle text-info"></i> TX
                         <i class="fa fa-circle text-success"></i> RX
                     </div>
@@ -109,13 +109,13 @@
             <div class="col-12">
                 <chart-card title="Network Throughput (tps)" sub-title="24 Hours performance" :chart-data="usersChart.data" :chart-options="usersChart.options">
                     <span slot="footer">
-                <i class="ti-reload"></i> Updated 3 minutes ago
-              </span>
+                            <i class="ti-reload"></i> Updated 3 minutes ago
+                          </span>
                     <!-- <div slot="legend">
-                <i class="fa fa-circle text-info"></i> Open
-                <i class="fa fa-circle text-danger"></i> Click
-                <i class="fa fa-circle text-warning"></i> Click Second Time
-              </div> -->
+                            <i class="fa fa-circle text-info"></i> Open
+                            <i class="fa fa-circle text-danger"></i> Click
+                            <i class="fa fa-circle text-warning"></i> Click Second Time
+                          </div> -->
                 </chart-card>
             </div>
     
@@ -128,7 +128,7 @@
 import { StatsCard, ChartCard, WideCard } from "@/components/index";
 import Chartist from 'chartist';
 import WalletCopiedNotification from './Notifications/WalletCopied';
-import Wallet from "../../../JSONdata/wallet.json"
+
 
 export default {
     components: {
@@ -137,10 +137,6 @@ export default {
         ChartCard
     },
     methods: {
-        persist() {
-            let amount;
-            this.tokenAmount = amount;
-        },
         getTokens: function() {
             var self = this
             window.backend.retrieveTokenAmount().then(result => {
@@ -159,23 +155,42 @@ export default {
         }
 
     },
+    computed: {
+        wallet2() {
+            return this.$store.state.walletInfo;
+        },
+        chartData() {
+            return this.$store.state.chartData;
+        },
+        localWallet() {
+            return this.$store.getters.localWallet;
+        }
+    },
     mounted() {
         window.wails.Events.On("token", (amount) => {
-            this.tokenAmount = amount;
+            this.$store.state.walletInfo.tokenAmount = amount;
         });
         window.wails.Events.On("blocks", (number) => {
-            this.blocks = number;
+            this.$store.state.walletInfo.blocks = number;
         });
         window.wails.Events.On("price", (currency, dagRate) => {
             let result = dagRate * this.tokenAmount;
-            this.usdValue = `${currency} ${(result).toFixed(2)}`;
+            this.$store.state.walletInfo.usdValue = `${currency} ${(result).toFixed(2)}`;
         });
-        window.wails.Events.On("counter", (count) => {
+        window.wails.Events.On("token_counter", (count) => {
             this.count = count;
         });
         window.wails.Events.On("block_counter", (blockCount) => {
             this.blockCount = blockCount;
         });
+        window.wails.Events.On("chart_counter", (pieChartCount) => {
+            this.pieChartCount = pieChartCount;
+        });
+        window.wails.Events.On("node_stats", (series, labels) => {
+            this.$store.state.chartData.nodesOnline.series = series
+            this.$store.state.chartData.nodesOnline.labels = labels
+            // this.stats = stats
+        })
     },
 
     /**
@@ -184,12 +199,10 @@ export default {
 
     data() {
         return {
-            wallet: Wallet,
-            tokenAmount: Wallet.balance,
-            usdValue: "$ " + (Wallet.balance * Wallet.token_price.DAG.USD).toFixed(2),
-            blocks: "NaN",
             count: "0",
+            // stats: [0,0,0],
             blockCount: "0",
+            pieChartCount: 24,
             type: ["", "info", "success", "warning", "danger"],
             notifications: {
                 topCenter: false
@@ -198,7 +211,7 @@ export default {
 
                 type: "info",
                 title: "Wallet Address",
-                address: Wallet.Address
+                //address: Wallet.Address
 
             },
             usersChart: {
@@ -235,23 +248,10 @@ export default {
             },
             activityChart: {
                 data: {
-                    labels: [
-                        "Jan",
-                        "Feb",
-                        "Mar",
-                        "Apr",
-                        "Mai",
-                        "Jun",
-                        "Jul",
-                        "Aug",
-                        "Sep",
-                        "Oct",
-                        "Nov",
-                        "Dec"
-                    ],
+                    labels: this.$store.state.chartData.transactions.labels,
                     series: [
-                        [542, 543, 520, 680, 653, 753, 326, 434, 568, 610, 756, 895],
-                        [230, 293, 380, 480, 503, 553, 600, 664, 698, 710, 736, 795]
+                        this.$store.state.chartData.transactions.seriesOne,
+                        this.$store.state.chartData.transactions.seriesTwo
                     ]
                 },
                 options: {
@@ -264,8 +264,8 @@ export default {
             },
             preferencesChart: {
                 data: {
-                    labels: ["62%", "32%", "6%"],
-                    series: [62, 32, 6]
+                    labels: this.$store.state.chartData.nodesOnline.labels,
+                    series: this.$store.state.chartData.nodesOnline.series
                 },
                 options: {}
             }

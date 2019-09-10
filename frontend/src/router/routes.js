@@ -5,10 +5,10 @@ import NotFound from "@/pages/NotFoundPage.vue";
 // Admin pages
 import Dashboard from "@/pages/Dashboard.vue";
 import WalletInformation from "@/pages/WalletInformation.vue";
-import NetworkInformation from "@/pages/NetworkInformation.vue";
+import About from "@/pages/About.vue";
 import Icons from "@/pages/Icons.vue";
 import Maps from "@/pages/Maps.vue";
-import Typography from "@/pages/Typography.vue";
+import Settings from "@/pages/Settings.vue";
 import Transactions from "@/pages/Transactions.vue";
 
 const routes = [
@@ -28,9 +28,9 @@ const routes = [
         component: WalletInformation
       },
       {
-        path: "network-info",
-        name: "network status",
-        component: NetworkInformation
+        path: "about",
+        name: "about",
+        component: About
       },
       {
         path: "icons",
@@ -43,9 +43,9 @@ const routes = [
         component: Maps
       },
       {
-        path: "typography",
-        name: "typography",
-        component: Typography
+        path: "settings",
+        name: "settings",
+        component: Settings
       },
       {
         path: "submit-transaction",

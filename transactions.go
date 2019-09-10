@@ -10,7 +10,7 @@ type Transaction struct {
 	Amount  int    `json:"amount"`
 	Address string `json:"address,omitempty"`
 	TS      string `json:"date,omitempty"`
-	Status  error  `json:"status,omitempty"`
+	Status  bool   `json:"status,omitempty"`
 }
 
 // sendTransaction will create the tx object and populate it with data
@@ -28,8 +28,9 @@ func sendTransaction(amount int, address string) *Transaction {
 	err := writeToJSON("tx", tx) // Temporary solution
 	if err != nil {
 		fmt.Println("Unable to write transaction data to tx.json.")
-		tx.Status = err
+		tx.Status = false
 	}
+	tx.Status = true
 
 	return tx
 }

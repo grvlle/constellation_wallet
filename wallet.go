@@ -70,10 +70,6 @@ func (w Wallet) GetAddress() []byte {
 		fmt.Println("Unable to write transaction data to wallet.json.")
 	}
 
-	// fmt.Printf("Public Key: %x\n", w.PublicKey)
-	// fmt.Printf("Public Hash: %x\n", pubHash)
-	// fmt.Printf("Address: %x\n", address)
-
 	return address
 }
 

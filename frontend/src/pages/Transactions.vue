@@ -33,7 +33,8 @@
         </div>
     
         <div class="col-12">
-            <card class="card" :title="table2.title" :subTitle="table2.subTitle">
+            <card class="card" :title="table2.title" :subTitle="table2.subTitle">                
+                
                 <div class="table-full-width table-responsive">
                     <paper-table type="hover" :title="table2.title" :sub-title="table2.subTitle" :data="table2.data" :columns="table2.columns">
     
@@ -52,7 +53,7 @@ const tableColumns = ["Id", "Amount", "Address", "Date"];
 let tableData = [];
 
 import TxSentNotification from './Notifications/TxSent';
-import Transactions from '../../../JSONdata/tx.json'
+import TransactionHistory from '../../../JSONdata/tx.json';
 
 export default {
     components: {
@@ -61,42 +62,40 @@ export default {
     methods: {
         tx: function() {
             var self = this
-            this.tokenSendInit(
-              
-                this.$swal({
-                    title: 'You are about to send ' + self.amountSubmitted + ' $DAG tokens to ' + self.txAddress,
-                    text: "Are you sure you wish to send this transaction?",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085D6',
-                    cancelButtonColor: '#EA896E',
-                    confirmButtonText: 'Yes, send it!'
-                }).then((result) => {
-                    if (result.value) {
-                        let amount = self.amountSubmitted
-                        let address = self.txAddress
-                        window.backend.sendTransaction(amount, address).then(transaction => {
-                            // self.txFull = transaction;
-                            // self.txAmount = transaction.Amount;
-                            //self.txAddress = transaction.Address;
+            self.$swal({
+                title: 'You are about to send ' + self.amountSubmitted + ' $DAG tokens to ' + self.txAddress,
+                text: "Are you sure you wish to send this transaction?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085D6',
+                cancelButtonColor: '#EA896E',
+                confirmButtonText: 'Yes, send it!'
+            }).then((result) => {
+                if (result.value) {
+                    let amount = self.amountSubmitted
+                    let address = self.txAddress
+                    window.backend.sendTransaction(amount, address)
+                    self.$swal({
+                            title: 'Success!',
+                            text: 'You have sent ' + self.amountSubmitted + ' $DAG tokens to address ' + self.txAddress + '.',
+                            type: 'success'
+                        }),
+                        self.$notify({
+                            component: TxSentNotification,
+                            icon: "ti-check",
+                            horizontalAlign: "right",
+                            verticalAlign: "top",
+                            type: "success"
                         })
-                        this.$swal({
-                                title: 'Success!',
-                                text: 'You have sent ' + self.amountSubmitted + ' $DAG tokens to address ' + self.txAddress + '.',
-                                type: 'success'
-                            }),
-                            this.$notify({
-                                component: TxSentNotification,
-                                icon: "ti-check",
-                                horizontalAlign: "right",
-                                verticalAlign: "top",
-                                type: "success"
-                            })
-                    }
-                })
-            );
+                }
+            });
         }
     },
+    watch: {
+    TransactionHistory: function () {
+      this.table2.data = TransactionHistory
+    }
+  },
     data() {
         return {
             amountSubmitted: 0,
@@ -117,7 +116,7 @@ export default {
                 title: "Transaction History",
                 subTitle: "Table containing all previous transactions",
                 columns: [...tableColumns],
-                data: [Transactions]
+                data: [TransactionHistory]
             }
         }
     }

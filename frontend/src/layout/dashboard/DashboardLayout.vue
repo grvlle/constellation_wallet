@@ -8,10 +8,10 @@
         <!-- <sidebar-link to="/typography" name="Typography" icon="ti-text"/>
         <sidebar-link to="/icons" name="Icons" icon="ti-pencil-alt2"/>
         <sidebar-link to="/maps" name="Map" icon="ti-map"/>-->
-        <sidebar-link to="/network-info" name="Network Status" icon="fa fa-network-wired"/>
+        <sidebar-link to="/about" name="About" icon="fa fa-question-circle"/>
         <p class="nav-item"><a href="#" @click="notifyVue('top', 'right')" class="nav-link"><i class="fa fa-trophy"></i>The League</a></p>
         <p class="nav-item"><a href="#" @click="notifyVue('top', 'right')" class="nav-link"><i class="fa fa-gavel"></i>Governance</a></p>
-
+        
       </template>
       <mobile-menu>
         <li class="nav-item">

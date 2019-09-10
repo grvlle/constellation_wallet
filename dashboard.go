@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -11,18 +12,66 @@ import (
 )
 
 const (
-	dummyValue           = 300000
-	updateIntervalToken  = 60 // Seconds
-	updateIntervalBlocks = 5  // Seconds
+	dummyValue             = 300000
+	updateIntervalToken    = 60 // Seconds
+	updateIntervalBlocks   = 5  // Seconds
+	updateIntervalPieChart = 24 // Hours
 )
+
+// ChartData contains all the datapoints for the Charts
+// on the Dashboard.
+type ChartData struct {
+	NodesOnline struct {
+		Labels []string `json:"labels"`
+		Series []int    `json:"series"`
+	} `json:"nodes_online"`
+	Transactions struct {
+		Labels    []string `json:"labels"`
+		SeriesOne []int    `json:"series_one"`
+		SeriesTwo []int    `json:"series_two"`
+	} `json:"transactions"`
+	Throughput struct {
+		Labels    []string `json:"labels"`
+		SeriesOne []int    `json:"series_one"`
+		SeriesTwo []int    `json:"series_two"`
+	} `json:"throughput"`
+}
+
+func ChartDataInit() *ChartData {
+	cd := &ChartData{}
+
+	cd.NodesOnline.Labels = []string{"30%", "20%", "50%"}
+	cd.NodesOnline.Series = []int{30, 20, 50}
+
+	cd.Transactions.Labels = []string{"Jan	", "Feb	", "Mar	", "Apr	", "Mai	", "Jun	", "Jul	", "Aug	", "Sep	", "Oct	", "Nov	", "Dec	"}
+	cd.Transactions.SeriesOne = []int{542, 543, 520, 680, 653, 753, 326, 434, 568, 610, 756, 895}
+	cd.Transactions.SeriesTwo = []int{230, 293, 380, 480, 503, 553, 600, 664, 698, 710, 736, 795}
+
+	cd.Throughput.Labels = []string{"9:00AM", "12:00AM", "3:00PM", "6:00PM", "9:00PM", "12:00PM", "3:00AM", "6:00AM"}
+	cd.Throughput.SeriesOne = []int{287, 385, 490, 562, 594, 626, 698, 895, 952}
+	cd.Throughput.SeriesTwo = []int{67, 152, 193, 240, 387, 435, 535, 642, 744}
+
+	writeToJSON("chart_data", cd)
+
+	return cd
+}
+
+func (w *Wallet) nodeStats(runtime *wails.Runtime, cd *ChartData) {
+	go func() {
+		for {
+			runtime.Events.Emit("node_stats", cd.NodesOnline.Series, cd.NodesOnline.Labels)
+			UpdateCounter(updateIntervalPieChart, "chart_counter", time.Hour, runtime)
+			time.Sleep(updateIntervalPieChart * time.Hour)
+		}
+	}()
+}
 
 // TokenAmount polls the token balance and stores it in the Wallet.Balance object
 func (w *Wallet) TokenAmount(runtime *wails.Runtime) {
 	go func() {
 		for {
-			//w.Balance = rand.Intn(dummyValue)
 			runtime.Events.Emit("token", w.Balance)
-			w.UpdateTokenCounter(updateIntervalToken, runtime)
+			UpdateCounter(updateIntervalToken, "token_counter", time.Second, runtime)
 			time.Sleep(updateIntervalToken * time.Second)
 		}
 	}()
@@ -41,7 +90,7 @@ func (w *Wallet) BlockAmount(runtime *wails.Runtime) {
 		for {
 			randomNumber = rand.Intn(dummyValue)
 			runtime.Events.Emit("blocks", randomNumber)
-			w.UpdateBlockCounter(updateIntervalBlocks, runtime)
+			UpdateCounter(updateIntervalBlocks, "block_counter", time.Second, runtime)
 			time.Sleep(updateIntervalBlocks * time.Second)
 		}
 	}()
@@ -62,7 +111,7 @@ func (w *Wallet) PricePoller(runtime *wails.Runtime) {
 		for {
 			resp, err := http.Get(url)
 			if err != nil {
-				// handle error
+				fmt.Println(err) // Log this
 			}
 			defer resp.Body.Close()
 			body, err := ioutil.ReadAll(resp.Body)
@@ -70,28 +119,17 @@ func (w *Wallet) PricePoller(runtime *wails.Runtime) {
 
 			runtime.Events.Emit("price", "$", w.TokenPrice.DAG.USD)
 			time.Sleep(updateIntervalToken * time.Second)
-			w.GetAddress() // This will update wallet.json with the tokenprice
+			//w.GetAddress() // This will update wallet.json with the tokenprice
 		}
 	}()
 }
 
-// UpdateTokenCounter will count up from the last time a card was updated.
-func (w *Wallet) UpdateTokenCounter(countFrom int, runtime *wails.Runtime) {
+// UpdateCounter will count up from the last time a card was updated.
+func UpdateCounter(countFrom int, counter string, unit time.Duration, runtime *wails.Runtime) {
 	go func() {
 		for i := countFrom; i > 0; i-- {
-			runtime.Events.Emit("counter", i)
-			time.Sleep(time.Second)
-			continue
-		}
-	}()
-}
-
-// UpdateBlockCounter will count up from the last time a card was updated.
-func (w *Wallet) UpdateBlockCounter(countFrom int, runtime *wails.Runtime) {
-	go func() {
-		for i := countFrom; i > 0; i-- {
-			runtime.Events.Emit("block_counter", i)
-			time.Sleep(time.Second)
+			runtime.Events.Emit(counter, i)
+			time.Sleep(unit)
 			continue
 		}
 	}()

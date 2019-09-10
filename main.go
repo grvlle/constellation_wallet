@@ -38,10 +38,16 @@ func (w *Wallet) WailsInit(runtime *wails.Runtime) error {
 	WailsRuntimeObject.RT = runtime
 
 	runtime.Window.SetTitle("Constellation Desktop Wallet")
+	// log.Logger := log.New()
+	// log.Logger := runtime.Log.New("WALLET")
 
 	w.BlockAmount(runtime)
 	w.TokenAmount(runtime)
 	w.PricePoller(runtime)
+
+	chartData := ChartDataInit()
+
+	w.nodeStats(runtime, chartData)
 
 	return nil
 }

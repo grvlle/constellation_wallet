@@ -65,7 +65,7 @@ func (w Wallet) GetAddress() []byte {
 
 	w.Address = address
 
-	err := writeToJSON("wallet", w) // Temporary solution
+	err := writeToJSON("wallet.json", w) // Temporary solution
 	if err != nil {
 		fmt.Println("Unable to write transaction data to wallet.json.")
 	}

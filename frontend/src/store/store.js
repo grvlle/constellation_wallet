@@ -18,6 +18,11 @@ export const store = new Vuex.Store({
         txInfo: {
             txHistory: [TransactionHistory]
         },
+        counters: {
+            blockCounter: 5,
+            tokenCounter: 60,
+            nodesOnlineCounter: 24
+        },
         chartData: {
             nodesOnline: {
                 labels: ChartData.nodes_online.labels,

@@ -25,7 +25,7 @@ func sendTransaction(amount int, address string) *Transaction {
 
 	tx.ID++
 
-	err := writeToJSON("tx", tx) // Temporary solution
+	err := writeToJSON("tx.json", tx) // Temporary solution
 	if err != nil {
 		fmt.Println("Unable to write transaction data to tx.json.")
 		tx.Status = false

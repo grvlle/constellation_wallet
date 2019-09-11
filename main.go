@@ -40,7 +40,7 @@ func (a *App) WailsInit(runtime *wails.Runtime) error {
 	a.log = runtime.Log.New("Constellation")
 	a.WalletInit()
 
-	runtime.Window.SetTitle("App Desktop Wallet")
+	runtime.Window.SetTitle("Constellation Desktop Wallet")
 
 	return nil
 }
@@ -49,12 +49,13 @@ func (a *App) WalletInit() *Wallet {
 	w := a.NewWallet()
 	w.GetAddress()
 
+	chartData := ChartDataInit()
+	a.nodeStats(a.RT, chartData)
+
 	a.BlockAmount()
 	a.TokenAmount()
 	a.PricePoller()
-
-	chartData := ChartDataInit()
-	a.nodeStats(a.RT, chartData)
+	a.watcherInit()
 
 	return w
 }

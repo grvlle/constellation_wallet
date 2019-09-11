@@ -17,7 +17,7 @@
     
                     </div>
                     <div class="stats" slot="footer">
-                        <i class="ti-reload"></i> Updated {{count}} seconds ago
+                        <i class="ti-reload"></i> Updated {{this.$store.state.counters.tokenCounter}} seconds ago
                     </div>
                 </stats-card>
             </div>
@@ -36,12 +36,10 @@
     
                     </div>
                     <div class="stats" slot="footer">
-                        <i class="ti-timer"></i> Updated {{count}} seconds ago
+                        <i class="ti-timer"></i> Updated {{this.$store.state.counters.tokenCounter}} seconds ago
                     </div>
                 </stats-card>
             </div>
-    
-    
     
             <div class="col-md-6 col-xl-4">
                 <stats-card>
@@ -55,7 +53,7 @@
     
                     </div>
                     <div class="stats" slot="footer">
-                        <i class="ti-reload"></i> Updated {{blockCount}} seconds ago
+                        <i class="ti-reload"></i> Updated {{this.$store.state.counters.blockCounter}} seconds ago
                     </div>
                 </stats-card>
             </div>
@@ -83,7 +81,7 @@
             <div class="col-md-6 col-12">
                 <chart-card title="Nodes Online" sub-title="Since last 24 hours" :chart-data="preferencesChart.data" chart-type="Pie">
                     <span slot="footer">
-                            <i class="ti-timer"></i> Updated {{pieChartCount}} hours ago</span>
+                            <i class="ti-timer"></i> Updated {{this.$store.state.counters.nodesOnlineCounter}} hours ago</span>
                     <div slot="legend">
                         <i class="fa fa-circle text-info"></i> Foundation Nodes
                         <i class="fa fa-circle text-success"></i> Medium Nodes
@@ -178,13 +176,13 @@ export default {
             this.$store.state.walletInfo.usdValue = `${currency} ${(result).toFixed(2)}`;
         });
         window.wails.Events.On("token_counter", (count) => {
-            this.count = count;
+            this.$store.state.counters.tokenCounter = count;
         });
         window.wails.Events.On("block_counter", (blockCount) => {
-            this.blockCount = blockCount;
+            this.$store.state.counters.blockCounter = blockCount;
         });
         window.wails.Events.On("chart_counter", (pieChartCount) => {
-            this.pieChartCount = pieChartCount;
+            this.$store.state.counters.nodesOnlineCounter = pieChartCount;
         });
         window.wails.Events.On("node_stats", (series, labels) => {
             this.$store.state.chartData.nodesOnline.series = series
@@ -199,10 +197,10 @@ export default {
 
     data() {
         return {
-            count: "0",
-            // stats: [0,0,0],
-            blockCount: "0",
-            pieChartCount: 24,
+            // tokenCounter: this.$store.state.counters.tokenCounter,
+            // // stats: [0,0,0],
+            // blockCounter: this.$store.state.counters.blockCounter,
+            // nodesOnlineCounter: this.$store.state.counters.nodesOnlineCounter,
             type: ["", "info", "success", "warning", "danger"],
             notifications: {
                 topCenter: false

@@ -33,7 +33,7 @@
         </div>
     
         <div class="col-12">
-            <card class="card" :title="table2.title" :subTitle="table2.subTitle">                
+            <card class="card" :title="table2.title" :subTitle="table2.subTitle">
                 
                 <div class="table-full-width table-responsive">
                     <paper-table type="hover" :title="table2.title" :sub-title="table2.subTitle" :data="table2.data" :columns="table2.columns">
@@ -53,7 +53,6 @@ const tableColumns = ["Id", "Amount", "Address", "Date"];
 let tableData = [];
 
 import TxSentNotification from './Notifications/TxSent';
-import TransactionHistory from '../../../JSONdata/tx.json';
 
 export default {
     components: {
@@ -91,11 +90,11 @@ export default {
             });
         }
     },
-    watch: {
-    TransactionHistory: function () {
-      this.table2.data = TransactionHistory
-    }
-  },
+    mounted() {
+        window.wails.Events.On("new_transaction", (txObject) => {
+            this.$store.state.txInfo.txHistory.push(txObject);
+        });
+    },
     data() {
         return {
             amountSubmitted: 0,
@@ -116,7 +115,7 @@ export default {
                 title: "Transaction History",
                 subTitle: "Table containing all previous transactions",
                 columns: [...tableColumns],
-                data: [TransactionHistory]
+                data: this.$store.state.txInfo.txHistory.reverse()
             }
         }
     }

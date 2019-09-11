@@ -50,7 +50,7 @@ func ChartDataInit() *ChartData {
 	cd.Throughput.SeriesOne = []int{287, 385, 490, 562, 594, 626, 698, 895, 952}
 	cd.Throughput.SeriesTwo = []int{67, 152, 193, 240, 387, 435, 535, 642, 744}
 
-	writeToJSON("chart_data", cd)
+	writeToJSON("chart_data.json", cd)
 
 	return cd
 }

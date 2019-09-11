@@ -8,26 +8,9 @@
                       label="Wallet Address"
                       :disabled="true"
                       placeholder="0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee"
-                      v-model="user.company">
+                      v-model="wallet.address">
             </fg-input>
           </div>
-          <!-- <div class="row">
-          <div class="col-md-3">
-
-            <fg-input type="text"
-                      label="Username"
-                      placeholder="Username"
-                      v-model="user.username">
-            </fg-input>
-          </div>
-          <div class="col-md-4">
-            <fg-input type="email"
-                      label="Username"
-                      placeholder="Email"
-                      v-model="user.email">
-            </fg-input>
-          </div>
-        </div> -->
         </div>
 
           <div class="row">
@@ -36,7 +19,7 @@
                       label="Nonce"
                       :disabled="true"
                       placeholder="0"
-                      v-model="user.firstName">
+                      v-model="wallet.nonce">
             </fg-input>
           </div>
           </div>
@@ -46,7 +29,7 @@
                       label="Total Balance"
                       :disabled="true"
                       placeholder="0"
-                      v-model="user.lastName">
+                      v-model="wallet.total_balance">
             </fg-input>
           </div>
         </div>
@@ -57,7 +40,7 @@
                       label="Delegated"
                       :disabled="true"
                       placeholder="0"
-                      v-model="user.address">
+                      v-model="wallet.delegated">
             </fg-input>
           </div>
         </div>
@@ -68,7 +51,7 @@
                       label="Deposit"
                       :disabled="true"
                       placeholder="0"
-                      v-model="user.city">
+                      v-model="wallet.deposit">
             </fg-input>
           </div>
         </div>
@@ -78,61 +61,26 @@
                       label="Available Balance"
                       :disabled="true"
                       placeholder="0"
-                      v-model="user.country">
+                      v-model="wallet.available_balance">
             </fg-input>
           </div>
           </div>
-          <!-- <div class="col-md-4">
-            <fg-input type="number"
-                      label="Postal Code"
-                      placeholder="ZIP Code"
-                      v-model="user.postalCode">
-            </fg-input>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label>About Me</label>
-              <textarea rows="5" class="form-control border-input"
-                        placeholder="Here can be your description"
-                        v-model="user.aboutMe">
-
-              </textarea>
-            </div>
-          </div>
-        </div>
-        <div class="text-center">
-          <p-button type="info"
-                    round
-                    @click.native.prevent="updateProfile">
-            Update Profile
-          </p-button>
-        </div> -->
         <div class="clearfix"></div>
       </form>
     </div>
   </card>
 </template>
 <script>
+import Wallet from "../../../../JSONdata/wallet.json"
 export default {
   data() {
     return {
-      user: {
-        company: "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee",
-        username: "12",
-        city: "2523523",
-        firstName: "325",
-        lastName: "21",
-        address: "53",
-        country: "12512351235"
-      }
+      wallet: Wallet,
     };
   },
   methods: {
     updateProfile() {
-      alert("Your data: " + JSON.stringify(this.user));
+      alert("Your data: " + JSON.stringify(Wallet));
     }
   }
 };

@@ -5,25 +5,6 @@ import (
 	"github.com/wailsapp/wails"
 )
 
-// WRT stands for Wails Runtime that is the Client/Server event bus
-type WRT struct {
-	RT *wails.Runtime
-}
-
-// WailsInit initializes the Client and Server side bindings
-func (w *Wallet) WailsInit(runtime *wails.Runtime) error {
-	WailsRuntimeObject := &WRT{}
-	WailsRuntimeObject.RT = runtime
-
-	runtime.Window.SetTitle("Constellation Desktop Wallet")
-
-	w.BlockAmount(runtime)
-	w.TokenAmount(runtime)
-	w.PricePoller(runtime)
-
-	return nil
-}
-
 func main() {
 
 	wallet := NewWallet()
@@ -42,5 +23,31 @@ func main() {
 	})
 
 	app.Bind(wallet)
+	app.Bind(sendTransaction)
 	app.Run()
+}
+
+// WRT stands for Wails Runtime that is the Client/Server event bus
+type WRT struct {
+	RT *wails.Runtime
+}
+
+// WailsInit initializes the Client and Server side bindings
+func (w *Wallet) WailsInit(runtime *wails.Runtime) error {
+	WailsRuntimeObject := &WRT{}
+	WailsRuntimeObject.RT = runtime
+
+	runtime.Window.SetTitle("Constellation Desktop Wallet")
+	// log.Logger := log.New()
+	// log.Logger := runtime.Log.New("WALLET")
+
+	w.BlockAmount(runtime)
+	w.TokenAmount(runtime)
+	w.PricePoller(runtime)
+
+	chartData := ChartDataInit()
+
+	w.nodeStats(runtime, chartData)
+
+	return nil
 }

@@ -1,4 +1,4 @@
-module constellation_wallet
+module github.com/grvlle/constellation_wallet
 
 require (
 	github.com/leaanthony/mewn v0.10.7
@@ -9,4 +9,5 @@ require (
 	golang.org/x/sys v0.0.0-20190902133755-9109b7679e13 // indirect
 	golang.org/x/text v0.3.2 // indirect
 	golang.org/x/tools v0.0.0-20190830223141-573d9926052a // indirect
+	golang.org/x/tools/gopls v0.1.3 // indirect
 )

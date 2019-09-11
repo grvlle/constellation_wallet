@@ -30,20 +30,22 @@
   </card>
 </template>
 <script>
+import Wallet from "../../../../JSONdata/wallet.json"
 export default {
   data() {
     return {
+      wallet: Wallet,
       details: [
         {
-          title: "12",
+          title: Wallet.deposit,
           subTitle: "Transactions"
         },
         {
-          title: "12512351",
+          title: Wallet.balance,
           subTitle: "$DAG"
         },
         {
-          title: "24024,6$",
+          title: '$' + Wallet.token_price.DAG.USD * Wallet.balance,
           subTitle: "USD"
         }
       ]

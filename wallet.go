@@ -18,26 +18,37 @@ const (
 
 // Wallet holds all wallet information.
 type Wallet struct {
-	Balance    int    `json:"balance"`
-	Address    []byte `json:"address"`
-	TokenPrice struct {
+	Balance          int    `json:"balance"`
+	AvailableBalance int    `json:"available_balance"`
+	Nonce            int    `json:"nonce"`
+	TotalBalance     int    `json:"total_balance"`
+	Delegated        int    `json:"delegated"`
+	Deposit          int    `json:"deposit"`
+	Address          []byte `json:"address"`
+	TokenPrice       struct {
 		DAG struct {
-			BTC float64 `json:"BTC"`
-			USD float64 `json:"USD"`
-			EUR float64 `json:"EUR"`
+			BTC float64 `json:"BTC,omitempty"`
+			USD float64 `json:"USD,omitempty"`
+			EUR float64 `json:"EUR,omitempty"`
 		} `json:"DAG"`
-	}
+	} `json:"token_price"`
 	PrivateKey ecdsa.PrivateKey
 	PublicKey  []byte
 }
 
-// NewWallet initates a new dummy wallet
+// NewWallet initates a new wallet object
 func NewWallet() *Wallet {
 	private, public := NewKeyPair()
 	wallet := Wallet{
-		Balance:    0,
-		PrivateKey: private,
-		PublicKey:  public,
+		Balance:          1024155,
+		AvailableBalance: 1012233,
+		Nonce:            420,
+		TotalBalance:     1012420,
+		Delegated:        42,
+		Deposit:          0,
+		Address:          []byte{0x00},
+		PrivateKey:       private,
+		PublicKey:        public,
 	}
 	return &wallet
 }
@@ -52,9 +63,12 @@ func (w Wallet) GetAddress() []byte {
 	fullHash := append(versionedHash, checksum...)
 	address := Base58Encode(fullHash)
 
-	fmt.Printf("Public Key: %x\n", w.PublicKey)
-	fmt.Printf("Public Hash: %x\n", pubHash)
-	fmt.Printf("Address: %x\n", address)
+	w.Address = address
+
+	err := writeToJSON("wallet", w) // Temporary solution
+	if err != nil {
+		fmt.Println("Unable to write transaction data to wallet.json.")
+	}
 
 	return address
 }

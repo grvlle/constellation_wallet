@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -56,10 +55,10 @@ func ChartDataInit() *ChartData {
 	return cd
 }
 
-func (w *Wallet) nodeStats(runtime *wails.Runtime, cd *ChartData) {
+func (a *App) nodeStats(runtime *wails.Runtime, cd *ChartData) {
 	go func() {
 		for {
-			runtime.Events.Emit("node_stats", cd.NodesOnline.Series, cd.NodesOnline.Labels)
+			a.RT.Events.Emit("node_stats", cd.NodesOnline.Series, cd.NodesOnline.Labels)
 			UpdateCounter(updateIntervalPieChart, "chart_counter", time.Hour, runtime)
 			time.Sleep(updateIntervalPieChart * time.Hour)
 		}
@@ -67,11 +66,11 @@ func (w *Wallet) nodeStats(runtime *wails.Runtime, cd *ChartData) {
 }
 
 // TokenAmount polls the token balance and stores it in the Wallet.Balance object
-func (w *Wallet) TokenAmount(runtime *wails.Runtime) {
+func (a *App) TokenAmount() {
 	go func() {
 		for {
-			runtime.Events.Emit("token", w.Balance)
-			UpdateCounter(updateIntervalToken, "token_counter", time.Second, runtime)
+			a.RT.Events.Emit("token", a.wallet.Balance)
+			UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
 			time.Sleep(updateIntervalToken * time.Second)
 		}
 	}()
@@ -84,13 +83,13 @@ func (w *Wallet) RetrieveTokenAmount() int {
 }
 
 // BlockAmount is a temporary function
-func (w *Wallet) BlockAmount(runtime *wails.Runtime) {
+func (a *App) BlockAmount() {
 	var randomNumber int
 	go func() {
 		for {
 			randomNumber = rand.Intn(dummyValue)
-			runtime.Events.Emit("blocks", randomNumber)
-			UpdateCounter(updateIntervalBlocks, "block_counter", time.Second, runtime)
+			a.RT.Events.Emit("blocks", randomNumber)
+			UpdateCounter(updateIntervalBlocks, "block_counter", time.Second, a.RT)
 			time.Sleep(updateIntervalBlocks * time.Second)
 		}
 	}()
@@ -99,7 +98,7 @@ func (w *Wallet) BlockAmount(runtime *wails.Runtime) {
 // PricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token
 // balance evaluation against USD.
-func (w *Wallet) PricePoller(runtime *wails.Runtime) {
+func (a *App) PricePoller() {
 
 	const (
 		apiKey string = "17b10afdddc411087e2140ec91bd73d88d0c20294541838b192255fc574b1cb7"
@@ -111,13 +110,13 @@ func (w *Wallet) PricePoller(runtime *wails.Runtime) {
 		for {
 			resp, err := http.Get(url)
 			if err != nil {
-				fmt.Println(err) // Log this
+				a.log.Errorf("Unable to poll token evaluation", err) // Log this
 			}
 			defer resp.Body.Close()
 			body, err := ioutil.ReadAll(resp.Body)
-			json.Unmarshal([]byte(body), &w.TokenPrice)
+			json.Unmarshal([]byte(body), &a.wallet.TokenPrice)
 
-			runtime.Events.Emit("price", "$", w.TokenPrice.DAG.USD)
+			a.RT.Events.Emit("price", "$", a.wallet.TokenPrice.DAG.USD)
 			time.Sleep(updateIntervalToken * time.Second)
 			//w.GetAddress() // This will update wallet.json with the tokenprice
 		}

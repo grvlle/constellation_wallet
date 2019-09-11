@@ -37,9 +37,9 @@ type Wallet struct {
 }
 
 // NewWallet initates a new wallet object
-func NewWallet() *Wallet {
+func (a *App) NewWallet() *Wallet {
 	private, public := NewKeyPair()
-	wallet := Wallet{
+	a.wallet = &Wallet{
 		Balance:          1024155,
 		AvailableBalance: 1012233,
 		Nonce:            420,
@@ -50,7 +50,7 @@ func NewWallet() *Wallet {
 		PrivateKey:       private,
 		PublicKey:        public,
 	}
-	return &wallet
+	return a.wallet
 }
 
 // GetAddress returns the address in human readable.

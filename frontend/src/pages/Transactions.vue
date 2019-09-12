@@ -115,7 +115,7 @@ export default {
                 title: "Transaction History",
                 subTitle: "Table containing all previous transactions",
                 columns: [...tableColumns],
-                data: this.$store.state.txInfo.txHistory.reverse()
+                data: this.$store.state.txInfo.txHistory
             }
         }
     }

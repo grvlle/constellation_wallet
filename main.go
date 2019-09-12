@@ -38,16 +38,10 @@ type App struct {
 func (a *App) WailsInit(runtime *wails.Runtime) error {
 	a.RT = runtime
 	a.log = runtime.Log.New("Constellation")
+	setupDirectoryStructure()
 	a.WalletInit()
 
 	runtime.Window.SetTitle("Constellation Desktop Wallet")
-
-	return nil
-}
-
-func (a *App) WalletInit() *Wallet {
-	w := a.NewWallet()
-	w.GetAddress()
 
 	chartData := ChartDataInit()
 	a.nodeStats(a.RT, chartData)
@@ -55,7 +49,14 @@ func (a *App) WalletInit() *Wallet {
 	a.BlockAmount()
 	a.TokenAmount()
 	a.PricePoller()
-	a.watcherInit()
+	a.monitorFileState()
 
+	return nil
+}
+
+// WalletInit initializes the Wallet struct and the
+func (a *App) WalletInit() *Wallet {
+	w := a.NewWallet()
+	w.GetAddress()
 	return w
 }

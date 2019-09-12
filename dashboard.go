@@ -36,17 +36,39 @@ type ChartData struct {
 	} `json:"throughput"`
 }
 
+// ChartDataInit initializes the ChartData struct with datapoints for
+// the charts in the wallet. These are stored on the fs as chart_data.json
 func ChartDataInit() *ChartData {
 	cd := &ChartData{}
 
 	cd.NodesOnline.Labels = []string{"30%", "20%", "50%"}
 	cd.NodesOnline.Series = []int{30, 20, 50}
 
-	cd.Transactions.Labels = []string{"Jan	", "Feb	", "Mar	", "Apr	", "Mai	", "Jun	", "Jul	", "Aug	", "Sep	", "Oct	", "Nov	", "Dec	"}
+	cd.Transactions.Labels = []string{
+		"Jan	",
+		"Feb	",
+		"Mar	",
+		"Apr	",
+		"Mai	",
+		"Jun	",
+		"Jul	",
+		"Aug	",
+		"Sep	",
+		"Oct	",
+		"Nov	",
+		"Dec	"}
 	cd.Transactions.SeriesOne = []int{542, 543, 520, 680, 653, 753, 326, 434, 568, 610, 756, 895}
 	cd.Transactions.SeriesTwo = []int{230, 293, 380, 480, 503, 553, 600, 664, 698, 710, 736, 795}
 
-	cd.Throughput.Labels = []string{"9:00AM", "12:00AM", "3:00PM", "6:00PM", "9:00PM", "12:00PM", "3:00AM", "6:00AM"}
+	cd.Throughput.Labels = []string{
+		"9:00AM",
+		"12:00AM",
+		"3:00PM",
+		"6:00PM",
+		"9:00PM",
+		"12:00PM",
+		"3:00AM",
+		"6:00AM"}
 	cd.Throughput.SeriesOne = []int{287, 385, 490, 562, 594, 626, 698, 895, 952}
 	cd.Throughput.SeriesTwo = []int{67, 152, 193, 240, 387, 435, 535, 642, 744}
 
@@ -110,11 +132,17 @@ func (a *App) PricePoller() {
 		for {
 			resp, err := http.Get(url)
 			if err != nil {
-				a.log.Errorf("Unable to poll token evaluation", err) // Log this
+				a.log.Warnf("Unable to poll token evaluation", err) // Log this
 			}
 			defer resp.Body.Close()
 			body, err := ioutil.ReadAll(resp.Body)
-			json.Unmarshal([]byte(body), &a.wallet.TokenPrice)
+			if err != nil {
+				a.log.Warnf("Unable to read HTTP resonse from Token API. Reason: ", err)
+			}
+			err = json.Unmarshal([]byte(body), &a.wallet.TokenPrice)
+			if err != nil {
+				a.log.Warnf("Unable to display token price. Reason:", err)
+			}
 
 			a.RT.Events.Emit("price", "$", a.wallet.TokenPrice.DAG.USD)
 			time.Sleep(updateIntervalToken * time.Second)

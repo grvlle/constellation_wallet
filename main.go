@@ -7,7 +7,6 @@ import (
 
 func main() {
 	a := &App{}
-	// window.log.Info("HEJSAN!!!!")
 
 	js := mewn.String("./frontend/dist/app.js")
 	css := mewn.String("./frontend/dist/app.css")
@@ -29,8 +28,14 @@ func main() {
 
 // App stands for Wails Runtime that is the Client/Server event bus
 type App struct {
-	RT     *wails.Runtime
-	log    *wails.CustomLogger
+	RT    *wails.Runtime
+	log   *wails.CustomLogger
+	paths struct {
+		HomeDir    string
+		DAGDir     string
+		KeyFile    string
+		LastTXFile string
+	}
 	wallet *Wallet
 }
 
@@ -49,6 +54,8 @@ func (a *App) WailsInit(runtime *wails.Runtime) error {
 	a.BlockAmount()
 	a.TokenAmount()
 	a.PricePoller()
+
+	a.collectOSPath()
 	a.monitorFileState()
 
 	return nil

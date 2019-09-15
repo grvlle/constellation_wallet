@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 import Wallet from "../../../JSONdata/wallet.json"
-import TransactionHistory from '../../../JSONdata/tx.json';
+//import TransactionHistory from '../../../JSONdata/tx.json';
 import ChartData from '../../../JSONdata/chart_data.json';
 
 export const store = new Vuex.Store({
@@ -16,7 +16,7 @@ export const store = new Vuex.Store({
         address: Wallet.address
         },
         txInfo: {
-            txHistory: [TransactionHistory]
+            txHistory: []
         },
         counters: {
             blockCounter: 5,

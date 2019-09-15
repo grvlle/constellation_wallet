@@ -6,8 +6,6 @@ import NotFound from "@/pages/NotFoundPage.vue";
 import Dashboard from "@/pages/Dashboard.vue";
 import WalletInformation from "@/pages/WalletInformation.vue";
 import About from "@/pages/About.vue";
-import Icons from "@/pages/Icons.vue";
-import Maps from "@/pages/Maps.vue";
 import Settings from "@/pages/Settings.vue";
 import Transactions from "@/pages/Transactions.vue";
 
@@ -31,16 +29,6 @@ const routes = [
         path: "about",
         name: "about",
         component: About
-      },
-      {
-        path: "icons",
-        name: "icons",
-        component: Icons
-      },
-      {
-        path: "maps",
-        name: "maps",
-        component: Maps
       },
       {
         path: "settings",

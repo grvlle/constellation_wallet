@@ -30,7 +30,7 @@
                         <i class="ti-pulse"></i>
                     </div>
                     <div class="numbers text-center" slot="content">
-                        <p>USD value</p>
+                        <p>USD value</p>   
                         {{wallet2.usdValue}}
     
     
@@ -81,7 +81,7 @@
             <div class="col-md-6 col-12">
                 <chart-card title="Nodes Online" sub-title="Since last 24 hours" :chart-data="preferencesChart.data" chart-type="Pie">
                     <span slot="footer">
-                            <i class="ti-timer"></i> Updated {{this.$store.state.counters.nodesOnlineCounter}} hours ago</span>
+                                    <i class="ti-timer"></i> Updated {{this.$store.state.counters.nodesOnlineCounter}} hours ago</span>
                     <div slot="legend">
                         <i class="fa fa-circle text-info"></i> Foundation Nodes
                         <i class="fa fa-circle text-success"></i> Medium Nodes
@@ -93,8 +93,8 @@
             <div class="col-md-6 col-12">
                 <chart-card title="Transactions" sub-title="The amount of transactions sent vs. received over the last year" :chart-data="activityChart.data" :chart-options="activityChart.options">
                     <span slot="footer">
-                            <i class="ti-check"></i> Data information certified
-                          </span>
+                                    <i class="ti-check"></i> Data information certified
+                                  </span>
                     <div slot="legend">Days
                         <i class="fa fa-circle text-info"></i> TX
                         <i class="fa fa-circle text-success"></i> RX
@@ -107,13 +107,13 @@
             <div class="col-12">
                 <chart-card title="Network Throughput (tps)" sub-title="24 Hours performance" :chart-data="usersChart.data" :chart-options="usersChart.options">
                     <span slot="footer">
-                            <i class="ti-reload"></i> Updated 3 minutes ago
-                          </span>
+                                    <i class="ti-reload"></i> Updated 3 minutes ago
+                                  </span>
                     <!-- <div slot="legend">
-                            <i class="fa fa-circle text-info"></i> Open
-                            <i class="fa fa-circle text-danger"></i> Click
-                            <i class="fa fa-circle text-warning"></i> Click Second Time
-                          </div> -->
+                                    <i class="fa fa-circle text-info"></i> Open
+                                    <i class="fa fa-circle text-danger"></i> Click
+                                    <i class="fa fa-circle text-warning"></i> Click Second Time
+                                  </div> -->
                 </chart-card>
             </div>
     
@@ -214,7 +214,16 @@ export default {
             },
             usersChart: {
                 data: {
-                    labels: this.$store.state.chartData.throughput.labels,
+                    labels: [
+                        "9:00AM",
+                        "12:00AM",
+                        "3:00PM",
+                        "6:00PM",
+                        "9:00PM",
+                        "12:00PM",
+                        "3:00AM",
+                        "6:00AM"
+                    ], //this.$store.state.chartData.throughput.labels,
                     series: [
                         this.$store.state.chartData.throughput.seriesOne,
                         this.$store.state.chartData.throughput.seriesTwo
@@ -237,7 +246,20 @@ export default {
             },
             activityChart: {
                 data: {
-                    labels: this.$store.state.chartData.transactions.labels,
+                    labels: [
+                        "Jan  ",
+                        "Feb  ",
+                        "Mar  ",
+                        "Apr  ",
+                        "Mai  ",
+                        "Jun  ",
+                        "Jul  ",
+                        "Aug  ",
+                        "Sep  ",
+                        "Oct  ",
+                        "Nov  ",
+                        "Dec  "
+                    ], //this.$store.state.chartData.transactions.labels,
                     series: [
                         this.$store.state.chartData.transactions.seriesOne,
                         this.$store.state.chartData.transactions.seriesTwo

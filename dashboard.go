@@ -45,18 +45,18 @@ func ChartDataInit() *ChartData {
 	cd.NodesOnline.Series = []int{30, 20, 50}
 
 	cd.Transactions.Labels = []string{
-		"Jan	",
-		"Feb	",
-		"Mar	",
-		"Apr	",
-		"Mai	",
-		"Jun	",
-		"Jul	",
-		"Aug	",
-		"Sep	",
-		"Oct	",
-		"Nov	",
-		"Dec	"}
+		"Jan  ",
+		"Feb  ",
+		"Mar  ",
+		"Apr  ",
+		"Mai  ",
+		"Jun  ",
+		"Jul  ",
+		"Aug  ",
+		"Sep  ",
+		"Oct  ",
+		"Nov  ",
+		"Dec  "}
 	cd.Transactions.SeriesOne = []int{542, 543, 520, 680, 653, 753, 326, 434, 568, 610, 756, 895}
 	cd.Transactions.SeriesTwo = []int{230, 293, 380, 480, 503, 553, 600, 664, 698, 710, 736, 795}
 

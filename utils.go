@@ -72,9 +72,6 @@ func (a *App) monitorFileState() error {
 func writeToJSON(filename string, data interface{}) error {
 
 	JSON, err := json.Marshal(data)
-	if err != nil {
-		return err
-	}
 
 	path := filepath.Join(".", "JSONdata", filename)
 	os.Remove(path)
@@ -88,6 +85,10 @@ func writeToJSON(filename string, data interface{}) error {
 
 	f.Write(JSON)
 	f.Sync()
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

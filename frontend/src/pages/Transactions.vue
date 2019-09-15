@@ -34,9 +34,9 @@
     
         <div class="col-12">
             <card class="card" :title="table2.title" :subTitle="table2.subTitle">
-                
+                {{txHistory}}
                 <div class="table-full-width table-responsive">
-                    <paper-table type="hover" :title="table2.title" :sub-title="table2.subTitle" :data="table2.data" :columns="table2.columns">
+                    <paper-table type="hover" :title="table2.title" :sub-title="table2.subTitle" :data="this.$store.state.txInfo.txHistory" :columns="table2.columns">
     
                     </paper-table>
                 </div>
@@ -53,6 +53,7 @@ const tableColumns = ["Id", "Amount", "Address", "Date"];
 let tableData = [];
 
 import TxSentNotification from './Notifications/TxSent';
+// import TransactionHistory from '../../../JSONdata/tx.json';
 
 export default {
     components: {
@@ -92,9 +93,32 @@ export default {
     },
     mounted() {
         window.wails.Events.On("new_transaction", (txObject) => {
-            this.$store.state.txInfo.txHistory.push(txObject);
+            //this.table2.data.push(txObject)
+            // this.$store.dispatch('appendTXAction', txObject)
+            this.$store.state.txInfo.txHistory.push(txObject)
         });
     },
+    // mutations: {
+    //     appendTX(state, payload) {
+    //         state.txInfo.txHistory.push(payload)
+    //     }
+    // },
+    // actions: {
+    //     appendTXAction(context, payload) {
+    //         context.commit('appendTX', payload)
+    //     }
+    // },
+    // getters: {
+    //     getTxHistory(state) {
+    //         return state.txInfo.txHistory
+    //     }
+    // },
+    // computed: {
+    //   txHistory () {
+    //     return this.$store.getters.txHistory
+    //   }
+    // },
+
     data() {
         return {
             amountSubmitted: 0,
@@ -115,7 +139,6 @@ export default {
                 title: "Transaction History",
                 subTitle: "Table containing all previous transactions",
                 columns: [...tableColumns],
-                data: this.$store.state.txInfo.txHistory
             }
         }
     }

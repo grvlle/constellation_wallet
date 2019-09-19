@@ -197,10 +197,6 @@ export default {
 
     data() {
         return {
-            // tokenCounter: this.$store.state.counters.tokenCounter,
-            // // stats: [0,0,0],
-            // blockCounter: this.$store.state.counters.blockCounter,
-            // nodesOnlineCounter: this.$store.state.counters.nodesOnlineCounter,
             type: ["", "info", "success", "warning", "danger"],
             notifications: {
                 topCenter: false

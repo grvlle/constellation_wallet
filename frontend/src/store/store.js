@@ -13,7 +13,9 @@ export const store = new Vuex.Store({
         tokenAmount: Wallet.balance, 
         usdValue: "$ " + (Wallet.balance * Wallet.token_price.DAG.USD).toFixed(2),
         blocks: "NaN",
-        address: Wallet.address
+        address: Wallet.address,
+        privateKey: "NaN",
+        publicKey: "NaN"
         },
         txInfo: {
             txHistory: []

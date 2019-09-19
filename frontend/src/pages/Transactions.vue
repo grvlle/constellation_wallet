@@ -74,7 +74,7 @@ export default {
                 if (result.value) {
                     let amount = self.amountSubmitted
                     let address = self.txAddress
-                    window.backend.sendTransaction(amount, address)
+                    window.backend.WalletApplication.PrepareTransaction(amount, address)
                     self.$swal({
                             title: 'Success!',
                             text: 'You have sent ' + self.amountSubmitted + ' $DAG tokens to address ' + self.txAddress + '.',

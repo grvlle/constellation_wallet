@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Transaction contains all tx information
@@ -45,7 +48,17 @@ type Transaction struct {
 	} `json:"edge,omitempty"`
 }
 
-func sendTransaction(amount int64, address string) *Transaction {
+type txInformation struct {
+	ID              int    `json:"id,omitempty"`
+	Amount          int64  `json:"amount,omitempty"`
+	Address         string `json:"address,omitempty"`
+	Fee             int    `json:"fee,omitempty"`
+	TransactionHash string `json:"txhash,omitempty"`
+	TS              string `json:"date,omitempty"`
+}
+
+// PrepareTransaction is triggered from the frontend and will initialize a new tx
+func (a *WalletApplication) PrepareTransaction(amount int64, address string) *Transaction {
 	fee := 10
 	tx := &Transaction{}
 
@@ -53,8 +66,15 @@ func sendTransaction(amount int64, address string) *Transaction {
 	tx.Edge.ObservationEdge.Data.Hash = address
 	tx.Edge.Data.Fee = fee
 
+	a.sendTransaction(amount, fee, address)
+
+	return tx
+}
+
+func (a *WalletApplication) sendTransaction(amount int64, fee int, address string) {
+
 	amountStr := strconv.FormatInt(amount, 10)
-	feeStr := strconv.FormatInt(amount, 10)
+	feeStr := strconv.Itoa(fee)
 
 	// newTX is the full command to sign a new transaction
 	newTX := "java -cp constellation-assembly-1.0.12.jar org.constellation.SignNewTx " + amountStr + ` "` + address + `" ` + feeStr
@@ -73,36 +93,46 @@ func sendTransaction(amount int64, address string) *Transaction {
 	err := cmd.Run()
 	if err != nil {
 		err := fmt.Sprint(err) + ": " + stderr.String()
-		fmt.Println("Unable to send transaction. Reason:", err)
-		return tx
+		a.log.Errorf("Unable to send transaction. Reason:", err)
 	}
 	fmt.Println(out.String())
-
-	return tx
 }
 
-// sendTransaction will create the tx object and populate it with data
-// collected in the forms in Transactions.vue (amountSubmitted and txAddress).
-// func sendTransaction(amount int, address string) *Transaction {
+func (a *WalletApplication) updateLastTransactions() {
+	tx := &Transaction{}
 
-// 	tx := &Transaction{
-// 		Amount:  amount,
-// 		Address: address, // "0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee",
-// 		TS:      time.Now().Format("Mon Jan _2 15:04:05 2006"),
-// 	}
+	file, err := os.Open(a.paths.DAGDir + "/acct")
+	if err != nil {
+		a.log.Errorf("Unable to read tx data. Reason: %s", err)
+	}
+	defer file.Close()
 
-// 	tx.ID++
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	var txObjects []string
 
-// 	err := writeToJSON("tx.json", tx) // Temporary solution
-// 	if err != nil {
-// 		fmt.Println("Unable to write transaction data to tx.json.")
-// 		tx.Status = false
-// 	}
-// 	tx.Status = true
+	for scanner.Scan() {
+		txObjects = append(txObjects, scanner.Text())
+	}
 
-// 	return tx
-// }
+	file.Close()
 
-// func (w *Wallet) RecieveTransaction() {
-// 	return rx
-// }
+	for _, eachTX := range txObjects {
+		fmt.Println(eachTX)
+		bytes := []byte(eachTX)
+		err = json.Unmarshal(bytes, &tx)
+		if err != nil {
+			a.log.Warnf("Unable to parse contents of acct. Reason: %s", err)
+		}
+		txData := &txInformation{
+			ID:              tx.Edge.Count,
+			Amount:          tx.Edge.Data.Amount,
+			Address:         tx.Edge.ObservationEdge.Parents[0].Hash,
+			Fee:             tx.Edge.Data.Fee,
+			TransactionHash: tx.Edge.ObservationEdge.Data.Hash,
+			TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
+		}
+
+		a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
+	}
+}

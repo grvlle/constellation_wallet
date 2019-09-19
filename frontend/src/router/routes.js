@@ -31,16 +31,17 @@ const routes = [
         component: About
       },
       {
-        path: "settings",
-        name: "settings",
-        component: Settings
-      },
-      {
         path: "submit-transaction",
         name: "submit transaction",
         component: Transactions
+      },
+      {
+        path: "settings",
+        name: "settings",
+        component: Settings
       }
     ]
+
   },
   { path: "*", component: NotFound }
 ];

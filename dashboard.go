@@ -77,21 +77,21 @@ func ChartDataInit() *ChartData {
 	return cd
 }
 
-func (a *App) nodeStats(runtime *wails.Runtime, cd *ChartData) {
+func (a *WalletApplication) nodeStats(cd *ChartData) {
 	go func() {
 		for {
 			a.RT.Events.Emit("node_stats", cd.NodesOnline.Series, cd.NodesOnline.Labels)
-			UpdateCounter(updateIntervalPieChart, "chart_counter", time.Hour, runtime)
+			UpdateCounter(updateIntervalPieChart, "chart_counter", time.Hour, a.RT)
 			time.Sleep(updateIntervalPieChart * time.Hour)
 		}
 	}()
 }
 
 // TokenAmount polls the token balance and stores it in the Wallet.Balance object
-func (a *App) TokenAmount() {
+func (a *WalletApplication) tokenAmount() {
 	go func() {
 		for {
-			a.RT.Events.Emit("token", a.wallet.Balance)
+			a.RT.Events.Emit("token", a.Wallet.Balance)
 			UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
 			time.Sleep(updateIntervalToken * time.Second)
 		}
@@ -99,13 +99,13 @@ func (a *App) TokenAmount() {
 }
 
 // RetrieveTokenAmount is a user initiated function for updating current balance
-func (w *Wallet) RetrieveTokenAmount() int {
-	w.Balance = rand.Intn(dummyValue)
-	return w.Balance
-}
+// func (w *Wallet) RetrieveTokenAmount() int {
+// 	w.Balance = rand.Intn(dummyValue)
+// 	return w.Balance
+// }
 
 // BlockAmount is a temporary function
-func (a *App) BlockAmount() {
+func (a *WalletApplication) blockAmount() {
 	var randomNumber int
 	go func() {
 		for {
@@ -120,7 +120,7 @@ func (a *App) BlockAmount() {
 // PricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token
 // balance evaluation against USD.
-func (a *App) PricePoller() {
+func (a *WalletApplication) pricePoller() {
 
 	const (
 		apiKey string = "17b10afdddc411087e2140ec91bd73d88d0c20294541838b192255fc574b1cb7"
@@ -139,12 +139,12 @@ func (a *App) PricePoller() {
 			if err != nil {
 				a.log.Warnf("Unable to read HTTP resonse from Token API. Reason: ", err)
 			}
-			err = json.Unmarshal([]byte(body), &a.wallet.TokenPrice)
+			err = json.Unmarshal([]byte(body), &a.Wallet.TokenPrice)
 			if err != nil {
 				a.log.Warnf("Unable to display token price. Reason:", err)
 			}
 
-			a.RT.Events.Emit("price", "$", a.wallet.TokenPrice.DAG.USD)
+			a.RT.Events.Emit("price", "$", a.Wallet.TokenPrice.DAG.USD)
 			time.Sleep(updateIntervalToken * time.Second)
 			//w.GetAddress() // This will update wallet.json with the tokenprice
 		}

@@ -120,6 +120,7 @@ func (a *WalletApplication) blockAmount() {
 // PricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token
 // balance evaluation against USD.
+
 func (a *WalletApplication) pricePoller() {
 
 	const (
@@ -143,10 +144,11 @@ func (a *WalletApplication) pricePoller() {
 			if err != nil {
 				a.log.Warnf("Unable to display token price. Reason:", err)
 			}
+			a.log.Debugf("Collected token price in USD: %v", a.Wallet.TokenPrice.DAG.USD)
 
-			a.RT.Events.Emit("price", "$", a.Wallet.TokenPrice.DAG.USD)
+			tokenUSD := int(float64(a.Wallet.Balance) * a.Wallet.TokenPrice.DAG.USD)
+			a.RT.Events.Emit("price", "$", tokenUSD)
 			time.Sleep(updateIntervalToken * time.Second)
-			//w.GetAddress() // This will update wallet.json with the tokenprice
 		}
 	}()
 }

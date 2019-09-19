@@ -31,7 +31,7 @@
                     </div>
                     <div class="numbers text-center" slot="content">
                         <p>USD value</p>   
-                        {{wallet2.usdValue}}
+                        {{this.$store.state.walletInfo.usdValue}}
     
     
                     </div>
@@ -160,9 +160,6 @@ export default {
         chartData() {
             return this.$store.state.chartData;
         },
-        localWallet() {
-            return this.$store.getters.localWallet;
-        }
     },
     mounted() {
         window.wails.Events.On("token", (amount) => {
@@ -172,8 +169,7 @@ export default {
             this.$store.state.walletInfo.blocks = number;
         });
         window.wails.Events.On("price", (currency, dagRate) => {
-            let result = dagRate * this.tokenAmount;
-            this.$store.state.walletInfo.usdValue = `${currency} ${(result).toFixed(2)}`;
+            this.$store.state.walletInfo.usdValue = currency + " " + dagRate
         });
         window.wails.Events.On("token_counter", (count) => {
             this.$store.state.counters.tokenCounter = count;

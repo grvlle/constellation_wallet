@@ -96,6 +96,7 @@ func (a *WalletApplication) sendTransaction(amount int64, fee int, address strin
 		a.log.Errorf("Unable to send transaction. Reason:", err)
 	}
 	fmt.Println(out.String())
+	a.updateLastTransactions()
 }
 
 func (a *WalletApplication) updateLastTransactions() {

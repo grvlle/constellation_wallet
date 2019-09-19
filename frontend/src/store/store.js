@@ -11,7 +11,7 @@ export const store = new Vuex.Store({
     state: {
         walletInfo: {
         tokenAmount: Wallet.balance, 
-        usdValue: "$ " + (Wallet.balance * Wallet.token_price.DAG.USD).toFixed(2),
+        usdValue: "$ NaaaN",
         blocks: "NaN",
         address: Wallet.address,
         privateKey: "NaN",
@@ -42,16 +42,16 @@ export const store = new Vuex.Store({
             }
         }
     },
-    getters:{
-        localWallet: state => {
-        var localWallet = state.walletInfo.map(walletItem => {
-            return {
-                tokenAmount: walletItem.tokenAmount,
-                usdValue: walletItem.usdValue,
-                blocks: walletItem.blocks
-            }
-        });
-        return localWallet;
-    }
-    }
+    // getters:{
+    //     localWallet: state => {
+    //     var localWallet = state.walletInfo.map(walletItem => {
+    //         return {
+    //             tokenAmount: walletItem.tokenAmount,
+    //             usdValue: walletItem.usdValue,
+    //             blocks: walletItem.blocks
+    //         }
+    //     });
+    //     return localWallet;
+    // }
+    // }
 })

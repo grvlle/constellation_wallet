@@ -11,11 +11,12 @@ export const store = new Vuex.Store({
     state: {
         walletInfo: {
         tokenAmount: Wallet.balance, 
-        usdValue: "$ NaaaN",
+        usdValue: "NaN",
         blocks: "NaN",
         address: Wallet.address,
         privateKey: "NaN",
-        publicKey: "NaN"
+        publicKey: "NaN",
+        seed: "witch collapse practice feed shame open despair creek road again ice least"
         },
         txInfo: {
             txHistory: []
@@ -42,16 +43,5 @@ export const store = new Vuex.Store({
             }
         }
     },
-    // getters:{
-    //     localWallet: state => {
-    //     var localWallet = state.walletInfo.map(walletItem => {
-    //         return {
-    //             tokenAmount: walletItem.tokenAmount,
-    //             usdValue: walletItem.usdValue,
-    //             blocks: walletItem.blocks
-    //         }
-    //     });
-    //     return localWallet;
-    // }
-    // }
+
 })

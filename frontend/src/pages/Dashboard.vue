@@ -67,7 +67,8 @@
                         <hr>
                         <p style="color: #c4c4c4; padding-top: 15px; background-color: #f7f7f7; font-size: 25px; font-weight: 100; font-family: 'Inconsolata';">
                             {{wallet2.address}}
-                            <p-button type="info" style="margin-bottom: 15px" icon @click.native="notifyVue('top', 'right')"><i class="fa fa-copy"></i>
+                            <input type="hidden" id="testing-code" :value="wallet2.address">
+                            <p-button type="info" style="margin-bottom: 15px" icon @click.native="copyTestingCode"><i class="fa fa-copy"></i>
                             </p-button>
                         </p>
                     </div>
@@ -126,6 +127,7 @@
 import { StatsCard, ChartCard, WideCard } from "@/components/index";
 import Chartist from 'chartist';
 import WalletCopiedNotification from './Notifications/WalletCopied';
+import WalletCopiedFailedNotification from './Notifications/WalletCopiedFailed';
 
 
 export default {
@@ -135,16 +137,33 @@ export default {
         ChartCard
     },
     methods: {
+         copyTestingCode () {
+          let testingCodeToCopy = document.querySelector('#testing-code')
+          testingCodeToCopy.setAttribute('type', 'text')    
+          testingCodeToCopy.select()
+
+          try {
+            var successful = document.execCommand('copy');
+            successful ? 'successful' : 'unsuccessful';
+            this.notifyVue('top', 'right', 2, WalletCopiedNotification)
+          } catch (err) {
+            this.notifyVue('top', 'right', 4, WalletCopiedFailedNotification)
+            alert('Oops, unable to copy');
+          }
+
+          /* unselect the range */
+          testingCodeToCopy.setAttribute('type', 'hidden')
+          window.getSelection().removeAllRanges()
+        },
         getTokens: function() {
             var self = this
             window.backend.retrieveTokenAmount().then(result => {
                 self.tokenAmount = result;
             });
         },
-        notifyVue(verticalAlign, horizontalAlign) {
-            const color = 2;
+        notifyVue(verticalAlign, horizontalAlign, color, copied) {
             this.$notify({
-                component: WalletCopiedNotification,
+                component: copied,
                 icon: "ti-check",
                 horizontalAlign: horizontalAlign,
                 verticalAlign: verticalAlign,

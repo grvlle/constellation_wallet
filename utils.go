@@ -75,9 +75,7 @@ func (a *WalletApplication) collectOSPath() error {
 // and recreate it with new data(data). This is to avoid ticking off the
 // monitorFileState function with double write events.
 func writeToJSON(filename string, data interface{}) error {
-
 	JSON, err := json.Marshal(data)
-
 	path := filepath.Join(".", "JSONdata", filename)
 	os.Remove(path)
 
@@ -94,16 +92,14 @@ func writeToJSON(filename string, data interface{}) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
 // This function is called by WailsInit and will initialize the dir structure.
-func setupDirectoryStructure() error {
-	err := os.MkdirAll("JSONdata", os.ModePerm)
+func (a *WalletApplication) setupDirectoryStructure() error {
+	err := os.MkdirAll(a.paths.DAGDir, os.ModePerm)
 	if err != nil {
 		return err
 	}
-
 	return err
 }

@@ -40,11 +40,11 @@ type WalletApplication struct {
 func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.RT = runtime
 	a.log = runtime.Log.New("Constellation")
-	setupDirectoryStructure()
-	a.collectOSPath()
-	a.walletInit()
-
 	runtime.Window.SetTitle("Constellation Desktop Wallet")
+
+	a.collectOSPath()
+	a.setupDirectoryStructure()
+	a.walletInit()
 
 	// Initializes a struct containing all Chart Data on the dashboard
 	chartData := ChartDataInit()

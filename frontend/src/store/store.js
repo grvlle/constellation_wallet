@@ -4,6 +4,7 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 import Wallet from "../../../JSONdata/wallet.json"
+//import TX from "../../../../../../../.dag/acct"
 //import TransactionHistory from '../../../JSONdata/tx.json';
 import ChartData from '../../../JSONdata/chart_data.json';
 

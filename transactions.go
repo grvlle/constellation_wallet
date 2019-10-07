@@ -77,7 +77,7 @@ func (a *WalletApplication) sendTransaction(amount int64, fee int, address strin
 	feeStr := strconv.Itoa(fee)
 
 	// newTX is the full command to sign a new transaction
-	newTX := "java -cp constellation-assembly-1.0.12.jar org.constellation.SignNewTx " + amountStr + ` "` + address + `" ` + feeStr
+	newTX := "java -cp bcprov-jdk15on-1.62.jar:constellation-assembly-1.0.12.jar org.constellation.SignNewTx " + amountStr + ` "` + address + `" ` + feeStr + " fakepassword"
 	parts := strings.Fields(newTX)
 	head := parts[0]
 	parts = parts[1:len(parts)]

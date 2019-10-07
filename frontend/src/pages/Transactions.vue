@@ -96,6 +96,9 @@ export default {
             //this.table2.data.push(txObject)
             // this.$store.dispatch('appendTXAction', txObject)
             this.txFull = txObject
+            // this.txAll.push(txObject)
+            //this.$store.state.txInfo.txHistory.push(txObject)
+            this.$store.state.txInfo.txHistory = []
             this.$store.state.txInfo.txHistory.push(txObject)
         });
     },
@@ -105,6 +108,7 @@ export default {
         return {
             amountSubmitted: 0,
             txFull: {},
+            txAll: [],
             txAmount: '',
             txAddress: '',
             notifications: {

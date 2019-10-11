@@ -180,31 +180,6 @@ export default {
             return this.$store.state.chartData;
         },
     },
-    mounted() {
-        window.wails.Events.On("token", (amount) => {
-            this.$store.state.walletInfo.tokenAmount = amount;
-        });
-        window.wails.Events.On("blocks", (number) => {
-            this.$store.state.walletInfo.blocks = number;
-        });
-        window.wails.Events.On("price", (currency, dagRate) => {
-            this.$store.state.walletInfo.usdValue = currency + " " + dagRate
-        });
-        window.wails.Events.On("token_counter", (count) => {
-            this.$store.state.counters.tokenCounter = count;
-        });
-        window.wails.Events.On("block_counter", (blockCount) => {
-            this.$store.state.counters.blockCounter = blockCount;
-        });
-        window.wails.Events.On("chart_counter", (pieChartCount) => {
-            this.$store.state.counters.nodesOnlineCounter = pieChartCount;
-        });
-        window.wails.Events.On("node_stats", (series, labels) => {
-            this.$store.state.chartData.nodesOnline.series = series
-            this.$store.state.chartData.nodesOnline.labels = labels
-            // this.stats = stats
-        })
-    },
 
     /**
      * Chart data used to render stats, charts. Should be replaced with server data

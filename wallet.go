@@ -81,7 +81,7 @@ func (a *WalletApplication) getKeys() (string, string) {
 func (a *WalletApplication) newKeyPair() {
 
 	// newKeys will check if keys exist and create new ones if not
-	newKeys := "java -cp constellation-assembly-1.0.12.jar org.constellation.GetOrCreateKeys"
+	newKeys := "java -cp bcprov-jdk15on-1.62.jar:constellation-assembly-1.0.12.jar org.constellation.GetOrCreateKeys"
 	parts := strings.Fields(newKeys)
 	head := parts[0]
 	parts = parts[1:len(parts)]

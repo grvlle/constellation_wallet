@@ -7,10 +7,9 @@
     </thead>
     <tbody>
     <tr v-for="(item, index) in data" :key="index">
+      
       <slot :row="item">
-        <td v-for="(column, index) in columns"
-            :key="index"
-            v-if="hasValue(item, column)">
+        <td v-for="(column, index) in columns" :key="index">
           {{itemValue(item, column)}}
         </td>
       </slot>

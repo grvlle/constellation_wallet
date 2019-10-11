@@ -31,6 +31,44 @@ func (a *WalletApplication) monitorFileState() error {
 
 					case fileModified == a.paths.LastTXFile:
 						a.log.Debug("Last TX File has been modified")
+						// tx := &Transaction{}
+
+						// file, err := os.Open(a.paths.LastTXFile)
+						// if err != nil {
+						// 	a.log.Errorf("Unable to read tx data. Reason: %s", err)
+						// }
+						// defer file.Close()
+
+						// scanner := bufio.NewScanner(file)
+						// scanner.Split(bufio.ScanLines)
+						// var txObjects []string
+
+						// for scanner.Scan() {
+						// 	txObjects = append(txObjects, scanner.Text())
+						// }
+
+						// file.Close()
+
+						// a.RT.Events.Emit("clear_transactions", true)
+
+						// for _, eachTX := range txObjects {
+						// 	// fmt.Println(eachTX)
+						// 	bytes := []byte(eachTX)
+						// 	err = json.Unmarshal(bytes, &tx)
+						// 	if err != nil {
+						// 		a.log.Warnf("Unable to parse contents of acct. Reason: %s", err)
+						// 	}
+						// 	txData := &txInformation{
+						// 		ID:              tx.Edge.Count,
+						// 		Amount:          tx.Edge.Data.Amount,
+						// 		Address:         tx.Edge.ObservationEdge.Parents[0].Hash,
+						// 		Fee:             tx.Edge.Data.Fee,
+						// 		TransactionHash: tx.Edge.ObservationEdge.Data.Hash,
+						// 		TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
+						// 	}
+
+						// 	a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
+						// }
 
 					case fileModified == a.paths.KeyFile:
 						a.log.Debug("Key File has been modified")
@@ -75,8 +113,12 @@ func (a *WalletApplication) collectOSPath() error {
 // and recreate it with new data(data). This is to avoid ticking off the
 // monitorFileState function with double write events.
 func writeToJSON(filename string, data interface{}) error {
+	user, err := user.Current()
+	if err != nil {
+		return err
+	}
 	JSON, err := json.Marshal(data)
-	path := filepath.Join(".", "JSONdata", filename)
+	path := filepath.Join(user.HomeDir+"/.dag", filename)
 	os.Remove(path)
 
 	f, err := os.OpenFile(

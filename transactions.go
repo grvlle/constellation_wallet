@@ -106,20 +106,21 @@ func (a *WalletApplication) updateLastTransactions() {
 	if err != nil {
 		a.log.Errorf("Unable to read tx data. Reason: %s", err)
 	}
-	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	var txObjects []string
+	var txObjectsPopulated []*txInformation
 
 	for scanner.Scan() {
 		txObjects = append(txObjects, scanner.Text())
 	}
+	defer file.Close()
 
-	file.Close()
+	a.RT.Events.Emit("clear_tx_history", true)
 
 	for _, eachTX := range txObjects {
-		fmt.Println(eachTX)
+		// fmt.Println(eachTX)
 		bytes := []byte(eachTX)
 		err = json.Unmarshal(bytes, &tx)
 		if err != nil {
@@ -133,7 +134,10 @@ func (a *WalletApplication) updateLastTransactions() {
 			TransactionHash: tx.Edge.ObservationEdge.Data.Hash,
 			TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
 		}
+		txObjectsPopulated = append(txObjectsPopulated, txData)
+		writeToJSON("txhistory.json", txObjectsPopulated)
 
 		a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
 	}
+
 }

@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 import Wallet from "../../../JSONdata/wallet.json"
-//import TX from "../../../../../../../.dag/acct"
+import TXHistory from "../../../../../../../.dag/txhistory.json"
 //import TransactionHistory from '../../../JSONdata/tx.json';
 import ChartData from '../../../JSONdata/chart_data.json';
 
@@ -20,7 +20,7 @@ export const store = new Vuex.Store({
         seed: "witch collapse practice feed shame open despair creek road again ice least"
         },
         txInfo: {
-            txHistory: []
+            txHistory: TXHistory
         },
         counters: {
             blockCounter: 5,
@@ -44,5 +44,15 @@ export const store = new Vuex.Store({
             }
         }
     },
+    mutations: {
+        updateTxHistory(state, tx) {
+            state.txInfo.txHistory.push(tx)
+        },
+        clearTxHistory(state, clear) {
+            if (clear == true) {
+            state.txInfo.txHistory = []
+            }
+        }
+    }
 
 })

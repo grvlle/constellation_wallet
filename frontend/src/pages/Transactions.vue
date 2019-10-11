@@ -34,10 +34,9 @@
     
         <div class="col-12">
             <card class="card" :title="table2.title" :subTitle="table2.subTitle">
-                {{txFull}}
                 <div class="table-full-width table-responsive">
                     <paper-table type="hover" :title="table2.title" :sub-title="table2.subTitle" :data="this.$store.state.txInfo.txHistory" :columns="table2.columns">
-
+    
                     </paper-table>
                 </div>
             </card>
@@ -49,7 +48,7 @@
 <script>
 import { PaperTable } from "@/components";
 
-const tableColumns = ["Id", "Amount", "Address", "Fee", "TxHash", "Date"];
+const tableColumns = ["Id", "Amount", "Address", "Fee", "TxHash"];
 let tableData = [];
 
 import TxSentNotification from './Notifications/TxSent';
@@ -91,23 +90,11 @@ export default {
             });
         }
     },
-    mounted() {
-        window.wails.Events.On("new_transaction", (txObject) => {
-            //this.table2.data.push(txObject)
-            // this.$store.dispatch('appendTXAction', txObject)
-            this.txFull = txObject
-            // this.txAll.push(txObject)
-            //this.$store.state.txInfo.txHistory.push(txObject)
-            this.$store.state.txInfo.txHistory = []
-            this.$store.state.txInfo.txHistory.push(txObject)
-        });
-    },
 
 
     data() {
         return {
             amountSubmitted: 0,
-            txFull: {},
             txAll: [],
             txAmount: '',
             txAddress: '',

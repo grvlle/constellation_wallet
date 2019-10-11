@@ -82,13 +82,7 @@ export default {
             }
         }
     },
-    mounted() {
-        window.wails.Events.On("wallet_keys", (privateKey, publicKey) => {
-            this.$store.state.walletInfo.privateKey = privateKey;
-            this.$store.state.walletInfo.publicKey = publicKey;
-        });
 
-    },
     data() {
         return {
             type: 'password',

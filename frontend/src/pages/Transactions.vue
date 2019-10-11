@@ -48,7 +48,7 @@
 <script>
 import { PaperTable } from "@/components";
 
-const tableColumns = ["Id", "Amount", "Address", "Fee", "TxHash"];
+const tableColumns = ["Id", "Amount", "Address", "Fee", "TxHash", "Date"];
 let tableData = [];
 
 import TxSentNotification from './Notifications/TxSent';
@@ -90,7 +90,6 @@ export default {
             });
         }
     },
-
 
     data() {
         return {

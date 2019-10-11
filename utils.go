@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -143,5 +144,39 @@ func (a *WalletApplication) setupDirectoryStructure() error {
 	if err != nil {
 		return err
 	}
-	return err
+	path := filepath.Join(a.paths.DAGDir, "txhistory.json")
+	f, err := os.OpenFile(
+		path,
+		os.O_CREATE|os.O_WRONLY,
+		0666,
+	)
+	defer f.Close()
+
+	if fileExists(path) != true {
+		f.WriteString("{}")
+		f.Sync()
+	}
+
+	return nil
+}
+
+// fileExists checks if a file exists and is not a directory before we
+// try using it to prevent further errors.
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
+func reverseElement(elements []*txInformation) []*txInformation {
+
+	reversed := []*txInformation{}
+	for i := range elements {
+		n := elements[len(elements)-1-i]
+		reversed = append(reversed, n)
+	}
+	fmt.Println(reversed)
+	return reversed
 }

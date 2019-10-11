@@ -101,28 +101,40 @@ func (a *WalletApplication) sendTransaction(amount int64, fee int, address strin
 
 func (a *WalletApplication) updateLastTransactions() {
 	tx := &Transaction{}
+	txObjects := a.collectTXHistory()
 
-	file, err := os.Open(a.paths.DAGDir + "/acct")
+	lastTXindex := len(txObjects)
+
+	bytes := []byte(txObjects[lastTXindex-1])
+	err := json.Unmarshal(bytes, &tx)
 	if err != nil {
-		a.log.Errorf("Unable to read tx data. Reason: %s", err)
+		a.log.Warnf("Unable to parse contents of acct. Reason: %s", err)
+	}
+	txData := &txInformation{
+		ID:              tx.Edge.Count,
+		Amount:          tx.Edge.Data.Amount,
+		Address:         tx.Edge.ObservationEdge.Parents[0].Hash,
+		Fee:             tx.Edge.Data.Fee,
+		TransactionHash: tx.Edge.ObservationEdge.Data.Hash,
+		TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
 	}
 
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	var txObjects []string
+	a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
+}
+
+func (a *WalletApplication) initTransactionHistory() {
+	tx := &Transaction{}
+
+	txObjects := a.collectTXHistory()
 	var txObjectsPopulated []*txInformation
+	var txObjectsReversed []*txInformation
 
-	for scanner.Scan() {
-		txObjects = append(txObjects, scanner.Text())
-	}
-	defer file.Close()
-
-	a.RT.Events.Emit("clear_tx_history", true)
+	//a.RT.Events.Emit("clear_tx_history", true)
 
 	for _, eachTX := range txObjects {
 		// fmt.Println(eachTX)
 		bytes := []byte(eachTX)
-		err = json.Unmarshal(bytes, &tx)
+		err := json.Unmarshal(bytes, &tx)
 		if err != nil {
 			a.log.Warnf("Unable to parse contents of acct. Reason: %s", err)
 		}
@@ -135,9 +147,26 @@ func (a *WalletApplication) updateLastTransactions() {
 			TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
 		}
 		txObjectsPopulated = append(txObjectsPopulated, txData)
-		writeToJSON("txhistory.json", txObjectsPopulated)
 
-		a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
+	}
+	txObjectsReversed = reverseElement(txObjectsPopulated)
+	writeToJSON("txhistory.json", txObjectsReversed)
+
+}
+
+func (a *WalletApplication) collectTXHistory() []string {
+	var txObjects []string
+	file, err := os.Open(a.paths.LastTXFile)
+	if err != nil {
+		a.log.Errorf("Unable to read tx data. Reason: %s", err)
 	}
 
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+
+	for scanner.Scan() {
+		txObjects = append(txObjects, scanner.Text())
+	}
+	defer file.Close()
+	return txObjects
 }

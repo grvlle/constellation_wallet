@@ -38,6 +38,7 @@ type WalletApplication struct {
 
 // WailsInit initializes the Client and Server side bindings
 func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
+
 	a.RT = runtime
 	a.log = runtime.Log.New("Constellation")
 	runtime.Window.SetTitle("Constellation Desktop Wallet")
@@ -45,6 +46,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.collectOSPath()
 	a.setupDirectoryStructure()
 	a.walletInit()
+	a.initTransactionHistory()
 
 	// Initializes a struct containing all Chart Data on the dashboard
 	chartData := ChartDataInit()

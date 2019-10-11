@@ -46,7 +46,7 @@ export const store = new Vuex.Store({
     },
     mutations: {
         updateTxHistory(state, tx) {
-            state.txInfo.txHistory.push(tx)
+            state.txInfo.txHistory.unshift(tx)
         },
         clearTxHistory(state, clear) {
             if (clear == true) {

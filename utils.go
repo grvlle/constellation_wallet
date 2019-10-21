@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -81,6 +80,7 @@ func (a *WalletApplication) monitorFileState() error {
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
+					a.sendError("", err)
 					a.log.Error(err.Error())
 				}
 			}
@@ -89,6 +89,7 @@ func (a *WalletApplication) monitorFileState() error {
 
 	err = watcher.Add(a.paths.DAGDir)
 	if err != nil {
+		a.sendError("Failed to start watcher. Reason: ", err)
 		return err
 	}
 	return nil
@@ -97,7 +98,8 @@ func (a *WalletApplication) monitorFileState() error {
 func (a *WalletApplication) collectOSPath() error {
 	user, err := user.Current()
 	if err != nil {
-		a.log.Errorf("Unable to retrieve fs paths. Reason: ", err)
+		a.sendError("Unable to retrieve filesystem paths. Reason: ", err)
+		a.log.Errorf("Unable to retrieve filesystem paths. Reason: ", err)
 	}
 
 	a.paths.HomeDir = user.HomeDir
@@ -152,8 +154,8 @@ func (a *WalletApplication) setupDirectoryStructure() error {
 	)
 	defer f.Close()
 
-	if fileExists(path) != true {
-		f.WriteString("{}")
+	if !fileExists(path) {
+		f.WriteString("{}") // initialies empty JSON object for frontend parsing
 		f.Sync()
 	}
 
@@ -171,12 +173,10 @@ func fileExists(filename string) bool {
 }
 
 func reverseElement(elements []*txInformation) []*txInformation {
-
 	reversed := []*txInformation{}
 	for i := range elements {
 		n := elements[len(elements)-1-i]
 		reversed = append(reversed, n)
 	}
-	fmt.Println(reversed)
 	return reversed
 }

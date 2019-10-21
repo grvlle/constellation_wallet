@@ -6,8 +6,22 @@
 </template>
 
 <script>
+import ErrorNotification from './pages/Notifications/ErrorMessage';
+
 export default {
     mounted() {
+        // Backend Errors
+        window.wails.Events.On("error_handling", (m, err) => {
+            this.$store.state.errorMessage = m + err
+            this.$notify({
+                component: ErrorNotification,
+                icon: "fa fa-times",
+                horizontalAlign: 'right',
+                verticalAlign: 'top',
+                type: 'danger'
+            })
+        });
+
         // Transactions.vue sockets
         window.wails.Events.On("clear_tx_history", (clearingSignal) => {
             this.$store.commit('clearTxHistory', clearingSignal)
@@ -36,8 +50,16 @@ export default {
             this.$store.state.counters.nodesOnlineCounter = pieChartCount;
         });
         window.wails.Events.On("node_stats", (series, labels) => {
-            this.$store.state.chartData.nodesOnline.series = series
-            this.$store.state.chartData.nodesOnline.labels = labels
+            this.$store.state.chartData.nodesOnline.series = series;
+            this.$store.state.chartData.nodesOnline.labels = labels;
+        });
+        window.wails.Events.On("tx_stats", (seriesOne, seriesTwo, labels) => {
+            this.$store.state.chartData.transactions.series = [seriesOne, seriesTwo];
+            this.$store.state.chartData.transactions.labels = labels;
+        });
+        window.wails.Events.On("network_stats", (seriesOne, seriesTwo, labels) => {
+            this.$store.state.chartData.throughput.series = [seriesOne, seriesTwo];
+            this.$store.state.chartData.throughput.labels = labels;
         });
 
         // Settings.vue sockets

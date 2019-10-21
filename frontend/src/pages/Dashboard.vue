@@ -17,7 +17,7 @@
     
                     </div>
                     <div class="stats" slot="footer">
-                        <i class="ti-reload"></i> Updated {{this.$store.state.counters.tokenCounter}} seconds ago
+                        <i class="ti-timer"></i> Updates in {{this.$store.state.counters.tokenCounter}} seconds
                     </div>
                 </stats-card>
             </div>
@@ -36,7 +36,7 @@
     
                     </div>
                     <div class="stats" slot="footer">
-                        <i class="ti-timer"></i> Updated {{this.$store.state.counters.tokenCounter}} seconds ago
+                        <i class="ti-timer"></i> Updates in {{this.$store.state.counters.tokenCounter}} seconds
                     </div>
                 </stats-card>
             </div>
@@ -53,7 +53,7 @@
     
                     </div>
                     <div class="stats" slot="footer">
-                        <i class="ti-reload"></i> Updated {{this.$store.state.counters.blockCounter}} seconds ago
+                        <i class="ti-reload"></i> Updates in {{this.$store.state.counters.blockCounter}} seconds
                     </div>
                 </stats-card>
             </div>
@@ -78,11 +78,11 @@
     
         <!--Charts-->
         <div class="row">
-    
+            
             <div class="col-md-6 col-12">
-                <chart-card title="Nodes Online" sub-title="Since last 24 hours" :chart-data="preferencesChart.data" chart-type="Pie">
+                <chart-card title="Nodes Online" sub-title="Since last 24 hours" :chart-data="this.$store.state.chartData.nodesOnline" chart-type="Pie">
                     <span slot="footer">
-                                    <i class="ti-timer"></i> Updated {{this.$store.state.counters.nodesOnlineCounter}} hours ago</span>
+                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds</span>
                     <div slot="legend">
                         <i class="fa fa-circle text-info"></i> Foundation Nodes
                         <i class="fa fa-circle text-success"></i> Medium Nodes
@@ -92,9 +92,9 @@
             </div>
     
             <div class="col-md-6 col-12">
-                <chart-card title="Transactions" sub-title="The amount of transactions sent vs. received over the last year" :chart-data="activityChart.data" :chart-options="activityChart.options">
+                <chart-card title="Transactions" sub-title="The amount of transactions sent vs. received over the last year" :chart-data="this.$store.state.chartData.transactions" :chart-options="activityChart.options">
                     <span slot="footer">
-                                    <i class="ti-check"></i> Data information certified
+                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds</span>
                                   </span>
                     <div slot="legend">Days
                         <i class="fa fa-circle text-info"></i> TX
@@ -106,7 +106,7 @@
     
     
             <div class="col-12">
-                <chart-card title="Network Throughput (tps)" sub-title="24 Hours performance" :chart-data="usersChart.data" :chart-options="usersChart.options">
+                <chart-card title="Network Throughput (tps)" sub-title="24 Hours performance" :chart-data="this.$store.state.chartData.throughput" :chart-options="usersChart.options">
                     <span slot="footer">
                                     <i class="ti-reload"></i> Updated 3 minutes ago
                                   </span>

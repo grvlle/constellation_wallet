@@ -61,11 +61,13 @@ func (a *WalletApplication) getKeys() (string, string) {
 	path := filepath.Join(a.paths.KeyFile)
 	f, err := ioutil.ReadFile(path)
 	if err != nil {
+		a.sendError("Unable to parse wallet file. Reason: ", err)
 		a.log.Warnf("Unable to parse wallet file. Reason: %s", err)
 	}
 
 	err = json.Unmarshal(f, &a.Wallet)
 	if err != nil {
+		a.sendError("Unable to parse contents of acct. Reason: ", err)
 		a.log.Warnf("Unable to parse contents of acct. Reason: %s", err)
 	}
 

@@ -56,7 +56,8 @@ export default {
     chartOptions: {
       type: Object,
       default: () => {
-        return {};
+        return {
+        };
       }
     },
     chartData: {
@@ -71,20 +72,33 @@ export default {
   },
   data() {
     return {
-      chartId: "no-id"
+      chartId: "no-id",
+      chartSelected: "",
+      chartUpdated: false
     };
   },
+  
+
+  
   methods: {
+    updateChart() {
+      this.chartSelected.update();
+      var self = this;
+      setTimeout(self.updateChart, 1000)
+    },
     /***
      * Initializes the chart by merging the chart options sent via props and the default chart options
      */
+  
     initChart(Chartist) {
       const chartIdQuery = `#${this.chartId}`;
-      Chartist[this.chartType](
+      var chart
+      chart = Chartist[this.chartType](
         chartIdQuery,
         this.chartData,
         this.chartOptions
       );
+      return chart
     },
     /***
      * Assigns a random id to the chart
@@ -100,12 +114,17 @@ export default {
   },
   mounted() {
     this.updateChartId();
+    
+    
     import('chartist').then((Chartist) => {
-      let ChartistLib = Chartist.default || Chartist ;
+      let ChartistLib = Chartist.default || Chartist ;  
       this.$nextTick(() => {
-        this.initChart(ChartistLib);
+        this.chartSelected = this.initChart(ChartistLib);
+        // this.updateChart();
       });
     });
+    
+    window.setTimeout(this.updateChart, 0);
   }
 };
 </script>

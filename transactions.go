@@ -92,6 +92,7 @@ func (a *WalletApplication) sendTransaction(amount int64, fee int, address strin
 
 	err := cmd.Run()
 	if err != nil {
+		a.sendError("Unable to send transaction. Reason:", err)
 		err := fmt.Sprint(err) + ": " + stderr.String()
 		a.log.Errorf("Unable to send transaction. Reason:", err)
 	}
@@ -108,6 +109,7 @@ func (a *WalletApplication) updateLastTransactions() {
 	bytes := []byte(txObjects[lastTXindex-1])
 	err := json.Unmarshal(bytes, &tx)
 	if err != nil {
+		a.sendError("Unable to parse contents of acct. Reason:", err)
 		a.log.Warnf("Unable to parse contents of acct. Reason: %s", err)
 	}
 	txData := &txInformation{
@@ -129,13 +131,12 @@ func (a *WalletApplication) initTransactionHistory() {
 	var txObjectsPopulated []*txInformation
 	var txObjectsReversed []*txInformation
 
-	//a.RT.Events.Emit("clear_tx_history", true)
-
 	for _, eachTX := range txObjects {
 		// fmt.Println(eachTX)
 		bytes := []byte(eachTX)
 		err := json.Unmarshal(bytes, &tx)
 		if err != nil {
+			a.sendError("Unable to parse contents of acct. Reason:", err)
 			a.log.Warnf("Unable to parse contents of acct. Reason: %s", err)
 		}
 		txData := &txInformation{
@@ -158,6 +159,7 @@ func (a *WalletApplication) collectTXHistory() []string {
 	var txObjects []string
 	file, err := os.Open(a.paths.LastTXFile)
 	if err != nil {
+		a.sendError("Unable to read tx data. Reason:", err)
 		a.log.Errorf("Unable to read tx data. Reason: %s", err)
 	}
 

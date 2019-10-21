@@ -48,7 +48,7 @@
 <script>
 import { PaperTable } from "@/components";
 
-const tableColumns = ["Id", "Amount", "Address", "Fee", "TxHash", "Date"];
+const tableColumns = ["Amount", "Address", "Fee", "TxHash", "Date"];
 let tableData = [];
 
 import TxSentNotification from './Notifications/TxSent';

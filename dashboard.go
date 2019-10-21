@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	dummyValue             = 300000
+	dummyValue             = 1000
 	updateIntervalToken    = 60 // Seconds
 	updateIntervalBlocks   = 5  // Seconds
-	updateIntervalPieChart = 24 // Hours
+	updateIntervalPieChart = 6  // Seconds
 )
 
 // ChartData contains all the datapoints for the Charts
@@ -77,12 +77,51 @@ func ChartDataInit() *ChartData {
 	return cd
 }
 
+// Populates the Nodes Online pie chart with data from the block explorer.
 func (a *WalletApplication) nodeStats(cd *ChartData) {
 	go func() {
 		for {
+			// Will populate the chart with random data
+			for i := range cd.NodesOnline.Series {
+				cd.NodesOnline.Series[i] = rand.Intn(dummyValue)
+			}
 			a.RT.Events.Emit("node_stats", cd.NodesOnline.Series, cd.NodesOnline.Labels)
-			UpdateCounter(updateIntervalPieChart, "chart_counter", time.Hour, a.RT)
-			time.Sleep(updateIntervalPieChart * time.Hour)
+			UpdateCounter(updateIntervalPieChart, "chart_counter", time.Second, a.RT)
+			time.Sleep(updateIntervalPieChart * time.Second)
+		}
+	}()
+}
+
+func (a *WalletApplication) txStats(cd *ChartData) {
+	go func() {
+		for {
+			// Will populate the chart with random data
+			for i := range cd.Transactions.SeriesOne {
+				cd.Transactions.SeriesOne[i] = rand.Intn(dummyValue)
+			}
+			for i := range cd.Transactions.SeriesTwo {
+				cd.Transactions.SeriesTwo[i] = rand.Intn(dummyValue)
+			}
+			a.RT.Events.Emit("tx_stats", cd.Transactions.SeriesOne, cd.Transactions.SeriesTwo, cd.Transactions.Labels)
+			//UpdateCounter(updateIntervalPieChart, "chart_counter", time.Second, a.RT)
+			time.Sleep(updateIntervalPieChart * time.Second)
+		}
+	}()
+}
+
+func (a *WalletApplication) networkStats(cd *ChartData) {
+	go func() {
+		for {
+			// Will populate the chart with random data
+			for i := range cd.Throughput.SeriesOne {
+				cd.Throughput.SeriesOne[i] = rand.Intn(dummyValue)
+			}
+			for i := range cd.Throughput.SeriesTwo {
+				cd.Throughput.SeriesTwo[i] = rand.Intn(dummyValue)
+			}
+			a.RT.Events.Emit("network_stats", cd.Throughput.SeriesOne, cd.Throughput.SeriesTwo, cd.Throughput.Labels)
+			//UpdateCounter(updateIntervalPieChart, "chart_counter", time.Second, a.RT)
+			time.Sleep(updateIntervalPieChart * time.Second)
 		}
 	}()
 }
@@ -132,15 +171,18 @@ func (a *WalletApplication) pricePoller() {
 		for {
 			resp, err := http.Get(url)
 			if err != nil {
-				a.log.Warnf("Unable to poll token evaluation", err) // Log this
+				a.sendError("Unable to poll token evaluation. Reason: ", err)
+				a.log.Warnf("Unable to poll token evaluation. Reason: ", err) // Log this
 			}
 			defer resp.Body.Close()
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
+				a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
 				a.log.Warnf("Unable to read HTTP resonse from Token API. Reason: ", err)
 			}
 			err = json.Unmarshal([]byte(body), &a.Wallet.TokenPrice)
 			if err != nil {
+				a.sendError("Unable to display token price. Reason: ", err)
 				a.log.Warnf("Unable to display token price. Reason:", err)
 			}
 			a.log.Debugf("Collected token price in USD: %v", a.Wallet.TokenPrice.DAG.USD)

@@ -8,8 +8,10 @@ import TXHistory from "../../../../../../../.dag/txhistory.json"
 //import TransactionHistory from '../../../JSONdata/tx.json';
 import ChartData from '../../../JSONdata/chart_data.json';
 
+
 export const store = new Vuex.Store({
     state: {
+        errorMessage: "None",
         walletInfo: {
         tokenAmount: Wallet.balance, 
         usdValue: "NaN",
@@ -34,13 +36,11 @@ export const store = new Vuex.Store({
             },
             transactions: {
                 labels:    [ChartData.transactions.labels],
-                seriesOne: ChartData.transactions.series_one,
-                seriesTwo: ChartData.transactions.series_two
+                series: [ChartData.transactions.series_one, ChartData.transactions.series_two]
             },
             throughput: {
                 labels:    [ChartData.throughput.labels],
-                seriesOne: ChartData.throughput.series_one,
-                seriesTwo: ChartData.throughput.series_two
+                series: [ChartData.throughput.series_one, ChartData.throughput.series_two]
             }
         }
     },
@@ -52,7 +52,10 @@ export const store = new Vuex.Store({
             if (clear == true) {
             state.txInfo.txHistory = []
             }
-        }
+        },
+        // updateCharts(state) {
+        //     state.chartData.chartSelected.update();
+        // }
     }
 
 })

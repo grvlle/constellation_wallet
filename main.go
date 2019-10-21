@@ -53,6 +53,8 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 
 	// Below methods are continously updating the client side modules.
 	a.nodeStats(chartData)
+	a.txStats(chartData)
+	a.networkStats(chartData)
 	a.blockAmount()
 	a.tokenAmount()
 	a.pricePoller()
@@ -67,4 +69,9 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 // WalletInit initializes the Wallet struct and the
 func (a *WalletApplication) walletInit() *Wallet {
 	return a.NewWallet()
+}
+
+func (a *WalletApplication) sendError(msg string, err error) {
+	e := err.Error()
+	a.RT.Events.Emit("error_handling", msg, e)
 }

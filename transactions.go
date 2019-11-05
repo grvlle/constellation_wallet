@@ -49,16 +49,16 @@ type Transaction struct {
 
 type txInformation struct {
 	ID              int    `json:"id,omitempty"`
-	Amount          int64  `json:"amount,omitempty"`
-	Address         string `json:"address,omitempty"`
-	Fee             int    `json:"fee,omitempty"`
+	Amount          int64  `json:"amount"`
+	Address         string `json:"address"`
+	Fee             int    `json:"fee"`
 	TransactionHash string `json:"txhash,omitempty"`
 	TS              string `json:"date,omitempty"`
 }
 
 // PrepareTransaction is triggered from the frontend and will initialize a new tx
-func (a *WalletApplication) PrepareTransaction(amount int64, address string) *Transaction {
-	fee := 10
+func (a *WalletApplication) PrepareTransaction(amount int64, fee int, address string) *Transaction {
+
 	tx := &Transaction{}
 
 	tx.Edge.Data.Amount = amount

@@ -25,7 +25,7 @@
   @include box-shadow(none);
 
   &:focus {
-    background-color: $white-bg;
+    background-color: $gray-input-bg;
     @include box-shadow(none);
     outline: 0 !important;
   }

@@ -29,6 +29,7 @@ export const store = new Vuex.Store({
             tokenCounter: 60,
             nodesOnlineCounter: 24
         },
+        pageOfItems: [],
         chartData: {
             nodesOnline: {
                 labels: ChartData.nodes_online.labels,

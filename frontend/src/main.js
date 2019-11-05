@@ -11,6 +11,8 @@ import "vue-notifyjs/themes/default.css";
 import VueNotify from 'vue-notifyjs'
 import VueSweetalert2 from 'vue-sweetalert2';
 import {store} from './store/store'
+import JwPagination from 'jw-vue-pagination';
+Vue.component('jw-pagination', JwPagination);
 
 Vue.use(VueNotify);
 Vue.use(PaperDashboard);

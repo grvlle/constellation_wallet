@@ -94,7 +94,7 @@
             <div class="col-md-6 col-12">
                 <chart-card title="Transactions" sub-title="The amount of transactions sent vs. received over the last year" :chart-data="this.$store.state.chartData.transactions" :chart-options="activityChart.options">
                     <span slot="footer">
-                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds</span>
+                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds
                                   </span>
                     <div slot="legend">Days
                         <i class="fa fa-circle text-info"></i> TX

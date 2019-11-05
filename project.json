@@ -1,12 +1,12 @@
 {
- "name": "Constellation Wallet",
- "description": "Enter your project description",
+ "name": "Constellation Wallet [Beta]",
+ "description": "Used to store $DAG tokens",
  "author": {
   "name": "vito",
   "email": "gralle89@gmail.com"
  },
- "version": "0.1.0",
- "binaryname": "constellation_wallet",
+ "version": "0.1.3 Beta",
+ "binaryname": "Constellation Desktop Wallet [Beta]",
  "frontend": {
   "dir": "frontend",
   "install": "npm install",

@@ -40,8 +40,7 @@ type WalletApplication struct {
 func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 
 	a.RT = runtime
-	a.log = runtime.Log.New("Constellation")
-	runtime.Window.SetTitle("Constellation Desktop Wallet")
+	a.log = runtime.Log.New("Constellation Wallet")
 
 	a.collectOSPath()
 	a.setupDirectoryStructure()

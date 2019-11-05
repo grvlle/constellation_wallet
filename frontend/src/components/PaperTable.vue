@@ -18,14 +18,17 @@
           <p class="description" style="font-size: 15px;" v-if="index === 4">{{ item.date | truncate}}</p>
 
 
-       
+        
           
           
         </td>
       </slot>
+      
     </tr>
     </tbody>
   </table>
+  
+  
 </template>
 <script>
 export default {

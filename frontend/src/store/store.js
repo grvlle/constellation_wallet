@@ -1,14 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-Vue.use(Vuex);
+
 
 import Wallet from "../../../JSONdata/wallet.json"
 import TXHistory from "../../../../../../../.dag/txhistory.json"
 //import TransactionHistory from '../../../JSONdata/tx.json';
-import ChartData from '../../../JSONdata/chart_data.json';
+import ChartData from '../../../../../../../.dag/chart_data.json';
 
-
+Vue.use(Vuex);
 export const store = new Vuex.Store({
     state: {
         errorMessage: "None",
@@ -53,9 +53,6 @@ export const store = new Vuex.Store({
             state.txInfo.txHistory = []
             }
         },
-        // updateCharts(state) {
-        //     state.chartData.chartSelected.update();
-        // }
     }
 
 })

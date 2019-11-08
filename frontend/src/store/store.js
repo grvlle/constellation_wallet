@@ -4,9 +4,7 @@ import Vuex from 'vuex';
 
 
 import Wallet from "../../../JSONdata/wallet.json"
-import TXHistory from "../../../../../../../.dag/txhistory.json"
-//import TransactionHistory from '../../../JSONdata/tx.json';
-import ChartData from '../../../../../../../.dag/chart_data.json';
+//import ChartData from '../../../../../../../.dag/chart_data.json';
 
 Vue.use(Vuex);
 export const store = new Vuex.Store({
@@ -22,7 +20,7 @@ export const store = new Vuex.Store({
         seed: "witch collapse practice feed shame open despair creek road again ice least"
         },
         txInfo: {
-            txHistory: TXHistory
+            txHistory: []
         },
         counters: {
             blockCounter: 5,
@@ -32,16 +30,16 @@ export const store = new Vuex.Store({
         pageOfItems: [],
         chartData: {
             nodesOnline: {
-                labels: ChartData.nodes_online.labels,
-                series: ChartData.nodes_online.series
+                labels: [], // ChartData.nodes_online.labels,
+                series: []  // ChartData.nodes_online.series
             },
             transactions: {
-                labels:    [ChartData.transactions.labels],
-                series: [ChartData.transactions.series_one, ChartData.transactions.series_two]
+                labels:    [], //[ChartData.transactions.labels],
+                series: [] //[ChartData.transactions.series_one, ChartData.transactions.series_two]
             },
             throughput: {
-                labels:    [ChartData.throughput.labels],
-                series: [ChartData.throughput.series_one, ChartData.throughput.series_two]
+                labels:    [], //[ChartData.throughput.labels],
+                series: [] //[ChartData.throughput.series_one, ChartData.throughput.series_two]
             }
         }
     },
@@ -49,10 +47,10 @@ export const store = new Vuex.Store({
         updateTxHistory(state, tx) {
             state.txInfo.txHistory.unshift(tx)
         },
-        clearTxHistory(state, clear) {
-            if (clear == true) {
-            state.txInfo.txHistory = []
-            }
+        updateFullTxHistory(state, txHistoryUpdated) {
+            
+            state.txInfo.txHistory = txHistoryUpdated
+            
         },
     }
 

@@ -38,7 +38,7 @@ type ChartData struct {
 
 // ChartDataInit initializes the ChartData struct with datapoints for
 // the charts in the wallet. These are stored on the fs as chart_data.json
-func ChartDataInit() *ChartData {
+func (a *WalletApplication) ChartDataInit() *ChartData {
 	cd := &ChartData{}
 
 	cd.NodesOnline.Labels = []string{"30%", "20%", "50%"}
@@ -71,6 +71,15 @@ func ChartDataInit() *ChartData {
 		"6:00AM"}
 	cd.Throughput.SeriesOne = []int{287, 385, 490, 562, 594, 626, 698, 895, 952}
 	cd.Throughput.SeriesTwo = []int{67, 152, 193, 240, 387, 435, 535, 642, 744}
+
+	go func() {
+		for i := 0; i < 2; i++ {
+			a.RT.Events.Emit("tx_stats", cd.Transactions.SeriesOne, cd.Transactions.SeriesTwo, cd.Transactions.Labels)
+			a.RT.Events.Emit("node_stats", cd.NodesOnline.Series, cd.NodesOnline.Labels)
+			a.RT.Events.Emit("network_stats", cd.Throughput.SeriesOne, cd.Throughput.SeriesTwo, cd.Throughput.Labels)
+			time.Sleep(1 * time.Second)
+		}
+	}()
 
 	writeToJSON("chart_data.json", cd)
 
@@ -110,6 +119,7 @@ func (a *WalletApplication) txStats(cd *ChartData) {
 }
 
 func (a *WalletApplication) networkStats(cd *ChartData) {
+
 	go func() {
 		for {
 			// Will populate the chart with random data
@@ -136,12 +146,6 @@ func (a *WalletApplication) tokenAmount() {
 		}
 	}()
 }
-
-// RetrieveTokenAmount is a user initiated function for updating current balance
-// func (w *Wallet) RetrieveTokenAmount() int {
-// 	w.Balance = rand.Intn(dummyValue)
-// 	return w.Balance
-// }
 
 // BlockAmount is a temporary function
 func (a *WalletApplication) blockAmount() {
@@ -172,7 +176,7 @@ func (a *WalletApplication) pricePoller() {
 			resp, err := http.Get(url)
 			if err != nil {
 				a.sendError("Unable to poll token evaluation. Reason: ", err)
-				a.log.Warnf("Unable to poll token evaluation. Reason: ", err) // Log this
+				a.log.Warnf("Unable to poll token evaluation. Reason: ", err.Error) // Log this
 			}
 			defer resp.Body.Close()
 			body, err := ioutil.ReadAll(resp.Body)
@@ -201,6 +205,20 @@ func UpdateCounter(countFrom int, counter string, unit time.Duration, runtime *w
 			runtime.Events.Emit(counter, i)
 			time.Sleep(unit)
 			continue
+		}
+	}()
+}
+
+// initSocketData will push the wallet data to be displayed on the frontend twice
+// to bypass a bug present in the Wails lib. This will allow us to display data
+// as soon as the wallet App is started.
+func (a *WalletApplication) initSocketData(frontendFunction string, data ...interface{}) {
+
+	// Need to emit twice for it to stick. Bug with the Wails lib.
+	go func() {
+		for i := 0; i < 2; i++ {
+			a.RT.Events.Emit(frontendFunction, data)
+			time.Sleep(1 * time.Second)
 		}
 	}()
 }

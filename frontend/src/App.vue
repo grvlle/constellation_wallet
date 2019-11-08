@@ -23,8 +23,9 @@ export default {
         });
 
         // Transactions.vue sockets
-        window.wails.Events.On("clear_tx_history", (clearingSignal) => {
-            this.$store.commit('clearTxHistory', clearingSignal)
+        window.wails.Events.On("update_tx_history", (txHistoryFull) => {
+            this.$store.state.txInfo.txHistory = txHistoryFull;
+            //this.$store.commit('updateFullTxHistory', txHistoryFull)
         });
         window.wails.Events.On("new_transaction", (txObject) => {
             this.$store.commit('updateTxHistory', txObject)

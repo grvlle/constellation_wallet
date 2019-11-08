@@ -152,9 +152,18 @@ func (a *WalletApplication) initTransactionHistory() {
 			TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
 		}
 		txObjectsPopulated = append(txObjectsPopulated, txData)
-
 	}
+
 	txObjectsReversed = reverseElement(txObjectsPopulated) // We want to display the last tx at the top
+
+	// Need to emit twice for it to stick. Bug with the Wails lib.
+	go func() {
+		for i := 0; i < 2; i++ {
+			a.RT.Events.Emit("update_tx_history", txObjectsReversed)
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
 	writeToJSON("txhistory.json", txObjectsReversed)
 	writeToJSON("ts", time.Now().Format("Mon Jan _2 15:04:05 2006"))
 

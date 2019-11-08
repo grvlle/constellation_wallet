@@ -48,7 +48,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.initTransactionHistory()
 
 	// Initializes a struct containing all Chart Data on the dashboard
-	chartData := ChartDataInit()
+	chartData := a.ChartDataInit()
 
 	// Below methods are continously updating the client side modules.
 	a.nodeStats(chartData)

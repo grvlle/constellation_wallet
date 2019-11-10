@@ -1,9 +1,11 @@
 <template>
+
     <div>
     
-        <!--Stats cards-->
+        
+        
     
-    
+        
     
         <div class="row">
             <div class="col-md-6 col-xl-4">
@@ -119,8 +121,10 @@
             </div>
     
         </div>
+        </div>
+        
     
-    </div>
+    
 </template>
 
 <script>
@@ -130,12 +134,14 @@ import WalletCopiedNotification from './Notifications/WalletCopied';
 import WalletCopiedFailedNotification from './Notifications/WalletCopiedFailed';
 
 
+
 export default {
     components: {
         StatsCard,
         WideCard,
         ChartCard
     },
+
     methods: {
          copyTestingCode () {
           let testingCodeToCopy = document.querySelector('#testing-code')

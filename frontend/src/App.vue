@@ -1,15 +1,31 @@
 <template>
+
     <div :class="{'nav-open': $sidebar.showSidebar}">
+        <loading-screen :isLoading="isLoading" :fadeout="!isLoading" />
+        <div v-if="!isLoading">
         <notifications></notifications>
         <router-view></router-view>
+        </div>
     </div>
 </template>
 
 <script>
 import ErrorNotification from './pages/Notifications/ErrorMessage';
+import LoadingScreen from './pages/LoadingScreen'
 
 export default {
+    components: {
+        LoadingScreen
+    },
+    data() {
+        return {
+            isLoading: true
+        }
+    },
     mounted() {
+        setTimeout(() => {
+            this.isLoading = false
+        }, 6000)
         // Backend Errors
         window.wails.Events.On("error_handling", (m, err) => {
             this.$store.state.errorMessage = m + err
@@ -98,5 +114,16 @@ export default {
         opacity: 0;
         transform: scale(1.2, 0.7);
     }
+}
+
+.fadeout {
+  animation: fadeout 2s backwards;
+}
+
+@keyframes fadeout {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
 </style>

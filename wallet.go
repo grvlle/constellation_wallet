@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -53,29 +53,24 @@ func (a *WalletApplication) NewWallet() *Wallet {
 	return a.Wallet
 }
 
-// getKeys will parse the wallet file(key) and store in the wallet
-// data type.
+// getKeys will parse key files, base64 encode them and remove the decrypted files.
 func (a *WalletApplication) getKeys() (string, string) {
+
 	a.newKeyPair()
-
-	path := filepath.Join(a.paths.KeyFile)
-	f, err := ioutil.ReadFile(path)
+	PrivKey, err := a.getFileContents(a.paths.KeyFile)
 	if err != nil {
-		a.sendError("Unable to parse wallet file. Reason: ", err)
-		a.log.Warnf("Unable to parse wallet file. Reason: %s", err)
+		a.sendError("Unable to parse PrivKey. Reason: ", err)
+		a.log.Warnf("Unable to parse PrivKey file. Reason: %s", err)
 	}
-
-	err = json.Unmarshal(f, &a.Wallet)
+	PubKey, err := a.getFileContents(a.paths.PubKeyFile)
 	if err != nil {
-		a.sendError("Unable to parse contents of acct. Reason: ", err)
-		a.log.Warnf("Unable to parse contents of acct. Reason: %s", err)
+		a.sendError("Unable to parse PubKey. Reason: ", err)
+		a.log.Warnf("Unable to parse PubKey file. Reason: %s", err)
 	}
+	a.removeKeyArtifacts()
+	a.log.Info("Keys successfully created")
 
-	a.log.Info(a.Wallet.PrivateKey.Key)
-	a.log.Info(a.Wallet.PublicKey.Key)
-
-	return a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key
-
+	return base64.StdEncoding.EncodeToString(PrivKey), base64.StdEncoding.EncodeToString(PubKey)
 }
 
 // newKeyPair is used to generate a new pub/priv key using ECDSA. This
@@ -83,7 +78,7 @@ func (a *WalletApplication) getKeys() (string, string) {
 func (a *WalletApplication) newKeyPair() {
 
 	// newKeys will check if keys exist and create new ones if not
-	newKeys := "java -cp bcprov-jdk15on-1.62.jar:constellation-assembly-1.0.12.jar org.constellation.GetOrCreateKeys"
+	newKeys := "java -cp bcprov-jdk15on-1.62.jar:constellation-assembly-1.0.12.jar org.constellation.GetOrCreateKeys fakepassword true"
 	parts := strings.Fields(newKeys)
 	head := parts[0]
 	parts = parts[1:len(parts)]
@@ -104,6 +99,18 @@ func (a *WalletApplication) newKeyPair() {
 	a.log.Info(out.String())
 }
 
+func (a *WalletApplication) removeKeyArtifacts() error {
+	err := os.Remove(a.paths.KeyFile)
+	if err != nil {
+		return err
+	}
+	err = os.RemoveAll(a.paths.EncryptedDir)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // PassKeysToFrontend emits the keys to the settings.Vue component on a
 // 5 second interval
 func (a *WalletApplication) passKeysToFrontend() {
@@ -113,4 +120,13 @@ func (a *WalletApplication) passKeysToFrontend() {
 			time.Sleep(5 * time.Second)
 		}
 	}()
+}
+
+func (a *WalletApplication) getFileContents(filePath string) ([]byte, error) {
+	path := filepath.Join(filePath)
+	fileContents, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	return fileContents, nil
 }

@@ -31,44 +31,6 @@ func (a *WalletApplication) monitorFileState() error {
 
 					case fileModified == a.paths.LastTXFile:
 						a.log.Debug("Last TX File has been modified")
-						// tx := &Transaction{}
-
-						// file, err := os.Open(a.paths.LastTXFile)
-						// if err != nil {
-						// 	a.log.Errorf("Unable to read tx data. Reason: %s", err)
-						// }
-						// defer file.Close()
-
-						// scanner := bufio.NewScanner(file)
-						// scanner.Split(bufio.ScanLines)
-						// var txObjects []string
-
-						// for scanner.Scan() {
-						// 	txObjects = append(txObjects, scanner.Text())
-						// }
-
-						// file.Close()
-
-						// a.RT.Events.Emit("clear_transactions", true)
-
-						// for _, eachTX := range txObjects {
-						// 	// fmt.Println(eachTX)
-						// 	bytes := []byte(eachTX)
-						// 	err = json.Unmarshal(bytes, &tx)
-						// 	if err != nil {
-						// 		a.log.Warnf("Unable to parse contents of acct. Reason: %s", err)
-						// 	}
-						// 	txData := &txInformation{
-						// 		ID:              tx.Edge.Count,
-						// 		Amount:          tx.Edge.Data.Amount,
-						// 		Address:         tx.Edge.ObservationEdge.Parents[0].Hash,
-						// 		Fee:             tx.Edge.Data.Fee,
-						// 		TransactionHash: tx.Edge.ObservationEdge.Data.Hash,
-						// 		TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
-						// 	}
-
-						// 	a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
-						// }
 
 					case fileModified == a.paths.KeyFile:
 						a.log.Debug("Key File has been modified")
@@ -102,12 +64,36 @@ func (a *WalletApplication) collectOSPath() error {
 		a.log.Errorf("Unable to retrieve filesystem paths. Reason: ", err)
 	}
 
-	a.paths.HomeDir = user.HomeDir
-	a.paths.DAGDir = a.paths.HomeDir + "/.dag"
-	a.paths.KeyFile = a.paths.DAGDir + "/key"
-	a.paths.LastTXFile = a.paths.DAGDir + "/acct"
+	a.paths.HomeDir = user.HomeDir             // Home directory of the user
+	a.paths.DAGDir = a.paths.HomeDir + "/.dag" // DAG directory for configuration files and wallet specific data
+	a.paths.EncryptedDir = a.paths.DAGDir + "/encrypted_key"
+	a.paths.KeyFile = a.paths.DAGDir + "/private_decrypted.pem" // DAG wallet keys
+	a.paths.PubKeyFile = a.paths.EncryptedDir + "/pub.pem"
+	a.paths.LastTXFile = a.paths.DAGDir + "/acct" // Account information
 
-	a.log.Info("The following paths will be used:\n Home Directory: " + a.paths.HomeDir + "\n DAG Directory: " + a.paths.DAGDir + "\n KeyFile: " + a.paths.KeyFile + "\n Transactions File: " + a.paths.LastTXFile + "\n")
+	a.log.Info("DAG Directory: " + a.paths.DAGDir)
+
+	return nil
+}
+
+// This function is called by WailsInit and will initialize the dir structure.
+func (a *WalletApplication) setupDirectoryStructure() error {
+	err := os.MkdirAll(a.paths.DAGDir, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	path := filepath.Join(a.paths.DAGDir, "txhistory.json")
+	f, err := os.OpenFile(
+		path,
+		os.O_CREATE|os.O_WRONLY,
+		0666,
+	)
+	defer f.Close()
+
+	if !fileExists(path) {
+		f.WriteString("{}") // initialies empty JSON object for frontend parsing
+		f.Sync()
+	}
 
 	return nil
 }
@@ -137,28 +123,6 @@ func writeToJSON(filename string, data interface{}) error {
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-// This function is called by WailsInit and will initialize the dir structure.
-func (a *WalletApplication) setupDirectoryStructure() error {
-	err := os.MkdirAll(a.paths.DAGDir, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	path := filepath.Join(a.paths.DAGDir, "txhistory.json")
-	f, err := os.OpenFile(
-		path,
-		os.O_CREATE|os.O_WRONLY,
-		0666,
-	)
-	defer f.Close()
-
-	if !fileExists(path) {
-		f.WriteString("{}") // initialies empty JSON object for frontend parsing
-		f.Sync()
-	}
-
 	return nil
 }
 

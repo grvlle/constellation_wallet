@@ -29,10 +29,12 @@ type WalletApplication struct {
 	log    *wails.CustomLogger
 	Wallet *Wallet
 	paths  struct {
-		HomeDir    string
-		DAGDir     string
-		KeyFile    string
-		LastTXFile string
+		HomeDir      string
+		DAGDir       string
+		EncryptedDir string
+		KeyFile      string
+		PubKeyFile   string
+		LastTXFile   string
 	}
 }
 

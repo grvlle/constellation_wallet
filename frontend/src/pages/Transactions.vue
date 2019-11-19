@@ -33,49 +33,100 @@
         </div>
     
         <div class="col-12">
-            <card class="card" :title="table2.title" :subTitle="table2.subTitle">                
-                
+            <card class="card" :title="table2.title" :subTitle="table2.subTitle">
                 <div class="table-full-width table-responsive">
-                    <paper-table type="hover" :title="table2.title" :sub-title="table2.subTitle" :data="table2.data" :columns="table2.columns">
+                    <table class="table" :class="tableClass">
+                        <thead>
+                            <slot name="columns">
+                                <th v-for="column in table2.columns" :key="column">{{column}}</th>
+                            </slot>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, index) in this.$store.state.pageOfItems" :key="index">
     
-                    </paper-table>
+                                <slot :row="item">
+                                    <td v-for="(column, index) in table2.columns" :key="index">
+    
+                                        <!-- {{ item[column.toLowerCase()] }} -->
+                                        <p class="description" style="font-size: 15px;" v-if="index === 0"><b>{{ item.amount | dropzero}}</b> $DAG</p>
+                                        <p class="description" style="font-size: 15px;" v-if="index === 1">{{ item.address.toUpperCase() | truncate}}</p>
+                                        <p class="description" style="font-size: 15px;" v-if="index === 2">{{ item.fee | truncate}}</p>
+                                        <a id="txhash" href="#" rel="noopener noreferrer" target="_blank">
+                                            <p style="font-size: 15px;" v-if="index === 3">{{ item.txhash.toUpperCase() | truncate}}</p>
+                                        </a>
+                                        <p class="description" style="font-size: 15px;" v-if="index === 4">{{ item.date | truncate}}</p>
+    
+                                    </td>
+                                </slot>
+    
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- <paper-table type="hover" :title="table2.title" :sub-title="table2.subTitle" :data="this.$store.state.txInfo.txHistory" :columns="table2.columns">
+                                                
+                                            </paper-table> -->
+                    <center>
+                        <jw-pagination :items="table2.data" @changePage="onChangePage"></jw-pagination>
+                    </center>
                 </div>
             </card>
+    
         </div>
     
     </div>
 </template>
 
 <script>
-import { PaperTable } from "@/components";
+// import { PaperTable } from "@/components";
 
-const tableColumns = ["Id", "Amount", "Address", "Date"];
+const tableColumns = ["Amount", "Address", "Fee", "TxHash", "Date"];
 let tableData = [];
 
 import TxSentNotification from './Notifications/TxSent';
-import TransactionHistory from '../../../JSONdata/tx.json';
+import Swal from 'sweetalert2'
 
 export default {
     components: {
-        PaperTable
+        // PaperTable
     },
     methods: {
+        onChangePage(pageOfItems) {
+            // update page of items
+            this.$store.state.pageOfItems = pageOfItems;
+        },
         tx: function() {
             var self = this
-            self.$swal({
-                title: 'You are about to send ' + self.amountSubmitted + ' $DAG tokens to ' + self.txAddress,
-                text: "Are you sure you wish to send this transaction?",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085D6',
-                cancelButtonColor: '#EA896E',
-                confirmButtonText: 'Yes, send it!'
-            }).then((result) => {
+            Swal.mixin({
+                progressSteps: ['1', '2'],
+            }).queue([{
+                    title: "Are you sure?",
+                    html: 'You are about to send <b>' + self.amountSubmitted + '</b> $DAG tokens to ' + self.txAddress.toUpperCase(),
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#5FD1FB',
+                    confirmButtonText: 'Yes, please proceed!'
+                },
+                {
+                    title: 'Set a fee to prioritize your transaction.',
+                    html: 'This is <b>optional</b>, enter 0 for no fee.',
+                    input: 'range',
+                    inputAttributes: {
+                        min: 0,
+                        max: 5000,
+                        step: 1
+                    },
+                    inputValue: 0,
+                    confirmButtonText: 'Send transaction',
+                    confirmButtonColor: '#5FD1FB',
+                    showCancelButton: true,
+                },
+            ]).then((result) => {
                 if (result.value) {
                     let amount = self.amountSubmitted
                     let address = self.txAddress
-                    window.backend.sendTransaction(amount, address)
-                    self.$swal({
+                    let fee = result.value
+                    window.backend.WalletApplication.PrepareTransaction(amount, parseInt(fee[1]), address)
+                    Swal.fire({
                             title: 'Success!',
                             text: 'You have sent ' + self.amountSubmitted + ' $DAG tokens to address ' + self.txAddress + '.',
                             type: 'success'
@@ -91,15 +142,10 @@ export default {
             });
         }
     },
-    watch: {
-    TransactionHistory: function () {
-      this.table2.data = TransactionHistory
-    }
-  },
+
     data() {
         return {
             amountSubmitted: 0,
-            txFull: {},
             txAmount: '',
             txAddress: '',
             notifications: {
@@ -116,13 +162,56 @@ export default {
                 title: "Transaction History",
                 subTitle: "Table containing all previous transactions",
                 columns: [...tableColumns],
-                data: [TransactionHistory]
+                data: this.$store.state.txInfo.txHistory
             }
+        }
+    },
+    filters: {
+        dropzero: function(value) {
+            if (!value) return ''
+            let index
+            value = value.toString().split("")
+            index = value.length - 8
+            value = value.splice(0, index)
+            return value.join('')
+        },
+        truncate: function(value) {
+            if (value.length > 30) {
+                value = value.substring(0, 27) + '...';
+            }
+            return value
+
+        }
+    },
+    props: {
+        columns: Array,
+        data: Array,
+        type: {
+            type: String, // striped | hover
+            default: "striped"
+        },
+        title: {
+            type: String,
+            default: ""
+        },
+        subTitle: {
+            type: String,
+            default: ""
         }
     }
 }
 </script>
 
 <style>
+txhash a {
+    color: blue;
+}
 
+txhash a:visited {
+    color: blue
+}
+
+txhash p {
+    font-weight: bold
+}
 </style>

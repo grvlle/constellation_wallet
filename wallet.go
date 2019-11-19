@@ -1,19 +1,15 @@
 package main
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
-	"crypto/rand"
-	"crypto/sha256"
+	"bytes"
+	"encoding/base64"
 	"fmt"
-	"log"
-
-	"golang.org/x/crypto/ripemd160"
-)
-
-const (
-	checksumLength = 4
-	version        = byte(0x00) // Number zero
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
+	"time"
 )
 
 // Wallet holds all wallet information.
@@ -32,14 +28,18 @@ type Wallet struct {
 			EUR float64 `json:"EUR,omitempty"`
 		} `json:"DAG"`
 	} `json:"token_price"`
-	PrivateKey ecdsa.PrivateKey
-	PublicKey  []byte
+	PrivateKey struct {
+		Key string `json:"key"`
+	} `json:"privateKey"`
+	PublicKey struct {
+		Key string `json:"key"`
+	} `json:"publicKey"`
 }
 
 // NewWallet initates a new wallet object
-func NewWallet() *Wallet {
-	private, public := NewKeyPair()
-	wallet := Wallet{
+func (a *WalletApplication) NewWallet() *Wallet {
+
+	a.Wallet = &Wallet{
 		Balance:          1024155,
 		AvailableBalance: 1012233,
 		Nonce:            420,
@@ -47,66 +47,86 @@ func NewWallet() *Wallet {
 		Delegated:        42,
 		Deposit:          0,
 		Address:          []byte{0x00},
-		PrivateKey:       private,
-		PublicKey:        public,
 	}
-	return &wallet
+	a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key = a.getKeys()
+
+	return a.Wallet
 }
 
-// GetAddress returns the address in human readable.
-func (w Wallet) GetAddress() []byte {
-	pubHash := PublicKeyHash(w.PublicKey)
+// getKeys will parse key files, base64 encode them and remove the decrypted files.
+func (a *WalletApplication) getKeys() (string, string) {
 
-	versionedHash := append([]byte{version}, pubHash...)
-	checksum := Checksum(versionedHash)
-
-	fullHash := append(versionedHash, checksum...)
-	address := Base58Encode(fullHash)
-
-	w.Address = address
-
-	err := writeToJSON("wallet", w) // Temporary solution
+	a.newKeyPair()
+	PrivKey, err := a.getFileContents(a.paths.KeyFile)
 	if err != nil {
-		fmt.Println("Unable to write transaction data to wallet.json.")
+		a.sendError("Unable to parse PrivKey. Reason: ", err)
+		a.log.Warnf("Unable to parse PrivKey file. Reason: %s", err)
 	}
+	PubKey, err := a.getFileContents(a.paths.PubKeyFile)
+	if err != nil {
+		a.sendError("Unable to parse PubKey. Reason: ", err)
+		a.log.Warnf("Unable to parse PubKey file. Reason: %s", err)
+	}
+	a.removeKeyArtifacts()
+	a.log.Info("Keys successfully created")
 
-	return address
+	return base64.StdEncoding.EncodeToString(PrivKey), base64.StdEncoding.EncodeToString(PubKey)
 }
 
-// NewKeyPair is used to generate a new pub/priv key using ECDSA. This
+// newKeyPair is used to generate a new pub/priv key using ECDSA. This
 // function is called when a NewWallet() is created.
-func NewKeyPair() (ecdsa.PrivateKey, []byte) {
-	curve := elliptic.P256()
+func (a *WalletApplication) newKeyPair() {
 
-	private, err := ecdsa.GenerateKey(curve, rand.Reader)
+	// newKeys will check if keys exist and create new ones if not
+	newKeys := "java -cp bcprov-jdk15on-1.62.jar:constellation-assembly-1.0.12.jar org.constellation.GetOrCreateKeys fakepassword true"
+	parts := strings.Fields(newKeys)
+	head := parts[0]
+	parts = parts[1:len(parts)]
+
+	os.Setenv("PATH", "/usr/bin:/sbin") // This is neccessary when interacting with the CLI on RedHat and other linux distros
+	cmd := exec.Command(head, parts...)
+
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out    // Captures STDOUT
+	cmd.Stderr = &stderr // Captures STDERR
+
+	err := cmd.Run()
 	if err != nil {
-		log.Panic(err)
+		err := fmt.Sprint(err) + ": " + stderr.String()
+		a.log.Errorf("Unable to create/locate wallet. Reason:", err)
 	}
-	pub := append(private.PublicKey.X.Bytes(), private.PublicKey.Y.Bytes()...)
-
-	return *private, pub
+	a.log.Info(out.String())
 }
 
-// PublicKeyHash produces a ripemd160 hash from the sha256 encrypted
-// public key.
-func PublicKeyHash(pubKey []byte) []byte {
-	pubHash := sha256.Sum256(pubKey)
-
-	hasher := ripemd160.New()
-	_, err := hasher.Write(pubHash[:])
+func (a *WalletApplication) removeKeyArtifacts() error {
+	err := os.Remove(a.paths.KeyFile)
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
-	publicRipMD := hasher.Sum(nil)
-
-	return publicRipMD
+	err = os.RemoveAll(a.paths.EncryptedDir)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-// Checksum will perform a double hash on the payload and
-// return a checksum
-func Checksum(payload []byte) []byte {
-	firstHash := sha256.Sum256(payload)
-	secondHash := sha256.Sum256(firstHash[:])
+// PassKeysToFrontend emits the keys to the settings.Vue component on a
+// 5 second interval
+func (a *WalletApplication) passKeysToFrontend() {
+	go func() {
+		for {
+			a.RT.Events.Emit("wallet_keys", a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key)
+			time.Sleep(5 * time.Second)
+		}
+	}()
+}
 
-	return secondHash[:checksumLength]
+func (a *WalletApplication) getFileContents(filePath string) ([]byte, error) {
+	path := filepath.Join(filePath)
+	fileContents, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	return fileContents, nil
 }

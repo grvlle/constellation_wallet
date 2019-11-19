@@ -1,9 +1,11 @@
 <template>
+
     <div>
     
-        <!--Stats cards-->
+        
+        
     
-    
+        
     
         <div class="row">
             <div class="col-md-6 col-xl-4">
@@ -17,7 +19,7 @@
     
                     </div>
                     <div class="stats" slot="footer">
-                        <i class="ti-reload"></i> Updated {{count}} seconds ago
+                        <i class="ti-timer"></i> Updates in {{this.$store.state.counters.tokenCounter}} seconds
                     </div>
                 </stats-card>
             </div>
@@ -30,18 +32,16 @@
                         <i class="ti-pulse"></i>
                     </div>
                     <div class="numbers text-center" slot="content">
-                        <p>USD value</p>
-                        {{wallet2.usdValue}}
+                        <p>USD value</p>   
+                        {{this.$store.state.walletInfo.usdValue}}
     
     
                     </div>
                     <div class="stats" slot="footer">
-                        <i class="ti-timer"></i> Updated {{count}} seconds ago
+                        <i class="ti-timer"></i> Updates in {{this.$store.state.counters.tokenCounter}} seconds
                     </div>
                 </stats-card>
             </div>
-    
-    
     
             <div class="col-md-6 col-xl-4">
                 <stats-card>
@@ -55,7 +55,7 @@
     
                     </div>
                     <div class="stats" slot="footer">
-                        <i class="ti-reload"></i> Updated {{blockCount}} seconds ago
+                        <i class="ti-reload"></i> Updates in {{this.$store.state.counters.blockCounter}} seconds
                     </div>
                 </stats-card>
             </div>
@@ -69,7 +69,8 @@
                         <hr>
                         <p style="color: #c4c4c4; padding-top: 15px; background-color: #f7f7f7; font-size: 25px; font-weight: 100; font-family: 'Inconsolata';">
                             {{wallet2.address}}
-                            <p-button type="info" style="margin-bottom: 15px" icon @click.native="notifyVue('top', 'right')"><i class="fa fa-copy"></i>
+                            <input type="hidden" id="testing-code" :value="wallet2.address">
+                            <p-button type="info" style="margin-bottom: 15px" icon @click.native="copyTestingCode"><i class="fa fa-copy"></i>
                             </p-button>
                         </p>
                     </div>
@@ -79,11 +80,11 @@
     
         <!--Charts-->
         <div class="row">
-    
+            
             <div class="col-md-6 col-12">
-                <chart-card title="Nodes Online" sub-title="Since last 24 hours" :chart-data="preferencesChart.data" chart-type="Pie">
+                <chart-card title="Nodes Online" sub-title="Since last 24 hours" :chart-data="this.$store.state.chartData.nodesOnline" chart-type="Pie">
                     <span slot="footer">
-                            <i class="ti-timer"></i> Updated {{pieChartCount}} hours ago</span>
+                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds</span>
                     <div slot="legend">
                         <i class="fa fa-circle text-info"></i> Foundation Nodes
                         <i class="fa fa-circle text-success"></i> Medium Nodes
@@ -93,10 +94,10 @@
             </div>
     
             <div class="col-md-6 col-12">
-                <chart-card title="Transactions" sub-title="The amount of transactions sent vs. received over the last year" :chart-data="activityChart.data" :chart-options="activityChart.options">
+                <chart-card title="Transactions" sub-title="The amount of transactions sent vs. received over the last year" :chart-data="this.$store.state.chartData.transactions" :chart-options="activityChart.options">
                     <span slot="footer">
-                            <i class="ti-check"></i> Data information certified
-                          </span>
+                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds
+                                  </span>
                     <div slot="legend">Days
                         <i class="fa fa-circle text-info"></i> TX
                         <i class="fa fa-circle text-success"></i> RX
@@ -107,27 +108,31 @@
     
     
             <div class="col-12">
-                <chart-card title="Network Throughput (tps)" sub-title="24 Hours performance" :chart-data="usersChart.data" :chart-options="usersChart.options">
+                <chart-card title="Network Throughput (tps)" sub-title="24 Hours performance" :chart-data="this.$store.state.chartData.throughput" :chart-options="usersChart.options">
                     <span slot="footer">
-                            <i class="ti-reload"></i> Updated 3 minutes ago
-                          </span>
+                                    <i class="ti-reload"></i> Updated 3 minutes ago
+                                  </span>
                     <!-- <div slot="legend">
-                            <i class="fa fa-circle text-info"></i> Open
-                            <i class="fa fa-circle text-danger"></i> Click
-                            <i class="fa fa-circle text-warning"></i> Click Second Time
-                          </div> -->
+                                    <i class="fa fa-circle text-info"></i> Open
+                                    <i class="fa fa-circle text-danger"></i> Click
+                                    <i class="fa fa-circle text-warning"></i> Click Second Time
+                                  </div> -->
                 </chart-card>
             </div>
     
         </div>
+        </div>
+        
     
-    </div>
+    
 </template>
 
 <script>
 import { StatsCard, ChartCard, WideCard } from "@/components/index";
 import Chartist from 'chartist';
 import WalletCopiedNotification from './Notifications/WalletCopied';
+import WalletCopiedFailedNotification from './Notifications/WalletCopiedFailed';
+
 
 
 export default {
@@ -136,17 +141,35 @@ export default {
         WideCard,
         ChartCard
     },
+
     methods: {
+         copyTestingCode () {
+          let testingCodeToCopy = document.querySelector('#testing-code')
+          testingCodeToCopy.setAttribute('type', 'text')    
+          testingCodeToCopy.select()
+
+          try {
+            var successful = document.execCommand('copy');
+            successful ? 'successful' : 'unsuccessful';
+            this.notifyVue('top', 'right', 2, WalletCopiedNotification)
+          } catch (err) {
+            this.notifyVue('top', 'right', 4, WalletCopiedFailedNotification)
+            alert('Oops, unable to copy');
+          }
+
+          /* unselect the range */
+          testingCodeToCopy.setAttribute('type', 'hidden')
+          window.getSelection().removeAllRanges()
+        },
         getTokens: function() {
             var self = this
             window.backend.retrieveTokenAmount().then(result => {
                 self.tokenAmount = result;
             });
         },
-        notifyVue(verticalAlign, horizontalAlign) {
-            const color = 2;
+        notifyVue(verticalAlign, horizontalAlign, color, copied) {
             this.$notify({
-                component: WalletCopiedNotification,
+                component: copied,
                 icon: "ti-check",
                 horizontalAlign: horizontalAlign,
                 verticalAlign: verticalAlign,
@@ -162,35 +185,6 @@ export default {
         chartData() {
             return this.$store.state.chartData;
         },
-        localWallet() {
-            return this.$store.getters.localWallet;
-        }
-    },
-    mounted() {
-        window.wails.Events.On("token", (amount) => {
-            this.$store.state.walletInfo.tokenAmount = amount;
-        });
-        window.wails.Events.On("blocks", (number) => {
-            this.$store.state.walletInfo.blocks = number;
-        });
-        window.wails.Events.On("price", (currency, dagRate) => {
-            let result = dagRate * this.tokenAmount;
-            this.$store.state.walletInfo.usdValue = `${currency} ${(result).toFixed(2)}`;
-        });
-        window.wails.Events.On("token_counter", (count) => {
-            this.count = count;
-        });
-        window.wails.Events.On("block_counter", (blockCount) => {
-            this.blockCount = blockCount;
-        });
-        window.wails.Events.On("chart_counter", (pieChartCount) => {
-            this.pieChartCount = pieChartCount;
-        });
-        window.wails.Events.On("node_stats", (series, labels) => {
-            this.$store.state.chartData.nodesOnline.series = series
-            this.$store.state.chartData.nodesOnline.labels = labels
-            // this.stats = stats
-        })
     },
 
     /**
@@ -199,10 +193,6 @@ export default {
 
     data() {
         return {
-            count: "0",
-            // stats: [0,0,0],
-            blockCount: "0",
-            pieChartCount: 24,
             type: ["", "info", "success", "warning", "danger"],
             notifications: {
                 topCenter: false
@@ -225,10 +215,10 @@ export default {
                         "12:00PM",
                         "3:00AM",
                         "6:00AM"
-                    ],
+                    ], //this.$store.state.chartData.throughput.labels,
                     series: [
-                        [287, 385, 490, 562, 594, 626, 698, 895, 952],
-                        [67, 152, 193, 240, 387, 435, 535, 642, 744]
+                        this.$store.state.chartData.throughput.seriesOne,
+                        this.$store.state.chartData.throughput.seriesTwo
                     ]
                 },
                 options: {
@@ -248,7 +238,20 @@ export default {
             },
             activityChart: {
                 data: {
-                    labels: this.$store.state.chartData.transactions.labels,
+                    labels: [
+                        "Jan  ",
+                        "Feb  ",
+                        "Mar  ",
+                        "Apr  ",
+                        "Mai  ",
+                        "Jun  ",
+                        "Jul  ",
+                        "Aug  ",
+                        "Sep  ",
+                        "Oct  ",
+                        "Nov  ",
+                        "Dec  "
+                    ], //this.$store.state.chartData.transactions.labels,
                     series: [
                         this.$store.state.chartData.transactions.seriesOne,
                         this.$store.state.chartData.transactions.seriesTwo

@@ -8,7 +8,7 @@
         <img class="avatar border-white" src="@/assets/img/faces/face-0.jpg" alt="...">
         <h4 class="title">user@email.com
           <br>
-            <small>0x161D1B0bca85e29dF546AFba1360eEc6Ab4aA7Ee</small>
+            <small>{{this.$store.state.walletInfo.address}}</small>
         </h4>
       </div>
       <p class="description text-center">
@@ -41,11 +41,11 @@ export default {
           subTitle: "Transactions"
         },
         {
-          title: Wallet.balance,
+          title: this.$store.state.walletInfo.tokenAmount,
           subTitle: "$DAG"
         },
         {
-          title: '$' + Wallet.token_price.DAG.USD * Wallet.balance,
+          title: this.$store.state.walletInfo.usdValue,
           subTitle: "USD"
         }
       ]

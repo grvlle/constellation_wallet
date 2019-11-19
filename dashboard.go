@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -12,10 +11,10 @@ import (
 )
 
 const (
-	dummyValue             = 300000
+	dummyValue             = 1000
 	updateIntervalToken    = 60 // Seconds
 	updateIntervalBlocks   = 5  // Seconds
-	updateIntervalPieChart = 24 // Hours
+	updateIntervalPieChart = 6  // Seconds
 )
 
 // ChartData contains all the datapoints for the Charts
@@ -37,60 +36,125 @@ type ChartData struct {
 	} `json:"throughput"`
 }
 
-func ChartDataInit() *ChartData {
+// ChartDataInit initializes the ChartData struct with datapoints for
+// the charts in the wallet. These are stored on the fs as chart_data.json
+func (a *WalletApplication) ChartDataInit() *ChartData {
 	cd := &ChartData{}
 
 	cd.NodesOnline.Labels = []string{"30%", "20%", "50%"}
 	cd.NodesOnline.Series = []int{30, 20, 50}
 
-	cd.Transactions.Labels = []string{"Jan	", "Feb	", "Mar	", "Apr	", "Mai	", "Jun	", "Jul	", "Aug	", "Sep	", "Oct	", "Nov	", "Dec	"}
+	cd.Transactions.Labels = []string{
+		"Jan  ",
+		"Feb  ",
+		"Mar  ",
+		"Apr  ",
+		"Mai  ",
+		"Jun  ",
+		"Jul  ",
+		"Aug  ",
+		"Sep  ",
+		"Oct  ",
+		"Nov  ",
+		"Dec  "}
 	cd.Transactions.SeriesOne = []int{542, 543, 520, 680, 653, 753, 326, 434, 568, 610, 756, 895}
 	cd.Transactions.SeriesTwo = []int{230, 293, 380, 480, 503, 553, 600, 664, 698, 710, 736, 795}
 
-	cd.Throughput.Labels = []string{"9:00AM", "12:00AM", "3:00PM", "6:00PM", "9:00PM", "12:00PM", "3:00AM", "6:00AM"}
+	cd.Throughput.Labels = []string{
+		"9:00AM",
+		"12:00AM",
+		"3:00PM",
+		"6:00PM",
+		"9:00PM",
+		"12:00PM",
+		"3:00AM",
+		"6:00AM"}
 	cd.Throughput.SeriesOne = []int{287, 385, 490, 562, 594, 626, 698, 895, 952}
 	cd.Throughput.SeriesTwo = []int{67, 152, 193, 240, 387, 435, 535, 642, 744}
 
-	writeToJSON("chart_data", cd)
+	go func() {
+		for i := 0; i < 2; i++ {
+			a.RT.Events.Emit("tx_stats", cd.Transactions.SeriesOne, cd.Transactions.SeriesTwo, cd.Transactions.Labels)
+			a.RT.Events.Emit("node_stats", cd.NodesOnline.Series, cd.NodesOnline.Labels)
+			a.RT.Events.Emit("network_stats", cd.Throughput.SeriesOne, cd.Throughput.SeriesTwo, cd.Throughput.Labels)
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
+	writeToJSON("chart_data.json", cd)
 
 	return cd
 }
 
-func (w *Wallet) nodeStats(runtime *wails.Runtime, cd *ChartData) {
+// Populates the Nodes Online pie chart with data from the block explorer.
+func (a *WalletApplication) nodeStats(cd *ChartData) {
 	go func() {
 		for {
-			runtime.Events.Emit("node_stats", cd.NodesOnline.Series, cd.NodesOnline.Labels)
-			UpdateCounter(updateIntervalPieChart, "chart_counter", time.Hour, runtime)
-			time.Sleep(updateIntervalPieChart * time.Hour)
+			// Will populate the chart with random data
+			for i := range cd.NodesOnline.Series {
+				cd.NodesOnline.Series[i] = rand.Intn(dummyValue)
+			}
+			a.RT.Events.Emit("node_stats", cd.NodesOnline.Series, cd.NodesOnline.Labels)
+			UpdateCounter(updateIntervalPieChart, "chart_counter", time.Second, a.RT)
+			time.Sleep(updateIntervalPieChart * time.Second)
+		}
+	}()
+}
+
+func (a *WalletApplication) txStats(cd *ChartData) {
+	go func() {
+		for {
+			// Will populate the chart with random data
+			for i := range cd.Transactions.SeriesOne {
+				cd.Transactions.SeriesOne[i] = rand.Intn(dummyValue)
+			}
+			for i := range cd.Transactions.SeriesTwo {
+				cd.Transactions.SeriesTwo[i] = rand.Intn(dummyValue)
+			}
+			a.RT.Events.Emit("tx_stats", cd.Transactions.SeriesOne, cd.Transactions.SeriesTwo, cd.Transactions.Labels)
+			//UpdateCounter(updateIntervalPieChart, "chart_counter", time.Second, a.RT)
+			time.Sleep(updateIntervalPieChart * time.Second)
+		}
+	}()
+}
+
+func (a *WalletApplication) networkStats(cd *ChartData) {
+
+	go func() {
+		for {
+			// Will populate the chart with random data
+			for i := range cd.Throughput.SeriesOne {
+				cd.Throughput.SeriesOne[i] = rand.Intn(dummyValue)
+			}
+			for i := range cd.Throughput.SeriesTwo {
+				cd.Throughput.SeriesTwo[i] = rand.Intn(dummyValue)
+			}
+			a.RT.Events.Emit("network_stats", cd.Throughput.SeriesOne, cd.Throughput.SeriesTwo, cd.Throughput.Labels)
+			//UpdateCounter(updateIntervalPieChart, "chart_counter", time.Second, a.RT)
+			time.Sleep(updateIntervalPieChart * time.Second)
 		}
 	}()
 }
 
 // TokenAmount polls the token balance and stores it in the Wallet.Balance object
-func (w *Wallet) TokenAmount(runtime *wails.Runtime) {
+func (a *WalletApplication) tokenAmount() {
 	go func() {
 		for {
-			runtime.Events.Emit("token", w.Balance)
-			UpdateCounter(updateIntervalToken, "token_counter", time.Second, runtime)
+			a.RT.Events.Emit("token", a.Wallet.Balance)
+			UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
 			time.Sleep(updateIntervalToken * time.Second)
 		}
 	}()
 }
 
-// RetrieveTokenAmount is a user initiated function for updating current balance
-func (w *Wallet) RetrieveTokenAmount() int {
-	w.Balance = rand.Intn(dummyValue)
-	return w.Balance
-}
-
 // BlockAmount is a temporary function
-func (w *Wallet) BlockAmount(runtime *wails.Runtime) {
+func (a *WalletApplication) blockAmount() {
 	var randomNumber int
 	go func() {
 		for {
 			randomNumber = rand.Intn(dummyValue)
-			runtime.Events.Emit("blocks", randomNumber)
-			UpdateCounter(updateIntervalBlocks, "block_counter", time.Second, runtime)
+			a.RT.Events.Emit("blocks", randomNumber)
+			UpdateCounter(updateIntervalBlocks, "block_counter", time.Second, a.RT)
 			time.Sleep(updateIntervalBlocks * time.Second)
 		}
 	}()
@@ -99,7 +163,7 @@ func (w *Wallet) BlockAmount(runtime *wails.Runtime) {
 // PricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token
 // balance evaluation against USD.
-func (w *Wallet) PricePoller(runtime *wails.Runtime) {
+func (a *WalletApplication) pricePoller() {
 
 	const (
 		apiKey string = "17b10afdddc411087e2140ec91bd73d88d0c20294541838b192255fc574b1cb7"
@@ -111,15 +175,25 @@ func (w *Wallet) PricePoller(runtime *wails.Runtime) {
 		for {
 			resp, err := http.Get(url)
 			if err != nil {
-				fmt.Println(err) // Log this
+				a.sendError("Unable to poll token evaluation. Reason: ", err)
+				a.log.Warnf("Unable to poll token evaluation. Reason: ", err.Error) // Log this
 			}
 			defer resp.Body.Close()
 			body, err := ioutil.ReadAll(resp.Body)
-			json.Unmarshal([]byte(body), &w.TokenPrice)
+			if err != nil {
+				a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
+				a.log.Warnf("Unable to read HTTP resonse from Token API. Reason: ", err)
+			}
+			err = json.Unmarshal([]byte(body), &a.Wallet.TokenPrice)
+			if err != nil {
+				a.sendError("Unable to display token price. Reason: ", err)
+				a.log.Warnf("Unable to display token price. Reason:", err)
+			}
+			a.log.Debugf("Collected token price in USD: %v", a.Wallet.TokenPrice.DAG.USD)
 
-			runtime.Events.Emit("price", "$", w.TokenPrice.DAG.USD)
+			tokenUSD := int(float64(a.Wallet.Balance) * a.Wallet.TokenPrice.DAG.USD)
+			a.RT.Events.Emit("price", "$", tokenUSD)
 			time.Sleep(updateIntervalToken * time.Second)
-			//w.GetAddress() // This will update wallet.json with the tokenprice
 		}
 	}()
 }
@@ -131,6 +205,20 @@ func UpdateCounter(countFrom int, counter string, unit time.Duration, runtime *w
 			runtime.Events.Emit(counter, i)
 			time.Sleep(unit)
 			continue
+		}
+	}()
+}
+
+// initSocketData will push the wallet data to be displayed on the frontend twice
+// to bypass a bug present in the Wails lib. This will allow us to display data
+// as soon as the wallet App is started.
+func (a *WalletApplication) initSocketData(frontendFunction string, data ...interface{}) {
+
+	// Need to emit twice for it to stick. Bug with the Wails lib.
+	go func() {
+		for i := 0; i < 2; i++ {
+			a.RT.Events.Emit(frontendFunction, data)
+			time.Sleep(1 * time.Second)
 		}
 	}()
 }

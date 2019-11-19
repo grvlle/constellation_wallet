@@ -7,16 +7,28 @@
     </thead>
     <tbody>
     <tr v-for="(item, index) in data" :key="index">
+      
       <slot :row="item">
-        <td v-for="(column, index) in columns"
-            :key="index"
-            v-if="hasValue(item, column)">
-          {{itemValue(item, column)}}
+        <td v-for="(column, index) in columns" :key="index">
+          <!-- {{ item[column.toLowerCase()] }} -->
+          <p class="description" style="font-size: 15px;" v-if="index === 0">{{ item.amount | truncate}}</p>
+          <p class="description" style="font-size: 15px;" v-if="index === 1">{{ item.address | truncate}}</p>
+          <p class="description" style="font-size: 15px;" v-if="index === 2">{{ item.fee | truncate}}</p>
+          <p class="description" style="font-size: 15px;" v-if="index === 3">{{ item.txhash | truncate}}</p>
+          <p class="description" style="font-size: 15px;" v-if="index === 4">{{ item.date | truncate}}</p>
+
+
+        
+          
+          
         </td>
       </slot>
+      
     </tr>
     </tbody>
   </table>
+  
+  
 </template>
 <script>
 export default {
@@ -40,6 +52,21 @@ export default {
   computed: {
     tableClass() {
       return `table-${this.type}`;
+    }
+  //   truncString: function(){
+  //     if(this.username.length > 5) {
+  //        return this.username.slice(0,4);
+  //     }
+  //     return this.username;
+  //  }
+  },
+  filters: {
+    truncate: function(value) {
+      if (value.length > 30) {
+        value = value.substring(0, 27) + '...';
+      }
+      return value
+
     }
   },
   methods: {

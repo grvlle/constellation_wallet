@@ -9,23 +9,48 @@
                         <div class="row">
                             <div class="col-md-1"></div>
                             <div class="col-md-4">
-                                <fg-input v-model.number="amountSubmitted" type="text" label="Submit the amount of $DAG you wish to send" placeholder="0">
+                                <fg-input v-model.number="txAmountValidation" @change="sendAmount($event.target.value)" type="text" label="Submit the amount of $DAG you wish to send" placeholder="0">
                                 </fg-input>
+                                <div style="height: 25px;" class="error" v-if="$v.txAmountValidation.inBetween">
+    
+                                </div>
+    
+                                <div class="error" v-if="!$v.txAmountValidation.inBetween">
+                                    <p class="validate">Invalid amount. Please specify a number between 0.00000001 - 3,711,998,690.</p>
+                                </div>
                             </div>
                             <div class="col-md-1">
                                 <i class="fa fa-chevron-circle-right" style="color: #6DECBB; font-size: 40px; padding: 28px;"></i>
                             </div>
                             <div class="col-md-4">
-                                <fg-input v-model="txAddress" type="text" label="Wallet Address of Recipient" placeholder="Enter Recipients Wallet Address">
+                                <fg-input v-model.trim="txAddressValidation" @change="setName($event.target.value)" type="text" label="Wallet Address of Recipient" placeholder="Enter Recipients Wallet Address">
                                 </fg-input>
+                                <div style="height: 25px;" class="error" v-if="$v.txAddressValidation.minLength && $v.txAddressValidation.maxLength && $v.txAddressValidation.verifyPrefix">
+    
+                                </div>
+    
+                                <!-- <div class="error" v-if="!$v.txAddressValidation.verifyPrefix">
+                                        <p class="validate">The Prefix {{$v.txAddressValidation.$params.minLength.min}} characters.</p>
+                                    </div> -->
+    
+                                <div class="error" v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength">
+                                    <p class="validate">Invalid wallet address. Please verify.</p>
+                                </div>
+    
+                                <!-- <div class="error" v-if="!$v.txAddressValidation.maxLength">
+                                        <p class="validate">The recieving wallet address cannot be longer than {{$v.txAddressValidation.$params.maxLength.max}} characters.</p>
+                                    </div> -->
+    
                             </div>
                             <div class="col-md-1">
-                                <p-button type="info" block @click.native="tx" style="margin-top: 28px; overflow: visible;">
+                                <p-button type="info" block @click.native="tx" :disabled="submitStatus === 'PENDING'" style="margin-top: 28px; overflow: visible;">
                                     <span style="width: 80px; margin-left: -20px; overflow: hidden; white-space: nowrap; display: block; text-overflow: ellipsis;"><i class="fa fa-paper-plane"></i> SEND</span>
                                 </p-button>
+    
+    
                             </div>
                         </div>
-                        <div class="clearfix"></div>
+                        <!-- <div class="clearfix"></div> -->
                     </form>
                 </div>
                 <br><br>
@@ -37,7 +62,7 @@
                 <div class="table-full-width table-responsive">
                     <table class="table" :class="tableClass">
                         <thead>
-                            <slot name="columns">
+                            <slot txAddressValidation="columns">
                                 <th v-for="column in table2.columns" :key="column">{{column}}</th>
                             </slot>
                         </thead>
@@ -63,8 +88,8 @@
                         </tbody>
                     </table>
                     <!-- <paper-table type="hover" :title="table2.title" :sub-title="table2.subTitle" :data="this.$store.state.txInfo.txHistory" :columns="table2.columns">
-                                                
-                                            </paper-table> -->
+                                                                                
+                                                                            </paper-table> -->
                     <center>
                         <jw-pagination :items="table2.data" @changePage="onChangePage"></jw-pagination>
                     </center>
@@ -81,71 +106,97 @@
 
 const tableColumns = ["Amount", "Address", "Fee", "TxHash", "Date"];
 let tableData = [];
+const verifyPrefix = (value) => value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
 import TxSentNotification from './Notifications/TxSent';
 import Swal from 'sweetalert2'
+import { required, minLength, maxLength, between } from 'vuelidate/lib/validators'
 
 export default {
-    components: {
-        // PaperTable
-    },
     methods: {
+
         onChangePage(pageOfItems) {
             // update page of items
             this.$store.state.pageOfItems = pageOfItems;
         },
+        sendAmount(value) {
+            this.txAmountValidation = value
+            this.$v.txAmountValidation.$touch()
+        },
+        setName(value) {
+            this.txAddressValidation = value
+            this.$v.txAddressValidation.$touch()
+        },
         tx: function() {
             var self = this
-            Swal.mixin({
-                progressSteps: ['1', '2'],
-            }).queue([{
-                    title: "Are you sure?",
-                    html: 'You are about to send <b>' + self.amountSubmitted + '</b> $DAG tokens to ' + self.txAddress.toUpperCase(),
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#5FD1FB',
-                    confirmButtonText: 'Yes, please proceed!'
-                },
-                {
-                    title: 'Set a fee to prioritize your transaction.',
-                    html: 'This is <b>optional</b>, enter 0 for no fee.',
-                    input: 'range',
-                    inputAttributes: {
-                        min: 0,
-                        max: 5000,
-                        step: 1
+            self.$v.$touch()
+            if (self.$v.$invalid) {
+                self.submitStatus = 'ERROR'
+            } else {
+                // do your submit logic here
+                self.submitStatus = 'PENDING'
+                setTimeout(() => {
+                    self.submitStatus = 'OK'
+                }, 500)
+            }
+
+
+            if (self.submitStatus != 'ERROR') {
+                Swal.mixin({
+                    progressSteps: ['1', '2'],
+                }).queue([{
+                        title: "Are you sure?",
+                        html: 'You are about to send <b>' + self.txAmountValidation + '</b> $DAG tokens to ' + self.txAddressValidation.toUpperCase(),
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#5FD1FB',
+                        confirmButtonText: 'Yes, please proceed!'
                     },
-                    inputValue: 0,
-                    confirmButtonText: 'Send transaction',
-                    confirmButtonColor: '#5FD1FB',
-                    showCancelButton: true,
-                },
-            ]).then((result) => {
-                if (result.value) {
-                    let amount = self.amountSubmitted
-                    let address = self.txAddress
-                    let fee = result.value
-                    window.backend.WalletApplication.PrepareTransaction(amount, parseInt(fee[1]), address)
-                    Swal.fire({
-                            title: 'Success!',
-                            text: 'You have sent ' + self.amountSubmitted + ' $DAG tokens to address ' + self.txAddress + '.',
-                            type: 'success'
-                        }),
-                        self.$notify({
-                            component: TxSentNotification,
-                            icon: "ti-check",
-                            horizontalAlign: "right",
-                            verticalAlign: "top",
-                            type: "success"
-                        })
-                }
-            });
+                    {
+                        title: 'Set a fee to prioritize your transaction.',
+                        html: 'This is <b>optional</b>, enter 0 for no fee.',
+                        input: 'range',
+                        inputAttributes: {
+                            min: 0,
+                            max: 5000,
+                            step: 1
+                        },
+                        inputValue: 0,
+                        confirmButtonText: 'Send transaction',
+                        confirmButtonColor: '#5FD1FB',
+                        showCancelButton: true,
+                    },
+                ]).then((result) => {
+                    if (result.value) {
+                        let amount = self.txAmountValidation
+                        let address = self.txAddressValidation
+                        let fee = result.value
+                        window.backend.WalletApplication.PrepareTransaction(parseInt(amount), parseInt(fee[1]), address)
+                        Swal.fire({
+                                title: 'Success!',
+                                text: 'You have sent ' + self.txAmountValidation + ' $DAG tokens to address ' + self.txAddressValidation + '.',
+                                type: 'success'
+                            }),
+                            self.$notify({
+                                component: TxSentNotification,
+                                icon: "ti-check",
+                                horizontalAlign: "right",
+                                verticalAlign: "top",
+                                type: "success"
+                            })
+                    }
+                });
+            }
         }
+
     },
 
     data() {
         return {
-            amountSubmitted: 0,
+            txAddressValidation: '',
+            txAmountValidation: null,
+            submitStatus: null,
+            amountSubmitted: null,
             txAmount: '',
             txAddress: '',
             notifications: {
@@ -183,6 +234,18 @@ export default {
 
         }
     },
+
+    validations: {
+        txAddressValidation: {
+            required,
+            minLength: minLength(40),
+            maxLength: maxLength(40),
+            verifyPrefix,
+        },
+        txAmountValidation: {
+            inBetween: between(0.00000001, 3711998690),
+        }
+    },
     props: {
         columns: Array,
         data: Array,
@@ -213,5 +276,11 @@ txhash a:visited {
 
 txhash p {
     font-weight: bold
+}
+
+p.validate {
+    font-size: 10px;
+    color: firebrick;
+    margin-top: -5px;
 }
 </style>

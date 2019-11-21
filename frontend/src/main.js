@@ -12,8 +12,11 @@ import VueNotify from 'vue-notifyjs'
 import VueSweetalert2 from 'vue-sweetalert2';
 import {store} from './store/store'
 import JwPagination from 'jw-vue-pagination';
+import Vuelidate from 'vuelidate'
+
 Vue.component('jw-pagination', JwPagination);
 
+Vue.use(Vuelidate)
 Vue.use(VueNotify);
 Vue.use(PaperDashboard);
 Vue.use(VueSweetalert2);

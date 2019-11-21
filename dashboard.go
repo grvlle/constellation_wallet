@@ -72,6 +72,7 @@ func (a *WalletApplication) ChartDataInit() *ChartData {
 	cd.Throughput.SeriesOne = []int{287, 385, 490, 562, 594, 626, 698, 895, 952}
 	cd.Throughput.SeriesTwo = []int{67, 152, 193, 240, 387, 435, 535, 642, 744}
 
+	// Init chart widgets with data.
 	go func() {
 		for i := 0; i < 2; i++ {
 			a.RT.Events.Emit("tx_stats", cd.Transactions.SeriesOne, cd.Transactions.SeriesTwo, cd.Transactions.Labels)
@@ -80,8 +81,6 @@ func (a *WalletApplication) ChartDataInit() *ChartData {
 			time.Sleep(1 * time.Second)
 		}
 	}()
-
-	writeToJSON("chart_data.json", cd)
 
 	return cd
 }

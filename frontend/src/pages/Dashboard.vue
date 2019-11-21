@@ -11,7 +11,7 @@
             <div class="col-md-6 col-xl-4">
                 <stats-card>
                     <div class="icon-big text-center" :class="`icon-success`" slot="header">
-                        <i class="ti-wallet"></i>
+                        <i class="fas fa-wallet"></i>
                     </div>
                     <div class="numbers text-center" slot="content">
                         <p>$DAG Tokens</p>
@@ -29,7 +29,7 @@
             <div class="col-md-6 col-xl-4">
                 <stats-card>
                     <div class="icon-big text-center" :class="`icon-danger`" slot="header">
-                        <i class="ti-pulse"></i>
+                        <i class="fas fa-search-dollar"></i>
                     </div>
                     <div class="numbers text-center" slot="content">
                         <p>USD value</p>   
@@ -46,7 +46,7 @@
             <div class="col-md-6 col-xl-4">
                 <stats-card>
                     <div class="icon-big text-center" :class="`icon-info`" slot="header">
-                        <i class="ti-package"></i>
+                        <i class="fas fa-cube"></i>
                     </div>
                     <div class="numbers text-center" slot="content">
                         <p>Blocks</p>

@@ -2,12 +2,8 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"encoding/json"
-	"fmt"
 	"os"
-	"os/exec"
-	"strconv"
 	"time"
 )
 
@@ -74,29 +70,7 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int, address st
 // to put the actual transaction on chain. It'll then call updateLastTransaction in order
 // to display transaction history to the user.
 func (a *WalletApplication) sendTransaction(amount int64, fee int, address string) {
-
-	amountStr := strconv.FormatInt(amount, 10)
-	feeStr := strconv.Itoa(fee)
-
-	// newTX is the full command to sign a new transaction
-	main := "java"
-	args := []string{"-cp", "bcprov-jdk15on-1.62.jar:constellation-assembly-1.0.12.jar", "org.constellation.SignNewTx", amountStr, address, feeStr, "fakepassword"}
-
-	os.Setenv("PATH", "/usr/bin:/sbin") // This is neccessary when interacting with the CLI on RedHat and other linux distros
-	cmd := exec.Command(main, args...)
-
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	cmd.Stdout = &out    // Captures STDOUT
-	cmd.Stderr = &stderr // Captures STDERR
-
-	err := cmd.Run()
-	if err != nil {
-		a.sendError("Unable to send transaction. Reason:", err)
-		err := fmt.Sprint(err) + ": " + stderr.String()
-		a.log.Errorf("Unable to send transaction. Reason:", err)
-	}
-	fmt.Println(out.String())
+	a.putTXOnNetwork(amount, fee, address, "alias", "storepass", "fakepassword") // TODO: implement password protection for the tx
 	a.updateLastTransactions()
 }
 

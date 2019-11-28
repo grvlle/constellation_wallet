@@ -18,25 +18,25 @@
                 <form @submit.prevent>
                     <!-- Below can be revived when Mnemonic Seed is supported -->
                     <!-- <label class="control-label">
-                                  <p>Mnemonic Seed</p>
-                                </label>
-                                <p class="small" style="margin-bottom: -5px; margin-top: -20px;">This is the seed that will be used to backup and restore your wallet.</p>
-                              <div class="row">
-                                
-                                <div class="input-group col-md-12">
-                                  
-                                  <input :type=seed class="form-control" :disabled="true" placeholder="Mnemonic Seed" v-model="this.$store.state.walletInfo.seed">
-                                  <div class="input-group-append">
-                                    <p-button class="btn" @click.native="showPassword2()" type="danger"><i v-bind:class="btnText"/></p-button>
+                                      <p>Mnemonic Seed</p>
+                                    </label>
+                                    <p class="small" style="margin-bottom: -5px; margin-top: -20px;">This is the seed that will be used to backup and restore your wallet.</p>
+                                  <div class="row">
+                                    
+                                    <div class="input-group col-md-12">
+                                      
+                                      <input :type=seed class="form-control" :disabled="true" placeholder="Mnemonic Seed" v-model="this.$store.state.walletInfo.seed">
+                                      <div class="input-group-append">
+                                        <p-button class="btn" @click.native="showPassword2()" type="danger"><i v-bind:class="btnText"/></p-button>
+                                      </div>
+                                      
                                   </div>
-                                  
-                              </div>
-                            </div> -->
+                                </div> -->
     
     
                     <label class="control-label">
-                                  <p>Public Key</p>
-                                </label>
+                                      <p>Public Key</p>
+                                    </label>
                     <p class="small" style="margin-bottom: -5px; margin-top: -20px;">Base64 Encoded public key</p>
                     <div class="row">
                         <div class="col-md-12">
@@ -45,8 +45,8 @@
                         </div>
                     </div>
                     <label class="control-label">
-                                  <p>Private Key</p>
-                                </label>
+                                      <p>Private Key</p>
+                                    </label>
                     <p class="small" style="margin-bottom: -5px; margin-top: -20px;">Base64 Encoded private key</p>
                     <div class="row">
                         <div class="input-group col-md-12">
@@ -58,12 +58,12 @@
                     </div>
                 </form>
                 <label class="control-label">
-                                  <p>Import / Export Keys</p>
-                                </label>
-                    <p class="small" style="margin-top: -20px;">Select Import if you wish to restore your wallet from a previously exported file.<br>Select Export to export your keys into an encrypted .pem file on your filesystem. Store this file in cold storage for optimal security. </p>
-                <p-button style="margin-right: 10px;" type="success">Import <i class="fas fa-file-import"/></p-button>
-                
-                <p-button type="danger">Export <i class="fas fa-file-export"/></p-button>
+                                      <p>Import / Export Keys</p>
+                                    </label>
+                <p class="small" style="margin-top: -20px;">Select Import if you wish to restore your wallet from a previously exported file.<br>Select Export to export your keys into an encrypted .pem file on your filesystem. Store this file in cold storage for optimal security. </p>
+                <p-button @click.native="importKeys()" style="margin-right: 10px;" type="success">Import <i class="fas fa-file-import" /></p-button>
+    
+                <p-button @click.native="exportKeys()" type="danger">Export <i class="fas fa-file-export" /></p-button>
     
             </card>
         </div>
@@ -75,7 +75,13 @@
 export default {
 
     methods: {
-        showPassword() {
+        importKeys: function() {
+            window.backend.WalletApplication.ImportKeys();
+        },
+        exportKeys: function() {
+            window.backend.WalletApplication.ExportKeys();
+        },
+        showPassword: function() {
             if (this.type === 'password') {
                 this.type = 'text'
                 this.btnText = 'fa fa-eye-slash'
@@ -84,7 +90,7 @@ export default {
                 this.btnText = 'fa fa-eye'
             }
         },
-        showPassword2() {
+        showPassword2: function() {
             if (this.seed === 'password') {
                 this.seed = 'text'
                 this.btnText = 'fa fa-eye-slash'

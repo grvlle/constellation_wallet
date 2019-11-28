@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"time"
 )
@@ -20,7 +18,7 @@ type Wallet struct {
 	TotalBalance     int    `json:"total_balance"`
 	Delegated        int    `json:"delegated"`
 	Deposit          int    `json:"deposit"`
-	Address          []byte `json:"address"`
+	Address          string `json:"address"`
 	TokenPrice       struct {
 		DAG struct {
 			BTC float64 `json:"BTC,omitempty"`
@@ -46,18 +44,34 @@ func (a *WalletApplication) NewWallet() *Wallet {
 		TotalBalance:     1012420,
 		Delegated:        42,
 		Deposit:          0,
-		Address:          []byte{0x00},
+		Address:          "",
 	}
 	a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key = a.getKeys()
+	a.Wallet.Address = a.createAddressFromPublicKey()
 
 	return a.Wallet
+}
+
+// ImportKeys is called from the frontend to use a file dialog to select key file.
+func (a *WalletApplication) ImportKeys() error {
+	filename := a.RT.Dialog.SelectFile()
+	a.log.Info("Path to keys that user wants to import: " + filename)
+	return nil
+}
+
+// ExportKeys is called from the frontend to use a file dialog to select directory
+// where user wants to export the keys to.
+func (a *WalletApplication) ExportKeys() error {
+	filename := a.RT.Dialog.SelectDirectory()
+	a.log.Info("File user wants to save to: " + filename)
+	return nil
 }
 
 // getKeys will parse key files, base64 encode them and remove the decrypted files.
 func (a *WalletApplication) getKeys() (string, string) {
 
 	a.newKeyPair()
-	PrivKey, err := a.getFileContents(a.paths.KeyFile)
+	PrivKey, err := a.getFileContents(a.paths.DecKeyFile)
 	if err != nil {
 		a.sendError("Unable to parse PrivKey. Reason: ", err)
 		a.log.Warnf("Unable to parse PrivKey file. Reason: %s", err)
@@ -66,9 +80,10 @@ func (a *WalletApplication) getKeys() (string, string) {
 	if err != nil {
 		a.sendError("Unable to parse PubKey. Reason: ", err)
 		a.log.Warnf("Unable to parse PubKey file. Reason: %s", err)
+	} else {
+		a.log.Info("Keys successfully created")
 	}
 	a.removeKeyArtifacts()
-	a.log.Info("Keys successfully created")
 
 	return base64.StdEncoding.EncodeToString(PrivKey), base64.StdEncoding.EncodeToString(PubKey)
 }
@@ -100,7 +115,7 @@ func (a *WalletApplication) newKeyPair() {
 }
 
 func (a *WalletApplication) removeKeyArtifacts() error {
-	err := os.Remove(a.paths.KeyFile)
+	err := os.Remove(a.paths.DecKeyFile)
 	if err != nil {
 		return err
 	}
@@ -120,13 +135,4 @@ func (a *WalletApplication) passKeysToFrontend() {
 			time.Sleep(5 * time.Second)
 		}
 	}()
-}
-
-func (a *WalletApplication) getFileContents(filePath string) ([]byte, error) {
-	path := filepath.Join(filePath)
-	fileContents, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	return fileContents, nil
 }

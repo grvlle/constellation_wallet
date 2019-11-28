@@ -1,12 +1,12 @@
 {
- "name": "Constellation Wallet [Beta]",
+ "name": "Molly - Constellation Desktop Wallet [Beta]",
  "description": "Used to store $DAG tokens",
  "author": {
   "name": "vito",
   "email": "gralle89@gmail.com"
  },
  "version": "0.1.3 Beta",
- "binaryname": "Constellation Desktop Wallet [Beta]",
+ "binaryname": "mollywallet",
  "frontend": {
   "dir": "frontend",
   "install": "npm install",

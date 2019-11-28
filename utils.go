@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -32,7 +33,7 @@ func (a *WalletApplication) monitorFileState() error {
 					case fileModified == a.paths.LastTXFile:
 						a.log.Debug("Last TX File has been modified")
 
-					case fileModified == a.paths.KeyFile:
+					case fileModified == a.paths.DecKeyFile:
 						a.log.Debug("Key File has been modified")
 						a.RT.Events.Emit("wallet_keys", a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key)
 
@@ -54,47 +55,6 @@ func (a *WalletApplication) monitorFileState() error {
 		a.sendError("Failed to start watcher. Reason: ", err)
 		return err
 	}
-	return nil
-}
-
-func (a *WalletApplication) collectOSPath() error {
-	user, err := user.Current()
-	if err != nil {
-		a.sendError("Unable to retrieve filesystem paths. Reason: ", err)
-		a.log.Errorf("Unable to retrieve filesystem paths. Reason: ", err)
-	}
-
-	a.paths.HomeDir = user.HomeDir             // Home directory of the user
-	a.paths.DAGDir = a.paths.HomeDir + "/.dag" // DAG directory for configuration files and wallet specific data
-	a.paths.EncryptedDir = a.paths.DAGDir + "/encrypted_key"
-	a.paths.KeyFile = a.paths.DAGDir + "/private_decrypted.pem" // DAG wallet keys
-	a.paths.PubKeyFile = a.paths.EncryptedDir + "/pub.pem"
-	a.paths.LastTXFile = a.paths.DAGDir + "/acct" // Account information
-
-	a.log.Info("DAG Directory: " + a.paths.DAGDir)
-
-	return nil
-}
-
-// This function is called by WailsInit and will initialize the dir structure.
-func (a *WalletApplication) setupDirectoryStructure() error {
-	err := os.MkdirAll(a.paths.DAGDir, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	path := filepath.Join(a.paths.DAGDir, "txhistory.json")
-	f, err := os.OpenFile(
-		path,
-		os.O_CREATE|os.O_WRONLY,
-		0666,
-	)
-	defer f.Close()
-
-	if !fileExists(path) {
-		f.WriteString("{}") // initialies empty JSON object for frontend parsing
-		f.Sync()
-	}
-
 	return nil
 }
 
@@ -124,6 +84,15 @@ func writeToJSON(filename string, data interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func (a *WalletApplication) getFileContents(filePath string) ([]byte, error) {
+	path := filepath.Join(filePath)
+	fileContents, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	return fileContents, nil
 }
 
 // fileExists checks if a file exists and is not a directory before we

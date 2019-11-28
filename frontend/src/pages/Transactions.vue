@@ -29,17 +29,9 @@
     
                                 </div>
     
-                                <!-- <div class="error" v-if="!$v.txAddressValidation.verifyPrefix">
-                                        <p class="validate">The Prefix {{$v.txAddressValidation.$params.minLength.min}} characters.</p>
-                                    </div> -->
-    
                                 <div class="error" v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength">
                                     <p class="validate">Invalid wallet address. Please verify.</p>
                                 </div>
-    
-                                <!-- <div class="error" v-if="!$v.txAddressValidation.maxLength">
-                                        <p class="validate">The recieving wallet address cannot be longer than {{$v.txAddressValidation.$params.maxLength.max}} characters.</p>
-                                    </div> -->
     
                             </div>
                             <div class="col-md-1">

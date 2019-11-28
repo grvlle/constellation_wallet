@@ -5,6 +5,7 @@ require (
 	github.com/google/martian v2.1.0+incompatible
 	github.com/leaanthony/mewn v0.10.7
 	github.com/mr-tron/base58 v1.1.2
+	github.com/sirupsen/logrus v1.4.1
 	github.com/wailsapp/wails v0.19.0-pre2
 	golang.org/x/crypto v0.0.0-20190829043050-9756ffdc2472
 	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297 // indirect

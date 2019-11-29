@@ -1,12 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"encoding/base64"
-	"fmt"
 	"os"
-	"os/exec"
-	"strings"
 	"time"
 )
 
@@ -69,8 +65,7 @@ func (a *WalletApplication) ExportKeys() error {
 
 // getKeys will parse key files, base64 encode them and remove the decrypted files.
 func (a *WalletApplication) getKeys() (string, string) {
-
-	a.newKeyPair()
+	a.newKeys()
 	PrivKey, err := a.getFileContents(a.paths.DecKeyFile)
 	if err != nil {
 		a.sendError("Unable to parse PrivKey. Reason: ", err)
@@ -88,30 +83,8 @@ func (a *WalletApplication) getKeys() (string, string) {
 	return base64.StdEncoding.EncodeToString(PrivKey), base64.StdEncoding.EncodeToString(PubKey)
 }
 
-// newKeyPair is used to generate a new pub/priv key using ECDSA. This
-// function is called when a NewWallet() is created.
-func (a *WalletApplication) newKeyPair() {
-
-	// newKeys will check if keys exist and create new ones if not
-	newKeys := "java -cp bcprov-jdk15on-1.62.jar:constellation-assembly-1.0.12.jar org.constellation.GetOrCreateKeys fakepassword true"
-	parts := strings.Fields(newKeys)
-	head := parts[0]
-	parts = parts[1:len(parts)]
-
-	os.Setenv("PATH", "/usr/bin:/sbin") // This is neccessary when interacting with the CLI on RedHat and other linux distros
-	cmd := exec.Command(head, parts...)
-
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	cmd.Stdout = &out    // Captures STDOUT
-	cmd.Stderr = &stderr // Captures STDERR
-
-	err := cmd.Run()
-	if err != nil {
-		err := fmt.Sprint(err) + ": " + stderr.String()
-		a.log.Errorf("Unable to create/locate wallet. Reason:", err)
-	}
-	a.log.Info(out.String())
+func (a *WalletApplication) newKeys() {
+	a.createEncryptedKeyPairToPasswordProtectedFile("alias", "keypass", "storepass")
 }
 
 func (a *WalletApplication) removeKeyArtifacts() error {

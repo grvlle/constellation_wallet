@@ -13,9 +13,11 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import {store} from './store/store'
 import JwPagination from 'jw-vue-pagination';
 import Vuelidate from 'vuelidate'
+import ToggleButton from 'vue-js-toggle-button'
 
 Vue.component('jw-pagination', JwPagination);
 
+Vue.use(ToggleButton)
 Vue.use(Vuelidate)
 Vue.use(VueNotify);
 Vue.use(PaperDashboard);

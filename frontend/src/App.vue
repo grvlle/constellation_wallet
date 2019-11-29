@@ -26,11 +26,13 @@ export default {
         setTimeout(() => {
             this.isLoading = false
         }, 6000)
+
         // Backend Errors
         window.wails.Events.On("error_handling", (m, err) => {
             this.$store.state.errorMessage = m + err
             this.$notify({
                 component: ErrorNotification,
+                timeout: 500000,
                 icon: "fa fa-times",
                 horizontalAlign: 'right',
                 verticalAlign: 'top',

@@ -12,7 +12,16 @@
             </fg-input>
           </div>
         </div>
-
+    <div class="row">
+          <div class="col-md-12">
+            <fg-input type="text"
+                      label="Available Balance"
+                      :disabled="true"
+                      placeholder="0"
+                      v-model="wallet.available_balance">
+            </fg-input>
+          </div>
+          </div>
           <div class="row">
           <div class="col-md-12">
             <fg-input type="text"
@@ -37,10 +46,10 @@
         <div class="row">
           <div class="col-md-12">
             <fg-input type="text"
-                      label="Delegated"
+                      label="Wallet Client Version"
                       :disabled="true"
                       placeholder="0"
-                      v-model="wallet.delegated">
+                      v-model="this.$store.state.walletInfo.version">
             </fg-input>
           </div>
         </div>
@@ -48,23 +57,14 @@
         <div class="row">
           <div class="col-md-12">
             <fg-input type="text"
-                      label="Deposit"
+                      label="Wallet UI Version"
                       :disabled="true"
                       placeholder="0"
-                      v-model="wallet.deposit">
+                      v-model="this.$store.state.walletInfo.uiVersion">
             </fg-input>
           </div>
         </div>
-          <div class="row">
-          <div class="col-md-12">
-            <fg-input type="text"
-                      label="Available Balance"
-                      :disabled="true"
-                      placeholder="0"
-                      v-model="wallet.available_balance">
-            </fg-input>
-          </div>
-          </div>
+        
         <div class="clearfix"></div>
       </form>
     </div>

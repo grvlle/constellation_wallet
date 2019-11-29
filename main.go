@@ -46,6 +46,7 @@ type WalletApplication struct {
 		EncPrivKeyFile string
 		LastTXFile     string
 		AddressFile    string
+		ImageDir       string
 	}
 }
 
@@ -107,10 +108,11 @@ func (a *WalletApplication) initDirectoryStructure() error {
 	a.paths.DecKeyFile = a.paths.DAGDir + "/private_decrypted.pem" // DAG wallet keys
 	a.paths.PubKeyFile = a.paths.EncryptedDir + "/pub.pem"
 	a.paths.EncPrivKeyFile = a.paths.EncryptedDir + "/priv.p12"
-	a.paths.AddressFile = a.paths.DAGDir + "/addr" // DAG wallet keys
-	a.paths.LastTXFile = a.paths.DAGDir + "/acct"  // Account information
+	a.paths.AddressFile = a.paths.DAGDir + "/addr"  // DAG wallet keys
+	a.paths.LastTXFile = a.paths.DAGDir + "/acct"   // Account information
+	a.paths.ImageDir = "./frontend/src/assets/img/" // Image Folder
 
-	a.log.Info("DAG Directory: " + a.paths.DAGDir)
+	a.log.Info("DAG Directory: ", a.paths.DAGDir)
 
 	err = os.MkdirAll(a.paths.DAGDir, os.ModePerm)
 	if err != nil {
@@ -138,5 +140,6 @@ func (a *WalletApplication) initWallet() *Wallet {
 }
 
 func (a *WalletApplication) sendError(msg string, err error) {
-	a.RT.Events.Emit("error_handling", msg, err.Error())
+	errStr := string(err.Error())
+	a.RT.Events.Emit("error_handling", msg, errStr)
 }

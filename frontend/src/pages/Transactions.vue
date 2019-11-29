@@ -80,8 +80,8 @@
                         </tbody>
                     </table>
                     <!-- <paper-table type="hover" :title="table2.title" :sub-title="table2.subTitle" :data="this.$store.state.txInfo.txHistory" :columns="table2.columns">
-                                                                                
-                                                                            </paper-table> -->
+                                                                                        
+                                                                                    </paper-table> -->
                     <center>
                         <jw-pagination :items="table2.data" @changePage="onChangePage"></jw-pagination>
                     </center>
@@ -94,8 +94,6 @@
 </template>
 
 <script>
-// import { PaperTable } from "@/components";
-
 const tableColumns = ["Amount", "Address", "Fee", "TxHash", "Date"];
 let tableData = [];
 const verifyPrefix = (value) => value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
@@ -106,6 +104,13 @@ import { required, minLength, maxLength, between } from 'vuelidate/lib/validator
 
 export default {
     methods: {
+        isFloat: function(n) {
+            return n === +n && n !== (n | 0);
+        },
+
+        isInteger: function(n) {
+            return n === +n && n === (n | 0);
+        },
 
         onChangePage(pageOfItems) {
             // update page of items
@@ -147,16 +152,20 @@ export default {
                     {
                         title: 'Set a fee to prioritize your transaction.',
                         html: 'This is <b>optional</b>, enter 0 for no fee.',
-                        input: 'range',
-                        inputAttributes: {
-                            min: 0,
-                            max: 5000,
-                            step: 1
-                        },
+                        input: 'number',
                         inputValue: 0,
                         confirmButtonText: 'Send transaction',
-                        confirmButtonColor: '#5FD1FB',
+                        confirmButtonColor: '#6DECBB',
                         showCancelButton: true,
+                        inputValidator: (value) => {
+                            return new Promise((resolve) => {
+                                if (value < 0 || value >= 3711998690) {
+                                    resolve('Please enter a value between 0 and 3711998690')
+                                } else {
+                                    resolve()
+                                }
+                            })
+                        }
                     },
                 ]).then((result) => {
                     if (result.value) {

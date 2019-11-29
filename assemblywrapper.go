@@ -41,13 +41,13 @@ func (a *WalletApplication) createAddressFromPublicKey() string {
 	err := a.runCMD("org.constellation.util.wallet.GenerateAddress", "--pub_key_str="+a.Wallet.PublicKey.Key, "--store_path="+a.paths.DAGDir)
 	if err != nil {
 		a.sendError("Unable to generate wallet address. Reason:", err)
-		a.log.Errorf("Unable to generate wallet address. Reason: %s", err)
+		a.log.Errorf("Unable to generate wallet address. Reason: %s", err.Error())
 	}
 
 	bytes, err := a.getFileContents(a.paths.AddressFile) // addr
 	if err != nil {
-		a.sendError("Unable to read DAG Address from filesystem. Reason:", err)
-		a.log.Errorf("Unable to read DAG Address from filesystem. Reason: %s", err)
+		a.sendError("Unable to read DAG Address from filesystem. Reason: ", err)
+		a.log.Errorf("Unable to read DAG Address from filesystem. Reason: %s", err.Error())
 	}
 
 	return string(bytes)
@@ -68,8 +68,8 @@ func (a *WalletApplication) putTXOnNetwork(amount int64, fee int, address, alias
 	// newTX is the full command to sign a new transaction
 	err := a.runCMD("org.constellation.util.wallet.CreateNewTransaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass="+storepass, "--keypass="+keypass, "--account_path="+a.paths.DAGDir, "--amount="+amountStr, "--fee="+feeStr, "--destination="+address, "--store_path="+a.paths.LastTXFile, "--priv_key_str="+a.Wallet.PrivateKey.Key, "--pub_key_str="+a.Wallet.PublicKey.Key)
 	if err != nil {
-		a.sendError("Unable to send transaction. Reason:", err)
-		a.log.Errorf("Unable to send transaction. Reason: %s", err)
+		a.sendError("Unable to send transaction. Reason: ", err)
+		a.log.Errorf("Unable to send transaction. Reason: %s", err.Error())
 	}
 	time.Sleep(10) // Will sleep for 10 sec between TXs to prevent spamming.
 }
@@ -79,10 +79,10 @@ func (a *WalletApplication) putTXOnNetwork(amount int64, fee int, address, alias
 // (a.paths.EncPrivKey)
 func (a *WalletApplication) createEncryptedKeyPairToPasswordProtectedFile(alias, storepass, keypass string) {
 
-	err := a.runCMD("org.constellation.keytool.KeyTool", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass="+storepass, "--keypass="+keypass)
+	err := a.runCMD("org.constellation.keytool.KeyTool", "--keystore="+a.paths.EncryptedDir, "--alias="+alias, "--storepass="+storepass, "--keypass="+keypass)
 	if err != nil {
-		a.sendError("Unable to write encrypted keys to filesystem. Reason:", err)
-		a.log.Fatalf("Unable to write encrypted keys to filesystem. Reason: %s", err)
+		a.sendError("Unable to write encrypted keys to filesystem. Reason: ", err)
+		a.log.Errorf("Unable to write encrypted keys to filesystem. Reason: %s", err.Error()) // TODO: change to fatal
 	}
 
 }

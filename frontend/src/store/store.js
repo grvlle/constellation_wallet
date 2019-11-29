@@ -4,6 +4,7 @@ import Vuex from 'vuex';
 
 
 import Wallet from "../../../JSONdata/wallet.json"
+
 //import ChartData from '../../../../../../../.dag/chart_data.json';
 
 Vue.use(Vuex);
@@ -11,13 +12,17 @@ export const store = new Vuex.Store({
     state: {
         errorMessage: "None",
         walletInfo: {
-        tokenAmount: Wallet.balance, 
-        usdValue: "NaN",
-        blocks: "NaN",
-        address: Wallet.address,
-        privateKey: "NaN",
-        publicKey: "NaN",
-        seed: "witch collapse practice feed shame open despair creek road again ice least"
+            version: "v1.12",
+            uiVersion: "v0.1.3 Beta",
+            email: "user@email.com",
+            imgPath: 'faces/face-0.jpg',
+            tokenAmount: Wallet.balance, 
+            usdValue: "NaN",
+            blocks: "NaN",
+            address: Wallet.address,
+            privateKey: "NaN",
+            publicKey: "NaN",
+            seed: "witch collapse practice feed shame open despair creek road again ice least"
         },
         txInfo: {
             txHistory: []
@@ -26,6 +31,11 @@ export const store = new Vuex.Store({
             blockCounter: 5,
             tokenCounter: 60,
             nodesOnlineCounter: 24
+        },
+        toggleDashboard: {
+            showNodesOnline: false,
+            showTransactions: true,
+            showThroughput: true,
         },
         pageOfItems: [],
         chartData: {

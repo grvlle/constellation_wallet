@@ -81,7 +81,7 @@
         <!--Charts-->
         <div class="row">
             
-            <div class="col-md-6 col-12">
+            <div v-if="this.$store.state.toggleDashboard.showNodesOnline" class="col-md-6 col-12">
                 <chart-card title="Nodes Online" sub-title="Since last 24 hours" :chart-data="this.$store.state.chartData.nodesOnline" chart-type="Pie">
                     <span slot="footer">
                                     <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds</span>
@@ -93,7 +93,7 @@
                 </chart-card>
             </div>
     
-            <div class="col-md-6 col-12">
+            <div v-if="this.$store.state.toggleDashboard.showTransactions" class="col-md-6 col-12">
                 <chart-card title="Transactions" sub-title="The amount of transactions sent vs. received over the last year" :chart-data="this.$store.state.chartData.transactions" :chart-options="activityChart.options">
                     <span slot="footer">
                                     <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds
@@ -107,7 +107,7 @@
     
     
     
-            <div class="col-12">
+            <div v-if="this.$store.state.toggleDashboard.showThroughput" class="col-md-6 col-12">
                 <chart-card title="Network Throughput (tps)" sub-title="24 Hours performance" :chart-data="this.$store.state.chartData.throughput" :chart-options="usersChart.options">
                     <span slot="footer">
                                     <i class="ti-reload"></i> Updated 3 minutes ago
@@ -279,5 +279,6 @@ export default {
 </script>
 
 <style>
+
 
 </style>

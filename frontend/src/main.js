@@ -27,6 +27,9 @@ Wails.Init(() => {
   new Vue({
     router,
     store: store,
-    render: h => h(App)
+    render: h => h(App),
+    mounted() {
+      this.$router.replace('/') // added this
+    }
   }).$mount("#app");
 });

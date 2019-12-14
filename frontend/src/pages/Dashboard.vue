@@ -67,7 +67,7 @@
                     <div class="numbers text-center col-17" slot="content">
                         <p>{{walletCard.title}}</p>
                         <hr>
-                        <p style="color: #c4c4c4; padding-top: 15px; background-color: #f7f7f7; font-size: 25px; font-weight: 100; font-family: 'Inconsolata';">
+                        <p style="color: #c4c4c4; padding-top: 15px; background-color: #f7f7f7; font-size: 25px; font-weight: 100;">
                             {{wallet2.address}}
                             <input type="hidden" id="testing-code" :value="wallet2.address">
                             <p-button type="info" style="margin-bottom: 15px" icon @click.native="copyTestingCode"><i class="fa fa-copy"></i>
@@ -96,8 +96,7 @@
             <div v-if="this.$store.state.toggleDashboard.showTransactions" class="col-md-6 col-12">
                 <chart-card title="Transactions" sub-title="The amount of transactions sent vs. received over the last year" :chart-data="this.$store.state.chartData.transactions" :chart-options="activityChart.options">
                     <span slot="footer">
-                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds
-                                  </span>
+                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds</span>
                     <div slot="legend">Days
                         <i class="fa fa-circle text-info"></i> TX
                         <i class="fa fa-circle text-success"></i> RX
@@ -110,8 +109,7 @@
             <div v-if="this.$store.state.toggleDashboard.showThroughput" class="col-md-6 col-12">
                 <chart-card title="Network Throughput (tps)" sub-title="24 Hours performance" :chart-data="this.$store.state.chartData.throughput" :chart-options="usersChart.options">
                     <span slot="footer">
-                                    <i class="ti-reload"></i> Updated 3 minutes ago
-                                  </span>
+                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds</span>
                     <!-- <div slot="legend">
                                     <i class="fa fa-circle text-info"></i> Open
                                     <i class="fa fa-circle text-danger"></i> Click

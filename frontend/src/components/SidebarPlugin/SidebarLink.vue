@@ -7,7 +7,7 @@
     <a class="nav-link">
       <slot>
         <i v-if="icon" :class="icon"></i>
-        <p>{{name}}</p>
+        <p class="nav-item">{{name}}</p>
       </slot>
     </a>
   </component>

@@ -1,34 +1,30 @@
 <template>
-   
-
-        <div class="boxes">
-            <div class="box">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-            <div class="box">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-            <div class="box">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-            <div class="box">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
+    <center><div class="boxes">
+        <div class="box">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
-    
-
+        <div class="box">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="box">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="box">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div></center>
 </template>
 
 <script>
@@ -38,7 +34,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .loader {
     background: #f2f2f2;
     background-repeat: no-repeat;
@@ -57,14 +53,15 @@ $colorRight: darken(#5c8df6, 15%);
 $colorLeft: darken(#5c8df6, 5%);
 $shadow: #dbe3f4;
 .boxes {
-    --size: 332px;
+    --size: 32px;
     --duration: 800ms;
+    text-align: center;
     height: calc(var(--size) * 2);
     width: calc(var(--size) * 3);
     position: relative;
     transform-style: preserve-3d;
     transform-origin: 50% 50%;
-    margin-top: calc(var(--size) * 1.5 * -1);
+    margin-top: 330px;
     transform: rotateX(60deg) rotateZ(45deg) rotateY(0deg) translateZ(0px);
     .box {
         width: var(--size);
@@ -207,7 +204,6 @@ html {
 //         }
 //     }
 // }
-
 .fadeout {
     animation: fadeout 2s forwards;
 }

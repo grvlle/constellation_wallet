@@ -80,8 +80,8 @@
                         </tbody>
                     </table>
                     <!-- <paper-table type="hover" :title="table2.title" :sub-title="table2.subTitle" :data="this.$store.state.txInfo.txHistory" :columns="table2.columns">
-                                                                                        
-                                                                                    </paper-table> -->
+                                                                                            
+                                                                                        </paper-table> -->
                     <center>
                         <jw-pagination :items="table2.data" @changePage="onChangePage"></jw-pagination>
                     </center>
@@ -181,16 +181,16 @@ export default {
                             setTimeout(() => {
                                 this.$notifications.clear();
                             }, 6000)
-                            self.$notify({
-                                component: TxSentNotification,
-                                icon: "ti-check",
-                                horizontalAlign: "right",
-                                verticalAlign: "top",
-                                type: "success",
-                                    onClick: ()=>{
-					                    this.$notifications.clear();
-				                    }
-                            })
+                        self.$notify({
+                            component: TxSentNotification,
+                            icon: "ti-check",
+                            horizontalAlign: "right",
+                            verticalAlign: "top",
+                            type: "success",
+                            onClick: () => {
+                                this.$notifications.clear();
+                            }
+                        })
                     }
                 });
             }

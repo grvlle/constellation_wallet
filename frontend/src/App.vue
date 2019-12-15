@@ -2,8 +2,8 @@
     <div>
     
         <loading-screen v-if="isLoading" :isLoading="isLoading" :fadeout="!isLoading" />
-        <center><img v-if="isLoading" src="https://constellationnetwork.io/wp-content/uploads/2019/08/Constellation-Logo-1.png" />
-            <p v-if="isLoading" style="color: #c4c4c4; margin-top: -5px;">
+        <center><img v-if="isLoading" style="margin-top: -260px;" src="https://constellationnetwork.io/wp-content/uploads/2019/08/Constellation-Logo-1.png" />
+            <p v-if="isLoading" style="color: #c4c4c4; margin-top: 60px;">
                 Getting your $DAG Wallet ready...
             </p>
         </center>

@@ -53,7 +53,7 @@
                         it, double click to highlight it, then copy and store it somewhere safe. <br><br> The Engineering team is right now investigating means of introducing bip32 encryption which would allow us to generate a more memorable Mnemonic Seed.
                         This will then be included in this wallet as well.<br><br>
     
-                        <b>Something is not working. What do I do?</b><br> Please send an e-mail to <a href="#">vito@dagwallet.com (lol fix this)</a> with a thorough explanation of the problem. Also, please include the <b>wallet.log</b> file located in your
+                        <b>Something is not working. What do I do?</b><br> Please send an e-mail to <b>@armedvito</b> with a thorough explanation of the problem. Also, please include the <b>wallet.log</b> file located in your
                         <i>.dag</i> folder.
                         <br><br>
                         <b>I thought $DAG was free to transact, why do I need to enter a fee?</b><br> $DAG transactions are indeed free. The fee is intended for companies with higher data throughput demands.

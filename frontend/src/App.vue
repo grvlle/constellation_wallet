@@ -1,9 +1,16 @@
 <template>
-    <div :class="{'nav-open': $sidebar.showSidebar}">
-        <loading-screen :isLoading="isLoading" :fadeout="!isLoading"></loading-screen>
-        <div v-if="!isLoading">
-        <notifications></notifications>
-        <router-view></router-view>
+    <div>
+    
+        <loading-screen v-if="isLoading" :isLoading="isLoading" :fadeout="!isLoading" />
+        <center><img v-if="isLoading" src="https://constellationnetwork.io/wp-content/uploads/2019/08/Constellation-Logo-1.png" />
+            <p v-if="isLoading" style="color: #c4c4c4; margin-top: -5px;">
+                Getting your $DAG Wallet ready...
+            </p>
+        </center>
+        <div v-if="!isLoading" :class="{'nav-open': $sidebar.showSidebar}">
+    
+            <notifications v-if="!isLoading"></notifications>
+            <router-view v-if="!isLoading"></router-view>
         </div>
     </div>
 </template>
@@ -24,13 +31,13 @@ export default {
     mounted() {
         setTimeout(() => {
             this.isLoading = false
-        }, 6000)
+        }, 8000)
 
         // Backend Errors
         window.wails.Events.On("error_handling", (m, err) => {
             this.$store.state.errorMessage = m + err
-             setTimeout(() => {
-                    this.$notifications.clear();
+            setTimeout(() => {
+                this.$notifications.clear();
             }, 60000)
             this.$notify({
                 component: ErrorNotification,
@@ -39,7 +46,7 @@ export default {
                 horizontalAlign: 'right',
                 verticalAlign: 'top',
                 type: 'danger',
-                onClick: ()=>{
+                onClick: () => {
                     this.$notifications.clear();
                 }
             })
@@ -124,13 +131,13 @@ export default {
 }
 
 .fadeout {
-  animation: fadeout 2s backwards;
+    animation: fadeout 2s backwards;
 }
 
 @keyframes fadeout {
-  to {
-    opacity: 0;
-    visibility: hidden;
-  }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
 }
 </style>

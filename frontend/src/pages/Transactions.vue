@@ -178,12 +178,18 @@ export default {
                                 text: 'You have sent ' + self.txAmountValidation + ' $DAG tokens to address ' + self.txAddressValidation + '.',
                                 type: 'success'
                             }),
+                            setTimeout(() => {
+                                this.$notifications.clear();
+                            }, 6000)
                             self.$notify({
                                 component: TxSentNotification,
                                 icon: "ti-check",
                                 horizontalAlign: "right",
                                 verticalAlign: "top",
-                                type: "success"
+                                type: "success",
+                                    onClick: ()=>{
+					                    this.$notifications.clear();
+				                    }
                             })
                     }
                 });

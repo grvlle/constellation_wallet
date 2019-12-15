@@ -5,7 +5,7 @@ import router from "./router/index";
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 
-import Wails from '@wailsapp/runtime';
+import * as Wails from '@wailsapp/runtime';
 import PaperDashboard from "./plugins/paperDashboard";
 import "vue-notifyjs/themes/default.css";
 import VueNotify from 'vue-notifyjs'

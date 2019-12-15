@@ -192,12 +192,18 @@ export default {
                                     text: 'You have uploaded a new wallet picture',
                                     type: 'success'
                                 }),
+                                setTimeout(() => {
+                                    this.$notifications.clear();
+                                }, 6000)
                                 this.$notify({
                                     component: ImgUploaded,
                                     icon: "ti-check",
                                     horizontalAlign: "right",
                                     verticalAlign: "top",
-                                    type: "success"
+                                    type: "success",
+                                    onClick: ()=>{
+					                    this.$notifications.clear();
+				                    }
                                 })
                         }
                     })

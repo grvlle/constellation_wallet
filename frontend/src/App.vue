@@ -1,7 +1,6 @@
 <template>
-
     <div :class="{'nav-open': $sidebar.showSidebar}">
-        <loading-screen :isLoading="isLoading" :fadeout="!isLoading" />
+        <loading-screen :isLoading="isLoading" :fadeout="!isLoading"></loading-screen>
         <div v-if="!isLoading">
         <notifications></notifications>
         <router-view></router-view>
@@ -30,13 +29,19 @@ export default {
         // Backend Errors
         window.wails.Events.On("error_handling", (m, err) => {
             this.$store.state.errorMessage = m + err
+             setTimeout(() => {
+                    this.$notifications.clear();
+            }, 60000)
             this.$notify({
                 component: ErrorNotification,
                 timeout: 500000,
                 icon: "fa fa-times",
                 horizontalAlign: 'right',
                 verticalAlign: 'top',
-                type: 'danger'
+                type: 'danger',
+                onClick: ()=>{
+                    this.$notifications.clear();
+                }
             })
         });
 

@@ -23,7 +23,7 @@ module.exports = {
       .test(/\.(woff2?|eot|ttf|otf|svg)(\?.*)?$/i)
       .use("url-loader")
       .loader("url-loader")
-      .options({
+      .options({  
         limit: limit
       });
   },

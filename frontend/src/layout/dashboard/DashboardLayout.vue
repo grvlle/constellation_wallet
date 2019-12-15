@@ -20,7 +20,7 @@
 
         <p class="nav-item">
           <a @click="notifyVue2('top', 'right')" class="nav-link"
-            ><i class="fa fa-trophy"></i>The League</a
+            ><i class="fa fa-trophy"></i>Team</a
           >
         </p>
         <p class="nav-item">

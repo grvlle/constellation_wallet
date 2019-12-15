@@ -4,12 +4,11 @@
              class="nav-item"
              v-bind="$attrs"
              tag="li">
-    <a class="nav-link">
+    <!-- <a class="nav-link"> -->
       <slot>
-        <i v-if="icon" :class="icon"></i>
-        <p class="nav-item">{{name}}</p>
+        <p class="nav-item"><a class="nav-link"><i v-if="icon" :class="icon"></i> {{name}}</a></p>
       </slot>
-    </a>
+    <!-- </a> -->
   </component>
 </template>
 <script>
@@ -61,4 +60,5 @@ export default {
 };
 </script>
 <style>
+@import url('https://fonts.googleapis.com/css?family=Poppins&display=swap');
 </style>

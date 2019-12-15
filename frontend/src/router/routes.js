@@ -1,8 +1,6 @@
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
 // GeneralViews
 import NotFound from "@/pages/NotFoundPage.vue";
-
-// Admin pages
 import Dashboard from "@/pages/Dashboard.vue";
 import WalletInformation from "@/pages/WalletInformation.vue";
 import About from "@/pages/About.vue";

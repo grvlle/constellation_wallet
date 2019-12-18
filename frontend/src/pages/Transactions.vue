@@ -143,7 +143,7 @@ export default {
                     progressSteps: ['1', '2'],
                 }).queue([{
                         title: "Are you sure?",
-                        html: 'You are about to send <b>' + self.txAmountValidation + '</b> $DAG tokens to ' + self.txAddressValidation.toUpperCase(),
+                        html: 'You are about to send <b>' + self.txAmountValidation + '</b> $DAG tokens to ' + self.txAddressValidation,
                         type: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#5FD1FB',
@@ -159,7 +159,7 @@ export default {
                         showCancelButton: true,
                         inputValidator: (value) => {
                             return new Promise((resolve) => {
-                                if (value < 0 || value >= 3711998690) {
+                                if (value < 0 || value > 3711998690 || isNaN(parseInt(value))) {
                                     resolve('Please enter a value between 0 and 3711998690')
                                 } else {
                                     resolve()
@@ -250,6 +250,7 @@ export default {
             verifyPrefix,
         },
         txAmountValidation: {
+            required,
             inBetween: between(0.00000001, 3711998690),
         }
     },

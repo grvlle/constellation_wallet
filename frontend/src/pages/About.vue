@@ -3,10 +3,10 @@
         <div class="row">
             <div class="col-md-6">
                 <card title="About" sub-title="Get to know the Constellation Wallet">
-                    <p>Thank you for using the Constellation Desktop Wallet!<br><br> The Constellation Desktop Wallet was built by our community member <a href="#">@armedvito</a> and is an application overlay that integrates with the wallet binary produced by
+                    <p>Thank you for using the Constellation Desktop Wallet!<br><br> The Constellation Desktop Wallet was built by our community member <b>@armedvito</b> and is an application overlay that integrates with the wallet binary produced by
                         the Constellation Engineering team. This means that all major aspects around the security of the wallet is managed by the team, as well as yourself - since you will be responsible for handling the wallet backup and private key (see
-                        the <a href="#">FAQ</a> for best practices). <br><br> This is the first iterration of the Desktop Wallet, with many more versions and alternatives to come. If you were to experience any errors with it (you will), or have any feature
-                        requests - then please reach out to <a href="#">@armedvito</a> on <a href="#">Telegram</a> or <a href="#">Twitter</a> DMs. No matter the bug you may run into with the application, keep in mind that <b>your funds will never be jeopordized by this software</b>,
+                        the <b>FAQ</b> for best practices). <br><br> This is the first iterration of the Desktop Wallet, with many more versions and alternatives to come. If you were to experience any errors with it (you will), or have any feature
+                        requests - then please reach out to <b>@armedvito</b> on <b>Telegram</b> or <b>Twitter</b> DMs. No matter the bug you may run into with the application, keep in mind that <b>your funds will never be jeopordized by this software</b>,
                         so don't panic if there's an error message.<br><br>
     
                     </p>

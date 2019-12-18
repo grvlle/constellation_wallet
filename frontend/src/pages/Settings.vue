@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div id="app" class="row">
     <div class="col-md-6">
       <card>
         <h4 class="card-title">Settings</h4>

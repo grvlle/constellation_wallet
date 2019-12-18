@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div id="app" class="row">
       <div class="col-xl-6 col-lg-7 col-md-6">
         
         <user-card>

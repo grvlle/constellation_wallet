@@ -40,6 +40,7 @@
     "eslint-plugin-vue": "^5.0.0",
     "eventsource-polyfill": "^0.9.6",
     "json-loader": "^0.5.7",
+    "prerender-spa-plugin": "^3.4.0",
     "vue-template-compiler": "^2.5.21",
     "webpack-hot-middleware": "^2.24.3"
   },

@@ -1,11 +1,6 @@
 <template>
 
-    <div>
-    
-        
-        
-    
-        
+    <div id="app">        
     
         <div class="row">
             <div class="col-md-6 col-xl-4">

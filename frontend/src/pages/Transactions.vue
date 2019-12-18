@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div id="app" class="row">
         <div class="col-12">
             <card :title="table1.title" :subTitle="table1.subTitle">
                 <!-- <transaction-form> -->

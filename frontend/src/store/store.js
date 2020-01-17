@@ -1,12 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-
-
-import Wallet from "../../../JSONdata/wallet.json"
-
-//import ChartData from '../../../../../../../.dag/chart_data.json';
-
 Vue.use(Vuex);
 export const store = new Vuex.Store({
     state: {
@@ -20,10 +14,10 @@ export const store = new Vuex.Store({
             uiVersion: "v0.1.3 Beta",
             email: "user@email.com",
             imgPath: 'faces/face-0.jpg',
-            tokenAmount: Wallet.balance, 
+            tokenAmount: "1000000", 
             usdValue: "NaN",
             blocks: "NaN",
-            address: Wallet.address,
+            address: "NaN",
             privateKey: "NaN",
             publicKey: "NaN",
             seed: "witch collapse practice feed shame open despair creek road again ice least"

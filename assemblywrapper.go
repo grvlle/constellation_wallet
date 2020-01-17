@@ -78,8 +78,9 @@ func (a *WalletApplication) createAddressFromPublicKey() string {
 		a.sendError("Unable to read DAG Address from filesystem. Reason: ", err)
 		a.log.Errorf("Unable to read DAG Address from filesystem. Reason: %s", err.Error())
 	}
+	formattedAddress := string((bytes[1 : len(bytes)-1]))
 
-	return string(bytes)
+	return formattedAddress
 }
 
 // putTXOnNetwork will put an actual transaction on the network. This is called from the

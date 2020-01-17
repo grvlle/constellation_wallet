@@ -69,6 +69,11 @@ export default {
       this.$store.commit("updateTxHistory", txObject);
     });
 
+    // Login.vue sockets
+    window.wails.Events.On("registeredLogin", event => {
+        
+        });
+
     // Dashboard.vue sockets
     window.wails.Events.On("token", amount => {
       this.$store.state.walletInfo.tokenAmount = amount;
@@ -102,9 +107,10 @@ export default {
     });
 
     // Settings.vue sockets
-    window.wails.Events.On("wallet_keys", (privateKey, publicKey) => {
+    window.wails.Events.On("wallet_keys", (privateKey, publicKey, address) => {
       this.$store.state.walletInfo.privateKey = privateKey;
       this.$store.state.walletInfo.publicKey = publicKey;
+      this.$store.state.walletInfo.address = address;
     });
   }
 };

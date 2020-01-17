@@ -19,26 +19,32 @@
       </button>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
-          <p class="nav-item">
+          <!-- <p class="nav-item">
             <drop-down
               class="nav-item"
-              title="Notifications"
+              title="Logout"
               title-classes="nav-link"
-              icon="ti-bell"
+              icon="ti-lock"
             >
               <a class="dropdown-item">Empty</a>
             </drop-down>
-          </p>
+          </p>-->
+
+            
+            <li class="nav-item">
+              <a href="#" class="nav-link" @click="logout">
+              <i class="ti-lock"></i>
+              <p class="nav-item">LOGOUT</p>
+              </a>
+            </li>
           
           <slot>
-          <li class="nav-item">
-              
-                <router-link class="nav-link" to="/settings">
-                  <i class="ti-settings"></i>
-                  <p class="nav-item">SETTINGS</p>
-                </router-link>
-              
-          </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/settings">
+                <i class="ti-settings"></i>
+                <p class="nav-item">SETTINGS</p>
+              </router-link>
+            </li>
           </slot>
         </ul>
       </div>
@@ -59,6 +65,10 @@ export default {
     };
   },
   methods: {
+    logout() {
+      this.$store.state.app.isLoading = false;
+      this.$store.state.app.isLoggedIn = false;
+    },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },

@@ -75,7 +75,7 @@ func (a *WalletApplication) removeKeyArtifacts() error {
 func (a *WalletApplication) passKeysToFrontend() {
 	go func() {
 		for {
-			a.RT.Events.Emit("wallet_keys", a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key)
+			a.RT.Events.Emit("wallet_keys", a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key, a.Wallet.Address)
 			time.Sleep(5 * time.Second)
 		}
 	}()

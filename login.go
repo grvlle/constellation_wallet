@@ -27,7 +27,8 @@ func (a *WalletApplication) CreateUser(username, password string) bool {
 		return false
 	}
 
-	a.NewWallet()
+	//a.NewWallet()
+	a.UserLoggedIn = false
 
 	return true
 }
@@ -36,8 +37,8 @@ func (a *WalletApplication) Login(username, password string) bool {
 	var wallet Wallet
 	a.DB.First(&wallet, "username = ?", username) // find user in database
 
-	a.UserLoggedIn = a.CheckAccess(password, wallet.PasswordHash)
-	if a.UserLoggedIn {
+	if !a.UserLoggedIn {
+		a.UserLoggedIn = a.CheckAccess(password, wallet.PasswordHash)
 		err := a.initWallet()
 		if err != nil {
 			a.log.Errorf("Unable to initialize wallet object. Reason: ", err)

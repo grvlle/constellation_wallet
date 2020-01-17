@@ -16,19 +16,19 @@ func (a *WalletApplication) UploadImage() string {
 
 	a.log.Info("Path to user uploaded image: " + filePath)
 	err := CopyFile(filePath, a.paths.ImageDir+filename)
-	if err != nil {
+	if err != nil && filePath != "" {
 		a.log.Errorf("Unable to copy image. ", err)
 		a.sendError("Unable to change Image. ", err)
 		return "None"
 	}
 
 	file, err := os.Open(filePath)
-	defer file.Close()
-	if err != nil {
+	if err != nil && filePath != "" {
 		a.log.Errorf("Unable to open image. ", err)
 		a.sendError("Unable to find Image on the path provided. ", err)
 		return "None"
 	}
+	defer file.Close()
 
 	img, _, err := image.DecodeConfig(file)
 	if err != nil {

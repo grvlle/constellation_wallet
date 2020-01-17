@@ -11,6 +11,10 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state: {
         errorMessage: "None",
+        app: {
+            isLoading: false,
+            isLoggedIn: false
+        },
         walletInfo: {
             version: "v1.12",
             uiVersion: "v0.1.3 Beta",

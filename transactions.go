@@ -138,8 +138,12 @@ func (a *WalletApplication) initTransactionHistory() {
 		}
 	}()
 
-	writeToJSON("txhistory.json", txObjectsReversed)
-	writeToJSON("ts", time.Now().Format("Mon Jan _2 15:04:05 2006"))
+	// TODO: Add txhistory to database
+	err := writeToJSON("txhistory", txObjectsReversed)
+	if err != nil {
+		a.sendError("Unable to write txhistory to fs. Reason:", err)
+		a.log.Errorf("Unable to read txhistory to fs. Reason: %s", err)
+	}
 
 }
 

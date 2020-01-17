@@ -4,8 +4,8 @@ import (
 	"io"
 	"os"
 	"os/user"
-	"path/filepath"
 
+	"github.com/jinzhu/gorm"
 	"github.com/leaanthony/mewn"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
@@ -37,6 +37,7 @@ type WalletApplication struct {
 	RT     *wails.Runtime
 	log    *logrus.Logger
 	Wallet *Wallet
+	DB     *gorm.DB
 	paths  struct {
 		HomeDir        string
 		DAGDir         string
@@ -48,35 +49,36 @@ type WalletApplication struct {
 		AddressFile    string
 		ImageDir       string
 	}
+	UserLoggedIn bool
 }
 
 // WailsInit initializes the Client and Server side bindings
 func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
+	var err error
 
+	a.UserLoggedIn = false
 	a.RT = runtime
 	a.log = logrus.New()
+	a.DB, err = gorm.Open("sqlite3", "/home/vito/.dag/store.db")
+	if err != nil {
+		a.log.Panicf("failed to connect database", err)
+	}
+	// Migrate the schema
+	a.DB.AutoMigrate(&Wallet{}, &TXHistory{})
 
 	a.initDirectoryStructure()
 	a.initLogger()
-	a.initWallet()
-	a.initTransactionHistory()
-
-	// Initializes a struct containing all Chart Data on the dashboard
-	chartData := a.ChartDataInit()
-
-	// Below methods are continously updating the client side modules.
-	a.nodeStats(chartData)
-	a.txStats(chartData)
-	a.networkStats(chartData)
-	a.blockAmount()
-	a.tokenAmount()
-	a.pricePoller()
-	a.passKeysToFrontend()
-
 	// Monitors the .dag folder for file manipulation
-	a.monitorFileState()
-
+	err = a.monitorFileState()
+	if err != nil {
+		return err
+	}
 	return nil
+}
+
+// WailsShutdown is called when the application is closed
+func (a *WalletApplication) WailsShutdown() {
+	a.DB.Close()
 }
 
 // Write log to STDOUT and a.paths.DAGDir/wallet.log
@@ -94,7 +96,7 @@ func (a *WalletApplication) initLogger() {
 }
 
 // Initializes the Directory Structure and stores the paths to the WalletApplication struct.
-func (a *WalletApplication) initDirectoryStructure() error {
+func (a *WalletApplication) initDirectoryStructure() {
 
 	user, err := user.Current()
 	if err != nil {
@@ -104,39 +106,53 @@ func (a *WalletApplication) initDirectoryStructure() error {
 
 	a.paths.HomeDir = user.HomeDir             // Home directory of the user
 	a.paths.DAGDir = a.paths.HomeDir + "/.dag" // DAG directory for configuration files and wallet specific data
-	a.paths.EncryptedDir = a.paths.DAGDir + "/encrypted_key"
-	a.paths.DecKeyFile = a.paths.DAGDir + "/private_decrypted.pem" // DAG wallet keys
-	a.paths.PubKeyFile = a.paths.EncryptedDir + "/pub.pem"
-	a.paths.EncPrivKeyFile = a.paths.EncryptedDir + "/priv.p12"
+	a.paths.EncryptedDir = a.paths.DAGDir + "/keys"
+	a.paths.DecKeyFile = a.paths.EncryptedDir + "/private_decrypted" // DAG wallet keys
+	a.paths.PubKeyFile = a.paths.EncryptedDir + "/decrypted_keystore.pub"
+	a.paths.EncPrivKeyFile = a.paths.EncryptedDir + "/key.p12"
 	a.paths.AddressFile = a.paths.DAGDir + "/addr"  // DAG wallet keys
-	a.paths.LastTXFile = a.paths.DAGDir + "/acct"   // Account information
 	a.paths.ImageDir = "./frontend/src/assets/img/" // Image Folder
 
 	a.log.Info("DAG Directory: ", a.paths.DAGDir)
 
-	err = os.MkdirAll(a.paths.DAGDir, os.ModePerm)
+	err = a.directoryCreator(a.paths.DAGDir, a.paths.EncryptedDir)
 	if err != nil {
-		return err
+		a.sendError("Unable to set up directory structure. Make sure you run the wallet with the right priviledges. Reason: ", err)
+		a.log.Errorf("Unable to set up directory structure. Make sure you run the wallet with the right priviledges. Reason: ", err)
 	}
-	path := filepath.Join(a.paths.DAGDir, "txhistory.json")
-	f, err := os.OpenFile(
-		path,
-		os.O_CREATE|os.O_WRONLY,
-		0666,
-	)
-	defer f.Close()
-
-	if !fileExists(path) {
-		f.WriteString("{}") // initialies empty JSON object for frontend parsing
-		f.Sync()
-	}
-
-	return nil
 }
 
-// initWallet initializes the Wallet struct and the
-func (a *WalletApplication) initWallet() *Wallet {
-	return a.NewWallet()
+// initWallet initializes the Wallet data post-login.
+func (a *WalletApplication) initWallet() error {
+
+	a.Wallet = &Wallet{
+		Balance:          1024155,
+		AvailableBalance: 1012233,
+		Nonce:            420,
+		TotalBalance:     1012420,
+		Delegated:        42,
+		Deposit:          0,
+		Address:          "",
+	}
+
+	a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key = a.getKeys()
+	a.Wallet.Address = a.createAddressFromPublicKey()
+
+	//a.initTransactionHistory()
+
+	// Initializes a struct containing all Chart Data on the dashboard
+	chartData := a.ChartDataInit()
+
+	// Below methods are continously updating the client side modules.
+	a.nodeStats(chartData)
+	a.txStats(chartData)
+	a.networkStats(chartData)
+	a.blockAmount()
+	a.tokenAmount()
+	a.pricePoller()
+	a.passKeysToFrontend()
+
+	return nil
 }
 
 func (a *WalletApplication) sendError(msg string, err error) {

@@ -86,6 +86,16 @@ func writeToJSON(filename string, data interface{}) error {
 	return nil
 }
 
+func (a *WalletApplication) directoryCreator(directories ...string) error {
+	for _, d := range directories {
+		err := os.MkdirAll(d, os.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (a *WalletApplication) getFileContents(filePath string) ([]byte, error) {
 	path := filepath.Join(filePath)
 	fileContents, err := ioutil.ReadFile(path)

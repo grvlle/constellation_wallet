@@ -177,7 +177,6 @@ func (a *WalletApplication) pricePoller() {
 				a.sendError("Unable to poll token evaluation. Reason: ", err)
 				a.log.Warnf("Unable to poll token evaluation. Reason: ", err.Error) // Log this
 			}
-			defer resp.Body.Close()
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
 				a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
@@ -204,20 +203,6 @@ func UpdateCounter(countFrom int, counter string, unit time.Duration, runtime *w
 			runtime.Events.Emit(counter, i)
 			time.Sleep(unit)
 			continue
-		}
-	}()
-}
-
-// initSocketData will push the wallet data to be displayed on the frontend twice
-// to bypass a bug present in the Wails lib. This will allow us to display data
-// as soon as the wallet App is started.
-func (a *WalletApplication) initSocketData(frontendFunction string, data ...interface{}) {
-
-	// Need to emit twice for it to stick. Bug with the Wails lib.
-	go func() {
-		for i := 0; i < 2; i++ {
-			a.RT.Events.Emit(frontendFunction, data)
-			time.Sleep(1 * time.Second)
 		}
 	}()
 }

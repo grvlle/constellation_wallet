@@ -8,8 +8,8 @@ import (
 // Wallet holds all wallet information.
 type Wallet struct {
 	gorm.Model
-	Username         string
-	PasswordHash     string
+	Username         string      `gorm:"unique;not null"`
+	PasswordHash     string      `gorm:"unique;not null"`
 	Addresses        []Address   `sql:"-"`
 	TXHistory        []TXHistory `sql:"-"`
 	ProfilePicture   string
@@ -28,12 +28,8 @@ type Wallet struct {
 			EUR float64 `json:"EUR,omitempty"`
 		} `json:"DAG"`
 	} `json:"token_price"`
-	PrivateKey struct {
-		Key string `json:"key"`
-	} `json:"privateKey"`
-	PublicKey struct {
-		Key string `json:"key"`
-	} `json:"publicKey"`
+	PrivateKey string
+	PublicKey  string
 }
 
 type TXHistory struct {

@@ -72,10 +72,11 @@ func (a *WalletApplication) removeKeyArtifacts() error {
 
 // PassKeysToFrontend emits the keys to the settings.Vue component on a
 // 5 second interval
-func (a *WalletApplication) passKeysToFrontend() {
+func (a *WalletApplication) passKeysToFrontend(privateKey, publicKey string) {
+	a.WidgetRunning.PassKeysToFrontend = true
 	go func() {
 		for {
-			a.RT.Events.Emit("wallet_keys", a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key, a.Wallet.Address)
+			a.RT.Events.Emit("wallet_keys", privateKey, publicKey, a.Wallet.Address)
 			time.Sleep(5 * time.Second)
 		}
 	}()

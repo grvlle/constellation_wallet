@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"os/user"
@@ -19,7 +20,7 @@ func main() {
 	css := mewn.String("./frontend/dist/app.css")
 
 	frontend := wails.CreateApp(&wails.AppConfig{
-		Width:  1524,
+		Width:  1530,
 		Height: 815,
 		Title:  "Molly - Constellation Desktop Wallet [Beta]",
 		JS:     js,
@@ -49,7 +50,12 @@ type WalletApplication struct {
 		AddressFile    string
 		ImageDir       string
 	}
-	UserLoggedIn bool
+	UserLoggedIn  bool
+	UserLoggedOut int
+	WidgetRunning struct {
+		PassKeysToFrontend bool
+		DashboardWidgets   bool
+	}
 }
 
 // WailsInit initializes the Client and Server side bindings
@@ -68,6 +74,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 
 	a.initDirectoryStructure()
 	a.initLogger()
+
 	// Monitors the .dag folder for file manipulation
 	err = a.monitorFileState()
 	if err != nil {
@@ -123,23 +130,52 @@ func (a *WalletApplication) initDirectoryStructure() {
 }
 
 // initWallet initializes the Wallet data post-login.
-func (a *WalletApplication) initWallet() error {
+func (a *WalletApplication) initNewWallet() error {
+	fmt.Println("NEW")
 
 	a.Wallet = &Wallet{
-		Balance:          1024155,
-		AvailableBalance: 1012233,
-		Nonce:            420,
-		TotalBalance:     1012420,
-		Delegated:        42,
+		Balance:          0,
+		AvailableBalance: 0,
+		Nonce:            0,
+		TotalBalance:     0,
+		Delegated:        0,
 		Deposit:          0,
 		Address:          "",
 	}
 
-	a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key = a.getKeys()
+	a.Wallet.PrivateKey, a.Wallet.PublicKey = a.getKeys()
 	a.Wallet.Address = a.createAddressFromPublicKey()
+
+	a.DB.Model(&a.Wallet).Update("Address", a.Wallet.Address)
 
 	//a.initTransactionHistory()
 
+	a.passKeysToFrontend(a.Wallet.PrivateKey, a.Wallet.PublicKey)
+
+	if !a.WidgetRunning.DashboardWidgets {
+		a.initDashboardWidgets()
+	}
+
+	return nil
+}
+
+func (a *WalletApplication) initExistingWallet(username string) {
+	fmt.Println("EXISTING")
+	a.Wallet = &Wallet{}
+	a.DB.First(&a.Wallet, "username = ?", username)
+	// a.Wallet.PrivateKey, a.Wallet.PublicKey = a.getKeys()
+	// a.Wallet.Address = a.createAddressFromPublicKey()
+	if !a.WidgetRunning.DashboardWidgets {
+		a.initDashboardWidgets()
+	}
+
+	if !a.WidgetRunning.PassKeysToFrontend {
+		a.passKeysToFrontend(a.Wallet.PrivateKey, a.Wallet.PublicKey)
+	}
+
+}
+
+func (a *WalletApplication) initDashboardWidgets() {
 	// Initializes a struct containing all Chart Data on the dashboard
 	chartData := a.ChartDataInit()
 
@@ -150,9 +186,8 @@ func (a *WalletApplication) initWallet() error {
 	a.blockAmount()
 	a.tokenAmount()
 	a.pricePoller()
-	a.passKeysToFrontend()
 
-	return nil
+	a.WidgetRunning.DashboardWidgets = true
 }
 
 func (a *WalletApplication) sendError(msg string, err error) {

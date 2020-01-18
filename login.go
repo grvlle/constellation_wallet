@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -8,8 +10,20 @@ import (
 
 // CreateUser is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateUser(username, password string) bool {
-	var wallet Wallet
+
+	var count int
+	a.DB.Model(&Wallet{}).Where("username = ?", username).Count(&count)
+
+	if count != 0 {
+		err1 := errors.New("Please try with another username.")
+		a.log.Errorln("Unable to create user. There's already a user with that username.")
+		a.sendError("Unable to create user. There's already a user with that username ", err1)
+		return false
+	}
+
 	hashed, err := a.GenerateSaltedHash(password)
+
+	var wallet Wallet
 	if err != nil {
 		a.log.Errorf("Unable to generate password hash. Reason: ", err)
 		a.sendError("Unable to generate password hash. Reason: ", err)
@@ -27,7 +41,12 @@ func (a *WalletApplication) CreateUser(username, password string) bool {
 		return false
 	}
 
-	//a.NewWallet()
+	err = a.initNewWallet()
+	if err != nil {
+		a.log.Errorf("Unable to initialize wallet object. Reason: ", err)
+		a.sendError("Unable to initialize wallet object. Reason: ", err)
+	}
+
 	a.UserLoggedIn = false
 
 	return true
@@ -35,17 +54,22 @@ func (a *WalletApplication) CreateUser(username, password string) bool {
 
 func (a *WalletApplication) Login(username, password string) bool {
 	var wallet Wallet
+
 	a.DB.First(&wallet, "username = ?", username) // find user in database
 
-	if !a.UserLoggedIn {
-		a.UserLoggedIn = a.CheckAccess(password, wallet.PasswordHash)
-		err := a.initWallet()
-		if err != nil {
-			a.log.Errorf("Unable to initialize wallet object. Reason: ", err)
-			a.sendError("Unable to initialize wallet object. Reason: ", err)
-		}
+	a.UserLoggedIn = a.CheckAccess(password, wallet.PasswordHash)
+
+	if !a.UserLoggedIn && wallet.Username == username {
+		a.UserLoggedIn = false
+	} else if a.UserLoggedIn && wallet.Username == username {
+		a.initExistingWallet(username)
 	}
+
 	return a.UserLoggedIn
+}
+
+func (a *WalletApplication) LogOut() {
+	a.UserLoggedIn = true
 }
 
 func (a *WalletApplication) GenerateSaltedHash(s string) (string, error) {

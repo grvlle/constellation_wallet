@@ -18,8 +18,7 @@ func (a *WalletApplication) runWalletCMD(scalaFunc string, scalaArgs ...string) 
 	cmds := []string{"-cp", "cl-wallet.jar", scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
-	fmt.Println(cmd)
-	a.log.Debugln(cmd)
+	a.log.Infoln("Running command: ", cmd)
 
 	var out bytes.Buffer
 	var stderr bytes.Buffer
@@ -43,8 +42,7 @@ func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string)
 	cmds := []string{"-jar", "cl-keytool.jar", scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
-	fmt.Println(cmd)
-	a.log.Debugln(cmd)
+	a.log.Infoln("Running command: ", cmd)
 
 	var out bytes.Buffer
 	var stderr bytes.Buffer
@@ -66,7 +64,7 @@ func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string)
 
 // java -cp constellation-assembly-1.0.12.jar org.constellation.util.wallet.GenerateAddress --pub_key_str=<base64 hash of pubkey> --store_path=<path to file where address will be stored>
 func (a *WalletApplication) createAddressFromPublicKey() string {
-	fmt.Println(a.Wallet.PublicKey.Key)
+	a.log.Infoln("Creating DAG Address from Public Key...")
 	err := a.runWalletCMD("org.constellation.util.wallet.GenerateAddress", "--pub_key_str="+"MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEwL78JcMnzMHM+bHm2NjlcF6PghRAvZU//Nwn/6O9Ckh6QBApecq3ybAFaOWPRyADy6lIKRRvGw+YxL714+lO1Q==", "--store_path="+a.paths.AddressFile)
 	if err != nil {
 		a.sendError("Unable to generate wallet address. Reason:", err)
@@ -96,7 +94,7 @@ func (a *WalletApplication) putTXOnNetwork(amount int64, fee int, address, alias
 	feeStr := strconv.Itoa(fee)
 
 	// newTX is the full command to sign a new transaction
-	err := a.runWalletCMD("org.constellation.util.wallet.CreateNewTransaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass="+storepass, "--keypass="+keypass, "--account_path="+a.paths.DAGDir, "--amount="+amountStr, "--fee="+feeStr, "--destination="+address, "--store_path="+a.paths.LastTXFile, "--priv_key_str="+a.Wallet.PrivateKey.Key, "--pub_key_str="+a.Wallet.PublicKey.Key)
+	err := a.runWalletCMD("org.constellation.util.wallet.CreateNewTransaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass="+storepass, "--keypass="+keypass, "--account_path="+a.paths.DAGDir, "--amount="+amountStr, "--fee="+feeStr, "--destination="+address, "--store_path="+a.paths.LastTXFile, "--priv_key_str="+a.Wallet.PrivateKey, "--pub_key_str="+a.Wallet.PublicKey)
 	if err != nil {
 		a.sendError("Unable to send transaction. Reason: ", err)
 		a.log.Errorf("Unable to send transaction. Reason: %s", err.Error())

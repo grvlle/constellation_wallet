@@ -7,17 +7,19 @@ export const store = new Vuex.Store({
         errorMessage: "None",
         app: {
             isLoading: false,
-            isLoggedIn: false
+            isLoggedIn: false,
+            register: false,
+            margin: 250,
         },
         walletInfo: {
             version: "v1.12",
             uiVersion: "v0.1.3 Beta",
             email: "user@email.com",
             imgPath: 'faces/face-0.jpg',
-            tokenAmount: "1000000", 
+            tokenAmount: 0, 
             usdValue: "NaN",
             blocks: "NaN",
-            address: "NaN",
+            address: "N/A",
             privateKey: "NaN",
             publicKey: "NaN",
             seed: "witch collapse practice feed shame open despair creek road again ice least"

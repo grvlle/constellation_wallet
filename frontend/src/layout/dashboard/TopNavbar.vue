@@ -29,21 +29,19 @@
               <a class="dropdown-item">Empty</a>
             </drop-down>
           </p>-->
+          <li class="nav-item">
+            <router-link class="nav-link" to="/settings">
+              <i class="ti-settings"></i>
+              <p class="nav-item">SETTINGS</p>
+            </router-link>
+          </li>
 
-            
-            <li class="nav-item">
-              <a href="#" class="nav-link" @click="logout">
-              <i class="ti-lock"></i>
-              <p class="nav-item">LOGOUT</p>
-              </a>
-            </li>
-          
           <slot>
             <li class="nav-item">
-              <router-link class="nav-link" to="/settings">
-                <i class="ti-settings"></i>
-                <p class="nav-item">SETTINGS</p>
-              </router-link>
+              <a href="#" class="nav-link" @click="logout">
+                <i class="ti-lock"></i>
+                <p class="nav-item">LOGOUT</p>
+              </a>
             </li>
           </slot>
         </ul>
@@ -66,6 +64,7 @@ export default {
   },
   methods: {
     logout() {
+      window.backend.WalletApplication.LogOut()
       this.$store.state.app.isLoading = false;
       this.$store.state.app.isLoggedIn = false;
     },

@@ -9,7 +9,7 @@ export const store = new Vuex.Store({
             isLoading: false,
             isLoggedIn: false,
             register: false,
-            margin: 250,
+            margin: 100,
         },
         walletInfo: {
             version: "v1.12",
@@ -20,6 +20,7 @@ export const store = new Vuex.Store({
             usdValue: "NaN",
             blocks: "NaN",
             address: "N/A",
+            keystorePath: "",
             privateKey: "NaN",
             publicKey: "NaN",
             seed: "witch collapse practice feed shame open despair creek road again ice least"

@@ -70,8 +70,8 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int, address st
 // to put the actual transaction on chain. It'll then call updateLastTransaction in order
 // to display transaction history to the user.
 func (a *WalletApplication) sendTransaction(amount int64, fee int, address string) {
-	a.putTXOnNetwork(amount, fee, address, "alias", "storepass", "fakepassword") // TODO: implement password protection for the tx
-	a.updateLastTransactions()
+	a.putTXOnNetwork(amount, fee, address, "alias", "storepass", "keypass") // TODO: implement password protection for the tx
+	//a.updateLastTransactions()
 }
 
 // updateLastTransaction will read the contents of txhistory.json into memory and pass it onto

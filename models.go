@@ -8,20 +8,21 @@ import (
 // Wallet holds all wallet information.
 type Wallet struct {
 	gorm.Model
-	Username         string      `gorm:"unique;not null"`
-	PasswordHash     string      `gorm:"unique;not null"`
-	Addresses        []Address   `sql:"-"`
-	TXHistory        []TXHistory `sql:"-"`
-	ProfilePicture   string
-	WalletTag        string
-	Balance          int    `json:"balance"`
-	AvailableBalance int    `json:"available_balance"`
-	Nonce            int    `json:"nonce"`
-	TotalBalance     int    `json:"total_balance"`
-	Delegated        int    `json:"delegated"`
-	Deposit          int    `json:"deposit"`
-	Address          string `json:"address"`
-	TokenPrice       struct {
+	KeystorePasswordHash string
+	KeyPasswordHash      string
+	KeyStorePath         string
+	Addresses            []Address   `sql:"-"`
+	TXHistory            []TXHistory `sql:"-"`
+	ProfilePicture       string
+	WalletTag            string
+	Balance              int    `json:"balance"`
+	AvailableBalance     int    `json:"available_balance"`
+	Nonce                int    `json:"nonce"`
+	TotalBalance         int    `json:"total_balance"`
+	Delegated            int    `json:"delegated"`
+	Deposit              int    `json:"deposit"`
+	Address              string `json:"address"`
+	TokenPrice           struct {
 		DAG struct {
 			BTC float64 `json:"BTC,omitempty"`
 			USD float64 `json:"USD,omitempty"`
@@ -41,7 +42,3 @@ type TXHistory struct {
 }
 
 type Address string
-
-func (a *WalletApplication) initDB() {
-	a.DB.Model(&Wallet{}).Related(&TXHistory{})
-}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -174,8 +175,9 @@ func (a *WalletApplication) pricePoller() {
 		for {
 			resp, err := http.Get(url)
 			if err != nil {
+				fmt.Println(resp)
 				a.sendError("Unable to poll token evaluation. Reason: ", err)
-				a.log.Warnf("Unable to poll token evaluation. Reason: ", err.Error) // Log this
+				a.log.Warnf("Unable to poll token evaluation. Reason: ", err) // Log this
 			}
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {

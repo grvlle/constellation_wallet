@@ -2,17 +2,7 @@
   <div>
     <login-screen v-if="!this.$store.state.app.isLoggedIn" :isLoggedIn="!this.$store.state.app.isLoggedIn" />
     <loading-screen v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn" :isLoading="this.$store.state.app.isLoading" :fadeout="!this.$store.state.app.isLoading" />
-    <center>
-      <img
-        v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-        style="margin-top: -260px;"
-        src="https://constellationnetwork.io/wp-content/uploads/2019/08/Constellation-Logo-1.png"
-      />
-      <p
-        v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-        style="color: #c4c4c4; margin-top: 60px;"
-      >Getting your $DAG Wallet ready...</p>
-    </center>
+
 
     <div v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn" :class="{'nav-open': $sidebar.showSidebar}">
       <notifications v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"></notifications>

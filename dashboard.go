@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -137,10 +136,10 @@ func (a *WalletApplication) networkStats(cd *ChartData) {
 }
 
 // TokenAmount polls the token balance and stores it in the Wallet.Balance object
-func (a *WalletApplication) tokenAmount() {
+func (a *WalletApplication) tokenAmount(wallet *Wallet) {
 	go func() {
 		for {
-			a.RT.Events.Emit("token", a.Wallet.Balance)
+			a.RT.Events.Emit("token", wallet.Balance)
 			UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
 			time.Sleep(updateIntervalToken * time.Second)
 		}
@@ -163,7 +162,7 @@ func (a *WalletApplication) blockAmount() {
 // PricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token
 // balance evaluation against USD.
-func (a *WalletApplication) pricePoller() {
+func (a *WalletApplication) pricePoller(wallet *Wallet) {
 
 	const (
 		apiKey string = "17b10afdddc411087e2140ec91bd73d88d0c20294541838b192255fc574b1cb7"
@@ -172,28 +171,36 @@ func (a *WalletApplication) pricePoller() {
 	)
 
 	go func() {
+		retryCounter := 0
 		for {
 			resp, err := http.Get(url)
 			if err != nil {
-				fmt.Println(resp)
-				a.sendError("Unable to poll token evaluation. Reason: ", err)
 				a.log.Warnf("Unable to poll token evaluation. Reason: ", err) // Log this
 			}
-			body, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
-				a.log.Warnf("Unable to read HTTP resonse from Token API. Reason: ", err)
-			}
-			err = json.Unmarshal([]byte(body), &a.Wallet.TokenPrice)
-			if err != nil {
-				a.sendError("Unable to display token price. Reason: ", err)
-				a.log.Warnf("Unable to display token price. Reason:", err)
-			}
-			a.log.Debugf("Collected token price in USD: %v", a.Wallet.TokenPrice.DAG.USD)
+			if resp != nil {
+				body, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
+					a.log.Warnf("Unable to read HTTP resonse from Token API. Reason: ", err)
+				}
+				err = json.Unmarshal([]byte(body), &wallet.TokenPrice)
+				if err != nil {
+					a.sendError("Unable to display token price. Reason: ", err)
+					a.log.Warnf("Unable to display token price. Reason:", err)
+				}
+				a.log.Debugf("Collected token price in USD: %v", wallet.TokenPrice.DAG.USD)
 
-			tokenUSD := int(float64(a.Wallet.Balance) * a.Wallet.TokenPrice.DAG.USD)
-			a.RT.Events.Emit("price", "$", tokenUSD)
-			time.Sleep(updateIntervalToken * time.Second)
+				tokenUSD := int(float64(wallet.Balance) * wallet.TokenPrice.DAG.USD)
+				a.RT.Events.Emit("price", "$", tokenUSD)
+				time.Sleep(updateIntervalToken * time.Second)
+			} else {
+				retryCounter++
+				time.Sleep(1 * time.Second)
+				if retryCounter >= 10 {
+					a.sendError("Unable to poll token evaluation. Reason: ", err)
+					break
+				}
+			}
 		}
 	}()
 }

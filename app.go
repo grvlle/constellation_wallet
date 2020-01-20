@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"os/user"
@@ -47,6 +48,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	var err error
 
 	a.UserLoggedIn = false
+	a.NewUser = false
 	a.RT = runtime
 	a.log = logrus.New()
 	a.DB, err = gorm.Open("sqlite3", "/home/vito/.dag/store.db")
@@ -145,10 +147,10 @@ func (a *WalletApplication) initNewWallet() error {
 	a.DB.Model(&a.Wallet).Update("Address", a.Wallet.Address)
 
 	//a.initTransactionHistory()
-	a.passKeysToFrontend(a.Wallet.PrivateKey, a.Wallet.PublicKey)
+	a.passKeysToFrontend(a.Wallet.PrivateKey, a.Wallet.PublicKey, a.Wallet.Address)
 
 	if !a.WidgetRunning.DashboardWidgets {
-		a.initDashboardWidgets()
+		a.initDashboardWidgets(a.Wallet)
 	}
 
 	a.log.Infoln("A New wallet has been created successfully!")
@@ -161,22 +163,26 @@ func (a *WalletApplication) initNewWallet() error {
 func (a *WalletApplication) initExistingWallet(keystorePath string) {
 
 	var wallet Wallet
-	a.DB.First(&wallet, 1)
-
+	if err := a.DB.First(&wallet, 1).Error; err != nil {
+		a.log.Errorf("Unable to query database object for wallet. Reason: ", err)
+		a.sendError("Unable to query database object for wallet. Reason: ", err)
+	}
+	fmt.Println(a.WidgetRunning.DashboardWidgets)
 	a.paths.EncPrivKeyFile = keystorePath
-	a.Wallet.PrivateKey, a.Wallet.PublicKey = a.getKeys()
+	wallet.PrivateKey, wallet.PublicKey = a.getKeys()
 
 	if !a.WidgetRunning.DashboardWidgets {
-		a.initDashboardWidgets()
+		a.initDashboardWidgets(&wallet)
 	}
 	if !a.WidgetRunning.PassKeysToFrontend {
-		a.passKeysToFrontend(a.Wallet.PrivateKey, a.Wallet.PublicKey)
+		a.passKeysToFrontend(wallet.PrivateKey, wallet.PublicKey, wallet.Address)
 	}
+
 	a.log.Infoln("User has logged into the wallet")
 
 }
 
-func (a *WalletApplication) initDashboardWidgets() {
+func (a *WalletApplication) initDashboardWidgets(wallet *Wallet) {
 	// Initializes a struct containing all Chart Data on the dashboard
 	chartData := a.ChartDataInit()
 
@@ -185,8 +191,8 @@ func (a *WalletApplication) initDashboardWidgets() {
 	a.txStats(chartData)
 	a.networkStats(chartData)
 	a.blockAmount()
-	a.tokenAmount()
-	a.pricePoller()
+	a.tokenAmount(wallet)
+	a.pricePoller(wallet)
 
 	a.WidgetRunning.DashboardWidgets = true
 }

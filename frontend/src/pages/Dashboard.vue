@@ -10,7 +10,7 @@
                     </div>
                     <div class="numbers text-center" slot="content">
                         <p>$DAG Tokens</p>
-                        {{wallet2.tokenAmount}}
+                        {{this.$store.state.walletInfo.tokenAmount}}
     
                     </div>
                     <div class="stats" slot="footer">

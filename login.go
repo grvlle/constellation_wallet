@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -65,14 +64,15 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword st
 
 	if keystorePath == "" {
 		keystorePath = wallet.KeyStorePath
+		a.log.Infoln("No path to keystore provided. Using %s", keystorePath)
 	}
-	fmt.Println(a.Wallet.KeyStorePath)
 
 	if a.CheckAccess(keystorePassword, wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, wallet.KeyPasswordHash) {
 		a.UserLoggedIn = true
 	} else {
 		a.UserLoggedIn = false
 	}
+
 	if a.UserLoggedIn && !a.NewUser {
 		a.initExistingWallet(keystorePath)
 	}
@@ -92,8 +92,14 @@ func (a *WalletApplication) ImportKey() string {
 		a.sendError("Please enter a valid path", nil)
 	}
 
-	a.log.Info("Path to user uploaded image: " + a.paths.EncPrivKeyFile)
+	a.log.Info("Path to imported key: " + a.paths.EncPrivKeyFile)
 	return a.paths.EncPrivKeyFile
+}
+
+func (a *WalletApplication) SelectDirToStoreKey() string {
+	a.paths.EncryptedDir = a.RT.Dialog.SelectDirectory()
+	// TODO: Copy file to user
+	return a.paths.EncryptedDir
 }
 
 func (a *WalletApplication) GenerateSaltedHash(s string) (string, error) {

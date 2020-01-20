@@ -303,7 +303,7 @@ export default {
 p.validate {
     font-size: 10px;
     color: firebrick;
-    margin-top: -5px;
+    margin-top: 5px;
 }
 
 body,

@@ -36,7 +36,7 @@ func (a *WalletApplication) monitorFileState() error {
 
 					case fileModified == a.paths.DecKeyFile:
 						a.log.Debug("Key File has been modified")
-						a.RT.Events.Emit("wallet_keys", a.Wallet.PrivateKey, a.Wallet.PublicKey)
+						a.RT.Events.Emit("wallet_keys", a.wallet.PrivateKey, a.wallet.PublicKey)
 
 					case fileModified == "JSONdata/chart_data.json":
 						a.log.Info("Chart Data file modified")

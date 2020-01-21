@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"os/user"
@@ -17,7 +16,7 @@ import (
 type WalletApplication struct {
 	RT     *wails.Runtime
 	log    *logrus.Logger
-	Wallet *Wallet
+	wallet Wallet
 	DB     *gorm.DB
 	paths  struct {
 		HomeDir        string
@@ -130,7 +129,7 @@ func (a *WalletApplication) initDirectoryStructure() {
 // only when a new wallet is created.
 func (a *WalletApplication) initNewWallet() error {
 
-	a.Wallet = &Wallet{
+	a.wallet = Wallet{
 		Balance:          0,
 		AvailableBalance: 0,
 		Nonce:            0,
@@ -140,17 +139,17 @@ func (a *WalletApplication) initNewWallet() error {
 		Address:          "",
 	}
 
-	a.Wallet.PrivateKey, a.Wallet.PublicKey = a.getKeys()
-	a.Wallet.Address = a.createAddressFromPublicKey()
-	a.paths.EncPrivKeyFile = a.Wallet.KeyStorePath
+	a.wallet.PrivateKey, a.wallet.PublicKey = a.getKeys()
+	a.wallet.Address = a.createAddressFromPublicKey()
+	a.paths.EncPrivKeyFile = a.wallet.KeyStorePath
 
-	a.DB.Model(&a.Wallet).Update("Address", a.Wallet.Address)
+	a.DB.Model(&a.wallet).Update("Address", a.wallet.Address)
 
 	//a.initTransactionHistory()
-	a.passKeysToFrontend(a.Wallet.PrivateKey, a.Wallet.PublicKey, a.Wallet.Address)
+	a.passKeysToFrontend(a.wallet.PrivateKey, a.wallet.PublicKey, a.wallet.Address)
 
 	if !a.WidgetRunning.DashboardWidgets {
-		a.initDashboardWidgets(a.Wallet)
+		a.initDashboardWidgets(a.wallet)
 	}
 
 	a.log.Infoln("A New wallet has been created successfully!")
@@ -162,27 +161,21 @@ func (a *WalletApplication) initNewWallet() error {
 // the information to the front end components.
 func (a *WalletApplication) initExistingWallet(keystorePath string) {
 
-	var wallet Wallet
-	if err := a.DB.First(&wallet, 1).Error; err != nil {
-		a.log.Errorf("Unable to query database object for wallet. Reason: ", err)
-		a.sendError("Unable to query database object for wallet. Reason: ", err)
-	}
-	fmt.Println(a.WidgetRunning.DashboardWidgets)
 	a.paths.EncPrivKeyFile = keystorePath
-	wallet.PrivateKey, wallet.PublicKey = a.getKeys()
+	a.wallet.PrivateKey, a.wallet.PublicKey = a.getKeys()
 
 	if !a.WidgetRunning.DashboardWidgets {
-		a.initDashboardWidgets(&wallet)
+		a.initDashboardWidgets(a.wallet)
 	}
 	if !a.WidgetRunning.PassKeysToFrontend {
-		a.passKeysToFrontend(wallet.PrivateKey, wallet.PublicKey, wallet.Address)
+		a.passKeysToFrontend(a.wallet.PrivateKey, a.wallet.PublicKey, a.wallet.Address)
 	}
 
 	a.log.Infoln("User has logged into the wallet")
 
 }
 
-func (a *WalletApplication) initDashboardWidgets(wallet *Wallet) {
+func (a *WalletApplication) initDashboardWidgets(wallet Wallet) {
 	// Initializes a struct containing all Chart Data on the dashboard
 	chartData := a.ChartDataInit()
 

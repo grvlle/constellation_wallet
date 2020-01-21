@@ -9,10 +9,8 @@ import (
 // CreateUser is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword string) bool {
 
-	var wallet Wallet
-
 	if keystorePath == "" {
-		keystorePath = wallet.KeyStorePath
+		keystorePath = a.wallet.KeyStorePath
 	}
 
 	keystorePasswordHashed, err := a.GenerateSaltedHash(keystorePassword)
@@ -29,13 +27,13 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		return false
 	}
 
-	if err := a.DB.FirstOrCreate(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}, &wallet, 1).Error; err != nil {
+	if err := a.DB.FirstOrCreate(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}, &a.wallet, 1).Error; err != nil {
 		a.log.Errorf("Unable to create database object for new wallet. Reason: ", err)
 		a.sendError("Unable to create database object for new wallet. Reason: ", err)
 		return false
 	}
 
-	if err := a.DB.First(&wallet, 1).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
+	if err := a.DB.First(&a.wallet, 1).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
 		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
 		a.sendError("Unable to query database object for new wallet. Reason: ", err)
 		return false
@@ -54,25 +52,21 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 }
 
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword string) bool {
-	var wallet Wallet
 
-	if err := a.DB.First(&wallet, 1).Error; err != nil {
+	if err := a.DB.First(&a.wallet, 1).Error; err != nil {
 		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
 		a.sendError("Unable to query database object for new wallet. Reason: ", err)
 		return false
 	}
-
 	if keystorePath == "" {
-		keystorePath = wallet.KeyStorePath
+		keystorePath = a.wallet.KeyStorePath
 		a.log.Infoln("No path to keystore provided. Using %s", keystorePath)
 	}
-
-	if a.CheckAccess(keystorePassword, wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, wallet.KeyPasswordHash) {
+	if a.CheckAccess(keystorePassword, a.wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, a.wallet.KeyPasswordHash) {
 		a.UserLoggedIn = true
 	} else {
 		a.UserLoggedIn = false
 	}
-
 	if a.UserLoggedIn && !a.NewUser {
 		a.initExistingWallet(keystorePath)
 	}

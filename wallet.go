@@ -9,7 +9,7 @@ import (
 // NewWallet initates a new wallet object
 func (a *WalletApplication) NewWallet() *Wallet {
 
-	return a.Wallet
+	return &a.wallet
 }
 
 // ImportKeys is called from the frontend to use a file dialog to select key file.

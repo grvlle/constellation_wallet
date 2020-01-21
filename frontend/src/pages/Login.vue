@@ -35,6 +35,7 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
 
               <div class="col-4">  
         <div v-if="!this.$store.state.app.register">
+          <p>Select your private key (key.p12)</p>
         <table style="width:100%;">
           <tr>
             <td style="padding: 0px; width: 81%;">
@@ -63,6 +64,7 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
               </div>
 
                       <div v-if="this.$store.state.app.register">
+                        <p>Select a directory to store your private key (key.p12) in</p>
         <table style="width:100%;">
           <tr>
             <td style="padding: 0px; width: 81%;">
@@ -70,8 +72,8 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
               <fg-input
                 type="text"
                 :disabled="true"
-                :placeholder="this.$store.state.walletInfo.keystorePath"
-                v-model="this.$store.state.walletInfo.keystorePath"
+                :placeholder="this.$store.state.walletInfo.saveKeystorePath"
+                v-model="this.$store.state.walletInfo.saveKeystorePath"
               ></fg-input>
 
       </td>
@@ -117,7 +119,7 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
                 <div v-if="this.$store.state.app.register">
                   <fg-input
                     type="text"
-                    v-model="this.newWalletLabel"
+                    v-model="newWalletLabel"
                     :placeholder="this.$store.state.walletInfo.email"
                     label="Wallet Label (optional)"
                   ></fg-input>
@@ -246,17 +248,10 @@ export default {
       );
     },
     SelectDirToStoreKey: function() {
-      this.$notify({
-        component: ErrorNotification,
-        timeout: 500000,
-        icon: "fa fa-times",
-        horizontalAlign: "right",
-        verticalAlign: "top",
-        type: "danger",})
       window.backend.WalletApplication.SelectDirToStoreKey().then(
         result => {
           if (result) {
-          this.$store.state.walletInfo.keystorePath = result;
+          this.$store.state.walletInfo.saveKeystorePath = result;
           }
           // handle err
         }
@@ -264,7 +259,7 @@ export default {
     },
     newLogin: function() {
       this.$store.state.app.register = !this.$store.state.app.register;
-      this.$store.state.walletInfo.email = this.newWalletLabel;
+      // this.$store.state.walletInfo.email = this.$store.state.walletInfo.email
       this.$store.state.app.margin = 180;
     },
     cancelEvent: function() {
@@ -277,6 +272,12 @@ export default {
         window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate).then(
         result => {
           self.access = result;
+          window.backend.WalletApplication.SetWalletTag().then(walletTag =>
+            self.$store.state.walletInfo.email = walletTag
+          )
+          window.backend.WalletApplication.SetImagePath().then(imagePath =>
+            self.$store.state.walletInfo.imgPath = imagePath
+          )
           if (self.access) {
             self.$store.state.app.isLoading = self.access;
             self.$store.state.app.isLoggedIn = self.access;
@@ -290,6 +291,9 @@ export default {
     },
     createLogin: function() {
       var self = this;
+      self.$store.state.walletInfo.email = self.newWalletLabel
+      
+      window.backend.WalletApplication.StoreWalletLabelInDB(self.newWalletLabel)
       window.backend.WalletApplication.CreateWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate
       ).then(result => {
         if (result) {

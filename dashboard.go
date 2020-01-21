@@ -136,7 +136,7 @@ func (a *WalletApplication) networkStats(cd *ChartData) {
 }
 
 // TokenAmount polls the token balance and stores it in the Wallet.Balance object
-func (a *WalletApplication) tokenAmount(wallet *Wallet) {
+func (a *WalletApplication) tokenAmount(wallet Wallet) {
 	go func() {
 		for {
 			a.RT.Events.Emit("token", wallet.Balance)
@@ -162,7 +162,7 @@ func (a *WalletApplication) blockAmount() {
 // PricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token
 // balance evaluation against USD.
-func (a *WalletApplication) pricePoller(wallet *Wallet) {
+func (a *WalletApplication) pricePoller(wallet Wallet) {
 
 	const (
 		apiKey string = "17b10afdddc411087e2140ec91bd73d88d0c20294541838b192255fc574b1cb7"

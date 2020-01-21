@@ -21,6 +21,7 @@ export const store = new Vuex.Store({
             blocks: "NaN",
             address: "N/A",
             keystorePath: "",
+            saveKeystorePath: "",
             privateKey: "NaN",
             publicKey: "NaN",
             seed: "witch collapse practice feed shame open despair creek road again ice least"

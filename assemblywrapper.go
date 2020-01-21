@@ -94,7 +94,7 @@ func (a *WalletApplication) putTXOnNetwork(amount int64, fee int, address, alias
 	feeStr := strconv.Itoa(fee)
 
 	// newTX is the full command to sign a new transaction
-	err := a.runWalletCMD("org.constellation.util.wallet.CreateNewTransaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass="+storepass, "--keypass="+keypass, "--account_path="+a.paths.DAGDir, "--amount="+amountStr, "--fee="+feeStr, "--destination="+address, "--store_path="+a.paths.LastTXFile, "--priv_key_str="+a.Wallet.PrivateKey, "--pub_key_str="+"MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEwL78JcMnzMHM+bHm2NjlcF6PghRAvZU//Nwn/6O9Ckh6QBApecq3ybAFaOWPRyADy6lIKRRvGw+YxL714+lO1Q==")
+	err := a.runWalletCMD("org.constellation.util.wallet.CreateNewTransaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass="+storepass, "--keypass="+keypass, "--account_path="+a.paths.DAGDir, "--amount="+amountStr, "--fee="+feeStr, "--destination="+address, "--store_path="+a.paths.LastTXFile, "--priv_key_str="+a.wallet.PrivateKey, "--pub_key_str="+"MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEwL78JcMnzMHM+bHm2NjlcF6PghRAvZU//Nwn/6O9Ckh6QBApecq3ybAFaOWPRyADy6lIKRRvGw+YxL714+lO1Q==")
 	if err != nil {
 		a.sendError("Unable to send transaction. Reason: ", err)
 		a.log.Errorf("Unable to send transaction. Reason: %s", err.Error())

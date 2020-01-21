@@ -43,15 +43,37 @@ func (a *WalletApplication) UploadImage() string {
 
 	a.log.Info("Uploaded image resolution is set to ", img.Height, "x", img.Width)
 
-	if img.Height > 200 || img.Width > 200 {
-		a.log.Warnf("Image resolution is too big. Needs to be lower than 200x200 ")
+	if img.Height >= 201 || img.Width >= 201 {
+		a.log.Warnf("Image resolution is too big. Cannot be bigger than 200x200 ")
 
 		return "None"
 	}
 
-	// TODO: Store filePath in persistent storage.
+	a.StoreImagePathInDB(filename)
 
 	return filename
+}
+
+func (a *WalletApplication) SetImagePath() string {
+	return a.wallet.ProfilePicture
+}
+
+func (a *WalletApplication) StoreImagePathInDB(path string) {
+	if err := a.DB.First(&a.wallet, 1).Updates(&Wallet{ProfilePicture: path}).Error; err != nil {
+		a.log.Errorf("Unable to update the DB record with the wallet tag. Reason: ", err)
+		a.sendError("Unable to update the DB record with the wallet tag. Reason: ", err)
+	}
+}
+
+func (a *WalletApplication) SetWalletTag() string {
+	return a.wallet.WalletTag
+}
+
+func (a *WalletApplication) StoreWalletLabelInDB(walletTag string) {
+	if err := a.DB.First(&a.wallet, 1).Updates(&Wallet{WalletTag: walletTag}).Error; err != nil {
+		a.log.Errorf("Unable to update the DB record with the wallet tag. Reason: ", err)
+		a.sendError("Unable to update the DB record with the wallet tag. Reason: ", err)
+	}
 }
 
 // CopyFile the src file to dst. Any existing file will be overwritten and will not

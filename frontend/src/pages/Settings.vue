@@ -213,6 +213,7 @@ export default {
   methods: {
     submitLabel: function() {
       this.$store.state.walletInfo.email = this.newLabel;
+      window.backend.WalletApplication.StoreWalletLabelInDB(this.newLabel)
     },
     toggleNodesOnline: function() {
       this.$store.state.toggleDashboard.showNodesOnline = !this.$store.state

@@ -68,7 +68,7 @@ export default {
       this.$store.state.app.isLoading = false;
       this.$store.state.app.isLoggedIn = false;
       this.$store.state.app.register = false
-      this.$store.state.app.margin = 180
+      this.$store.state.app.margin = 100
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);

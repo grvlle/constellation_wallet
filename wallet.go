@@ -53,8 +53,6 @@ func (a *WalletApplication) getKeys() (string, string) {
 }
 
 func (a *WalletApplication) newKeys() {
-	// TEMPORARY. DO NOT REMOVE
-	//a.createEncryptedKeyPairToPasswordProtectedFile("alias", "storepass", "keypass")
 	a.decryptKeyPair("alias", "storepass", "keypass")
 }
 

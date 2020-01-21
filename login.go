@@ -98,8 +98,9 @@ func (a *WalletApplication) ImportKey() string {
 
 func (a *WalletApplication) SelectDirToStoreKey() string {
 	a.paths.EncryptedDir = a.RT.Dialog.SelectDirectory()
-	// TODO: Copy file to user
-	return a.paths.EncryptedDir
+	//a.createEncryptedKeyPairToPasswordProtectedFile("alias", "storepass", "keypass")
+
+	return a.paths.EncPrivKeyFile
 }
 
 func (a *WalletApplication) GenerateSaltedHash(s string) (string, error) {

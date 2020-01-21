@@ -29,7 +29,7 @@ Wails.Init(() => {
     store: store,
     render: h => h(App),
     mounted() {
-      this.$router.replace('/') // added this
+      this.$router.replace('/')
     }
   }).$mount("#app");
 });

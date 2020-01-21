@@ -8,6 +8,7 @@ import Settings from "@/pages/Settings.vue";
 import Transactions from "@/pages/Transactions.vue";
 
 const routes = [
+
   {
     path: "/",
     component: DashboardLayout,
@@ -37,9 +38,8 @@ const routes = [
         path: "settings",
         name: "settings",
         component: Settings
-      }
+      },
     ]
-
   },
   { path: "*", component: NotFound }
 ];

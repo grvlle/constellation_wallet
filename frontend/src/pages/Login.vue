@@ -18,21 +18,23 @@
                   <br />
                   <b>Create a new wallet</b>
                   <br />
-                  This section will let you create a Molly Wallet to store your $DAG tokens in. Before doing so, you need to set up the right hand side credentials. <br />
+                  This section will let you create a Molly Wallet to store your $DAG tokens in. Be aware that <b>everytime a new wallet is created, the previous is overwritten.</b> <br />
 
                   <br />
                   <ul>
-  <li><b>Username</b><i> - This is where you select your username</i></li>
-  <li><b>Password</b><i> - This is the password you will use when accessing or restoring your wallet</i></li>
-  <li><b>Store Pass</b><i> - This is the storepass </i></li>
+  <li><b>Key File</b><i> - Select a directory to store your key.p12. <b>You need to back this up</b> as it'll help you restore your wallet at any time. If you lose this, you will be locked out of the wallet.</i></li>
+  <li><b>Store Pass</b><i> - This is another layer of protection securing the private key. </i></li>
+  <li><b>Key Password</b><i> - This is the password you will use when accessing or restoring your wallet. It'll unlock the key.p12 file.</i></li>
+  <li><b>Token Label</b><i> - This will set the label of your wallet. This is <b>optional</b> and strictly for cosmetic purposes.</i></li>
 </ul>
+Please backup your passwords and wallet key file (key.p12) as these will allow you to restore your wallet at any time. 
                 
                   </p>
               </div>
 
 
               <div class="col-4">  
-        <div>
+        <div v-if="!this.$store.state.app.register">
         <table style="width:100%;">
           <tr>
             <td style="padding: 0px; width: 81%;">
@@ -59,14 +61,42 @@
           </tr>
         </table>
               </div>
+
+                      <div v-if="this.$store.state.app.register">
+        <table style="width:100%;">
+          <tr>
+            <td style="padding: 0px; width: 81%;">
+    
+              <fg-input
+                type="text"
+                :disabled="true"
+                :placeholder="this.$store.state.walletInfo.keystorePath"
+                v-model="this.$store.state.walletInfo.keystorePath"
+              ></fg-input>
+
+      </td>
+
+            <td style="padding-left: 0px;">
+              <p-button
+                @click.native="SelectDirToStoreKey"
+                type="default"
+                style="margin-top: -17px; width: 95%; float: right;"
+              ><span style="display: block;">
+               BROWSE
+              </span></p-button>
+         
+            </td>
+          </tr>
+        </table>
+              </div>
               
               <div>
-                <fg-input v-model="keystorePassword" type="password" label="Keystore Password" placeholder="Enter Keystore Password ..."></fg-input>
+                <fg-input v-model.trim="keystorePassword" type="password" label="Keystore Password" placeholder="Enter Keystore Password ..."></fg-input>
                   </div>
 
                 <div>
                   <fg-input
-                    v-model.trim="keyPassword"
+                    v-model.trim="keyPasswordValidate"
                     @change="setKeyPassword($event.target.value)"
                     type="password"
                     label="Key Password"
@@ -75,18 +105,20 @@
 
     
                 </div>
-                                  <div style="height: 20px;" class="error" v-if="$v.keyPasswordValidate.minLength && $v.keyPasswordValidate.maxLength">
+                 <div style="height: 20px;" v-if="$v.keyPasswordValidate.minLength">
+                   <!-- <p class="validate">hej</p>
+                   {{$v.keyPasswordValidate.minLength}} -->
+                </div>
     
-                                </div>
-    
-                                <div class="error" v-if="!$v.keyPasswordValidate.minLength || !$v.keyPasswordValidate.maxLength">
-                                    <p class="validate">Invalid wallet address. Please verify.</p>
-                                </div>
+                 <!-- <div style="height: 20px;" v-if="!$v.keyPasswordValidate.minLength">
+                     <p class="error">Invalid wallet address. Please verify.</p>
+                 </div> -->
 
                 <div v-if="this.$store.state.app.register">
                   <fg-input
-                    v-model="this.$store.state.walletInfo.email"
                     type="text"
+                    v-model="this.newWalletLabel"
+                    :placeholder="this.$store.state.walletInfo.email"
                     label="Wallet Label (optional)"
                   ></fg-input>
                 </div>
@@ -95,6 +127,7 @@
                   v-if="!this.$store.state.app.register"
                   style="float: left; width: 48%; margin-top: 20px;"
                 >
+            
                   <p-button
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="success"
@@ -178,8 +211,9 @@ import { required, minLength, maxLength, between } from 'vuelidate/lib/validator
 
 export default {
   name: "login-screen",
-  keystorePassword: "",
-  keyPasswordValidate: "",
+  newWalletLabel: "",
+  keystorePassword: '',
+  keyPasswordValidate: '',
   storepass: "",
   keypass: "",
   alias: "",
@@ -211,8 +245,26 @@ export default {
         }
       );
     },
+    SelectDirToStoreKey: function() {
+      this.$notify({
+        component: ErrorNotification,
+        timeout: 500000,
+        icon: "fa fa-times",
+        horizontalAlign: "right",
+        verticalAlign: "top",
+        type: "danger",})
+      window.backend.WalletApplication.SelectDirToStoreKey().then(
+        result => {
+          if (result) {
+          this.$store.state.walletInfo.keystorePath = result;
+          }
+          // handle err
+        }
+      );
+    },
     newLogin: function() {
       this.$store.state.app.register = !this.$store.state.app.register;
+      this.$store.state.walletInfo.email = this.newWalletLabel;
       this.$store.state.app.margin = 180;
     },
     cancelEvent: function() {
@@ -222,7 +274,7 @@ export default {
     login: function() {
       var self = this;
 
-        window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPassword).then(
+        window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate).then(
         result => {
           self.access = result;
           if (self.access) {
@@ -238,10 +290,10 @@ export default {
     },
     createLogin: function() {
       var self = this;
-      window.backend.WalletApplication.CreateWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPassword
+      window.backend.WalletApplication.CreateWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate
       ).then(result => {
         if (result) {
-          window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPassword
+          window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate
           ).then(result => {
             self.access = result;
             if (self.access) {
@@ -303,7 +355,7 @@ export default {
 p.validate {
     font-size: 10px;
     color: firebrick;
-    margin-top: 5px;
+    margin-top: 0px;
 }
 
 body,

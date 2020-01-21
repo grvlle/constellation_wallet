@@ -27,10 +27,6 @@ export default {
   },
 
   mounted() {
-    // setTimeout(() => {
-    //     this.isLoading = false
-    // }, 8000)
-
     // Backend Errors
     window.wails.Events.On("error_handling", (m, err) => {
       this.$store.state.errorMessage = m + err;

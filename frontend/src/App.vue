@@ -93,9 +93,9 @@ export default {
     });
 
     // Settings.vue sockets
-    window.wails.Events.On("wallet_keys", (privateKey, publicKey, address) => {
-      this.$store.state.walletInfo.privateKey = privateKey;
-      this.$store.state.walletInfo.publicKey = publicKey;
+    window.wails.Events.On("wallet_keys", (MnemonicSeed, keystorePath, address) => {
+      this.$store.state.walletInfo.seed = MnemonicSeed;
+      this.$store.state.walletInfo.keystorePath = keystorePath;
       this.$store.state.walletInfo.address = address;
     });
   }

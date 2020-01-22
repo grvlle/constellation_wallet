@@ -93,23 +93,17 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
               </div>
               
 
-                <div>
+                <div style="margin-bottom: 10px;">
                   <fg-input
-                    v-model.trim="keyPasswordValidate"
-                    @change="setKeyPassword($event.target.value)"
-                    type="password"
+                    v-model="keyPasswordValidate"
+                    @input="checkPassword(keyPasswordValidate)"
+                    class="fg-style"
                     label="Key Password"
                     placeholder="Enter Key Password..."
                   ></fg-input>
-
-
-                <div>
-                <fg-input @input="checkPassword" type="password" v-model="keystorePassword" label="Keystore Password" placeholder="Enter Keystore Password ..." />
-                  </div>
-
-    
                 </div>
-                 <div style="height: 30px;" v-if="this.$store.state.app.register && !this.$store.state.validators.valid_password">
+                  
+                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && this.$store.state.validators.target == this.keyPasswordValidate && this.$store.state.app.register && !this.$store.state.validators.valid_password">
                
                             <p v-if="!this.$store.state.validators.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
                             <p v-if="!this.$store.state.validators.contains_number" class="validate"> Number,</p> 
@@ -117,7 +111,25 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
                             <p v-if="!this.$store.state.validators.contains_special_character" class="validate"> Special Character </p> 
                           
                 </div> 
+
+                <div class="fg-style">
+                <fg-input @input="checkPassword(keystorePassword)" type="password" v-model="keystorePassword" label="Keystore Password" placeholder="Enter Keystore Password ..." />
+                  </div>
+
     
+                
+                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && this.$store.state.validators.target == this.keystorePassword && this.$store.state.app.register && !this.$store.state.validators.valid_password">
+               
+                            <p v-if="!this.$store.state.validators.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
+                            <p v-if="!this.$store.state.validators.contains_number" class="validate"> Number,</p> 
+                            <p v-if="!this.$store.state.validators.contains_uppercase" class="validate"> Uppercase, </p> 
+                            <p v-if="!this.$store.state.validators.contains_special_character" class="validate"> Special Character </p> 
+                          
+                </div> 
+                 <div style="height: 30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keystorePassword !== ''">
+                <p class="validate"> Keystore Password cannot be the same as the Key Password</p>
+                </div>
+               
 
 
                 <div v-if="this.$store.state.app.register">
@@ -216,9 +228,6 @@ import ErrorNotification from "./Notifications/ErrorMessage";
 import { required, minLength } from "vuelidate/lib/validators";
 
 export default {
-  validations: {
-    keystorePassword: { required, minLength: minLength(6) },
-  },
   name: "login-screen",
   newWalletLabel: "",
   keystorePassword: '',
@@ -235,8 +244,9 @@ export default {
   access: false,
   submitStatus: null,
   methods: {
-    checkPassword: function() {
-      this.$store.state.validators.password_length = this.keystorePassword.length;
+    checkPassword: function(pw) {
+      this.$store.state.validators.target = pw
+      this.$store.state.validators.password_length = pw.length;
       const format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
       
       if (this.$store.state.validators.password_length > 8) {
@@ -244,10 +254,16 @@ export default {
       } else {
         this.$store.state.validators.contains_eight_characters = false;
       }
+
+      if (this.$store.state.validators.target === this.keyPasswordValidate && this.$store.state.validators.target === this.keystorePassword) {
+        this.$store.state.validators.duplicate = true;
+      } else {
+        this.$store.state.validators.duplicate = false;
+      }
       
-      this.$store.state.validators.contains_number = /\d/.test(this.keystorePassword);
-      this.$store.state.validators.contains_uppercase = /[A-Z]/.test(this.keystorePassword);
-      this.$store.state.validators.contains_special_character = format.test(this.keystorePassword);
+      this.$store.state.validators.contains_number = /\d/.test(pw);
+      this.$store.state.validators.contains_uppercase = /[A-Z]/.test(pw);
+      this.$store.state.validators.contains_special_character = format.test(pw);
       
       if (this.$store.state.validators.contains_eight_characters === true &&
           this.$store.state.validators.contains_special_character === true &&
@@ -257,10 +273,6 @@ export default {
       } else {
         this.$store.state.validators.valid_password = false;
       }
-    },
-    setKeyPassword(value) {
-        this.keyPasswordValidate = value
-        this.$v.keyPasswordValidate.$touch()
     },
     importKey: function() {
       window.backend.WalletApplication.ImportKey().then(
@@ -277,6 +289,7 @@ export default {
         result => {
           if (result) {
           this.$store.state.walletInfo.saveKeystorePath = result;
+          // this.$store.state.walletInfo.keystorePath = result;
           }
           // handle err
         }
@@ -417,6 +430,10 @@ text-align: left;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.fg-style {
+  margin-bottom: 30px;
 }
 
 </style>

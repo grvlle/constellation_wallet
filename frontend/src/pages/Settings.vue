@@ -146,26 +146,26 @@
           </div>-->
 
           <label class="control-label">
-            <p>Public Key</p>
+            <p>Private Key</p>
           </label>
-          <p class="small" style="margin-bottom: -5px; margin-top: -20px;">Base64 Encoded public key</p>
+          <p class="small" style="margin-bottom: -5px; margin-top: -20px;">Path to private key (key.p12)</p>
           <div class="row">
             <div class="col-md-12">
               <fg-input
                 type="text"
                 :disabled="true"
-                placeholder="Public Key"
-                v-model="this.$store.state.walletInfo.publicKey"
+                placeholder="Path to private key (key.p12)"
+                v-model="this.$store.state.walletInfo.keystorePath"
               ></fg-input>
             </div>
           </div>
           <label class="control-label">
-            <p>Private Key</p>
+            <p>Mnemonic Seed (coming soon)</p>
           </label>
           <p
             class="small"
             style="margin-bottom: -5px; margin-top: -20px;"
-          >Base64 Encoded private key</p>
+          >This will be used to restore your wallet</p>
           <div class="row">
             <div class="input-group col-md-12">
               <input
@@ -173,8 +173,8 @@
                 label="Private Key"
                 class="form-control"
                 :disabled="true"
-                placeholder="Private Key"
-                v-model="this.$store.state.walletInfo.privateKey"
+                placeholder="Mnemonic Seed (coming soon)"
+                v-model="this.$store.state.walletInfo.seed"
                 aria-describedby="basic-addon2"
               />
               <div class="input-group-append">
@@ -213,7 +213,7 @@ export default {
   methods: {
     submitLabel: function() {
       this.$store.state.walletInfo.email = this.newLabel;
-      window.backend.WalletApplication.StoreWalletLabelInDB(this.newLabel)
+      window.backend.WalletApplication.StoreWalletLabelInDB(this.newLabel);
     },
     toggleNodesOnline: function() {
       this.$store.state.toggleDashboard.showNodesOnline = !this.$store.state

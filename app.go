@@ -22,9 +22,8 @@ type WalletApplication struct {
 		HomeDir        string
 		DAGDir         string
 		EncryptedDir   string
-		DecKeyFile     string
-		PubKeyFile     string
 		EncPrivKeyFile string
+		PrevTXFile     string
 		LastTXFile     string
 		AddressFile    string
 		ImageDir       string
@@ -46,25 +45,25 @@ func (a *WalletApplication) WailsShutdown() {
 func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	var err error
 
+	a.log = logrus.New()
+	err = a.initDirectoryStructure()
+	if err != nil {
+		a.log.Errorf("Unable to set up directory structure. Reason: ", err)
+	}
+
+	a.initLogger()
+
 	a.UserLoggedIn = false
 	a.NewUser = false
 	a.RT = runtime
-	a.log = logrus.New()
-	a.DB, err = gorm.Open("sqlite3", "/home/vito/.dag/store.db")
+
+	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"store.db")
 	if err != nil {
 		a.log.Panicf("failed to connect database", err)
 	}
 	// Migrate the schema
 	a.DB.AutoMigrate(&Wallet{}, &TXHistory{})
 
-	a.initDirectoryStructure()
-	a.initLogger()
-
-	// Monitors the .dag folder for file manipulation
-	err = a.monitorFileState()
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -83,45 +82,42 @@ func (a *WalletApplication) initLogger() {
 }
 
 // Initializes the Directory Structure and stores the paths to the WalletApplication struct.
-func (a *WalletApplication) initDirectoryStructure() {
+func (a *WalletApplication) initDirectoryStructure() error {
 
 	user, err := user.Current()
 	if err != nil {
-		a.sendError("Unable to retrieve filesystem paths. Reason: ", err)
-		a.log.Error("Unable to retrieve filesystem paths. Reason: ", err)
+		return err
 	}
 
 	a.paths.HomeDir = user.HomeDir             // Home directory of the user
 	a.paths.DAGDir = a.paths.HomeDir + "/.dag" // DAG directory for configuration files and wallet specific data
 	a.paths.EncryptedDir = a.paths.DAGDir + "/keys"
-	a.paths.DecKeyFile = a.paths.EncryptedDir + "/private_decrypted" // DAG wallet keys
-	a.paths.PubKeyFile = a.paths.EncryptedDir + "/decrypted_keystore.pub"
 	a.paths.EncPrivKeyFile = a.paths.EncryptedDir + "/key.p12"
 	a.paths.LastTXFile = a.paths.DAGDir + "/last_tx"
-	a.paths.AddressFile = a.paths.DAGDir + "/addr"  // DAG wallet keys
+	a.paths.PrevTXFile = a.paths.DAGDir + "/prev_tx"
 	a.paths.ImageDir = "./frontend/src/assets/img/" // Image Folder
 
 	a.log.Info("DAG Directory: ", a.paths.DAGDir)
 
 	err = a.directoryCreator(a.paths.DAGDir, a.paths.EncryptedDir)
 	if err != nil {
-		a.sendError("Unable to set up directory structure. Make sure you run the wallet with the right priviledges. Reason: ", err)
-		a.log.Errorf("Unable to set up directory structure. Make sure you run the wallet with the right priviledges. Reason: ", err)
+		return err
 	}
 
-	f, err := os.Create(a.paths.LastTXFile)
-	if err != nil {
-		a.log.Errorf("Unable to create"+a.paths.LastTXFile, err)
-		a.sendError("Unable to create"+a.paths.LastTXFile, err)
-	}
+	return nil
 
-	defer f.Close()
+	// f, err := os.Create(a.paths.LastTXFile)
+	// if err != nil {
+	// 	return err
+	// }
 
-	_, err = f.WriteString("{}")
-	if err != nil {
-		a.log.Errorf("Unable to create"+a.paths.LastTXFile, err)
-		a.sendError("Unable to create"+a.paths.LastTXFile, err)
-	}
+	// defer f.Close()
+
+	// _, err = f.WriteString("{}")
+	// if err != nil {
+	// 	a.log.Errorf("Unable to create"+a.paths.LastTXFile, err)
+	// 	a.sendError("Unable to create"+a.paths.LastTXFile, err)
+	// }
 
 }
 
@@ -139,14 +135,15 @@ func (a *WalletApplication) initNewWallet() error {
 		Address:          "",
 	}
 
-	a.wallet.PrivateKey, a.wallet.PublicKey = a.getKeys()
-	a.wallet.Address = a.createAddressFromPublicKey()
+	// a.wallet.PrivateKey, a.wallet.PublicKey = a.getKeys()
+	a.createEncryptedKeyPairToPasswordProtectedFile("alias")
+	a.wallet.Address = a.createAddressFromPublicKey("alias")
 	a.paths.EncPrivKeyFile = a.wallet.KeyStorePath
 
 	a.DB.Model(&a.wallet).Update("Address", a.wallet.Address)
 
 	//a.initTransactionHistory()
-	a.passKeysToFrontend(a.wallet.PrivateKey, a.wallet.PublicKey, a.wallet.Address)
+	a.passKeysToFrontend(a.wallet.PrivateKey)
 
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets(a.wallet)
@@ -162,13 +159,13 @@ func (a *WalletApplication) initNewWallet() error {
 func (a *WalletApplication) initExistingWallet(keystorePath string) {
 
 	a.paths.EncPrivKeyFile = keystorePath
-	a.wallet.PrivateKey, a.wallet.PublicKey = a.getKeys()
+	// a.wallet.PrivateKey, a.wallet.PublicKey = a.getKeys()
 
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets(a.wallet)
 	}
 	if !a.WidgetRunning.PassKeysToFrontend {
-		a.passKeysToFrontend(a.wallet.PrivateKey, a.wallet.PublicKey, a.wallet.Address)
+		a.passKeysToFrontend(a.wallet.Address)
 	}
 
 	a.log.Infoln("User has logged into the wallet")
@@ -200,7 +197,9 @@ func (a *WalletApplication) sendError(msg string, err error) {
 		}
 		errStr := string(b)
 		a.RT.Events.Emit("error_handling", msg, errStr+" ...")
+	} else {
+		errStr := ""
+		a.RT.Events.Emit("error_handling", msg, errStr+" ...")
 	}
-	errStr := ""
-	a.RT.Events.Emit("error_handling", msg, errStr+" ...")
+
 }

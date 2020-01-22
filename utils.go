@@ -7,57 +7,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
-
-	"github.com/fsnotify/fsnotify"
 )
-
-// monitorFileState will monitor the state of all files in .dag
-// and act accordingly upon manipulation.
-func (a *WalletApplication) monitorFileState() error {
-	a.log.Info("Starting Watcher")
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		return err
-	}
-
-	go func() {
-		for {
-			select {
-			case event, ok := <-watcher.Events:
-				if !ok {
-					return
-				} // If a JSONdata/*.json file is written to.
-				if event.Op&fsnotify.Write&fsnotify.Create == fsnotify.Write|fsnotify.Create {
-					a.log.Infof("modified file: %s", event.Name)
-					switch fileModified := event.Name; {
-
-					case fileModified == a.paths.LastTXFile:
-						a.log.Debug("Last TX File has been modified")
-
-					case fileModified == a.paths.DecKeyFile:
-						a.log.Debug("Key File has been modified")
-						a.RT.Events.Emit("wallet_keys", a.wallet.PrivateKey, a.wallet.PublicKey)
-
-					case fileModified == "JSONdata/chart_data.json":
-						a.log.Info("Chart Data file modified")
-					}
-				}
-			case err, ok := <-watcher.Errors:
-				if !ok {
-					a.sendError("", err)
-					a.log.Error(err.Error())
-				}
-			}
-		}
-	}()
-
-	err = watcher.Add(a.paths.DAGDir)
-	if err != nil {
-		a.sendError("Failed to start watcher. Reason: ", err)
-		return err
-	}
-	return nil
-}
 
 // Copy the src file to dst. Any existing file will be overwritten and will not
 // copy file attributes.

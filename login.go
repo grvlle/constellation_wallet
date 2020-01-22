@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -9,9 +12,13 @@ import (
 // CreateUser is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword string) bool {
 
+	fmt.Println(keystorePath)
 	if keystorePath == "" {
 		keystorePath = a.wallet.KeyStorePath
 	}
+
+	os.Setenv("CL_STOREPASS", keystorePassword)
+	os.Setenv("CL_KEYPASS", keyPassword)
 
 	keystorePasswordHashed, err := a.GenerateSaltedHash(keystorePassword)
 	if err != nil {
@@ -60,10 +67,12 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword st
 	}
 	if keystorePath == "" {
 		keystorePath = a.wallet.KeyStorePath
-		a.log.Infoln("No path to keystore provided. Using %s", keystorePath)
+		a.log.Infoln("PrivateKey path: %s", keystorePath)
 	}
 	if a.CheckAccess(keystorePassword, a.wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, a.wallet.KeyPasswordHash) {
 		a.UserLoggedIn = true
+		os.Setenv("CL_STOREPASS", keystorePassword)
+		os.Setenv("CL_KEYPASS", keyPassword)
 	} else {
 		a.UserLoggedIn = false
 	}
@@ -92,8 +101,7 @@ func (a *WalletApplication) ImportKey() string {
 
 func (a *WalletApplication) SelectDirToStoreKey() string {
 	a.paths.EncryptedDir = a.RT.Dialog.SelectDirectory()
-	//a.createEncryptedKeyPairToPasswordProtectedFile("alias", "storepass", "keypass")
-
+	a.paths.EncPrivKeyFile = a.paths.EncryptedDir + "/key.p12"
 	return a.paths.EncPrivKeyFile
 }
 

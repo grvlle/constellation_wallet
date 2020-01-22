@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/base64"
-	"os"
 	"time"
 )
 
@@ -28,52 +26,52 @@ func (a *WalletApplication) ExportKeys() error {
 }
 
 // getKeys will parse key files, base64 encode them and remove the decrypted files.
-func (a *WalletApplication) getKeys() (string, string) {
-	a.newKeys()
-	PrivKey, err := a.getFileContents(a.paths.DecKeyFile)
-	if err != nil {
-		a.sendError("Unable to parse PrivKey. Reason: ", err)
-		a.log.Warnf("Unable to parse PrivKey file. Reason: %s", err)
-	}
-	PubKey, err := a.getFileContents(a.paths.PubKeyFile)
-	if err != nil {
-		a.sendError("Unable to parse PubKey. Reason: ", err)
-		a.log.Warnf("Unable to parse PubKey file. Reason: %s", err)
-	} else {
-		a.log.Info("Keys successfully created")
-	}
-	// TEMPORARY. DO NOT REMOVE
-	// err = a.removeKeyArtifacts()
-	// if err != nil {
-	// 	a.sendError("Unable to remove Key artifacts. Reason: ", err)
-	// 	a.log.Warnf("Unable to remove Key artifacts. Reason: %s", err)
-	// }
+// func (a *WalletApplication) getKeys() (string, string) {
+// a.newKeys()
+// PrivKey, err := a.getFileContents(a.paths.DecKeyFile)
+// if err != nil {
+// 	a.sendError("Unable to parse PrivKey. Reason: ", err)
+// 	a.log.Warnf("Unable to parse PrivKey file. Reason: %s", err)
+// }
+// PubKey, err := a.getFileContents(a.paths.PubKeyFile)
+// if err != nil {
+// 	a.sendError("Unable to parse PubKey. Reason: ", err)
+// 	a.log.Warnf("Unable to parse PubKey file. Reason: %s", err)
+// } else {
+// 	a.log.Info("Keys successfully created")
+// }
+// TEMPORARY. DO NOT REMOVE
+// err = a.removeKeyArtifacts()
+// if err != nil {
+// 	a.sendError("Unable to remove Key artifacts. Reason: ", err)
+// 	a.log.Warnf("Unable to remove Key artifacts. Reason: %s", err)
+// }
 
-	return base64.StdEncoding.EncodeToString(PrivKey), base64.StdEncoding.EncodeToString(PubKey)
-}
+// 	return base64.StdEncoding.EncodeToString(PrivKey), base64.StdEncoding.EncodeToString(PubKey)
+// }
 
-func (a *WalletApplication) newKeys() {
-	a.decryptKeyPair("alias", "storepass", "keypass")
-}
+// func (a *WalletApplication) newKeys() {
+// 	a.decryptKeyPair("alias", "storepass", "keypass")
+// }
 
-func (a *WalletApplication) removeKeyArtifacts() error {
-	err := os.Remove(a.paths.DecKeyFile)
-	if err != nil {
-		return err
-	}
-	err = os.RemoveAll(a.paths.EncryptedDir)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+// func (a *WalletApplication) removeKeyArtifacts() error {
+// 	err := os.Remove(a.paths.DecKeyFile)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = os.RemoveAll(a.paths.EncryptedDir)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
 // PassKeysToFrontend emits the keys to the settings.Vue component on a
 // 5 second interval
-func (a *WalletApplication) passKeysToFrontend(privateKey, publicKey, walletAddress string) {
+func (a *WalletApplication) passKeysToFrontend(walletAddress string) {
 	go func() {
 		for {
-			a.RT.Events.Emit("wallet_keys", privateKey, publicKey, walletAddress)
+			a.RT.Events.Emit("wallet_keys", "Support for a Mnemonic Seed coming soon", a.paths.EncPrivKeyFile, walletAddress)
 			time.Sleep(5 * time.Second)
 		}
 	}()

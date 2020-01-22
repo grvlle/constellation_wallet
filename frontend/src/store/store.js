@@ -17,6 +17,8 @@ export const store = new Vuex.Store({
             email: "user@email.com",
             imgPath: 'faces/face-0.jpg',
             tokenAmount: 0, 
+            totalBalance: 0,
+            nonce: 0,
             usdValue: "NaN",
             blocks: "NaN",
             address: "N/A",
@@ -27,11 +29,13 @@ export const store = new Vuex.Store({
             seed: "witch collapse practice feed shame open despair creek road again ice least"
         },
         validators: {
+            target: "",
             password_length: 0,
             contains_eight_characters: false,
             contains_number: false,
             contains_uppercase: false,
             contains_special_character: false,
+            duplicate: false,
             valid_password: false,
         },
         txInfo: {

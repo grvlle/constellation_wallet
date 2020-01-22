@@ -26,6 +26,14 @@ export const store = new Vuex.Store({
             publicKey: "NaN",
             seed: "witch collapse practice feed shame open despair creek road again ice least"
         },
+        validators: {
+            password_length: 0,
+            contains_eight_characters: false,
+            contains_number: false,
+            contains_uppercase: false,
+            contains_special_character: false,
+            valid_password: false,
+        },
         txInfo: {
             txHistory: []
         },

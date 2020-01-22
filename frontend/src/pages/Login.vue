@@ -1,6 +1,6 @@
 <template>
   <div class="bg">
-    <div></div>
+    
     <center>
       <div :style="'margin-top: ' + this.$store.state.app.margin + 'px'">
         <img v-if="!this.$store.state.app.register" src="~@/assets/img/Constellation-Logo-1.png" />
@@ -92,9 +92,6 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
         </table>
               </div>
               
-              <div>
-                <fg-input v-model.trim="keystorePassword" type="password" label="Keystore Password" placeholder="Enter Keystore Password ..."></fg-input>
-                  </div>
 
                 <div>
                   <fg-input
@@ -105,16 +102,23 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
                     placeholder="Enter Key Password..."
                   ></fg-input>
 
+
+                <div>
+                <fg-input @input="checkPassword" type="password" v-model="keystorePassword" label="Keystore Password" placeholder="Enter Keystore Password ..." />
+                  </div>
+
     
                 </div>
-                 <div style="height: 20px;" v-if="$v.keyPasswordValidate.minLength">
-                   <!-- <p class="validate">hej</p>
-                   {{$v.keyPasswordValidate.minLength}} -->
-                </div>
+                 <div style="height: 30px;" v-if="this.$store.state.app.register && !this.$store.state.validators.valid_password">
+               
+                            <p v-if="!this.$store.state.validators.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
+                            <p v-if="!this.$store.state.validators.contains_number" class="validate"> Number,</p> 
+                            <p v-if="!this.$store.state.validators.contains_uppercase" class="validate"> Uppercase, </p> 
+                            <p v-if="!this.$store.state.validators.contains_special_character" class="validate"> Special Character </p> 
+                          
+                </div> 
     
-                 <!-- <div style="height: 20px;" v-if="!$v.keyPasswordValidate.minLength">
-                     <p class="error">Invalid wallet address. Please verify.</p>
-                 </div> -->
+
 
                 <div v-if="this.$store.state.app.register">
                   <fg-input
@@ -209,9 +213,12 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
 
 <script>
 import ErrorNotification from "./Notifications/ErrorMessage";
-import { required, minLength, maxLength, between } from 'vuelidate/lib/validators'
+import { required, minLength } from "vuelidate/lib/validators";
 
 export default {
+  validations: {
+    keystorePassword: { required, minLength: minLength(6) },
+  },
   name: "login-screen",
   newWalletLabel: "",
   keystorePassword: '',
@@ -219,24 +226,42 @@ export default {
   storepass: "",
   keypass: "",
   alias: "",
+  password_length: 0,
+  contains_eight_characters: false,
+  contains_number: false,
+  contains_uppercase: false,
+  contains_special_character: false,
+  valid_password: false,
   access: false,
   submitStatus: null,
-  validations: {
-      keyPasswordValidate: {
-          required,
-          minLength: minLength(10),
-          maxLength: maxLength(40),
-      },
-      storekeyPasswordValidate: {
-          required,
-          inBetween: between(0.00000001, 3711998690),
-      }
-  },
   methods: {
-        setKeyPassword(value) {
-            this.keyPasswordValidate = value
-            this.$v.keyPasswordValidate.$touch()
-        },
+    checkPassword: function() {
+      this.$store.state.validators.password_length = this.keystorePassword.length;
+      const format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+      
+      if (this.$store.state.validators.password_length > 8) {
+        this.$store.state.validators.contains_eight_characters = true;
+      } else {
+        this.$store.state.validators.contains_eight_characters = false;
+      }
+      
+      this.$store.state.validators.contains_number = /\d/.test(this.keystorePassword);
+      this.$store.state.validators.contains_uppercase = /[A-Z]/.test(this.keystorePassword);
+      this.$store.state.validators.contains_special_character = format.test(this.keystorePassword);
+      
+      if (this.$store.state.validators.contains_eight_characters === true &&
+          this.$store.state.validators.contains_special_character === true &&
+          this.$store.state.validators.contains_uppercase === true &&
+          this.$store.state.validators.contains_number === true) {
+            this.$store.state.validators.valid_password = true;			
+      } else {
+        this.$store.state.validators.valid_password = false;
+      }
+    },
+    setKeyPassword(value) {
+        this.keyPasswordValidate = value
+        this.$v.keyPasswordValidate.$touch()
+    },
     importKey: function() {
       window.backend.WalletApplication.ImportKey().then(
         result => {
@@ -260,7 +285,7 @@ export default {
     newLogin: function() {
       this.$store.state.app.register = !this.$store.state.app.register;
       // this.$store.state.walletInfo.email = this.$store.state.walletInfo.email
-      this.$store.state.app.margin = 180;
+      this.$store.state.app.margin = 200;
     },
     cancelEvent: function() {
       this.$store.state.app.register = !this.$store.state.app.register;
@@ -311,8 +336,10 @@ export default {
         }
       });
     }
-  }
-};
+  },
+  
+}
+
 
 </script>
 
@@ -360,6 +387,8 @@ p.validate {
     font-size: 10px;
     color: firebrick;
     margin-top: 0px;
+    margin-right: 2px;
+    float: left;
 }
 
 body,

@@ -98,6 +98,7 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
                     v-model="keyPasswordValidate"
                     @input="checkPassword(keyPasswordValidate)"
                     class="fg-style"
+                    type="password"
                     label="Key Password"
                     placeholder="Enter Key Password..."
                   ></fg-input>
@@ -126,7 +127,7 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
                             <p v-if="!this.$store.state.validators.contains_special_character" class="validate"> Special Character </p> 
                           
                 </div> 
-                 <div style="height: 30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keystorePassword !== ''">
+                 <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keystorePassword !== ''">
                 <p class="validate"> Keystore Password cannot be the same as the Key Password</p>
                 </div>
                
@@ -202,6 +203,7 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="warning"
                     block
+                    :disabled="!this.$store.state.validators.valid_password && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
                     @click.native="createLogin"
                     style="overflow: visible;"
                   >
@@ -296,7 +298,7 @@ export default {
       );
     },
     newLogin: function() {
-      this.$store.state.app.register = !this.$store.state.app.register;
+              this.$store.state.app.register = !this.$store.state.app.register;
       // this.$store.state.walletInfo.email = this.$store.state.walletInfo.email
       this.$store.state.app.margin = 200;
     },
@@ -328,6 +330,7 @@ export default {
       );
     },
     createLogin: function() {
+      if (this.$store.state.validators.valid_password) {
       var self = this;
       self.$store.state.walletInfo.email = self.newWalletLabel
       
@@ -348,6 +351,7 @@ export default {
           });
         }
       });
+      }
     }
   },
   

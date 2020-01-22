@@ -78,7 +78,7 @@ func (a *WalletApplication) createAddressFromPublicKey(alias string) string {
 
 	fmt.Println("Hello, playground") // this gets captured
 
-	err = a.runWalletCMD("show-address", "--keystore="+a.paths.EncPrivKeyFile, "--storepass=$CL_STOREPASS", "--alias="+alias, "--keypass=$CL_KEYPASS")
+	err = a.runWalletCMD("show-address", "--keystore="+a.paths.EncPrivKeyFile, "--storepass=$CL_STOREPASS", "--alias="+alias, "--keypass=$CL_KEYPASS", "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to generate wallet address. Reason:", err)
 		a.log.Errorf("Unable to generate wallet address. Reason: %s", err.Error())
@@ -115,7 +115,7 @@ func (a *WalletApplication) putTXOnNetwork(amount int64, fee int, address, alias
 	feeStr := strconv.Itoa(fee)
 
 	// newTX is the full command to sign a new transaction
-	err := a.runWalletCMD("create-transaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass=$CL_STOREPASS", "--keypass=$CL_KEYPASS", "--account_path="+a.paths.DAGDir, "--amount="+amountStr, "--fee="+feeStr, "-d="+address, "-f="+a.paths.LastTXFile, "-p="+a.paths.PrevTXFile)
+	err := a.runWalletCMD("create-transaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass=$CL_STOREPASS", "--keypass=$CL_KEYPASS", "--account_path="+a.paths.DAGDir, "--amount="+amountStr, "--fee="+feeStr, "-d="+address, "-f="+a.paths.LastTXFile, "-p="+a.paths.PrevTXFile, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to send transaction. Reason: ", err)
 		a.log.Errorf("Unable to send transaction. Reason: %s", err.Error())
@@ -130,7 +130,7 @@ func (a *WalletApplication) putTXOnNetwork(amount int64, fee int, address, alias
 // java -jar cl-keytool.jar --keystore testkey.p12 --alias alias --storepass storepass --keypass keypass
 
 func (a *WalletApplication) createEncryptedKeyPairToPasswordProtectedFile(alias string) {
-	err := a.runKeyToolCMD("--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass=$CL_STOREPASS", "--keypass=$CL_KEYPASS")
+	err := a.runKeyToolCMD("--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass=$CL_STOREPASS", "--keypass=$CL_KEYPASS", "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to write encrypted keys to filesystem. Reason: ", err)
 		a.log.Errorf("Unable to write encrypted keys to filesystem. Reason: %s", err.Error()) // TODO: change to fatal

@@ -64,7 +64,7 @@ func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string)
 // WalletKeystoreAccess is true if the user can unlock the .p12 keystore
 // and key using storepass and keypass
 func (a *WalletApplication) WalletKeystoreAccess() bool {
-	a.log.Infoln("Creating DAG Address from Public Key...")
+	a.log.Infoln("Checking Keystore Access...")
 
 	rescueStdout := os.Stdout
 	r, w, err := os.Pipe()
@@ -92,7 +92,7 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 		// Access to keystore is denied
 		a.KeyStoreAccess = false
 		a.log.Warn("KeyStore Access Rejected!")
-		a.LoginError("Invalid KeyStore Password provided. If not, make sure you have selected the correct KeyStore.")
+		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
 		return a.KeyStoreAccess
 	}
 	os.Stdout = rescueStdout

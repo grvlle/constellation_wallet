@@ -14,11 +14,24 @@ func (a *WalletApplication) LoginError(errMsg string) {
 
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
-	if err := a.DB.First(&a.wallet, "wallet_alias = ?", alias).Error; err != nil {
-		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
-		a.LoginError("Access Denied. Alias not found.")
+	os.Setenv("CL_STOREPASS", keystorePassword)
+	os.Setenv("CL_KEYPASS", keyPassword)
+
+	a.wallet.WalletAlias = alias
+
+	if a.WalletKeystoreAccess() {
+		if err := a.DB.First(&a.wallet, "wallet_alias = ?", alias).Error; err != nil {
+			a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
+			a.LoginError("Access Denied. Alias not found.")
+			return false
+		}
+		a.KeyStoreAccess = true
+	} else {
+		a.KeyStoreAccess = false
+		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
 		return false
 	}
+
 	if keystorePath != "" {
 		a.DB.Model(&a.wallet).Update("KeystorePath", keystorePath)
 		a.log.Infoln("PrivateKey path: ", keystorePath)
@@ -32,9 +45,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 		os.Setenv("CL_KEYPASS", keyPassword)
 	} else {
 		a.UserLoggedIn = false
-		if a.KeyStoreAccess {
-			a.LoginError("Access Denied. Please make sure that you have typed in the correct Key Password.")
-		}
+		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
 	}
 
 	if a.UserLoggedIn && a.KeyStoreAccess && !a.NewUser {

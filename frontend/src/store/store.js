@@ -5,6 +5,8 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state: {
         errorMessage: "None",
+        loginErrorMsg: "",
+        displayLoginError: false,
         app: {
             isLoading: false,
             isLoggedIn: false,

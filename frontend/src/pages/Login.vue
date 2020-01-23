@@ -6,8 +6,10 @@
         <img v-if="!this.$store.state.app.register" src="~@/assets/img/Constellation-Logo-1.png" />
         <p
           v-if="!this.$store.state.app.register"
-          style="margin-bottom: 50px; margin-top: 5px;"
+          style="margin-bottom: 20px; margin-top: 5px;"
         >Please enter your credentials below to access your Molly Wallet.</p>
+        <div style="height:30px;" v-if="!this.$store.state.app.register && !this.$store.state.displayLoginError"></div>
+        <div style="height:30px;" v-if="!this.$store.state.app.register && this.$store.state.displayLoginError"><p style="color: firebrick; font-size: 12px;">{{this.$store.state.loginErrorMsg}}</p></div>
         <div>
           <form @submit.prevent>
             <div class="row">

@@ -6,66 +6,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-/* Database Model is located in models.go */
-
-// CreateUser is called when creating a new wallet in frontend component Login.vue
-func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
-
-	// if keystorePath == "" {
-	// 	keystorePath = a.wallet.KeyStorePath
-
-	// }
-	// if alias == "" {
-	// 	alias = a.wallet.WalletAlias
-	// }
-
-	os.Setenv("CL_STOREPASS", keystorePassword)
-	os.Setenv("CL_KEYPASS", keyPassword)
-
-	keystorePasswordHashed, err := a.GenerateSaltedHash(keystorePassword)
-	if err != nil {
-		a.log.Errorf("Unable to generate password hash. Reason: ", err)
-		a.sendError("Unable to generate password hash. Reason: ", err)
-		return false
+func (a *WalletApplication) LoginError(errMsg string) {
+	if errMsg != "" {
+		a.RT.Events.Emit("login_error", errMsg, true)
 	}
-
-	keyPasswordHashed, err := a.GenerateSaltedHash(keyPassword)
-	if err != nil {
-		a.log.Errorf("Unable to generate password hash. Reason: ", err)
-		a.sendError("Unable to generate password hash. Reason: ", err)
-		return false
-	}
-
-	if err := a.DB.Where(&Wallet{WalletAlias: alias}).FirstOrCreate(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed, WalletAlias: alias}).Error; err != nil {
-		a.log.Errorf("Unable to create database object for new wallet. Reason: ", err)
-		a.sendError("Unable to create database object for new wallet. Reason: ", err)
-		return false
-	}
-
-	if err := a.DB.Where("wallet_alias = ?", alias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed, WalletAlias: alias}).Error; err != nil {
-		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
-		a.sendError("Unable to query database object for new wallet. Reason: ", err)
-		return false
-	}
-
-	err = a.initNewWallet()
-	if err != nil {
-		a.log.Errorf("Unable to initialize wallet object. Reason: ", err)
-		a.sendError("Unable to initialize wallet object. Reason: ", err)
-	}
-
-	a.KeyStoreAccess = a.WalletKeystoreAccess()
-	a.UserLoggedIn = false
-	a.NewUser = true
-
-	return true
 }
 
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	if err := a.DB.First(&a.wallet, "wallet_alias = ?", alias).Error; err != nil {
 		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
-		a.sendError("Unable to query database object for new wallet. Reason: ", err)
+		a.LoginError("Access Denied. Alias not found.")
 		return false
 	}
 	if keystorePath != "" {
@@ -81,7 +32,11 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 		os.Setenv("CL_KEYPASS", keyPassword)
 	} else {
 		a.UserLoggedIn = false
+		if a.KeyStoreAccess {
+			a.LoginError("Access Denied. Please make sure that you have typed in the correct Key Password.")
+		}
 	}
+
 	if a.UserLoggedIn && a.KeyStoreAccess && !a.NewUser {
 		a.initExistingWallet(keystorePath)
 	}
@@ -98,7 +53,7 @@ func (a *WalletApplication) LogOut() {
 func (a *WalletApplication) ImportKey() string {
 	a.paths.EncPrivKeyFile = a.RT.Dialog.SelectFile()
 	if a.paths.EncPrivKeyFile == "" {
-		a.sendError("Please enter a valid path", nil)
+		a.LoginError("Access Denied. No key path detected.")
 	}
 
 	a.log.Info("Path to imported key: " + a.paths.EncPrivKeyFile)
@@ -107,6 +62,9 @@ func (a *WalletApplication) ImportKey() string {
 
 func (a *WalletApplication) SelectDirToStoreKey() string {
 	a.paths.EncryptedDir = a.RT.Dialog.SelectDirectory()
+	if a.paths.EncPrivKeyFile == "" {
+		a.LoginError("No directory detected. Please try again.")
+	}
 	a.paths.EncPrivKeyFile = a.paths.EncryptedDir + "/key.p12"
 	return a.paths.EncPrivKeyFile
 }

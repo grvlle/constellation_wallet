@@ -118,60 +118,6 @@ func (a *WalletApplication) initDirectoryStructure() error {
 	return nil
 }
 
-// initWallet initializes a new wallet. This is called from login.vue/login.go
-// only when a new wallet is created.
-func (a *WalletApplication) initNewWallet() error {
-
-	a.CreateEncryptedKeyStore()
-	a.wallet.Address = a.GenerateDAGAddress()
-	a.paths.EncPrivKeyFile = a.wallet.KeyStorePath
-
-	a.DB.Model(&a.wallet).Update("Address", a.wallet.Address)
-
-	//a.initTransactionHistory()
-	a.passKeysToFrontend(a.wallet.Address)
-
-	if !a.WidgetRunning.DashboardWidgets {
-		a.initDashboardWidgets()
-	}
-
-	a.log.Infoln("A New wallet has been created successfully!")
-
-	return nil
-}
-
-// initExistingWallet queries the database for the user wallet and pushes
-// the information to the front end components.
-func (a *WalletApplication) initExistingWallet(keystorePath string) {
-
-	a.paths.EncPrivKeyFile = keystorePath
-
-	if !a.WidgetRunning.DashboardWidgets {
-		a.initDashboardWidgets()
-	}
-	if !a.WidgetRunning.PassKeysToFrontend {
-		a.passKeysToFrontend(a.wallet.Address)
-	}
-
-	a.log.Infoln("User has logged into the wallet")
-
-}
-
-func (a *WalletApplication) initDashboardWidgets() {
-	// Initializes a struct containing all Chart Data on the dashboard
-	chartData := a.ChartDataInit()
-
-	// Below methods are continously updating the client side modules.
-	a.nodeStats(chartData)
-	a.txStats(chartData)
-	a.networkStats(chartData)
-	a.blockAmount()
-	a.tokenAmount()
-	a.pricePoller()
-
-	a.WidgetRunning.DashboardWidgets = true
-}
-
 func (a *WalletApplication) sendError(msg string, err error) {
 
 	var errStr string

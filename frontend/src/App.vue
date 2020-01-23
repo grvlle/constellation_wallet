@@ -1,10 +1,19 @@
 <template>
   <div>
-    <login-screen v-if="!this.$store.state.app.isLoggedIn" :isLoggedIn="!this.$store.state.app.isLoggedIn" />
-    <loading-screen v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn" :isLoading="this.$store.state.app.isLoading" :fadeout="!this.$store.state.app.isLoading" />
+    <login-screen
+      v-if="!this.$store.state.app.isLoggedIn"
+      :isLoggedIn="!this.$store.state.app.isLoggedIn"
+    />
+    <loading-screen
+      v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
+      :isLoading="this.$store.state.app.isLoading"
+      :fadeout="!this.$store.state.app.isLoading"
+    />
 
-
-    <div v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn" :class="{'nav-open': $sidebar.showSidebar}">
+    <div
+      v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
+      :class="{'nav-open': $sidebar.showSidebar}"
+    >
       <notifications v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"></notifications>
       <router-view v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"></router-view>
     </div>
@@ -22,8 +31,7 @@ export default {
     LoginScreen
   },
   data() {
-    return {
-    };
+    return {};
   },
 
   mounted() {
@@ -46,6 +54,13 @@ export default {
       });
     });
 
+    window.wails.Events.On("login_error", (m, err) => {
+      this.$store.state.loginErrorMsg = m;
+      this.$store.state.displayLoginError = err;
+      setTimeout(() => {
+        this.$store.state.displayLoginError = false;
+      }, 6000);
+    });
     // Transactions.vue sockets
     window.wails.Events.On("update_tx_history", txHistoryFull => {
       this.$store.state.txInfo.txHistory = txHistoryFull;
@@ -56,9 +71,7 @@ export default {
     });
 
     // Login.vue sockets
-    window.wails.Events.On("registeredLogin", event => {
-        
-        });
+    window.wails.Events.On("registeredLogin", event => {});
 
     // Dashboard.vue sockets
     window.wails.Events.On("token", amount => {
@@ -93,11 +106,14 @@ export default {
     });
 
     // Settings.vue sockets
-    window.wails.Events.On("wallet_keys", (MnemonicSeed, keystorePath, address) => {
-      this.$store.state.walletInfo.seed = MnemonicSeed;
-      this.$store.state.walletInfo.keystorePath = keystorePath;
-      this.$store.state.walletInfo.address = address;
-    });
+    window.wails.Events.On(
+      "wallet_keys",
+      (MnemonicSeed, keystorePath, address) => {
+        this.$store.state.walletInfo.seed = MnemonicSeed;
+        this.$store.state.walletInfo.keystorePath = keystorePath;
+        this.$store.state.walletInfo.address = address;
+      }
+    );
   }
 };
 </script>

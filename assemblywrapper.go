@@ -92,6 +92,7 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 		// Access to keystore is denied
 		a.KeyStoreAccess = false
 		a.log.Warn("KeyStore Access Rejected!")
+		a.LoginError("Invalid KeyStore Password provided. If not, make sure you have selected the correct KeyStore.")
 		return a.KeyStoreAccess
 	}
 	os.Stdout = rescueStdout

@@ -61,11 +61,48 @@ func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string)
 	return nil
 }
 
-// createAddressFromPublicKey takes the pubKey hash and writes the DAG formatted
-// address to a file on the filesystem.
+// WalletKeystoreAccess is true if the user can unlock the .p12 keystore
+// and key using storepass and keypass
+func (a *WalletApplication) WalletKeystoreAccess() bool {
+	a.log.Infoln("Creating DAG Address from Public Key...")
+
+	rescueStdout := os.Stdout
+	r, w, err := os.Pipe()
+	if err != nil {
+		a.log.Errorf("Unable to pipe STDOUT, Reason: ", err)
+		a.sendError("Unable to pipe STDOUT, Reason: ", err)
+	}
+	os.Stdout = w
+	err = a.runWalletCMD("show-address", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--env_args=true")
+	if err != nil {
+		a.sendError("Unable to generate wallet address. Reason:", err)
+		a.log.Errorf("Unable to generate wallet address. Reason: %s", err.Error())
+	}
+
+	// STDOUT is captured here
+
+	w.Close()
+	dagAddress, err := ioutil.ReadAll(r)
+	if err != nil {
+		a.log.Errorf("Unable to read address from STDOUT", err)
+		a.sendError("Unable to read address from STDOUT", err)
+	}
+	// if STDOUT prefix of show-address output isn't DAG
+	if string(dagAddress[:2]) != "DAG" {
+		// Access to keystore is denied
+		a.KeyStoreAccess = false
+		a.log.Warn("KeyStore Access Rejected!")
+		return a.KeyStoreAccess
+	}
+	os.Stdout = rescueStdout
+
+	a.KeyStoreAccess = true
+	a.log.Info("KeyStore Access Granted!")
+	return a.KeyStoreAccess
+}
 
 // java -cp constellation-assembly-1.0.12.jar org.constellation.util.wallet.GenerateAddress --pub_key_str=<base64 hash of pubkey> --store_path=<path to file where address will be stored>
-func (a *WalletApplication) createAddressFromPublicKey() string {
+func (a *WalletApplication) GenerateDAGAddress() string {
 	a.log.Infoln("Creating DAG Address from Public Key...")
 
 	rescueStdout := os.Stdout
@@ -114,12 +151,12 @@ func (a *WalletApplication) putTXOnNetwork(amount int64, fee int, address string
 	time.Sleep(10 * time.Second) // Will sleep for 10 sec between TXs to prevent spamming.
 }
 
-// createEncryptedKeyPairToPasswordProtectedFile is called ONLY when a NEW wallet is created. This
+// createEncryptedKeyStore is called ONLY when a NEW wallet is created. This
 // will create a new password protected encrypted keypair stored in $HOME/.dag/encrypted_key/priv.p12
 // (a.paths.EncPrivKey)
 
 // java -jar cl-keytool.jar --keystore testkey.p12 --alias alias --storepass storepass --keypass keypass
-func (a *WalletApplication) createEncryptedKeyPairToPasswordProtectedFile() {
+func (a *WalletApplication) CreateEncryptedKeyStore() {
 	err := a.runKeyToolCMD("--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to write encrypted keys to filesystem. Reason: ", err)

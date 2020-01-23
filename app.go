@@ -28,9 +28,10 @@ type WalletApplication struct {
 		AddressFile    string
 		ImageDir       string
 	}
-	UserLoggedIn  bool
-	NewUser       bool
-	WidgetRunning struct {
+	KeyStoreAccess bool
+	UserLoggedIn   bool
+	NewUser        bool
+	WidgetRunning  struct {
 		PassKeysToFrontend bool
 		DashboardWidgets   bool
 	}
@@ -121,18 +122,8 @@ func (a *WalletApplication) initDirectoryStructure() error {
 // only when a new wallet is created.
 func (a *WalletApplication) initNewWallet() error {
 
-	a.wallet = Wallet{
-		Balance:          0,
-		AvailableBalance: 0,
-		Nonce:            0,
-		TotalBalance:     0,
-		Delegated:        0,
-		Deposit:          0,
-		Address:          "",
-	}
-
-	a.createEncryptedKeyPairToPasswordProtectedFile()
-	a.wallet.Address = a.createAddressFromPublicKey()
+	a.CreateEncryptedKeyStore()
+	a.wallet.Address = a.GenerateDAGAddress()
 	a.paths.EncPrivKeyFile = a.wallet.KeyStorePath
 
 	a.DB.Model(&a.wallet).Update("Address", a.wallet.Address)
@@ -154,7 +145,6 @@ func (a *WalletApplication) initNewWallet() error {
 func (a *WalletApplication) initExistingWallet(keystorePath string) {
 
 	a.paths.EncPrivKeyFile = keystorePath
-	// a.wallet.PrivateKey, a.wallet.PublicKey = a.getKeys()
 
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
@@ -184,17 +174,18 @@ func (a *WalletApplication) initDashboardWidgets() {
 
 func (a *WalletApplication) sendError(msg string, err error) {
 
+	var errStr string
+
 	if err != nil {
 		b := []byte(err.Error())
-		if len(b) > 100 {
-			errStr := string(b[:100]) // Restrict error size for frontend
-			a.RT.Events.Emit("error_handling", msg, errStr+" ...")
+		if len(b) > 80 {
+			errStr = string(b[:80]) // Restrict error size for frontend
+		} else if len(b) < 80 {
+			errStr = string(b)
+		} else {
+			errStr = ""
 		}
-		errStr := string(b)
-		a.RT.Events.Emit("error_handling", msg, errStr+" ...")
-	} else {
-		errStr := ""
+
 		a.RT.Events.Emit("error_handling", msg, errStr+" ...")
 	}
-
 }

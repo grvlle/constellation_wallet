@@ -36,13 +36,13 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		return false
 	}
 
-	if err := a.DB.Where(&Wallet{WalletAlias: alias}).FirstOrCreate(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
+	if err := a.DB.Where(&Wallet{WalletAlias: alias}).FirstOrCreate(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed, WalletAlias: alias}).Error; err != nil {
 		a.log.Errorf("Unable to create database object for new wallet. Reason: ", err)
 		a.sendError("Unable to create database object for new wallet. Reason: ", err)
 		return false
 	}
 
-	if err := a.DB.Where("wallet_alias = ?", alias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
+	if err := a.DB.Where("wallet_alias = ?", alias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed, WalletAlias: alias}).Error; err != nil {
 		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
 		a.sendError("Unable to query database object for new wallet. Reason: ", err)
 		return false
@@ -54,6 +54,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		a.sendError("Unable to initialize wallet object. Reason: ", err)
 	}
 
+	a.KeyStoreAccess = a.WalletKeystoreAccess()
 	a.UserLoggedIn = false
 	a.NewUser = true
 
@@ -67,18 +68,21 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 		a.sendError("Unable to query database object for new wallet. Reason: ", err)
 		return false
 	}
-	if keystorePath == "" {
-		keystorePath = a.wallet.KeyStorePath
+	if keystorePath != "" {
+		a.DB.Model(&a.wallet).Update("KeystorePath", keystorePath)
+		a.log.Infoln("PrivateKey path: ", keystorePath)
 	}
-	a.log.Infoln("PrivateKey path: ", keystorePath)
-	if a.CheckAccess(keystorePassword, a.wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, a.wallet.KeyPasswordHash) {
+	a.log.Warnln("No path to keystore provided")
+
+	// Check password strings against salted hashes stored in DB. Also make sure KeyStore has been accessed.
+	if a.CheckAccess(keystorePassword, a.wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, a.wallet.KeyPasswordHash) && a.KeyStoreAccess {
 		a.UserLoggedIn = true
 		os.Setenv("CL_STOREPASS", keystorePassword)
 		os.Setenv("CL_KEYPASS", keyPassword)
 	} else {
 		a.UserLoggedIn = false
 	}
-	if a.UserLoggedIn && !a.NewUser {
+	if a.UserLoggedIn && a.KeyStoreAccess && !a.NewUser {
 		a.initExistingWallet(keystorePath)
 	}
 

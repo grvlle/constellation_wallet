@@ -11,6 +11,7 @@ type Wallet struct {
 	KeystorePasswordHash string
 	KeyPasswordHash      string
 	KeyStorePath         string
+	WalletAlias          string
 	Addresses            []Address   `sql:"-"`
 	TXHistory            []TXHistory `sql:"-"`
 	ProfilePicture       string
@@ -29,8 +30,6 @@ type Wallet struct {
 			EUR float64 `json:"EUR,omitempty"`
 		} `json:"DAG"`
 	} `json:"token_price"`
-	PrivateKey string
-	PublicKey  string
 }
 
 type TXHistory struct {

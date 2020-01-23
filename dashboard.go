@@ -136,10 +136,10 @@ func (a *WalletApplication) networkStats(cd *ChartData) {
 }
 
 // TokenAmount polls the token balance and stores it in the Wallet.Balance object
-func (a *WalletApplication) tokenAmount(wallet Wallet) {
+func (a *WalletApplication) tokenAmount() {
 	go func() {
 		for {
-			a.RT.Events.Emit("token", wallet.Balance)
+			a.RT.Events.Emit("token", a.wallet.Balance)
 			UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
 			time.Sleep(updateIntervalToken * time.Second)
 		}
@@ -162,7 +162,7 @@ func (a *WalletApplication) blockAmount() {
 // PricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token
 // balance evaluation against USD.
-func (a *WalletApplication) pricePoller(wallet Wallet) {
+func (a *WalletApplication) pricePoller() {
 
 	const (
 		apiKey string = "17b10afdddc411087e2140ec91bd73d88d0c20294541838b192255fc574b1cb7"
@@ -183,14 +183,14 @@ func (a *WalletApplication) pricePoller(wallet Wallet) {
 					a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
 					a.log.Warnf("Unable to read HTTP resonse from Token API. Reason: ", err)
 				}
-				err = json.Unmarshal([]byte(body), &wallet.TokenPrice)
+				err = json.Unmarshal([]byte(body), &a.wallet.TokenPrice)
 				if err != nil {
 					a.sendError("Unable to display token price. Reason: ", err)
 					a.log.Warnf("Unable to display token price. Reason:", err)
 				}
-				a.log.Debugf("Collected token price in USD: %v", wallet.TokenPrice.DAG.USD)
+				a.log.Debugf("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
 
-				tokenUSD := int(float64(wallet.Balance) * wallet.TokenPrice.DAG.USD)
+				tokenUSD := int(float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD)
 				a.RT.Events.Emit("price", "$", tokenUSD)
 				time.Sleep(updateIntervalToken * time.Second)
 			} else {

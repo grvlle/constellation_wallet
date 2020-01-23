@@ -6,7 +6,7 @@
         <img v-if="!this.$store.state.app.register" src="~@/assets/img/Constellation-Logo-1.png" />
         <p
           v-if="!this.$store.state.app.register"
-          style="margin-bottom: 80px; margin-top: 5px;"
+          style="margin-bottom: 50px; margin-top: 5px;"
         >Please enter your credentials below to access your Molly Wallet.</p>
         <div>
           <form @submit.prevent>
@@ -18,13 +18,13 @@
                   <br />
                   <b>Create a new wallet</b>
                   <br />
-                  This section will let you create a Molly Wallet to store your $DAG tokens in. Be aware that <b>everytime a new wallet is created, the previous is overwritten.</b> <br />
+                  This section will let you create a Molly Wallet to store your $DAG tokens in. Be aware that <b>everytime a new wallet is created in the same directory, the previous is overwritten.</b> <br />
 
                   <br />
                   <ul>
   <li><b>Key File</b><i> - Select a directory to store your key.p12. <b>You need to back this up</b> as it'll help you restore your wallet at any time. If you lose this, you will be locked out of the wallet.</i></li>
-  <li><b>Store Pass</b><i> - This is another layer of protection securing the private key. </i></li>
-  <li><b>Key Password</b><i> - This is the password you will use when accessing or restoring your wallet. It'll unlock the key.p12 file.</i></li>
+  <li><b>Store Pass</b><i> - This password unlocks the keystore file. </i></li>
+  <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
   <li><b>Token Label</b><i> - This will set the label of your wallet. This is <b>optional</b> and strictly for cosmetic purposes.</i></li>
 </ul>
 Please backup your passwords and wallet key file (key.p12) as these will allow you to restore your wallet at any time. 
@@ -91,27 +91,18 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
           </tr>
         </table>
               </div>
-              
 
-                <div style="margin-bottom: 10px;">
+                              <div>
                   <fg-input
-                    v-model="keyPasswordValidate"
-                    @input="checkPassword(keyPasswordValidate)"
-                    class="fg-style"
-                    type="password"
-                    label="Key Password"
-                    placeholder="Enter Key Password..."
+                    type="text"
+                    v-model="alias"
+                    :placeholder="this.$store.state.walletInfo.alias"
+                    label="Key Alias"
                   ></fg-input>
                 </div>
-                  
-                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && this.$store.state.validators.target == this.keyPasswordValidate && this.$store.state.app.register && !this.$store.state.validators.valid_password">
-               
-                            <p v-if="!this.$store.state.validators.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
-                            <p v-if="!this.$store.state.validators.contains_number" class="validate"> Number,</p> 
-                            <p v-if="!this.$store.state.validators.contains_uppercase" class="validate"> Uppercase, </p> 
-                            <p v-if="!this.$store.state.validators.contains_special_character" class="validate"> Special Character </p> 
-                          
-                </div> 
+
+
+              
 
                 <div class="fg-style">
                 <fg-input @input="checkPassword(keystorePassword)" type="password" v-model="keystorePassword" label="Keystore Password" placeholder="Enter Keystore Password ..." />
@@ -127,10 +118,32 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
                             <p v-if="!this.$store.state.validators.contains_special_character" class="validate"> Special Character </p> 
                           
                 </div> 
-                 <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keystorePassword !== ''">
+ 
+               
+
+                <div style="margin-bottom: 10px;">
+                  <fg-input
+                    v-model="keyPasswordValidate"
+                    @input="checkPassword(keyPasswordValidate)"
+                    class="fg-style"
+                    type="password"
+                    label="Key Password"
+                    placeholder="Enter Key Password..."
+                  ></fg-input>
+                </div>
+                <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keyPasswordValidate !== ''">
                 <p class="validate"> Keystore Password cannot be the same as the Key Password</p>
                 </div>
+                  
+                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && this.$store.state.validators.target == this.keyPasswordValidate && this.$store.state.app.register && !this.$store.state.validators.valid_password">
                
+                            <p v-if="!this.$store.state.validators.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
+                            <p v-if="!this.$store.state.validators.contains_number" class="validate"> Number,</p> 
+                            <p v-if="!this.$store.state.validators.contains_uppercase" class="validate"> Uppercase, </p> 
+                            <p v-if="!this.$store.state.validators.contains_special_character" class="validate"> Special Character </p> 
+                          
+                </div> 
+
 
 
                 <div v-if="this.$store.state.app.register">
@@ -199,11 +212,12 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
                   v-if="this.$store.state.app.register"
                   style="float: right; width: 48%; margin-top: 20px;"
                 >
+                <!-- :disabled="!this.$store.state.validators.valid_password && this.keystorePassword !== '' && this.keyPasswordValidate !== ''" -->
                   <p-button
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="warning"
                     block
-                    :disabled="!this.$store.state.validators.valid_password && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                    
                     @click.native="createLogin"
                     style="overflow: visible;"
                   >
@@ -300,16 +314,16 @@ export default {
     newLogin: function() {
               this.$store.state.app.register = !this.$store.state.app.register;
       // this.$store.state.walletInfo.email = this.$store.state.walletInfo.email
-      this.$store.state.app.margin = 200;
+      this.$store.state.app.margin = 150;
     },
     cancelEvent: function() {
       this.$store.state.app.register = !this.$store.state.app.register;
-      this.$store.state.app.margin = 100;
+      this.$store.state.app.margin = 70;
     },
     login: function() {
       var self = this;
 
-        window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate).then(
+        window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias).then(
         result => {
           self.access = result;
           window.backend.WalletApplication.SetWalletTag().then(walletTag =>
@@ -330,15 +344,15 @@ export default {
       );
     },
     createLogin: function() {
-      if (this.$store.state.validators.valid_password) {
+      // if (this.$store.state.validators.valid_password) {
       var self = this;
       self.$store.state.walletInfo.email = self.newWalletLabel
       
       window.backend.WalletApplication.StoreWalletLabelInDB(self.newWalletLabel)
-      window.backend.WalletApplication.CreateWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate
+      window.backend.WalletApplication.CreateWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias
       ).then(result => {
         if (result) {
-          window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate
+          window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias
           ).then(result => {
             self.access = result;
             if (self.access) {
@@ -351,7 +365,7 @@ export default {
           });
         }
       });
-      }
+      // }
     }
   },
   

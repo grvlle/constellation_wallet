@@ -57,7 +57,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.NewUser = false
 	a.RT = runtime
 
-	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"store.db")
+	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {
 		a.log.Panicf("failed to connect database", err)
 	}
@@ -104,21 +104,17 @@ func (a *WalletApplication) initDirectoryStructure() error {
 		return err
 	}
 
+	files := []string{a.paths.LastTXFile, a.paths.PrevTXFile}
+
+	for _, f := range files {
+		file, err := os.Create(f)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+	}
+
 	return nil
-
-	// f, err := os.Create(a.paths.LastTXFile)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// defer f.Close()
-
-	// _, err = f.WriteString("{}")
-	// if err != nil {
-	// 	a.log.Errorf("Unable to create"+a.paths.LastTXFile, err)
-	// 	a.sendError("Unable to create"+a.paths.LastTXFile, err)
-	// }
-
 }
 
 // initWallet initializes a new wallet. This is called from login.vue/login.go
@@ -135,18 +131,17 @@ func (a *WalletApplication) initNewWallet() error {
 		Address:          "",
 	}
 
-	// a.wallet.PrivateKey, a.wallet.PublicKey = a.getKeys()
-	a.createEncryptedKeyPairToPasswordProtectedFile("alias")
-	a.wallet.Address = a.createAddressFromPublicKey("alias")
+	a.createEncryptedKeyPairToPasswordProtectedFile()
+	a.wallet.Address = a.createAddressFromPublicKey()
 	a.paths.EncPrivKeyFile = a.wallet.KeyStorePath
 
 	a.DB.Model(&a.wallet).Update("Address", a.wallet.Address)
 
 	//a.initTransactionHistory()
-	a.passKeysToFrontend(a.wallet.PrivateKey)
+	a.passKeysToFrontend(a.wallet.Address)
 
 	if !a.WidgetRunning.DashboardWidgets {
-		a.initDashboardWidgets(a.wallet)
+		a.initDashboardWidgets()
 	}
 
 	a.log.Infoln("A New wallet has been created successfully!")
@@ -162,7 +157,7 @@ func (a *WalletApplication) initExistingWallet(keystorePath string) {
 	// a.wallet.PrivateKey, a.wallet.PublicKey = a.getKeys()
 
 	if !a.WidgetRunning.DashboardWidgets {
-		a.initDashboardWidgets(a.wallet)
+		a.initDashboardWidgets()
 	}
 	if !a.WidgetRunning.PassKeysToFrontend {
 		a.passKeysToFrontend(a.wallet.Address)
@@ -172,7 +167,7 @@ func (a *WalletApplication) initExistingWallet(keystorePath string) {
 
 }
 
-func (a *WalletApplication) initDashboardWidgets(wallet Wallet) {
+func (a *WalletApplication) initDashboardWidgets() {
 	// Initializes a struct containing all Chart Data on the dashboard
 	chartData := a.ChartDataInit()
 
@@ -181,8 +176,8 @@ func (a *WalletApplication) initDashboardWidgets(wallet Wallet) {
 	a.txStats(chartData)
 	a.networkStats(chartData)
 	a.blockAmount()
-	a.tokenAmount(wallet)
-	a.pricePoller(wallet)
+	a.tokenAmount()
+	a.pricePoller()
 
 	a.WidgetRunning.DashboardWidgets = true
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"golang.org/x/crypto/bcrypt"
@@ -10,12 +9,15 @@ import (
 /* Database Model is located in models.go */
 
 // CreateUser is called when creating a new wallet in frontend component Login.vue
-func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword string) bool {
+func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
-	fmt.Println(keystorePath)
-	if keystorePath == "" {
-		keystorePath = a.wallet.KeyStorePath
-	}
+	// if keystorePath == "" {
+	// 	keystorePath = a.wallet.KeyStorePath
+
+	// }
+	// if alias == "" {
+	// 	alias = a.wallet.WalletAlias
+	// }
 
 	os.Setenv("CL_STOREPASS", keystorePassword)
 	os.Setenv("CL_KEYPASS", keyPassword)
@@ -34,13 +36,13 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		return false
 	}
 
-	if err := a.DB.FirstOrCreate(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}, &a.wallet, 1).Error; err != nil {
+	if err := a.DB.Where(&Wallet{WalletAlias: alias}).FirstOrCreate(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
 		a.log.Errorf("Unable to create database object for new wallet. Reason: ", err)
 		a.sendError("Unable to create database object for new wallet. Reason: ", err)
 		return false
 	}
 
-	if err := a.DB.First(&a.wallet, 1).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
+	if err := a.DB.Where("wallet_alias = ?", alias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
 		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
 		a.sendError("Unable to query database object for new wallet. Reason: ", err)
 		return false
@@ -58,17 +60,17 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 	return true
 }
 
-func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword string) bool {
+func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
-	if err := a.DB.First(&a.wallet, 1).Error; err != nil {
+	if err := a.DB.First(&a.wallet, "wallet_alias = ?", alias).Error; err != nil {
 		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
 		a.sendError("Unable to query database object for new wallet. Reason: ", err)
 		return false
 	}
 	if keystorePath == "" {
 		keystorePath = a.wallet.KeyStorePath
-		a.log.Infoln("PrivateKey path: %s", keystorePath)
 	}
+	a.log.Infoln("PrivateKey path: ", keystorePath)
 	if a.CheckAccess(keystorePassword, a.wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, a.wallet.KeyPasswordHash) {
 		a.UserLoggedIn = true
 		os.Setenv("CL_STOREPASS", keystorePassword)
@@ -131,13 +133,3 @@ func (a *WalletApplication) Compare(s, hash string) error {
 	existing := []byte(hash)
 	return bcrypt.CompareHashAndPassword(existing, incoming)
 }
-
-// func (a *WalletApplication) GenerateUUID() string {
-// 	n := 5
-// 	b := make([]byte, n)
-// 	if _, err := rand.Read(b); err != nil {
-// 		panic(err)
-// 	}
-// 	s := fmt.Sprintf("%X", b)
-// 	return s
-// }

@@ -59,9 +59,9 @@ func (a *WalletApplication) SetImagePath() string {
 }
 
 func (a *WalletApplication) StoreImagePathInDB(path string) {
-	if err := a.DB.First(&a.wallet, 1).Updates(&Wallet{ProfilePicture: path}).Error; err != nil {
-		a.log.Errorf("Unable to update the DB record with the wallet tag. Reason: ", err)
-		a.sendError("Unable to update the DB record with the wallet tag. Reason: ", err)
+	if err := a.DB.First(&a.wallet, "wallet_alias = ?", a.wallet.WalletAlias).Update(&Wallet{ProfilePicture: path}).Error; err != nil {
+		a.log.Errorf("Unable to update the DB record with the Image path. Reason: ", err)
+		a.sendError("Unable to update the DB record with the Image path. Reason: ", err)
 	}
 }
 
@@ -70,7 +70,7 @@ func (a *WalletApplication) SetWalletTag() string {
 }
 
 func (a *WalletApplication) StoreWalletLabelInDB(walletTag string) {
-	if err := a.DB.First(&a.wallet, 1).Updates(&Wallet{WalletTag: walletTag}).Error; err != nil {
+	if err := a.DB.First(&a.wallet, "wallet_alias = ?", a.wallet.WalletAlias).Update(&Wallet{WalletTag: walletTag}).Error; err != nil {
 		a.log.Errorf("Unable to update the DB record with the wallet tag. Reason: ", err)
 		a.sendError("Unable to update the DB record with the wallet tag. Reason: ", err)
 	}

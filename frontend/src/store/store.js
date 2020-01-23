@@ -9,13 +9,14 @@ export const store = new Vuex.Store({
             isLoading: false,
             isLoggedIn: false,
             register: false,
-            margin: 100,
+            margin: 70,
         },
         walletInfo: {
             version: "v1.12",
             uiVersion: "v0.1.3 Beta",
             email: "user@email.com",
             imgPath: 'faces/face-0.jpg',
+            transactions: 0,
             tokenAmount: 0, 
             totalBalance: 0,
             nonce: 0,
@@ -24,6 +25,7 @@ export const store = new Vuex.Store({
             address: "N/A",
             keystorePath: "",
             saveKeystorePath: "",
+            alias: "",
             privateKey: "NaN",
             publicKey: "NaN",
             seed: "witch collapse practice feed shame open despair creek road again ice least"

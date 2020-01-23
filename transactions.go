@@ -70,7 +70,7 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int, address st
 // to put the actual transaction on chain. It'll then call updateLastTransaction in order
 // to display transaction history to the user.
 func (a *WalletApplication) sendTransaction(amount int64, fee int, address string) {
-	a.putTXOnNetwork(amount, fee, address, "alias") // TODO: implement password protection for the tx
+	a.putTXOnNetwork(amount, fee, address)
 	//a.updateLastTransactions()
 }
 

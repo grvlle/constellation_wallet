@@ -36,7 +36,7 @@ export default {
     return {
       details: [
         {
-          title: 0,
+          title: this.$store.state.walletInfo.transactions,
           subTitle: "Transactions"
         },
         {

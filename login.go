@@ -2,6 +2,8 @@ package main
 
 import (
 	"os"
+	"os/exec"
+	"runtime"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -14,8 +16,13 @@ func (a *WalletApplication) LoginError(errMsg string) {
 
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
-	os.Setenv("CL_STOREPASS", keystorePassword)
-	os.Setenv("CL_KEYPASS", keyPassword)
+	if runtime.GOOS == "windows" {
+		exec.Command("SETX", "CL_STOREPASS", "keystorePassword")
+		exec.Command("SETX", "CL_KEYPASS", "keyPassword")
+	} else {
+		os.Setenv("CL_STOREPASS", keystorePassword)
+		os.Setenv("CL_KEYPASS", keyPassword)
+	}
 
 	a.wallet.WalletAlias = alias
 
@@ -41,8 +48,13 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	// Check password strings against salted hashes stored in DB. Also make sure KeyStore has been accessed.
 	if a.CheckAccess(keystorePassword, a.wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, a.wallet.KeyPasswordHash) && a.KeyStoreAccess {
 		a.UserLoggedIn = true
-		os.Setenv("CL_STOREPASS", keystorePassword)
-		os.Setenv("CL_KEYPASS", keyPassword)
+		if runtime.GOOS == "windows" {
+			exec.Command("SETX", "CL_STOREPASS", "keystorePassword")
+			exec.Command("SETX", "CL_KEYPASS", "keyPassword")
+		} else {
+			os.Setenv("CL_STOREPASS", keystorePassword)
+			os.Setenv("CL_KEYPASS", keyPassword)
+		}
 	} else {
 		a.UserLoggedIn = false
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")

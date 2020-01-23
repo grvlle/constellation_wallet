@@ -1,5 +1,5 @@
 <template>
-  <div class="contact-us full-screen">
+  <div id="app" class="contact-us full-screen">
     <nav class="navbar navbar-ct-default" role="navigation-demo">
       <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->

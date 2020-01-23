@@ -2,60 +2,33 @@ package main
 
 import (
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
-
-	"github.com/fsnotify/fsnotify"
 )
 
-// monitorFileState will monitor the state of all files in .dag
-// and act accordingly upon manipulation.
-func (a *WalletApplication) monitorFileState() error {
-	a.log.Info("Starting Watcher")
-	watcher, err := fsnotify.NewWatcher()
+// Copy the src file to dst. Any existing file will be overwritten and will not
+// copy file attributes.
+func Copy(src, dst string) error {
+	in, err := os.Open(src)
 	if err != nil {
 		return err
 	}
+	defer in.Close()
 
-	go func() {
-		for {
-			select {
-			case event, ok := <-watcher.Events:
-				if !ok {
-					return
-				} // If a JSONdata/*.json file is written to.
-				if event.Op&fsnotify.Write&fsnotify.Create == fsnotify.Write|fsnotify.Create {
-					a.log.Infof("modified file: %s", event.Name)
-					switch fileModified := event.Name; {
-
-					case fileModified == a.paths.LastTXFile:
-						a.log.Debug("Last TX File has been modified")
-
-					case fileModified == a.paths.DecKeyFile:
-						a.log.Debug("Key File has been modified")
-						a.RT.Events.Emit("wallet_keys", a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key)
-
-					case fileModified == "JSONdata/chart_data.json":
-						a.log.Info("Chart Data file modified")
-					}
-				}
-			case err, ok := <-watcher.Errors:
-				if !ok {
-					a.sendError("", err)
-					a.log.Error(err.Error())
-				}
-			}
-		}
-	}()
-
-	err = watcher.Add(a.paths.DAGDir)
+	out, err := os.Create(dst)
 	if err != nil {
-		a.sendError("Failed to start watcher. Reason: ", err)
 		return err
 	}
-	return nil
+	defer out.Close()
+
+	_, err = io.Copy(out, in)
+	if err != nil {
+		return err
+	}
+	return out.Close()
 }
 
 // writeToJSON is a helper function that will remove a requested file(filename),
@@ -82,6 +55,16 @@ func writeToJSON(filename string, data interface{}) error {
 
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (a *WalletApplication) directoryCreator(directories ...string) error {
+	for _, d := range directories {
+		err := os.MkdirAll(d, os.ModePerm)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

@@ -139,7 +139,7 @@ func (a *WalletApplication) networkStats(cd *ChartData) {
 func (a *WalletApplication) tokenAmount() {
 	go func() {
 		for {
-			a.RT.Events.Emit("token", a.Wallet.Balance)
+			a.RT.Events.Emit("token", a.wallet.Balance)
 			UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
 			time.Sleep(updateIntervalToken * time.Second)
 		}
@@ -171,28 +171,36 @@ func (a *WalletApplication) pricePoller() {
 	)
 
 	go func() {
+		retryCounter := 0
 		for {
 			resp, err := http.Get(url)
 			if err != nil {
-				a.sendError("Unable to poll token evaluation. Reason: ", err)
-				a.log.Warnf("Unable to poll token evaluation. Reason: ", err.Error) // Log this
+				a.log.Warnf("Unable to poll token evaluation. Reason: ", err) // Log this
 			}
-			defer resp.Body.Close()
-			body, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
-				a.log.Warnf("Unable to read HTTP resonse from Token API. Reason: ", err)
-			}
-			err = json.Unmarshal([]byte(body), &a.Wallet.TokenPrice)
-			if err != nil {
-				a.sendError("Unable to display token price. Reason: ", err)
-				a.log.Warnf("Unable to display token price. Reason:", err)
-			}
-			a.log.Debugf("Collected token price in USD: %v", a.Wallet.TokenPrice.DAG.USD)
+			if resp != nil {
+				body, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
+					a.log.Warnf("Unable to read HTTP resonse from Token API. Reason: ", err)
+				}
+				err = json.Unmarshal([]byte(body), &a.wallet.TokenPrice)
+				if err != nil {
+					a.sendError("Unable to display token price. Reason: ", err)
+					a.log.Warnf("Unable to display token price. Reason:", err)
+				}
+				a.log.Debugf("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
 
-			tokenUSD := int(float64(a.Wallet.Balance) * a.Wallet.TokenPrice.DAG.USD)
-			a.RT.Events.Emit("price", "$", tokenUSD)
-			time.Sleep(updateIntervalToken * time.Second)
+				tokenUSD := int(float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD)
+				a.RT.Events.Emit("price", "$", tokenUSD)
+				time.Sleep(updateIntervalToken * time.Second)
+			} else {
+				retryCounter++
+				time.Sleep(1 * time.Second)
+				if retryCounter >= 10 {
+					a.sendError("Unable to poll token evaluation. Reason: ", err)
+					break
+				}
+			}
 		}
 	}()
 }
@@ -204,20 +212,6 @@ func UpdateCounter(countFrom int, counter string, unit time.Duration, runtime *w
 			runtime.Events.Emit(counter, i)
 			time.Sleep(unit)
 			continue
-		}
-	}()
-}
-
-// initSocketData will push the wallet data to be displayed on the frontend twice
-// to bypass a bug present in the Wails lib. This will allow us to display data
-// as soon as the wallet App is started.
-func (a *WalletApplication) initSocketData(frontendFunction string, data ...interface{}) {
-
-	// Need to emit twice for it to stick. Bug with the Wails lib.
-	go func() {
-		for i := 0; i < 2; i++ {
-			a.RT.Events.Emit(frontendFunction, data)
-			time.Sleep(1 * time.Second)
 		}
 	}()
 }

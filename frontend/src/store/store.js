@@ -1,28 +1,44 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-
-
-import Wallet from "../../../JSONdata/wallet.json"
-
-//import ChartData from '../../../../../../../.dag/chart_data.json';
-
 Vue.use(Vuex);
 export const store = new Vuex.Store({
     state: {
         errorMessage: "None",
+        app: {
+            isLoading: false,
+            isLoggedIn: false,
+            register: false,
+            margin: 70,
+        },
         walletInfo: {
             version: "v1.12",
             uiVersion: "v0.1.3 Beta",
             email: "user@email.com",
             imgPath: 'faces/face-0.jpg',
-            tokenAmount: Wallet.balance, 
+            transactions: 0,
+            tokenAmount: 0, 
+            totalBalance: 0,
+            nonce: 0,
             usdValue: "NaN",
             blocks: "NaN",
-            address: Wallet.address,
+            address: "N/A",
+            keystorePath: "",
+            saveKeystorePath: "",
+            alias: "",
             privateKey: "NaN",
             publicKey: "NaN",
             seed: "witch collapse practice feed shame open despair creek road again ice least"
+        },
+        validators: {
+            target: "",
+            password_length: 0,
+            contains_eight_characters: false,
+            contains_number: false,
+            contains_uppercase: false,
+            contains_special_character: false,
+            duplicate: false,
+            valid_password: false,
         },
         txInfo: {
             txHistory: []

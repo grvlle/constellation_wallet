@@ -16,19 +16,19 @@ func (a *WalletApplication) UploadImage() string {
 
 	a.log.Info("Path to user uploaded image: " + filePath)
 	err := CopyFile(filePath, a.paths.ImageDir+filename)
-	if err != nil {
+	if err != nil && filePath != "" {
 		a.log.Errorf("Unable to copy image. ", err)
 		a.sendError("Unable to change Image. ", err)
 		return "None"
 	}
 
 	file, err := os.Open(filePath)
-	defer file.Close()
-	if err != nil {
+	if err != nil && filePath != "" {
 		a.log.Errorf("Unable to open image. ", err)
 		a.sendError("Unable to find Image on the path provided. ", err)
 		return "None"
 	}
+	defer file.Close()
 
 	img, _, err := image.DecodeConfig(file)
 	if err != nil {
@@ -43,15 +43,37 @@ func (a *WalletApplication) UploadImage() string {
 
 	a.log.Info("Uploaded image resolution is set to ", img.Height, "x", img.Width)
 
-	if img.Height > 200 || img.Width > 200 {
-		a.log.Warnf("Image resolution is too big. Needs to be lower than 200x200 ")
+	if img.Height >= 201 || img.Width >= 201 {
+		a.log.Warnf("Image resolution is too big. Cannot be bigger than 200x200 ")
 
 		return "None"
 	}
 
-	// TODO: Store filePath in persistent storage.
+	a.StoreImagePathInDB(filename)
 
 	return filename
+}
+
+func (a *WalletApplication) SetImagePath() string {
+	return a.wallet.ProfilePicture
+}
+
+func (a *WalletApplication) StoreImagePathInDB(path string) {
+	if err := a.DB.First(&a.wallet, "wallet_alias = ?", a.wallet.WalletAlias).Update(&Wallet{ProfilePicture: path}).Error; err != nil {
+		a.log.Errorf("Unable to update the DB record with the Image path. Reason: ", err)
+		a.sendError("Unable to update the DB record with the Image path. Reason: ", err)
+	}
+}
+
+func (a *WalletApplication) SetWalletTag() string {
+	return a.wallet.WalletTag
+}
+
+func (a *WalletApplication) StoreWalletLabelInDB(walletTag string) {
+	if err := a.DB.First(&a.wallet, "wallet_alias = ?", a.wallet.WalletAlias).Update(&Wallet{WalletTag: walletTag}).Error; err != nil {
+		a.log.Errorf("Unable to update the DB record with the wallet tag. Reason: ", err)
+		a.sendError("Unable to update the DB record with the wallet tag. Reason: ", err)
+	}
 }
 
 // CopyFile the src file to dst. Any existing file will be overwritten and will not

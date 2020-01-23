@@ -3,6 +3,8 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"os/exec"
 	"strconv"
 	"time"
@@ -12,12 +14,13 @@ import (
 by the Constellation Engineering team. The code is interfacing with the wallet assembly using
 the CLI */
 
-func (a *WalletApplication) runCMD(scalaFunc string, scalaArgs ...string) error {
+func (a *WalletApplication) runWalletCMD(scalaFunc string, scalaArgs ...string) error {
 
 	main := "java"
-	cmds := []string{"-cp", "bcprov-jdk15on-1.62.jar:constellation-assembly-1.0.12.jar", scalaFunc}
+	cmds := []string{"-jar", "cl-wallet.jar", scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
+	a.log.Infoln("Running command: ", cmd)
 
 	var out bytes.Buffer
 	var stderr bytes.Buffer
@@ -30,6 +33,31 @@ func (a *WalletApplication) runCMD(scalaFunc string, scalaArgs ...string) error 
 		return fmt.Errorf(errFormatted)
 	}
 	fmt.Println(out.String())
+	a.log.Debugln(cmd)
+
+	return nil
+}
+
+func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string) error {
+
+	main := "java"
+	cmds := []string{"-jar", "cl-keytool.jar", scalaFunc}
+	args := append(cmds, scalaArgs...)
+	cmd := exec.Command(main, args...)
+	a.log.Infoln("Running command: ", cmd)
+
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out    // Captures STDOUT
+	cmd.Stderr = &stderr // Captures STDERR
+
+	err := cmd.Run()
+	if err != nil {
+		errFormatted := fmt.Sprint(err) + ": " + stderr.String()
+		return fmt.Errorf(errFormatted)
+	}
+	fmt.Println(out.String())
+
 	return nil
 }
 
@@ -38,19 +66,31 @@ func (a *WalletApplication) runCMD(scalaFunc string, scalaArgs ...string) error 
 
 // java -cp constellation-assembly-1.0.12.jar org.constellation.util.wallet.GenerateAddress --pub_key_str=<base64 hash of pubkey> --store_path=<path to file where address will be stored>
 func (a *WalletApplication) createAddressFromPublicKey() string {
-	err := a.runCMD("org.constellation.util.wallet.GenerateAddress", "--pub_key_str="+a.Wallet.PublicKey.Key, "--store_path="+a.paths.DAGDir)
+	a.log.Infoln("Creating DAG Address from Public Key...")
+
+	rescueStdout := os.Stdout
+	r, w, err := os.Pipe()
+	if err != nil {
+		a.log.Errorf("Unable to pipe STDOUT, Reason: ", err)
+		a.sendError("Unable to pipe STDOUT, Reason: ", err)
+	}
+	os.Stdout = w
+
+	err = a.runWalletCMD("show-address", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to generate wallet address. Reason:", err)
 		a.log.Errorf("Unable to generate wallet address. Reason: %s", err.Error())
 	}
 
-	bytes, err := a.getFileContents(a.paths.AddressFile) // addr
+	w.Close()
+	dagAddress, err := ioutil.ReadAll(r)
 	if err != nil {
-		a.sendError("Unable to read DAG Address from filesystem. Reason: ", err)
-		a.log.Errorf("Unable to read DAG Address from filesystem. Reason: %s", err.Error())
+		a.log.Errorf("Unable to read address from STDOUT", err)
+		a.sendError("Unable to read address from STDOUT", err)
 	}
+	os.Stdout = rescueStdout
 
-	return string(bytes)
+	return string(dagAddress)
 }
 
 // putTXOnNetwork will put an actual transaction on the network. This is called from the
@@ -58,42 +98,32 @@ func (a *WalletApplication) createAddressFromPublicKey() string {
 // from the frontend (Transactions.vue) and the tx func. note you can either pass a priv key like
 // or pass in a path to an encrypted .p12 file
 
-// java -cp constellation-assembly-1.0.12.jar org.constellation.util.wallet.CreateNewTransaction --keystore=<path to kp.p12> --alias=alias --storepass=storepass --keypass=keypass --account_path=<tx-file.txt> --amount=137.035999084 --fee=0.007297 --destination=receiverAddress --store_path=src/test/resources/new-tx.txt --priv_key_str=<base64 hash of privkey> --pub_key_str=<base64 hash of pub>
-func (a *WalletApplication) putTXOnNetwork(amount int64, fee int, address, alias, storepass, keypass string) {
+// java -jar cl-wallet.jar create-transaction --keystore testkey.p12 --alias alias --storepass storepass --keypass keypass -d DAG6o9dcxo2QXCuJS8wnrR944YhFBpwc2jsh5j8f -p prev_tx -f new_tx --fee 0 --amount 1
+func (a *WalletApplication) putTXOnNetwork(amount int64, fee int, address string) {
 
 	// Convert to string
 	amountStr := strconv.FormatInt(amount, 10)
 	feeStr := strconv.Itoa(fee)
 
 	// newTX is the full command to sign a new transaction
-	err := a.runCMD("org.constellation.util.wallet.CreateNewTransaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass="+storepass, "--keypass="+keypass, "--account_path="+a.paths.DAGDir, "--amount="+amountStr, "--fee="+feeStr, "--destination="+address, "--store_path="+a.paths.LastTXFile, "--priv_key_str="+a.Wallet.PrivateKey.Key, "--pub_key_str="+a.Wallet.PublicKey.Key)
+	err := a.runWalletCMD("create-transaction", "--keystore="+a.wallet.KeyStorePath, "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeStr, "-d="+address, "-f="+a.paths.LastTXFile, "-p="+a.paths.PrevTXFile, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to send transaction. Reason: ", err)
 		a.log.Errorf("Unable to send transaction. Reason: %s", err.Error())
 	}
-	time.Sleep(10) // Will sleep for 10 sec between TXs to prevent spamming.
+	time.Sleep(10 * time.Second) // Will sleep for 10 sec between TXs to prevent spamming.
 }
 
 // createEncryptedKeyPairToPasswordProtectedFile is called ONLY when a NEW wallet is created. This
 // will create a new password protected encrypted keypair stored in $HOME/.dag/encrypted_key/priv.p12
 // (a.paths.EncPrivKey)
-func (a *WalletApplication) createEncryptedKeyPairToPasswordProtectedFile(alias, storepass, keypass string) {
 
-	err := a.runCMD("org.constellation.keytool.KeyTool", "--keystore="+a.paths.EncryptedDir, "--alias="+alias, "--storepass="+storepass, "--keypass="+keypass)
+// java -jar cl-keytool.jar --keystore testkey.p12 --alias alias --storepass storepass --keypass keypass
+func (a *WalletApplication) createEncryptedKeyPairToPasswordProtectedFile() {
+	err := a.runKeyToolCMD("--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to write encrypted keys to filesystem. Reason: ", err)
 		a.log.Errorf("Unable to write encrypted keys to filesystem. Reason: %s", err.Error()) // TODO: change to fatal
-	}
-
-}
-
-// decryptKeyPair dumps the encrypted KeyStore in unencrypted .pem format
-func (a *WalletApplication) decryptKeyPair(alias, storepass, keypass string) {
-
-	err := a.runCMD("org.constellation.util.wallet.ExportDecryptedKeysTest", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+alias, "--storepass="+storepass, "--keypass="+keypass, "--keypass="+keypass, "--priv_store_path="+"decrypted_keystore", "--pub_store_path="+"decrypted_keystore.pub")
-	if err != nil {
-		a.sendError("Unable to write encrypted keys to filesystem. Reason:", err)
-		a.log.Fatalf("Unable to write encrypted keys to filesystem. Reason: %s", err)
 	}
 
 }

@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div id="app" class="row">
         <div class="col-12">
             <card :title="table1.title" :subTitle="table1.subTitle">
                 <!-- <transaction-form> -->
@@ -80,8 +80,8 @@
                         </tbody>
                     </table>
                     <!-- <paper-table type="hover" :title="table2.title" :sub-title="table2.subTitle" :data="this.$store.state.txInfo.txHistory" :columns="table2.columns">
-                                                                                        
-                                                                                    </paper-table> -->
+                                                                                            
+                                                                                        </paper-table> -->
                     <center>
                         <jw-pagination :items="table2.data" @changePage="onChangePage"></jw-pagination>
                     </center>
@@ -143,7 +143,7 @@ export default {
                     progressSteps: ['1', '2'],
                 }).queue([{
                         title: "Are you sure?",
-                        html: 'You are about to send <b>' + self.txAmountValidation + '</b> $DAG tokens to ' + self.txAddressValidation.toUpperCase(),
+                        html: 'You are about to send <b>' + self.txAmountValidation + '</b> $DAG tokens to ' + self.txAddressValidation,
                         type: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#5FD1FB',
@@ -159,7 +159,7 @@ export default {
                         showCancelButton: true,
                         inputValidator: (value) => {
                             return new Promise((resolve) => {
-                                if (value < 0 || value >= 3711998690) {
+                                if (value < 0 || value > 3711998690 || isNaN(parseInt(value))) {
                                     resolve('Please enter a value between 0 and 3711998690')
                                 } else {
                                     resolve()
@@ -178,13 +178,19 @@ export default {
                                 text: 'You have sent ' + self.txAmountValidation + ' $DAG tokens to address ' + self.txAddressValidation + '.',
                                 type: 'success'
                             }),
-                            self.$notify({
-                                component: TxSentNotification,
-                                icon: "ti-check",
-                                horizontalAlign: "right",
-                                verticalAlign: "top",
-                                type: "success"
-                            })
+                            setTimeout(() => {
+                                this.$notifications.clear();
+                            }, 6000)
+                        self.$notify({
+                            component: TxSentNotification,
+                            icon: "ti-check",
+                            horizontalAlign: "right",
+                            verticalAlign: "top",
+                            type: "success",
+                            onClick: () => {
+                                this.$notifications.clear();
+                            }
+                        })
                     }
                 });
             }
@@ -244,6 +250,7 @@ export default {
             verifyPrefix,
         },
         txAmountValidation: {
+            required,
             inBetween: between(0.00000001, 3711998690),
         }
     },

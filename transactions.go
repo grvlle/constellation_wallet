@@ -70,8 +70,8 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int, address st
 // to put the actual transaction on chain. It'll then call updateLastTransaction in order
 // to display transaction history to the user.
 func (a *WalletApplication) sendTransaction(amount int64, fee int, address string) {
-	a.putTXOnNetwork(amount, fee, address, "alias", "storepass", "fakepassword") // TODO: implement password protection for the tx
-	a.updateLastTransactions()
+	a.putTXOnNetwork(amount, fee, address)
+	//a.updateLastTransactions()
 }
 
 // updateLastTransaction will read the contents of txhistory.json into memory and pass it onto
@@ -138,8 +138,12 @@ func (a *WalletApplication) initTransactionHistory() {
 		}
 	}()
 
-	writeToJSON("txhistory.json", txObjectsReversed)
-	writeToJSON("ts", time.Now().Format("Mon Jan _2 15:04:05 2006"))
+	// TODO: Add txhistory to database
+	err := writeToJSON("txhistory", txObjectsReversed)
+	if err != nil {
+		a.sendError("Unable to write txhistory to fs. Reason:", err)
+		a.log.Errorf("Unable to read txhistory to fs. Reason: %s", err)
+	}
 
 }
 

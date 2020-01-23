@@ -1,11 +1,6 @@
 <template>
 
-    <div>
-    
-        
-        
-    
-        
+    <div id="app">        
     
         <div class="row">
             <div class="col-md-6 col-xl-4">
@@ -15,7 +10,7 @@
                     </div>
                     <div class="numbers text-center" slot="content">
                         <p>$DAG Tokens</p>
-                        {{wallet2.tokenAmount}}
+                        {{this.$store.state.walletInfo.tokenAmount}}
     
                     </div>
                     <div class="stats" slot="footer">
@@ -67,7 +62,7 @@
                     <div class="numbers text-center col-17" slot="content">
                         <p>{{walletCard.title}}</p>
                         <hr>
-                        <p style="color: #c4c4c4; padding-top: 15px; background-color: #f7f7f7; font-size: 25px; font-weight: 100; font-family: 'Inconsolata';">
+                        <p style="color: #c4c4c4; padding-top: 15px; background-color: #f7f7f7; font-size: 25px; font-weight: 100;">
                             {{wallet2.address}}
                             <input type="hidden" id="testing-code" :value="wallet2.address">
                             <p-button type="info" style="margin-bottom: 15px" icon @click.native="copyTestingCode"><i class="fa fa-copy"></i>
@@ -83,25 +78,25 @@
             
             <div v-if="this.$store.state.toggleDashboard.showNodesOnline" class="col-md-6 col-12">
                 <chart-card title="Nodes Online" sub-title="Since last 24 hours" :chart-data="this.$store.state.chartData.nodesOnline" chart-type="Pie">
-                    <span slot="footer">
-                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds</span>
-                    <div slot="legend">
+                                        <div slot="legend">
                         <i class="fa fa-circle text-info"></i> Foundation Nodes
                         <i class="fa fa-circle text-success"></i> Medium Nodes
                         <i class="fa fa-circle text-danger"></i> Light Nodes
                     </div>
+                    <span slot="footer">
+                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds</span>
                 </chart-card>
             </div>
     
             <div v-if="this.$store.state.toggleDashboard.showTransactions" class="col-md-6 col-12">
                 <chart-card title="Transactions" sub-title="The amount of transactions sent vs. received over the last year" :chart-data="this.$store.state.chartData.transactions" :chart-options="activityChart.options">
-                    <span slot="footer">
-                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds
-                                  </span>
-                    <div slot="legend">Days
+                                        <div slot="legend">
                         <i class="fa fa-circle text-info"></i> TX
                         <i class="fa fa-circle text-success"></i> RX
                     </div>
+                    <span style="padding-top: 10px;" slot="footer">
+                      
+                                    <i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds</span>
                 </chart-card>
             </div>
     
@@ -109,9 +104,12 @@
     
             <div v-if="this.$store.state.toggleDashboard.showThroughput" class="col-md-6 col-12">
                 <chart-card title="Network Throughput (tps)" sub-title="24 Hours performance" :chart-data="this.$store.state.chartData.throughput" :chart-options="usersChart.options">
-                    <span slot="footer">
-                                    <i class="ti-reload"></i> Updated 3 minutes ago
-                                  </span>
+
+                                    <span slot="footer"><i class="ti-timer"></i> Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds</span>
+                                                            <div slot="legend">
+                        <i class="fa fa-circle text-info"></i> $DAG Tokens
+                        <i class="fa fa-circle text-success"></i> Data
+                    </div>
                     <!-- <div slot="legend">
                                     <i class="fa fa-circle text-info"></i> Open
                                     <i class="fa fa-circle text-danger"></i> Click
@@ -151,9 +149,9 @@ export default {
           try {
             var successful = document.execCommand('copy');
             successful ? 'successful' : 'unsuccessful';
-            this.notifyVue('top', 'right', 2, WalletCopiedNotification)
+            this.addNotification('top', 'right', 2, WalletCopiedNotification)
           } catch (err) {
-            this.notifyVue('top', 'right', 4, WalletCopiedFailedNotification)
+            this.addNotification('top', 'right', 4, WalletCopiedFailedNotification)
             alert('Oops, unable to copy');
           }
 
@@ -167,13 +165,19 @@ export default {
                 self.tokenAmount = result;
             });
         },
-        notifyVue(verticalAlign, horizontalAlign, color, copied) {
-            this.$notify({
-                component: copied,
-                icon: "ti-check",
-                horizontalAlign: horizontalAlign,
-                verticalAlign: verticalAlign,
-                type: this.type[color]
+        addNotification(verticalAlign, horizontalAlign, color, copied) {
+                setTimeout(() => {
+                    this.$notifications.clear();
+                }, 6000)
+                this.$notify({
+                    component: copied,
+                    icon: "ti-check",
+                    horizontalAlign: horizontalAlign,
+                    verticalAlign: verticalAlign,
+                    type: this.type[color],
+                    onClick: ()=>{
+                        this.$notifications.clear();
+                    }
             })
         }
 

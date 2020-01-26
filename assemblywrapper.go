@@ -6,9 +6,9 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"time"
-	"runtime"
 )
 
 /* AssemblyWrapper contains the code that is interacting with the wallet assembly provided
@@ -89,8 +89,9 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 	os.Stdout = w
 	err = a.runWalletCMD("show-address", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
-		a.sendError("Unable to generate wallet address. Reason:", err)
-		a.log.Errorf("Unable to generate wallet address. Reason: %s", err.Error())
+		a.log.Warn("KeyStore Access Rejected!")
+		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
+		a.KeyStoreAccess = false
 	}
 
 	// STDOUT is captured here
@@ -103,17 +104,18 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 	}
 	// if STDOUT prefix of show-address output isn't DAG
 
-	if string(dagAddress[:40]) != a.wallet.Address {
-		// Access to keystore is denied
-		a.KeyStoreAccess = false
-		a.log.Warn("KeyStore Access Rejected!")
-		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
+	a.TempPrintCreds()
+	if err == nil && a.wallet.Address != "" && string(dagAddress[:40]) == a.wallet.Address {
+		a.KeyStoreAccess = true
+		a.log.Info("KeyStore Access Granted!")
 		return a.KeyStoreAccess
 	}
 	os.Stdout = rescueStdout
 
-	a.KeyStoreAccess = true
-	a.log.Info("KeyStore Access Granted!")
+	a.KeyStoreAccess = false
+	a.log.Warn("KeyStore Access Rejected!")
+	a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
+
 	return a.KeyStoreAccess
 }
 

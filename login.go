@@ -17,11 +17,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	os.Setenv("CL_STOREPASS", keystorePassword)
 	os.Setenv("CL_KEYPASS", keyPassword)
 
-	a.log.Warnln("Login Before: ", a.wallet.WalletAlias, alias)
-
 	a.wallet.WalletAlias = alias
-
-	a.log.Warnln("Login After: ", a.wallet.WalletAlias, alias)
 
 	if err := a.DB.First(&a.wallet, "wallet_alias = ?", alias).Error; err != nil {
 		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
@@ -29,18 +25,9 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 		return false
 	}
 
-	a.log.Warnln("Login AfterAFTER: ", a.wallet.WalletAlias, alias)
-
-	if a.WalletKeystoreAccess() {
-		a.KeyStoreAccess = true
-	} else {
-		a.KeyStoreAccess = false
+	if !a.WalletKeystoreAccess() {
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
 		return false
-	}
-
-	if keystorePath == "" {
-		a.log.Warnln("No path to keystore provided")
 	}
 
 	a.DB.Model(&a.wallet).Update("KeystorePath", keystorePath)
@@ -59,7 +46,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	}
 
 	if a.UserLoggedIn && a.KeyStoreAccess && !a.NewUser {
-		a.initExistingWallet(keystorePath)
+		a.initWallet(keystorePath)
 	}
 
 	a.NewUser = false

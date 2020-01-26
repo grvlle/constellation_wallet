@@ -12,13 +12,72 @@ func (a *WalletApplication) TempPrintCreds() {
 
 /* Database Model is located in models.go */
 
+func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
+
+	os.Setenv("CL_STOREPASS", keystorePassword)
+	os.Setenv("CL_KEYPASS", keyPassword)
+
+	a.wallet = Wallet{
+		KeyStorePath: keystorePath,
+		WalletAlias:  alias}
+
+	a.wallet.Address = a.GenerateDAGAddress()
+	a.KeyStoreAccess = a.WalletKeystoreAccess()
+	a.TempPrintCreds()
+
+	if a.KeyStoreAccess {
+		if !a.DB.NewRecord(&a.wallet) {
+			keystorePasswordHashed, err := a.GenerateSaltedHash(keystorePassword)
+			if err != nil {
+				a.log.Errorf("Unable to generate password hash. Reason: ", err)
+				a.sendError("Unable to generate password hash. Reason: ", err)
+				return false
+			}
+
+			keyPasswordHashed, err := a.GenerateSaltedHash(keyPassword)
+			if err != nil {
+				a.log.Errorf("Unable to generate password hash. Reason: ", err)
+				a.sendError("Unable to generate password hash. Reason: ", err)
+				return false
+			}
+
+			a.TempPrintCreds()
+
+			if err := a.DB.Create(&a.wallet).Error; err != nil {
+				a.log.Errorf("Unable to create database object for the imported wallet. Reason: ", err)
+				a.sendError("Unable to create database object for the imported. Reason: ", err)
+				return false
+			}
+
+			if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
+				a.log.Errorf("Unable to query database object for the imported wallet. Reason: ", err)
+				a.sendError("Unable to query database object for the imported wallet. Reason: ", err)
+				return false
+			}
+			a.UserLoggedIn = false
+			a.NewUser = true
+			a.initWallet(a.wallet.KeyStorePath)
+
+			return true
+
+		} else if a.DB.NewRecord(&a.wallet) {
+			a.DB.First(&a.wallet)
+
+			a.TempPrintCreds()
+
+			a.UserLoggedIn = false
+			a.NewUser = false
+			a.initWallet(a.wallet.KeyStorePath)
+			return true
+		}
+	}
+
+	return false
+}
+
 // CreateUser is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
-	// if keystorePath == "" {
-	// 	keystorePath = a.wallet.KeyStorePath
-
-	// }
 	if alias == "" {
 		alias = a.wallet.WalletAlias
 	}
@@ -54,45 +113,39 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 	}
 
 	if err := a.DB.Where("wallet_alias = ?", alias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
-		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
-		a.sendError("Unable to query database object for new wallet. Reason: ", err)
+		a.log.Errorf("Unable to query database object for new wallet after wallet creation. Reason: ", err)
+		a.sendError("Unable to query database object for new wallet after wallet creation. Reason: ", err)
 		return false
 	}
 
-	a.log.Infoln("After: ", a.wallet.WalletAlias, alias)
+	a.CreateEncryptedKeyStore()
+	// a.paths.EncPrivKeyFile = keystorePath
+	a.wallet.Address = a.GenerateDAGAddress()
 
-	err = a.initNewWallet()
-	if err != nil {
-		a.log.Errorf("Unable to initialize wallet object. Reason: ", err)
-		a.sendError("Unable to initialize wallet object. Reason: ", err)
+	// a.wallet.KeyStorePath = a.paths.EncPrivKeyFile
+
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("Address", a.wallet.Address).Error; err != nil {
+		a.log.Errorf("Unable to update db object new wallet, with the DAG address. Reason: ", err)
+		a.sendError("Unable to update db object new wallet, with the DAG address. Reason. Reason: ", err)
+	}
+	a.TempPrintCreds()
+	a.KeyStoreAccess = a.WalletKeystoreAccess()
+
+	if a.KeyStoreAccess {
+		a.UserLoggedIn = false
+		a.NewUser = true
+
+		a.initNewWallet()
+
+		return true
 	}
 
-	a.KeyStoreAccess = a.WalletKeystoreAccess()
-	a.UserLoggedIn = false
-	a.NewUser = true
-
-	return true
+	return false
 }
 
 // initWallet initializes a new wallet. This is called from login.vue
 // only when a new wallet is created.
-func (a *WalletApplication) initNewWallet() error {
-
-	a.CreateEncryptedKeyStore()
-	a.wallet.Address = a.GenerateDAGAddress()
-	a.wallet.KeyStorePath = a.paths.EncPrivKeyFile
-
-	a.TempPrintCreds()
-
-	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("Address", a.wallet.Address).Error; err != nil {
-		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
-		a.sendError("Unable to query database object for new wallet. Reason: ", err)
-	}
-
-	// if err := a.DB.Model(&a.wallet).Update("Address", a.wallet.Address).Error; err != nil {
-	// 	a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
-	// 	a.sendError("Unable to query database object for new wallet. Reason: ", err)
-	// }
+func (a *WalletApplication) initNewWallet() {
 
 	//a.initTransactionHistory()
 	a.passKeysToFrontend()
@@ -102,14 +155,13 @@ func (a *WalletApplication) initNewWallet() error {
 	}
 
 	a.log.Infoln("A New wallet has been created successfully!")
-
-	return nil
 }
 
 // initExistingWallet queries the database for the user wallet and pushes
 // the information to the front end components.
-func (a *WalletApplication) initExistingWallet(keystorePath string) {
+func (a *WalletApplication) initWallet(keystorePath string) {
 
+	a.TempPrintCreds()
 	a.paths.EncPrivKeyFile = keystorePath
 
 	if !a.WidgetRunning.DashboardWidgets {

@@ -46,15 +46,3 @@ type TXHistory struct {
 }
 
 type Address string
-
-func (a *WalletApplication) CreateNewDBRecord(record interface{}) error {
-	if !a.DB.NewRecord(record) {
-		a.log.Warn("The value's primary key is not blank")
-	}
-	if err := a.DB.Create(record).Error; err != nil {
-		a.log.Warn("Unable to create new Database record")
-		return err
-	}
-	a.log.Info("A new Database Record were successfully added.")
-	return nil
-}

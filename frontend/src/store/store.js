@@ -10,7 +10,9 @@ export const store = new Vuex.Store({
         app: {
             isLoading: false,
             isLoggedIn: false,
+            import: false,
             register: false,
+            login: true,
             margin: 70,
         },
         walletInfo: {

@@ -305,10 +305,10 @@ export default {
     SelectDirToStoreKey: function() {
       window.backend.WalletApplication.SelectDirToStoreKey().then(
         result => {
-          if (result) {
+          
           this.$store.state.walletInfo.saveKeystorePath = result;
           // this.$store.state.walletInfo.keystorePath = result;
-          }
+          
           // handle err
         }
       );
@@ -444,8 +444,7 @@ text-align: left;
   /* Full height */
   height: 100%;
   position: absolute;
-  width: 100%;
-  overflow-x: none; 
+  width: 99%;
 
   /* Center and scale the image nicely */
   background-position: center;

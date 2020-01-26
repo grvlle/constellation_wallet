@@ -1,17 +1,22 @@
 package main
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 // Wallet holds all wallet information.
 type Wallet struct {
-	gorm.Model
+	ID                   uint `gorm:"AUTO_INCREMENT"`
+	CreatedAt            time.Time
+	UpdatedAt            time.Time
+	DeletedAt            *time.Time
 	KeystorePasswordHash string
 	KeyPasswordHash      string
 	KeyStorePath         string
-	WalletAlias          string
+	WalletAlias          string      `gorm:"primary_key;unique"`
 	Addresses            []Address   `sql:"-"`
 	TXHistory            []TXHistory `sql:"-"`
 	ProfilePicture       string
@@ -41,3 +46,15 @@ type TXHistory struct {
 }
 
 type Address string
+
+func (a *WalletApplication) CreateNewDBRecord(record interface{}) error {
+	if !a.DB.NewRecord(record) {
+		a.log.Warn("The value's primary key is not blank")
+	}
+	if err := a.DB.Create(record).Error; err != nil {
+		a.log.Warn("Unable to create new Database record")
+		return err
+	}
+	a.log.Info("A new Database Record were successfully added.")
+	return nil
+}

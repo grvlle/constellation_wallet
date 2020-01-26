@@ -1,9 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"time"
 )
+
+func (a *WalletApplication) TempPrintCreds() {
+	fmt.Println("address: ", a.wallet.Address, "alias: ", a.wallet.WalletAlias, "keyStorePass: ", os.Getenv("CL_STOREPASS"), "keyPass: ", os.Getenv("CL_KEYPASS"), "key: ", a.paths.EncPrivKeyFile)
+}
 
 /* Database Model is located in models.go */
 
@@ -14,9 +19,9 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 	// 	keystorePath = a.wallet.KeyStorePath
 
 	// }
-	// if alias == "" {
-	// 	alias = a.wallet.WalletAlias
-	// }
+	if alias == "" {
+		alias = a.wallet.WalletAlias
+	}
 
 	os.Setenv("CL_STOREPASS", keystorePassword)
 	os.Setenv("CL_KEYPASS", keyPassword)
@@ -35,17 +40,26 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		return false
 	}
 
-	if err := a.DB.Where(&Wallet{WalletAlias: alias}).FirstOrCreate(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed, WalletAlias: alias}).Error; err != nil {
+	a.wallet = Wallet{
+		KeyStorePath:         keystorePath,
+		KeystorePasswordHash: keystorePasswordHashed,
+		KeyPasswordHash:      keyPasswordHashed,
+		WalletAlias:          alias}
+
+	if err := a.DB.Create(&a.wallet).Error; err != nil {
 		a.log.Errorf("Unable to create database object for new wallet. Reason: ", err)
 		a.sendError("Unable to create database object for new wallet. Reason: ", err)
+		a.log.Infoln("BeforeBefore: ", a.wallet.WalletAlias, alias)
 		return false
 	}
 
-	if err := a.DB.Where("wallet_alias = ?", alias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed, WalletAlias: alias}).Error; err != nil {
+	if err := a.DB.Where("wallet_alias = ?", alias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
 		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
 		a.sendError("Unable to query database object for new wallet. Reason: ", err)
 		return false
 	}
+
+	a.log.Infoln("After: ", a.wallet.WalletAlias, alias)
 
 	err = a.initNewWallet()
 	if err != nil {
@@ -68,10 +82,17 @@ func (a *WalletApplication) initNewWallet() error {
 	a.wallet.Address = a.GenerateDAGAddress()
 	a.wallet.KeyStorePath = a.paths.EncPrivKeyFile
 
-	if err := a.DB.Model(&a.wallet).Update("Address", a.wallet.Address).Error; err != nil {
+	a.TempPrintCreds()
+
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("Address", a.wallet.Address).Error; err != nil {
 		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
 		a.sendError("Unable to query database object for new wallet. Reason: ", err)
 	}
+
+	// if err := a.DB.Model(&a.wallet).Update("Address", a.wallet.Address).Error; err != nil {
+	// 	a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
+	// 	a.sendError("Unable to query database object for new wallet. Reason: ", err)
+	// }
 
 	//a.initTransactionHistory()
 	a.passKeysToFrontend()
@@ -135,7 +156,7 @@ func (a *WalletApplication) ExportKeys() error {
 // PassKeysToFrontend emits the keys to the settings.Vue component on a
 // 5 second interval
 func (a *WalletApplication) passKeysToFrontend() {
-	if a.paths.EncPrivKeyFile != "" && a.wallet.Address != "" {		
+	if a.paths.EncPrivKeyFile != "" && a.wallet.Address != "" {
 		go func() {
 			for {
 				a.RT.Events.Emit("wallet_keys", a.wallet.Address)

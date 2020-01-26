@@ -17,14 +17,21 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	os.Setenv("CL_STOREPASS", keystorePassword)
 	os.Setenv("CL_KEYPASS", keyPassword)
 
+	a.log.Warnln("Login Before: ", a.wallet.WalletAlias, alias)
+
 	a.wallet.WalletAlias = alias
 
+	a.log.Warnln("Login After: ", a.wallet.WalletAlias, alias)
+
+	if err := a.DB.First(&a.wallet, "wallet_alias = ?", alias).Error; err != nil {
+		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
+		a.LoginError("Access Denied. Alias not found.")
+		return false
+	}
+
+	a.log.Warnln("Login AfterAFTER: ", a.wallet.WalletAlias, alias)
+
 	if a.WalletKeystoreAccess() {
-		if err := a.DB.First(&a.wallet, "wallet_alias = ?", alias).Error; err != nil {
-			a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
-			a.LoginError("Access Denied. Alias not found.")
-			return false
-		}
 		a.KeyStoreAccess = true
 	} else {
 		a.KeyStoreAccess = false
@@ -32,18 +39,19 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 		return false
 	}
 
-	if keystorePath != "" {
-		a.DB.Model(&a.wallet).Update("KeystorePath", keystorePath)
-		a.log.Infoln("PrivateKey path: ", keystorePath)
+	if keystorePath == "" {
+		a.log.Warnln("No path to keystore provided")
 	}
-	a.log.Warnln("No path to keystore provided")
+
+	a.DB.Model(&a.wallet).Update("KeystorePath", keystorePath)
+	a.log.Infoln("PrivateKey path: ", keystorePath)
 
 	// Check password strings against salted hashes stored in DB. Also make sure KeyStore has been accessed.
 	if a.CheckAccess(keystorePassword, a.wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, a.wallet.KeyPasswordHash) && a.KeyStoreAccess {
 		a.UserLoggedIn = true
 
-		os.Setenv("CL_STOREPASS", keystorePassword)
-		os.Setenv("CL_KEYPASS", keyPassword)
+		// os.Setenv("CL_STOREPASS", keystorePassword)
+		// os.Setenv("CL_KEYPASS", keyPassword)
 
 	} else {
 		a.UserLoggedIn = false
@@ -78,7 +86,10 @@ func (a *WalletApplication) SelectDirToStoreKey() string {
 	if a.paths.EncPrivKeyFile == "" {
 		a.LoginError("No directory detected. Please try again.")
 	}
-	a.paths.EncPrivKeyFile = a.paths.EncryptedDir + "/key.p12"
+	a.log.Info(a.paths.EncPrivKeyFile[len(a.paths.EncPrivKeyFile)-4:])
+	if a.paths.EncPrivKeyFile[len(a.paths.EncPrivKeyFile)-4:] != ".p12" {
+		a.paths.EncPrivKeyFile = a.paths.EncPrivKeyFile + ".p12"
+	}
 	return a.paths.EncPrivKeyFile
 }
 

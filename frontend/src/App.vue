@@ -106,9 +106,7 @@ export default {
     });
 
     // Settings.vue sockets
-    window.wails.Events.On(
-      "wallet_keys",
-      (MnemonicSeed, keystorePath, address) => {
+    window.wails.Events.On("wallet_keys", (address) => {
         // this.$store.state.walletInfo.keystorePath = keystorePath;
         this.$store.state.walletInfo.address = address;
       }

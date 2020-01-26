@@ -76,6 +76,9 @@ func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string)
 // and key using storepass and keypass
 func (a *WalletApplication) WalletKeystoreAccess() bool {
 	a.log.Infoln("Checking Keystore Access...")
+	// a.log.Infoln(os.Getenv("CL_STOREPASS"), os.Getenv("CL_KEYPASS"))
+	// a.log.Infoln(a.wallet.Address)
+	a.TempPrintCreds()
 
 	rescueStdout := os.Stdout
 	r, w, err := os.Pipe()
@@ -117,6 +120,7 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 // java -cp constellation-assembly-1.0.12.jar org.constellation.util.wallet.GenerateAddress --pub_key_str=<base64 hash of pubkey> --store_path=<path to file where address will be stored>
 func (a *WalletApplication) GenerateDAGAddress() string {
 	a.log.Infoln("Creating DAG Address from Public Key...")
+	a.TempPrintCreds()
 
 	rescueStdout := os.Stdout
 	r, w, err := os.Pipe()
@@ -157,7 +161,7 @@ func (a *WalletApplication) putTXOnNetwork(amount int64, fee int, address string
 	feeStr := strconv.Itoa(fee)
 
 	// newTX is the full command to sign a new transaction
-	err := a.runWalletCMD("create-transaction", "--keystore="+a.wallet.KeyStorePath, "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeStr, "-d="+address, "-f="+a.paths.LastTXFile, "-p="+a.paths.PrevTXFile, "--env_args=true")
+	err := a.runWalletCMD("create-transaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeStr, "-d="+address, "-f="+a.paths.LastTXFile, "-p="+a.paths.PrevTXFile, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to send transaction. Reason: ", err)
 		a.log.Errorf("Unable to send transaction. Reason: %s", err.Error())
@@ -171,6 +175,7 @@ func (a *WalletApplication) putTXOnNetwork(amount int64, fee int, address string
 
 // java -jar cl-keytool.jar --keystore testkey.p12 --alias alias --storepass storepass --keypass keypass
 func (a *WalletApplication) CreateEncryptedKeyStore() {
+	a.TempPrintCreds()
 	err := a.runKeyToolCMD("--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to write encrypted keys to filesystem. Reason: ", err)

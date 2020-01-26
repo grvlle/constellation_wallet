@@ -70,7 +70,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 
 // initLogger writes logs to STDOUT and a.paths.DAGDir/wallet.log
 func (a *WalletApplication) initLogger() {
-	logFile, err := os.OpenFile(a.paths.DAGDir+"/wallet.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
+	logFile, err := os.OpenFile(a.paths.DAGDir + "/wallet.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
 	if err != nil {
 		a.log.Fatal("Unable to create log file.")
 	}

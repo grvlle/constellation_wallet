@@ -352,11 +352,11 @@ export default {
       
       window.backend.WalletApplication.StoreWalletLabelInDB(self.newWalletLabel)
       window.backend.WalletApplication.CreateWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias
-      ).then(result => {
-        if (result) {
+      ).then(walletCreated => {
+        if (walletCreated) {
           window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias
-          ).then(result => {
-            self.access = result;
+          ).then(loggedIn => {
+            self.access = loggedIn;
             if (self.access) {
               self.$store.state.app.isLoading = self.access;
               self.$store.state.app.isLoggedIn = self.access;
@@ -445,6 +445,7 @@ text-align: left;
   height: 100%;
   position: absolute;
   width: 100%;
+  overflow-x: none; 
 
   /* Center and scale the image nicely */
   background-position: center;

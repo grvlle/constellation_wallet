@@ -66,7 +66,7 @@ func (a *WalletApplication) initNewWallet() error {
 
 	a.CreateEncryptedKeyStore()
 	a.wallet.Address = a.GenerateDAGAddress()
-	a.paths.EncPrivKeyFile = a.wallet.KeyStorePath
+	a.wallet.KeyStorePath = a.paths.EncPrivKeyFile
 
 	if err := a.DB.Model(&a.wallet).Update("Address", a.wallet.Address).Error; err != nil {
 		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
@@ -74,7 +74,7 @@ func (a *WalletApplication) initNewWallet() error {
 	}
 
 	//a.initTransactionHistory()
-	a.passKeysToFrontend(a.wallet.Address)
+	a.passKeysToFrontend()
 
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
@@ -95,7 +95,7 @@ func (a *WalletApplication) initExistingWallet(keystorePath string) {
 		a.initDashboardWidgets()
 	}
 	if !a.WidgetRunning.PassKeysToFrontend {
-		a.passKeysToFrontend(a.wallet.Address)
+		a.passKeysToFrontend()
 	}
 
 	a.log.Infoln("User has logged into the wallet")
@@ -134,11 +134,11 @@ func (a *WalletApplication) ExportKeys() error {
 
 // PassKeysToFrontend emits the keys to the settings.Vue component on a
 // 5 second interval
-func (a *WalletApplication) passKeysToFrontend(walletAddress string) {
-	if walletAddress != "" {
+func (a *WalletApplication) passKeysToFrontend() {
+	if a.paths.EncPrivKeyFile != "" && a.wallet.Address != "" {		
 		go func() {
 			for {
-				a.RT.Events.Emit("wallet_keys", "Support for a Mnemonic Seed coming soon", a.paths.EncPrivKeyFile, walletAddress)
+				a.RT.Events.Emit("wallet_keys", a.wallet.Address)
 				time.Sleep(5 * time.Second)
 			}
 		}()

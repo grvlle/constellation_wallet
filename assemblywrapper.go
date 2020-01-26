@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"strconv"
 	"time"
+	"runtime"
 )
 
 /* AssemblyWrapper contains the code that is interacting with the wallet assembly provided
@@ -15,8 +16,13 @@ by the Constellation Engineering team. The code is interfacing with the wallet a
 the CLI */
 
 func (a *WalletApplication) runWalletCMD(scalaFunc string, scalaArgs ...string) error {
+	var main string
 
-	main := "java"
+	if runtime.GOOS == "windows" {
+		main = "C:\\Program Files (x86)\\Java\\jre1.8.0_241\\bin\\javaw.exe"
+	} else {
+		main = "java"
+	}
 	cmds := []string{"-jar", "cl-wallet.jar", scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
@@ -39,8 +45,13 @@ func (a *WalletApplication) runWalletCMD(scalaFunc string, scalaArgs ...string) 
 }
 
 func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string) error {
+	var main string
 
-	main := "java"
+	if runtime.GOOS == "windows" {
+		main = "C:\\Program Files (x86)\\Java\\jre1.8.0_241\\bin\\javaw.exe"
+	} else {
+		main = "java"
+	}
 	cmds := []string{"-jar", "cl-keytool.jar", scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
@@ -88,7 +99,8 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 		a.sendError("Unable to read address from STDOUT", err)
 	}
 	// if STDOUT prefix of show-address output isn't DAG
-	if string(dagAddress[:2]) != "DAG" {
+
+	if string(dagAddress[:40]) != a.wallet.Address {
 		// Access to keystore is denied
 		a.KeyStoreAccess = false
 		a.log.Warn("KeyStore Access Rejected!")
@@ -127,8 +139,9 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 		a.sendError("Unable to read address from STDOUT", err)
 	}
 	os.Stdout = rescueStdout
+	a.wallet.Address = string(dagAddress[:40])
 
-	return string(dagAddress)
+	return a.wallet.Address
 }
 
 // putTXOnNetwork will put an actual transaction on the network. This is called from the

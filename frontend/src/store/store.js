@@ -43,6 +43,11 @@ export const store = new Vuex.Store({
             contains_special_character: false,
             duplicate: false,
             valid_password: false,
+            alias: {
+                alias_length: 0,
+                contains_five_characters: false,
+                valid_alias: false,
+            },
             storepass: {
                 password_length: 0,
                 contains_eight_characters: false,

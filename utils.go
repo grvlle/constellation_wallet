@@ -11,6 +11,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"time"
 )
 
 func (a *WalletApplication) detectJavaPath() {
@@ -32,9 +33,15 @@ func (a *WalletApplication) detectJavaPath() {
 			a.LoginError("Unable to find Java Installation")
 		}
 		jPath := out.String() // Path to java.exe
-		if jPath == "" {
-			a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+		if len(jPath) <= 0 {
+			go func() {
+				for c := 0; c >= 10; c++ {
+					a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+					time.Sleep(1 * time.Second)
+				}
+			}()
 			a.log.Errorln("Unable to detect your Java Path. Please make sure that Java is installed.")
+			return
 		}
 		jwPath := string(jPath[:len(jPath)-6]) + "w.exe" // Shifting to javaw.exe
 		a.log.Infoln("Java path detected: " + jwPath)

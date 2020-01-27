@@ -14,7 +14,7 @@ func (a *WalletApplication) LoginError(errMsg string) {
 
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
-	if !a.passwordsProvided(keystorePath, keystorePassword, keyPassword) {
+	if !a.passwordsProvided(keystorePath, keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
 		return false
 	}
@@ -67,15 +67,20 @@ func (a *WalletApplication) ImportKey() string {
 	a.paths.EncPrivKeyFile = a.RT.Dialog.SelectFile()
 	if a.paths.EncPrivKeyFile == "" {
 		a.LoginError("Access Denied. No key path detected.")
+		return ""
 	}
 
+	if a.paths.EncPrivKeyFile[len(a.paths.EncPrivKeyFile)-4:] != ".p12" {
+		a.LoginError("Access Denied. Not a key file.")
+		return ""
+	}
 	a.log.Info("Path to imported key: " + a.paths.EncPrivKeyFile)
 	return a.paths.EncPrivKeyFile
 }
 
 func (a *WalletApplication) SelectDirToStoreKey() string {
 	a.paths.EncPrivKeyFile = a.RT.Dialog.SelectSaveFile()
-	a.log.Error(len(a.paths.EncPrivKeyFile))
+
 	if len(a.paths.EncPrivKeyFile) <= 0 {
 		a.LoginError("No valid path were provided. Please try again.")
 		return ""

@@ -14,7 +14,7 @@ func (a *WalletApplication) TempPrintCreds() {
 
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
-	if !a.passwordsProvided(keystorePath, keystorePassword, keyPassword) {
+	if !a.passwordsProvided(keystorePath, keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
 		return false
 	}
@@ -82,7 +82,7 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 // CreateUser is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
-	if !a.passwordsProvided(keystorePath, keystorePassword, keyPassword) {
+	if !a.passwordsProvided(keystorePath, keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
 		return false
 	}
@@ -230,7 +230,7 @@ func (a *WalletApplication) passKeysToFrontend() {
 	}
 }
 
-func (a *WalletApplication) passwordsProvided(keystorePath, keystorePassword, keyPassword string) bool {
+func (a *WalletApplication) passwordsProvided(keystorePath, keystorePassword, keyPassword, alias string) bool {
 	if keystorePath == "" {
 		a.LoginError("Please provide a valid path to your KeyStore file.")
 		return false
@@ -240,6 +240,8 @@ func (a *WalletApplication) passwordsProvided(keystorePath, keystorePassword, ke
 	} else if keyPassword == "" {
 		a.LoginError("Please provide a Key Password.")
 		return false
+	} else if alias == "" {
+		a.LoginError("An Alias has not been provided.")
 	}
 	return true
 }

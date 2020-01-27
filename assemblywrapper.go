@@ -76,9 +76,6 @@ func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string)
 // and key using storepass and keypass
 func (a *WalletApplication) WalletKeystoreAccess() bool {
 	a.log.Infoln("Checking Keystore Access...")
-	// a.log.Infoln(os.Getenv("CL_STOREPASS"), os.Getenv("CL_KEYPASS"))
-	// a.log.Infoln(a.wallet.Address)
-	a.TempPrintCreds()
 
 	rescueStdout := os.Stdout
 	r, w, err := os.Pipe()
@@ -92,6 +89,7 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 		a.log.Warn("KeyStore Access Rejected!")
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
 		a.KeyStoreAccess = false
+		return a.KeyStoreAccess
 	}
 
 	// STDOUT is captured here
@@ -104,7 +102,6 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 	}
 	// if STDOUT prefix of show-address output isn't DAG
 
-	a.TempPrintCreds()
 	if err == nil && a.wallet.Address != "" && string(dagAddress[:40]) == a.wallet.Address {
 		a.KeyStoreAccess = true
 		a.log.Info("KeyStore Access Granted!")
@@ -115,7 +112,6 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 	a.KeyStoreAccess = false
 	a.log.Warn("KeyStore Access Rejected!")
 	a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
-
 	return a.KeyStoreAccess
 }
 
@@ -129,6 +125,7 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	if err != nil {
 		a.log.Errorf("Unable to pipe STDOUT, Reason: ", err)
 		a.sendError("Unable to pipe STDOUT, Reason: ", err)
+		return ""
 	}
 	os.Stdout = w
 
@@ -136,6 +133,7 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	if err != nil {
 		a.sendError("Unable to generate wallet address. Reason:", err)
 		a.log.Errorf("Unable to generate wallet address. Reason: %s", err.Error())
+		return ""
 	}
 
 	w.Close()

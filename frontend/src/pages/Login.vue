@@ -20,11 +20,13 @@
                   <br />
                   <b>Create a new wallet</b>
                   <br />
-                  This section will let you create a Molly Wallet to store your $DAG tokens in. You simply browse to a path where you wish to store your private key, give it a name and select 'save'. <br><br> 
-                  This will create a Key Store file (.p12) with the name that you provided. Once that's done, you get to set up a password to protect the key store.<br /><br />
+                  This section will let you create a Molly Wallet to store your <b>$DAG</b> tokens in. You simply browse to a path where you wish to save your KeyStore file, give it a name and select 'save'. <br ()><br /> 
+                  Once the path is selected, you get to set up a password to protect the key store.<br /><br />
 
-                  The Key Store will contain your private key. The only way to access that is with the Key Store, the Key Store Password and the Key Password.
+                  The Key Store will contain your private key. The only way to access that is with the KeyStore together with the KeyStore Password. The private key that is stored in the aforementioned file is also encrypted using a seperate Key Password. <br />
+                  All three of these variables are required in order to access a $DAG Wallet.
 
+                  <br />
                   <br />
                   <ul>
   <li><b>Key File</b><i> - Select where to save your private key. <b>You need to back this up</b> as it'll help you restore your wallet at any time. If you lose this, you will be locked out of the wallet.</i></li>
@@ -139,19 +141,25 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
           </tr>
         </table>
               </div>
-                <div>
+                <div class="fg-style">
                   <fg-input
                     type="text"
                     v-model="alias"
+                    @input="checkAlias(alias)"
                     :placeholder="this.$store.state.walletInfo.alias"
                     label="Key Alias"
                   ></fg-input>
                 </div>
+                <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.alias.valid_alias">
+      
+                  <p v-if="!this.$store.state.validators.alias.contains_five_characters" class="validate"> Alias has to be atleast 5 characters long. </p>  
+                
+                </div> 
                 
                 <div class="fg-style">
                 <fg-input @input="checkPassword(keystorePassword)" type="password" v-model="keystorePassword" label="Keystore Password" placeholder="Enter Keystore Password ..." />
                 </div>
-                 <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.validators.target === this.keystorePassword && !this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.storepass.valid_password">             
+                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.storepass.valid_password">             
                             <p v-if="!this.$store.state.validators.storepass.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
                             <p v-if="!this.$store.state.validators.storepass.contains_number" class="validate"> Number,</p> 
                             <p v-if="!this.$store.state.validators.storepass.contains_uppercase" class="validate"> Uppercase, </p> 
@@ -170,7 +178,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                 <p class="validate"> Keystore Password cannot be the same as the Key Password</p>
                 </div> -->
                   
-                 <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.validators.target === this.keyPasswordValidate && !this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.valid_password">
+                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.valid_password">
                
                             <p v-if="!this.$store.state.validators.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
                             <p v-if="!this.$store.state.validators.contains_number" class="validate"> Number,</p> 
@@ -365,6 +373,17 @@ export default {
         }
       });
     },
+    checkAlias: function() {
+      this.$store.state.validators.target = this.alias;
+      this.$store.state.validators.alias.alias_length = this.alias.length;
+
+      if (this.$store.state.validators.alias.alias_length > 5) {
+        this.$store.state.validators.alias.contains_five_characters = true;
+      } else {
+        this.$store.state.validators.alias.contains_five_characters = false;
+      }
+
+    },
     checkKeyPassword: function() {
       this.$store.state.validators.target = this.keyPasswordValidate
       this.$store.state.validators.password_length = this.keyPasswordValidate.length;
@@ -458,7 +477,7 @@ export default {
     newLogin: function() {
       this.$store.state.app.register = !this.$store.state.app.register;
       this.$store.state.app.login = !this.$store.state.app.login;
-      this.$store.state.app.margin = 150;
+      this.$store.state.app.margin = 100;
     },
     cancelEvent: function() {
       this.$store.state.app.register = !this.$store.state.app.register;

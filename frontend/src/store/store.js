@@ -43,6 +43,15 @@ export const store = new Vuex.Store({
             contains_special_character: false,
             duplicate: false,
             valid_password: false,
+            storepass: {
+                password_length: 0,
+                contains_eight_characters: false,
+                contains_number: false,
+                contains_uppercase: false,
+                contains_special_character: false,
+                duplicate: false,
+                valid_password: false,
+            },
         },
         txInfo: {
             txHistory: []

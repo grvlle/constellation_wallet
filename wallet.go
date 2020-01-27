@@ -14,6 +14,11 @@ func (a *WalletApplication) TempPrintCreds() {
 
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
+	if !a.passwordsProvided(keystorePath, keystorePassword, keyPassword) {
+		a.log.Warnln("One or more passwords were not provided.")
+		return false
+	}
+
 	os.Setenv("CL_STOREPASS", keystorePassword)
 	os.Setenv("CL_KEYPASS", keyPassword)
 
@@ -23,21 +28,20 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 	a.wallet.Address = a.GenerateDAGAddress()
 	a.KeyStoreAccess = a.WalletKeystoreAccess()
-	a.TempPrintCreds()
 
 	if a.KeyStoreAccess {
 		if !a.DB.NewRecord(&a.wallet) {
 			keystorePasswordHashed, err := a.GenerateSaltedHash(keystorePassword)
 			if err != nil {
 				a.log.Errorf("Unable to generate password hash. Reason: ", err)
-				a.sendError("Unable to generate password hash. Reason: ", err)
+				a.LoginError("Unable to generate password hash.")
 				return false
 			}
 
 			keyPasswordHashed, err := a.GenerateSaltedHash(keyPassword)
 			if err != nil {
 				a.log.Errorf("Unable to generate password hash. Reason: ", err)
-				a.sendError("Unable to generate password hash. Reason: ", err)
+				a.LoginError("Unable to generate password hash.")
 				return false
 			}
 
@@ -45,13 +49,13 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 			if err := a.DB.Create(&a.wallet).Error; err != nil {
 				a.log.Errorf("Unable to create database object for the imported wallet. Reason: ", err)
-				a.sendError("Unable to create database object for the imported. Reason: ", err)
+				a.LoginError("Unable to create database object for the imported.")
 				return false
 			}
 
 			if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
 				a.log.Errorf("Unable to query database object for the imported wallet. Reason: ", err)
-				a.sendError("Unable to query database object for the imported wallet. Reason: ", err)
+				a.LoginError("Unable to query database object for the imported wallet.")
 				return false
 			}
 			a.UserLoggedIn = false
@@ -77,6 +81,11 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 // CreateUser is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
+
+	if !a.passwordsProvided(keystorePath, keystorePassword, keyPassword) {
+		a.log.Warnln("One or more passwords were not provided.")
+		return false
+	}
 
 	if alias == "" {
 		alias = a.wallet.WalletAlias
@@ -219,4 +228,18 @@ func (a *WalletApplication) passKeysToFrontend() {
 	} else {
 		a.WidgetRunning.PassKeysToFrontend = false
 	}
+}
+
+func (a *WalletApplication) passwordsProvided(keystorePath, keystorePassword, keyPassword string) bool {
+	if keystorePath == "" {
+		a.LoginError("Please provide a valid path to your KeyStore file.")
+		return false
+	} else if keystorePassword == "" {
+		a.LoginError("Please provide a Key Store password.")
+		return false
+	} else if keyPassword == "" {
+		a.LoginError("Please provide a Key Password.")
+		return false
+	}
+	return true
 }

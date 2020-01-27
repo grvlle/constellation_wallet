@@ -19,7 +19,7 @@ func (a *WalletApplication) runWalletCMD(scalaFunc string, scalaArgs ...string) 
 	var main string
 
 	if runtime.GOOS == "windows" {
-		main = "C:\\Program Files (x86)\\Java\\jre1.8.0_241\\bin\\javaw.exe"
+		main = a.paths.Java
 	} else {
 		main = "java"
 	}
@@ -48,7 +48,7 @@ func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string)
 	var main string
 
 	if runtime.GOOS == "windows" {
-		main = "C:\\Program Files (x86)\\Java\\jre1.8.0_241\\bin\\javaw.exe"
+		main = a.paths.Java
 	} else {
 		main = "java"
 	}

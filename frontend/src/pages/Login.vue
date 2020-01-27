@@ -8,8 +8,8 @@
           v-if="this.$store.state.app.login"
           style="margin-bottom: 20px; margin-top: 5px;"
         >Please enter your credentials below to access your Molly Wallet.</p>
-        <div style="height:30px;" v-if="this.$store.state.app.login && !this.$store.state.displayLoginError"></div>
-        <div style="height:30px;" v-if="this.$store.state.app.login && this.$store.state.displayLoginError"><p style="color: firebrick; font-size: 12px;">{{this.$store.state.loginErrorMsg}}</p></div>
+        <div style="height:30px;" v-if="!this.$store.state.displayLoginError"></div>
+        <div style="height:30px;" v-if="this.$store.state.displayLoginError"><p style="color: firebrick; font-size: 12px;">{{this.$store.state.loginErrorMsg}}</p></div>
         <div>
           <form @submit.prevent>
             <div class="row">
@@ -20,16 +20,19 @@
                   <br />
                   <b>Create a new wallet</b>
                   <br />
-                  This section will let you create a Molly Wallet to store your $DAG tokens in. Be aware that <b>everytime a new wallet is created in the same directory, the previous is overwritten.</b> <br />
+                  This section will let you create a Molly Wallet to store your $DAG tokens in. You simply browse to a path where you wish to store your private key, give it a name and select 'save'. <br><br> 
+                  This will create a Key Store file (.p12) with the name that you provided. Once that's done, you get to set up a password to protect the key store.<br /><br />
+
+                  The Key Store will contain your private key. The only way to access that is with the Key Store, the Key Store Password and the Key Password.
 
                   <br />
                   <ul>
   <li><b>Key File</b><i> - Select where to save your private key. <b>You need to back this up</b> as it'll help you restore your wallet at any time. If you lose this, you will be locked out of the wallet.</i></li>
-  <li><b>Store Pass</b><i> - This password unlocks the keystore file. </i></li>
+  <li><b>Store Password</b><i> - This password unlocks the keystore file. </i></li>
   <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
   <li><b>Token Label</b><i> - This will set the label of your wallet. This is <b>optional</b> and strictly for cosmetic purposes.</i></li>
 </ul>
-Please backup your passwords and wallet key file (key.p12) as these will allow you to restore your wallet at any time. 
+Please backup your passwords and Key Store file (key.p12) as these will allow you to restore your wallet at any time. 
                 
                   </p>
               </div>
@@ -38,17 +41,15 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
                   <br />
                   <b>Import an existing wallet.</b>
                   <br />
-                  This section will let you create a Molly Wallet to store your $DAG tokens in. Be aware that <b>everytime a new wallet is created in the same directory, the previous is overwritten.</b> <br />
+                  This section will let you import an existing KeyStore (key.p12). Simply browse to the location of the KeyStore file, enter the Store Password as well as the Key Password to access it.<br />
 
                   <br />
                   <ul>
-  <li><b>Key File</b><i> - Select where to save your private key. <b>You need to back this up</b> as it'll help you restore your wallet at any time. If you lose this, you will be locked out of the wallet.</i></li>
-  <li><b>Store Pass</b><i> - This password unlocks the keystore file. </i></li>
+  <li><b>Key File</b><i> - Select where your <b>existing</b> private key is stored and unlock using the passwords previously set up.</i></li>
+  <li><b>Store Password</b><i> - This password unlocks the keystore file. </i></li>
   <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
-  <li><b>Token Label</b><i> - This will set the label of your wallet. This is <b>optional</b> and strictly for cosmetic purposes.</i></li>
 </ul>
-Please backup your passwords and wallet key file (key.p12) as these will allow you to restore your wallet at any time. 
-                
+If you're able to authenticate against the Key Store and Private Key, your Key Store will be unlocked and you'll be able to access your wallet.                
                   </p>
               </div>
 
@@ -91,8 +92,8 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
               <fg-input
                 type="text"
                 :disabled="true"
-                :placeholder="this.$store.state.walletInfo.saveKeystorePath"
-                v-model="this.$store.state.walletInfo.saveKeystorePath"
+                :placeholder="this.$store.state.walletInfo.keystorePath"
+                v-model="this.$store.state.walletInfo.keystorePath"
               ></fg-input>
             </td>
 
@@ -150,27 +151,26 @@ Please backup your passwords and wallet key file (key.p12) as these will allow y
                 <div class="fg-style">
                 <fg-input @input="checkPassword(keystorePassword)" type="password" v-model="keystorePassword" label="Keystore Password" placeholder="Enter Keystore Password ..." />
                 </div>
-                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.valid_password">             
-                            <p v-if="!this.$store.state.validators.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
-                            <p v-if="!this.$store.state.validators.contains_number" class="validate"> Number,</p> 
-                            <p v-if="!this.$store.state.validators.contains_uppercase" class="validate"> Uppercase, </p> 
-                            <p v-if="!this.$store.state.validators.contains_special_character" class="validate"> Special Character </p>     
+                 <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.validators.target === this.keystorePassword && !this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.storepass.valid_password">             
+                            <p v-if="!this.$store.state.validators.storepass.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
+                            <p v-if="!this.$store.state.validators.storepass.contains_number" class="validate"> Number,</p> 
+                            <p v-if="!this.$store.state.validators.storepass.contains_uppercase" class="validate"> Uppercase, </p> 
+                            <p v-if="!this.$store.state.validators.storepass.contains_special_character" class="validate"> Special Character </p>     
                 </div>
-                <div style="margin-bottom: 10px;">
+                <div class="fg-style">
                   <fg-input
-                    v-model="keyPasswordValidate"
                     @input="checkKeyPassword(keyPasswordValidate)"
-                    class="fg-style"
+                    v-model="keyPasswordValidate"
                     type="password"
                     label="Key Password"
                     placeholder="Enter Key Password..."
                   ></fg-input>
                 </div>
-                <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keyPasswordValidate !== ''">
+                <!-- <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keyPasswordValidate !== ''">
                 <p class="validate"> Keystore Password cannot be the same as the Key Password</p>
-                </div>
+                </div> -->
                   
-                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.valid_password">
+                 <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.validators.target === this.keyPasswordValidate && !this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.valid_password">
                
                             <p v-if="!this.$store.state.validators.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
                             <p v-if="!this.$store.state.validators.contains_number" class="validate"> Number,</p> 
@@ -365,9 +365,9 @@ export default {
         }
       });
     },
-    checkKeyPassword: function(pw) {
-      this.$store.state.validators.target = pw
-      this.$store.state.validators.password_length = pw.length;
+    checkKeyPassword: function() {
+      this.$store.state.validators.target = this.keyPasswordValidate
+      this.$store.state.validators.password_length = this.keyPasswordValidate.length;
       const format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
       
       if (this.$store.state.validators.password_length > 8) {
@@ -382,9 +382,9 @@ export default {
         this.$store.state.validators.duplicate = false;
       }
       
-      this.$store.state.validators.contains_number = /\d/.test(pw);
-      this.$store.state.validators.contains_uppercase = /[A-Z]/.test(pw);
-      this.$store.state.validators.contains_special_character = format.test(pw);
+      this.$store.state.validators.contains_number = /\d/.test(this.keyPasswordValidate);
+      this.$store.state.validators.contains_uppercase = /[A-Z]/.test(this.keyPasswordValidate);
+      this.$store.state.validators.contains_special_character = format.test(this.keyPasswordValidate);
       
       if (this.$store.state.validators.contains_eight_characters === true &&
           this.$store.state.validators.contains_special_character === true &&
@@ -395,34 +395,34 @@ export default {
         this.$store.state.validators.valid_password = false;
       }
     },
-    checkPassword: function(pw) {
-      this.$store.state.validators.target = pw
-      this.$store.state.validators.password_length = pw.length;
+    checkPassword: function() {
+      this.$store.state.validators.target = this.keystorePassword
+      this.$store.state.validators.storepass.password_length = this.keystorePassword.length;
       const format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
       
-      if (this.$store.state.validators.password_length > 8) {
-        this.$store.state.validators.contains_eight_characters = true;
+      if (this.$store.state.validators.storepass.password_length > 8) {
+        this.$store.state.validators.storepass.contains_eight_characters = true;
       } else {
-        this.$store.state.validators.contains_eight_characters = false;
+        this.$store.state.validators.storepass.contains_eight_characters = false;
       }
 
-      if (this.$store.state.validators.target === this.keyPasswordValidate && this.$store.state.validators.target === this.keystorePassword) {
+      if (this.$store.state.validators.storepass.target === this.$store.state.validators.target) {
         this.$store.state.validators.duplicate = true;
       } else {
         this.$store.state.validators.duplicate = false;
       }
       
-      this.$store.state.validators.contains_number = /\d/.test(pw);
-      this.$store.state.validators.contains_uppercase = /[A-Z]/.test(pw);
-      this.$store.state.validators.contains_special_character = format.test(pw);
+      this.$store.state.validators.storepass.contains_number = /\d/.test(this.keystorePassword);
+      this.$store.state.validators.storepass.contains_uppercase = /[A-Z]/.test(this.keystorePassword);
+      this.$store.state.validators.storepass.contains_special_character = format.test(this.keystorePassword);
       
-      if (this.$store.state.validators.contains_eight_characters === true &&
-          this.$store.state.validators.contains_special_character === true &&
-          this.$store.state.validators.contains_uppercase === true &&
-          this.$store.state.validators.contains_number === true) {
-            this.$store.state.validators.valid_password = true;			
+      if (this.$store.state.validators.storepass.contains_eight_characters === true &&
+          this.$store.state.validators.storepass.contains_special_character === true &&
+          this.$store.state.validators.storepass.contains_uppercase === true &&
+          this.$store.state.validators.storepass.contains_number === true) {
+            this.$store.state.validators.storepass.valid_password = true;			
       } else {
-        this.$store.state.validators.valid_password = false;
+        this.$store.state.validators.storepass.valid_password = false;
       }
     },
     importKey: function() {
@@ -438,7 +438,6 @@ export default {
     SelectDirToStoreKey: function() {
       window.backend.WalletApplication.SelectDirToStoreKey().then(
         result => {
-          
           this.$store.state.walletInfo.saveKeystorePath = result;
           // this.$store.state.walletInfo.keystorePath = result;
           

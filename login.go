@@ -14,6 +14,11 @@ func (a *WalletApplication) LoginError(errMsg string) {
 
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
+	if !a.passwordsProvided(keystorePath, keystorePassword, keyPassword) {
+		a.log.Warnln("One or more passwords were not provided.")
+		return false
+	}
+
 	os.Setenv("CL_STOREPASS", keystorePassword)
 	os.Setenv("CL_KEYPASS", keyPassword)
 
@@ -70,12 +75,14 @@ func (a *WalletApplication) ImportKey() string {
 
 func (a *WalletApplication) SelectDirToStoreKey() string {
 	a.paths.EncPrivKeyFile = a.RT.Dialog.SelectSaveFile()
-	if a.paths.EncPrivKeyFile == "" {
-		a.LoginError("No directory detected. Please try again.")
+	a.log.Error(len(a.paths.EncPrivKeyFile))
+	if len(a.paths.EncPrivKeyFile) <= 0 {
+		a.LoginError("No valid path were provided. Please try again.")
+		return ""
 	}
-	a.log.Info(a.paths.EncPrivKeyFile[len(a.paths.EncPrivKeyFile)-4:])
 	if a.paths.EncPrivKeyFile[len(a.paths.EncPrivKeyFile)-4:] != ".p12" {
 		a.paths.EncPrivKeyFile = a.paths.EncPrivKeyFile + ".p12"
+		return a.paths.EncPrivKeyFile
 	}
 	return a.paths.EncPrivKeyFile
 }

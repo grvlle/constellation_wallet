@@ -59,7 +59,7 @@ export default {
       this.$store.state.displayLoginError = err;
       setTimeout(() => {
         this.$store.state.displayLoginError = false;
-      }, 6000);
+      }, 10000);
     });
     // Transactions.vue sockets
     window.wails.Events.On("update_tx_history", txHistoryFull => {

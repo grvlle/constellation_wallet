@@ -1,13 +1,47 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"os/user"
 	"path/filepath"
+	"runtime"
 )
+
+func (a *WalletApplication) detectJavaPath() {
+
+	if runtime.GOOS == "windows" {
+
+		cmd := exec.Command("cmd", "/c", "where", "java")
+		a.log.Infoln("Running command: ", cmd)
+
+		var out bytes.Buffer
+		var stderr bytes.Buffer
+		cmd.Stdout = &out    // Captures STDOUT
+		cmd.Stderr = &stderr // Captures STDERR
+
+		err := cmd.Run()
+		if err != nil {
+			errFormatted := fmt.Sprint(err) + ": " + stderr.String()
+			a.log.Errorf(errFormatted)
+			a.LoginError("Unable to find Java Installation")
+		}
+		jPath := out.String() // Path to java.exe
+		if jPath == "" {
+			a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+			a.log.Errorln("Unable to detect your Java Path. Please make sure that Java is installed.")
+		}
+		jwPath := string(jPath[:len(jPath)-6]) + "w.exe" // Shifting to javaw.exe
+		a.log.Infoln("Java path detected: " + jwPath)
+		a.log.Debugln(cmd)
+		a.paths.Java = jwPath
+	}
+}
 
 // Copy the src file to dst. Any existing file will be overwritten and will not
 // copy file attributes.

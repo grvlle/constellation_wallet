@@ -129,11 +129,11 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-func reverseElement(elements []*txInformation) []*txInformation {
-	reversed := []*txInformation{}
-	for i := range elements {
-		n := elements[len(elements)-1-i]
-		reversed = append(reversed, n)
-	}
-	return reversed
-}
+// func reverseElement(elements []*txInformation) []*txInformation {
+// 	reversed := []*txInformation{}
+// 	for i := range elements {
+// 		n := elements[len(elements)-1-i]
+// 		reversed = append(reversed, n)
+// 	}
+// 	return reversed
+// }

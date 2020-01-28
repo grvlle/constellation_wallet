@@ -18,7 +18,7 @@ type Wallet struct {
 	KeyStorePath         string
 	WalletAlias          string      `gorm:"primary_key;unique"`
 	Addresses            []Address   `sql:"-"`
-	TXHistory            []TXHistory `sql:"-"`
+	TXHistory            []TXHistory `gorm:"foreignkey:Alias"`
 	ProfilePicture       string
 	WalletTag            string
 	Balance              int    `json:"balance"`
@@ -39,10 +39,12 @@ type Wallet struct {
 
 type TXHistory struct {
 	gorm.Model
-	FromAddress string
-	ToAddress   string
-	TXHash      string
-	Amount      uint64
+	Alias           string `json:"alias"`
+	Amount          int64  `json:"amount"`
+	Address         string `json:"address"`
+	Fee             int    `json:"fee"`
+	TransactionHash string `json:"txhash,omitempty"`
+	TS              string `json:"date,omitempty"`
 }
 
 type Address string

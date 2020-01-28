@@ -177,6 +177,7 @@ func (a *WalletApplication) initWallet(keystorePath string) {
 	if !a.WidgetRunning.PassKeysToFrontend {
 		a.passKeysToFrontend()
 	}
+	a.initTXs()
 
 	a.log.Infoln("User has logged into the wallet")
 

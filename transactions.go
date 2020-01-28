@@ -75,7 +75,7 @@ func (a *WalletApplication) sendTransaction(amount int64, fee int, address strin
 
 func (a *WalletApplication) initTXs() {
 	transactions := &a.wallet.TXHistory
-	a.DB.Model(&a.wallet).Association("TXHistory").Find(&transactions)
+	a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory").Find(&transactions)
 
 	a.log.Warnln(a.wallet.TXHistory)
 	for i := range a.wallet.TXHistory {

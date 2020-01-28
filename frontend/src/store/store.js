@@ -32,7 +32,7 @@ export const store = new Vuex.Store({
             alias: "",
             privateKey: "NaN",
             publicKey: "NaN",
-            seed: "witch collapse practice feed shame open despair creek road again ice least"
+            seed: "Mnemonic Seed will be introduced with a later software release"
         },
         validators: {
             target: "",

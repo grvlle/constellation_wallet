@@ -48,29 +48,40 @@ func (a *WalletApplication) UploadImage() string {
 
 		return "None"
 	}
-
 	a.StoreImagePathInDB(filename)
-
 	return filename
 }
 
+// SetImagePath is called from the Login.Vue
 func (a *WalletApplication) SetImagePath() string {
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Error; err != nil {
+		a.log.Errorf("Unable to query the DB record for the Image path. Reason: ", err)
+		a.sendError("Unable to query the DB record for the Image path. Reason: ", err)
+	}
+	a.log.Infoln("Profile Picture selected: ", a.wallet.ProfilePicture)
 	return a.wallet.ProfilePicture
 }
 
 func (a *WalletApplication) StoreImagePathInDB(path string) {
-	if err := a.DB.First(&a.wallet, "wallet_alias = ?", a.wallet.WalletAlias).Update(&Wallet{ProfilePicture: path}).Error; err != nil {
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("ProfilePicture", path).Error; err != nil {
 		a.log.Errorf("Unable to update the DB record with the Image path. Reason: ", err)
 		a.sendError("Unable to update the DB record with the Image path. Reason: ", err)
 	}
 }
 
+// SetWalletTag is called from the Login.Vue
 func (a *WalletApplication) SetWalletTag() string {
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Error; err != nil {
+		a.log.Errorf("Unable to query the DB record for the Image path. Reason: ", err)
+		a.sendError("Unable to query the DB record for the Image path. Reason: ", err)
+	}
+	a.log.Infoln("Wallet Tag selected: ", a.wallet.WalletTag)
+	a.log.Infoln("Wallet Tag: ", a.wallet.WalletTag)
 	return a.wallet.WalletTag
 }
 
 func (a *WalletApplication) StoreWalletLabelInDB(walletTag string) {
-	if err := a.DB.First(&a.wallet, "wallet_alias = ?", a.wallet.WalletAlias).Update(&Wallet{WalletTag: walletTag}).Error; err != nil {
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("WalletTag", walletTag).Error; err != nil {
 		a.log.Errorf("Unable to update the DB record with the wallet tag. Reason: ", err)
 		a.sendError("Unable to update the DB record with the wallet tag. Reason: ", err)
 	}

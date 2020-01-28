@@ -129,16 +129,13 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 	}
 
 	a.CreateEncryptedKeyStore()
-	// a.paths.EncPrivKeyFile = keystorePath
-	a.wallet.Address = a.GenerateDAGAddress()
 
-	// a.wallet.KeyStorePath = a.paths.EncPrivKeyFile
+	a.wallet.Address = a.GenerateDAGAddress()
 
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("Address", a.wallet.Address).Error; err != nil {
 		a.log.Errorf("Unable to update db object new wallet, with the DAG address. Reason: ", err)
 		a.sendError("Unable to update db object new wallet, with the DAG address. Reason. Reason: ", err)
 	}
-	a.TempPrintCreds()
 	a.KeyStoreAccess = a.WalletKeystoreAccess()
 
 	if a.KeyStoreAccess {
@@ -157,13 +154,14 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 // only when a new wallet is created.
 func (a *WalletApplication) initNewWallet() {
 
+	a.StoreImagePathInDB("faces/face-0.jpg")
+
 	//a.initTransactionHistory()
 	a.passKeysToFrontend()
 
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
 	}
-
 	a.log.Infoln("A New wallet has been created successfully!")
 }
 
@@ -171,7 +169,6 @@ func (a *WalletApplication) initNewWallet() {
 // the information to the front end components.
 func (a *WalletApplication) initWallet(keystorePath string) {
 
-	a.TempPrintCreds()
 	a.paths.EncPrivKeyFile = keystorePath
 
 	if !a.WidgetRunning.DashboardWidgets {

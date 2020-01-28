@@ -487,8 +487,8 @@ export default {
     login: function() {
       var self = this;
 
-        window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias).then(
-        result => {
+        window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias)
+        .then(result => {
           self.access = result;
           window.backend.WalletApplication.SetWalletTag().then(walletTag =>
             self.$store.state.walletInfo.email = walletTag

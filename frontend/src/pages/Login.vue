@@ -20,7 +20,7 @@
                   <br />
                   <b>Create a new wallet</b>
                   <br />
-                  This section will let you create a Molly Wallet to store your <b>$DAG</b> tokens in. You simply browse to a path where you wish to save your KeyStore file, give it a name and select 'save'. <br ()><br /> 
+                  This section will let you create a Molly Wallet to store your <b>$DAG</b> tokens in. You simply browse to a path where you wish to save your KeyStore file, give it a name and select 'save'. <br><br /> 
                   Once the path is selected, you get to set up a password to protect the key store.<br /><br />
 
                   The Key Store will contain your private key. The only way to access that is with the KeyStore together with the KeyStore Password. The private key that is stored in the aforementioned file is also encrypted using a seperate Key Password. <br />

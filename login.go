@@ -14,7 +14,7 @@ func (a *WalletApplication) LoginError(errMsg string) {
 
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
-	if !a.passwordsProvided(keystorePath, keystorePassword, keyPassword, alias) {
+	if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
 		return false
 	}

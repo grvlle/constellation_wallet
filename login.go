@@ -59,8 +59,9 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	return a.UserLoggedIn
 }
 
-func (a *WalletApplication) LogOut() {
-	a.UserLoggedIn = true
+func (a *WalletApplication) LogOut() *Wallet {
+	a.UserLoggedIn = false
+	return nil
 }
 
 func (a *WalletApplication) ImportKey() string {

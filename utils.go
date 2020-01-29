@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"os/user"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"time"
 )
@@ -110,30 +110,7 @@ func (a *WalletApplication) directoryCreator(directories ...string) error {
 	return nil
 }
 
-func (a *WalletApplication) getFileContents(filePath string) ([]byte, error) {
-	path := filepath.Join(filePath)
-	fileContents, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	return fileContents, nil
+func clear(v interface{}) {
+	p := reflect.ValueOf(v).Elem()
+	p.Set(reflect.Zero(p.Type()))
 }
-
-// fileExists checks if a file exists and is not a directory before we
-// try using it to prevent further errors.
-func fileExists(filename string) bool {
-	info, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return !info.IsDir()
-}
-
-// func reverseElement(elements []*txInformation) []*txInformation {
-// 	reversed := []*txInformation{}
-// 	for i := range elements {
-// 		n := elements[len(elements)-1-i]
-// 		reversed = append(reversed, n)
-// 	}
-// 	return reversed
-// }

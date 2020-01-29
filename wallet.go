@@ -177,7 +177,7 @@ func (a *WalletApplication) initWallet(keystorePath string) {
 	if !a.WidgetRunning.PassKeysToFrontend {
 		a.passKeysToFrontend()
 	}
-	a.initTXs()
+	a.initTXFromDB()
 
 	a.log.Infoln("User has logged into the wallet")
 
@@ -211,6 +211,20 @@ func (a *WalletApplication) ExportKeys() error {
 	filename := a.RT.Dialog.SelectDirectory()
 	a.log.Info("File user wants to save to: " + filename)
 	return nil
+}
+
+func (a *WalletApplication) initTXFromDB() {
+	transactions := &a.wallet.TXHistory
+	a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory").Find(&transactions)
+
+	for i := range a.wallet.TXHistory {
+		a.RT.Events.Emit("new_transaction", &a.wallet.TXHistory[i]) // Pass the tx to the frontend as a new transaction.
+	}
+
+}
+
+func (a *WalletApplication) initTXFromBlockExplorer() {
+	// TODO
 }
 
 // PassKeysToFrontend emits the keys to the settings.Vue component on a

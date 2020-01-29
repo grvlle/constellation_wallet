@@ -4,7 +4,9 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 export const store = new Vuex.Store({
     state: {
-        errorMessage: "None",
+        errorMessage: "",
+        warningMessage: "",
+        successMessage: "",
         loginErrorMsg: "",
         displayLoginError: false,
         app: {

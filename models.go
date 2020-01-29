@@ -3,7 +3,6 @@ package main
 import (
 	"time"
 
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
@@ -21,13 +20,13 @@ type Wallet struct {
 	TXHistory            []TXHistory `gorm:"foreignkey:Alias"`
 	ProfilePicture       string
 	WalletTag            string
-	Balance              int    `json:"balance"`
-	AvailableBalance     int    `json:"available_balance"`
-	Nonce                int    `json:"nonce"`
-	TotalBalance         int    `json:"total_balance"`
-	Delegated            int    `json:"delegated"`
-	Deposit              int    `json:"deposit"`
-	Address              string `json:"address"`
+	Balance              float64 `json:"balance"`
+	AvailableBalance     float64 `json:"available_balance"`
+	Nonce                float64 `json:"nonce"`
+	TotalBalance         float64 `json:"total_balance"`
+	Delegated            float64 `json:"delegated"`
+	Deposit              float64 `json:"deposit"`
+	Address              string  `json:"address"`
 	TokenPrice           struct {
 		DAG struct {
 			BTC float64 `json:"BTC,omitempty"`
@@ -38,13 +37,13 @@ type Wallet struct {
 }
 
 type TXHistory struct {
-	gorm.Model
-	Alias           string `json:"alias"`
-	Amount          int64  `json:"amount"`
-	Address         string `json:"address"`
-	Fee             int    `json:"fee"`
-	TransactionHash string `json:"txhash,omitempty"`
-	TS              string `json:"date,omitempty"`
+	ID              uint    `json:"id"`
+	Alias           string  `json:"alias"`
+	Amount          float64 `json:"amount"`
+	Address         string  `json:"address"`
+	Fee             float64 `json:"fee"`
+	TransactionHash string  `json:"txhash"`
+	TS              string  `json:"date"`
 }
 
 type Address string

@@ -76,7 +76,6 @@ func (a *WalletApplication) SetWalletTag() string {
 		a.sendError("Unable to query the DB record for the Image path. Reason: ", err)
 	}
 	a.log.Infoln("Wallet Tag selected: ", a.wallet.WalletTag)
-	a.log.Infoln("Wallet Tag: ", a.wallet.WalletTag)
 	return a.wallet.WalletTag
 }
 

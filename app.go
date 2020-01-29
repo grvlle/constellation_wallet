@@ -14,11 +14,28 @@ import (
 // WalletApplication holds all application specific objects
 // such as the Client/Server event bus and logger
 type WalletApplication struct {
-	RT     *wails.Runtime
-	log    *logrus.Logger
-	wallet Wallet
-	DB     *gorm.DB
-	paths  struct {
+	RT      *wails.Runtime
+	log     *logrus.Logger
+	wallet  Wallet
+	DB      *gorm.DB
+	Network struct {
+		URL     string
+		Handles struct {
+			Send        string // Takes TX Object, returns TX Hash (200)
+			Transaction string // Takes TX Object, returns TX Hash (200)
+		}
+		BlockExplorer struct {
+			URL     string
+			Handles struct {
+				Transactions string // Takes TX Hash, returns TX info
+				Checkpoints  string // Takes Checkpoint block hash, returns checkpoint block info
+				Snapshots    string // Takes SnapshotHash, returns info
+				CollectTX    string // Takes DAG address, returns tx objects
+
+			}
+		}
+	}
+	paths struct {
 		HomeDir        string
 		DAGDir         string
 		EncryptedDir   string
@@ -66,6 +83,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	// Migrate the schema
 	a.DB.AutoMigrate(&Wallet{}, &TXHistory{})
 	a.detectJavaPath()
+	a.initMainnetConnection()
 
 	return nil
 }
@@ -120,6 +138,42 @@ func (a *WalletApplication) initDirectoryStructure() error {
 	return nil
 }
 
+// initMainnetConnection populates the WalletApplication struct with mainnet data
+func (a *WalletApplication) initMainnetConnection() {
+	a.Network.URL = "35.235.121.52:9000" // Temp
+
+	a.Network.Handles.Send = "/send"
+	a.Network.Handles.Transaction = "/transaction"
+
+	a.Network.BlockExplorer.URL = "https://2mqil2w38l.execute-api.us-west-1.amazonaws.com/block-explorer-api-dev"
+	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"
+	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoints/"
+	a.Network.BlockExplorer.Handles.Snapshots = "/snapshots/"
+	a.Network.BlockExplorer.Handles.CollectTX = "/transactions?sender="
+}
+
+func (a *WalletApplication) sendSuccess(msg string) {
+
+	if len(msg) > 200 {
+		msg = string(msg[:200]) // Restrict error size for frontend
+		a.RT.Events.Emit("success", msg+" ...")
+		return
+	}
+	a.RT.Events.Emit("success", msg+" ...")
+	return
+}
+
+func (a *WalletApplication) sendWarning(msg string) {
+
+	if len(msg) > 200 {
+		msg = string(msg[:200]) // Restrict error size for frontend
+		a.RT.Events.Emit("warning", msg+" ...")
+		return
+	}
+	a.RT.Events.Emit("warning", msg+" ...")
+	return
+}
+
 func (a *WalletApplication) sendError(msg string, err error) {
 
 	var errStr string
@@ -135,5 +189,8 @@ func (a *WalletApplication) sendError(msg string, err error) {
 		}
 
 		a.RT.Events.Emit("error_handling", msg, errStr+" ...")
+	} else {
+		a.RT.Events.Emit("error_handling", msg+" ...")
 	}
+
 }

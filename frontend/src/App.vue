@@ -22,6 +22,8 @@
 
 <script>
 import ErrorNotification from "./pages/Notifications/ErrorMessage";
+import WarningNotification from "./pages/Notifications/Warning";
+import SuccessNotification from "./pages/Notifications/Success";
 import LoadingScreen from "./pages/LoadingScreen";
 import LoginScreen from "./pages/Login";
 
@@ -43,11 +45,47 @@ export default {
       }, 60000);
       this.$notify({
         component: ErrorNotification,
-        timeout: 500000,
+        timeout: 50000,
         icon: "fa fa-times",
         horizontalAlign: "right",
         verticalAlign: "top",
         type: "danger",
+        onClick: () => {
+          this.$notifications.clear();
+        }
+      });
+    });
+
+    window.wails.Events.On("warning", (m) => {
+      this.$store.state.warningMessage = m;
+      setTimeout(() => {
+        this.$notifications.clear();
+      }, 60000);
+      this.$notify({
+        component: WarningNotification,
+        timeout: 50000,
+        icon: "fa fa-times",
+        horizontalAlign: "right",
+        verticalAlign: "top",
+        type: "warning",
+        onClick: () => {
+          this.$notifications.clear();
+        }
+      });
+    });
+
+        window.wails.Events.On("success", (m) => {
+      this.$store.state.successMessage = m;
+      setTimeout(() => {
+        this.$notifications.clear();
+      }, 60000);
+      this.$notify({
+        component: SuccessNotification,
+        timeout: 50000,
+        icon: "fa fa-times",
+        horizontalAlign: "right",
+        verticalAlign: "top",
+        type: "success",
         onClick: () => {
           this.$notifications.clear();
         }
@@ -106,11 +144,10 @@ export default {
     });
 
     // Settings.vue sockets
-    window.wails.Events.On("wallet_keys", (address) => {
-        // this.$store.state.walletInfo.keystorePath = keystorePath;
-        this.$store.state.walletInfo.address = address;
-      }
-    );
+    window.wails.Events.On("wallet_keys", address => {
+      // this.$store.state.walletInfo.keystorePath = keystorePath;
+      this.$store.state.walletInfo.address = address;
+    });
   }
 };
 </script>

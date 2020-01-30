@@ -264,7 +264,7 @@ export default {
   },
   filters: {
     dropzero: function(value) {
-      if (!value) return "";
+      if (!value || value === null) return "";
       let index;
       value = value.toString().split("");
       index = value.length - 8;
@@ -272,6 +272,7 @@ export default {
       return value.join("");
     },
     truncate: function(value) {
+      if (!value || value === null) return "";
       if (value.length > 30) {
         value = value.substring(0, 27) + "...";
       }

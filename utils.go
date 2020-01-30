@@ -2,14 +2,10 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
-	"os/user"
-	"path/filepath"
-	"reflect"
 	"runtime"
 	"time"
 )
@@ -72,34 +68,6 @@ func Copy(src, dst string) error {
 	return out.Close()
 }
 
-// writeToJSON is a helper function that will remove a requested file(filename),
-// and recreate it with new data(data). This is to avoid ticking off the
-// monitorFileState function with double write events.
-func writeToJSON(filename string, data interface{}) error {
-	user, err := user.Current()
-	if err != nil {
-		return err
-	}
-	JSON, err := json.Marshal(data)
-	path := filepath.Join(user.HomeDir+"/.dag", filename)
-	os.Remove(path)
-
-	f, err := os.OpenFile(
-		path,
-		os.O_CREATE|os.O_WRONLY,
-		0666,
-	)
-	defer f.Close()
-
-	f.Write(JSON)
-	f.Sync()
-
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (a *WalletApplication) directoryCreator(directories ...string) error {
 	for _, d := range directories {
 		err := os.MkdirAll(d, os.ModePerm)
@@ -108,9 +76,4 @@ func (a *WalletApplication) directoryCreator(directories ...string) error {
 		}
 	}
 	return nil
-}
-
-func clear(v interface{}) {
-	p := reflect.ValueOf(v).Elem()
-	p.Set(reflect.Zero(p.Type()))
 }

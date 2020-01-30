@@ -49,7 +49,7 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 			if err := a.DB.Create(&a.wallet).Error; err != nil {
 				a.log.Errorf("Unable to create database object for the imported wallet. Reason: ", err)
-				a.LoginError("Unable to create database object for the imported.")
+				a.LoginError("Unable to create database object for the imported wallet. Maybe it's already imported? Try to login.")
 				return false
 			}
 

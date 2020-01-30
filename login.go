@@ -35,8 +35,10 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 		return false
 	}
 
-	a.DB.Model(&a.wallet).Update("KeystorePath", keystorePath)
-	a.log.Infoln("PrivateKey path: ", keystorePath)
+	if !a.NewUser {
+		a.DB.Model(&a.wallet).Update("KeystorePath", keystorePath)
+		a.log.Infoln("PrivateKey path: ", keystorePath)
+	}
 
 	// Check password strings against salted hashes stored in DB. Also make sure KeyStore has been accessed.
 	if a.CheckAccess(keystorePassword, a.wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, a.wallet.KeyPasswordHash) && a.KeyStoreAccess {

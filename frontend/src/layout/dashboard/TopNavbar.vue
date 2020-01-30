@@ -65,7 +65,7 @@ export default {
   methods: {
     logout() {
       window.backend.WalletApplication.LogOut()
-      this.$store.state.txInfo.txHistory = null
+      this.$store.state.txInfo.txHistory = []
       this.$store.state.app.isLoading = false;
       this.$store.state.app.isLoggedIn = false;
       this.$store.state.app.register = false;

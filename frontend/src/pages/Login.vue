@@ -11,7 +11,7 @@
         <div style="height:30px;" v-if="!this.$store.state.displayLoginError"></div>
         <div style="height:30px;" v-if="this.$store.state.displayLoginError"><p style="color: firebrick; font-size: 12px;">{{this.$store.state.loginErrorMsg}}</p></div>
         <div>
-          <form @submit.prevent>
+          <form @submit.prevent="form">
             <div class="row">
               <div class="col-2"></div>
               <div v-if="!this.$store.state.app.register && !this.$store.state.app.import" class="col-2"></div>
@@ -312,7 +312,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     type="info"
                     block
                     
-                    @click.native="importWallet"
+                    @click.native="importWallet()"
                     style="overflow: visible;"
                   >
                     <span style="display: block;">
@@ -377,7 +377,7 @@ export default {
       this.$store.state.validators.target = this.alias;
       this.$store.state.validators.alias.alias_length = this.alias.length;
 
-      if (this.$store.state.validators.alias.alias_length > 5) {
+      if (this.$store.state.validators.alias.alias_length >= 5) {
         this.$store.state.validators.alias.contains_five_characters = true;
       } else {
         this.$store.state.validators.alias.contains_five_characters = false;
@@ -389,7 +389,7 @@ export default {
       this.$store.state.validators.password_length = this.keyPasswordValidate.length;
       const format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
       
-      if (this.$store.state.validators.password_length > 8) {
+      if (this.$store.state.validators.password_length >= 8) {
         this.$store.state.validators.contains_eight_characters = true;
       } else {
         this.$store.state.validators.contains_eight_characters = false;
@@ -458,7 +458,7 @@ export default {
       window.backend.WalletApplication.SelectDirToStoreKey().then(
         result => {
           this.$store.state.walletInfo.saveKeystorePath = result;
-          // this.$store.state.walletInfo.keystorePath = result;
+          this.$store.state.walletInfo.keystorePath = result;
           
           // handle err
         }
@@ -474,12 +474,12 @@ export default {
       this.$store.state.app.login = !this.$store.state.app.login;
       this.$store.state.app.margin = 70;
     },
-    newLogin: function() {
+    newLogin: function(event) {
       this.$store.state.app.register = !this.$store.state.app.register;
       this.$store.state.app.login = !this.$store.state.app.login;
       this.$store.state.app.margin = 100;
     },
-    cancelEvent: function() {
+    cancelEvent: function(event) {
       this.$store.state.app.register = !this.$store.state.app.register;
       this.$store.state.app.login = !this.$store.state.app.login;
       this.$store.state.app.margin = 70;

@@ -192,12 +192,12 @@
           Select Import if you wish to restore your wallet from a previously exported file.
           <br />Select Export to export your keys into an encrypted .pem file on your filesystem. Store this file in cold storage for optimal security.
         </p>
-        <p-button @click.native="importKeys()" style="margin-right: 10px;" type="success">
+        <p-button :disabled="true" @click.native="importKeys()" style="margin-right: 10px;" type="success">
           Import
           <i class="fas fa-file-import" />
         </p-button>
 
-        <p-button @click.native="exportKeys()" type="danger">
+        <p-button :disabled="true" @click.native="exportKeys()" type="danger">
           Export
           <i class="fas fa-file-export" />
         </p-button>

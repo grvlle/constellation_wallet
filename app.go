@@ -160,7 +160,6 @@ func (a *WalletApplication) sendSuccess(msg string) {
 		return
 	}
 	a.RT.Events.Emit("success", msg+" ...")
-	return
 }
 
 func (a *WalletApplication) sendWarning(msg string) {
@@ -171,7 +170,6 @@ func (a *WalletApplication) sendWarning(msg string) {
 		return
 	}
 	a.RT.Events.Emit("warning", msg+" ...")
-	return
 }
 
 func (a *WalletApplication) sendError(msg string, err error) {

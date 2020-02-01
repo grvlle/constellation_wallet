@@ -186,12 +186,8 @@ func (a *WalletApplication) initWallet(keystorePath string) {
 
 	a.paths.EncPrivKeyFile = keystorePath
 
-	a.log.Infoln("PATH: ", a.wallet.Path.LastTXFile)
-	a.log.Infoln("Wallet: ", a.wallet.WalletAlias)
-	a.initTXFilePath()
-
-	a.log.Infoln("PATH: ", a.wallet.Path.LastTXFile)
-	// Update paths from DB.
+	a.initTXFilePath() // Update paths from DB.
+	a.initTXFromDB()   // Disregard upon import
 
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
@@ -199,7 +195,6 @@ func (a *WalletApplication) initWallet(keystorePath string) {
 	if !a.WidgetRunning.PassKeysToFrontend {
 		a.passKeysToFrontend()
 	}
-	a.initTXFromDB()
 
 	a.log.Infoln("User has logged into the wallet")
 
@@ -253,6 +248,7 @@ func (a *WalletApplication) initTXFromDB() {
 	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory").Find(&transactions).Error; err != nil {
 		a.log.Error("Unable to initialize historic Transactions from DB", err)
 		a.sendError("Unable to initialize historic Transactions from DB", err)
+		return
 	}
 
 	for i := range a.wallet.TXHistory {
@@ -266,6 +262,7 @@ func (a *WalletApplication) initTXFilePath() {
 	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("Path").Find(&paths).Error; err != nil {
 		a.log.Error("Unable to initialize historic Transactions from DB", err)
 		a.sendError("Unable to initialize historic Transactions from DB", err)
+		return
 	}
 	a.paths.LastTXFile = a.wallet.Path.LastTXFile
 	a.paths.PrevTXFile = a.wallet.Path.PrevTXFile

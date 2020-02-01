@@ -82,7 +82,7 @@ export default {
       this.$notify({
         component: SuccessNotification,
         timeout: 50000,
-        icon: "fa fa-times",
+        icon: "fa fa-check",
         horizontalAlign: "right",
         verticalAlign: "top",
         type: "success",

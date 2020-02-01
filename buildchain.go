@@ -7,38 +7,39 @@ import (
 	"os"
 )
 
-func (a *WalletApplication) sendTX(amount float64, fee float64, address string, ptxObj *Transaction, ltxObj *Transaction) {
+func (a *WalletApplication) formTXChain(amount float64, fee float64, address string, ptxObj *Transaction, ltxObj *Transaction) {
+	a.log.Infoln("Amount: ", amount)
+	// Queries the number of previous transactions for this wallet.
+	numberOfTX := a.DB.Model(&a.wallet).Association("TXHistory").Count()
+
+	a.log.Infoln("Nr tx: ", numberOfTX)
+
+	if numberOfTX == 0 {
+		a.log.Infoln("Detected that this is the first TX sent from this key.")
+		a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.EmptyTXFile)
+		a.sendTransaction(a.paths.LastTXFile)
+		return
+	}
+
+	if numberOfTX == 1 {
+		a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
+		a.sendTransaction(a.paths.PrevTXFile)
+		return
+	}
 
 	newTX := a.determineBlockOrder(ptxObj, ltxObj)
-	a.log.Infoln(newTX)
-
-	if a.SecondTX {
-		a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
-		a.sendTransaction(amount, fee, address, a.paths.LastTXFile)
-		a.FirstTX = false
-		a.SecondTX = false
-		return
-	}
-
-	if a.FirstTX {
-		a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.EmptyTXFile)
-		a.sendTransaction(amount, fee, address, a.paths.LastTXFile)
-		a.FirstTX = false
-		a.SecondTX = true
-		return
-	}
 
 	if newTX != a.paths.PrevTXFile {
 		a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.PrevTXFile)
-		a.sendTransaction(amount, fee, address, a.paths.LastTXFile)
+		a.sendTransaction(a.paths.LastTXFile)
 		return
 	}
 	a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
-	a.sendTransaction(amount, fee, address, a.paths.PrevTXFile)
+	a.sendTransaction(a.paths.PrevTXFile)
 }
 
 func (a *WalletApplication) determineBlockOrder(ptxObj, ltxObj *Transaction) string {
-
+	// The higher ordinal will always be the TX carrying the TX Ref.
 	a.log.Info("ltx: ", ltxObj.LastTxRef.Ordinal, "ptx: ", ptxObj.LastTxRef.Ordinal)
 	if ltxObj.LastTxRef.Ordinal > ptxObj.LastTxRef.Ordinal {
 		return a.paths.PrevTXFile

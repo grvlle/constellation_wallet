@@ -74,14 +74,18 @@
    </pre>
 ---
 
-### 4. Clone this repository into your GOPATH
+### 4. Download the wallet and keytool from the official Constellation repository.
+
+   Download the release [here](https://github.com/Constellation-Labs/constellation/releases/tag/Wallet-Client). You will need both the keytool and wallet to be located in the same folder as the compiled executable (see below steps).
+
+### 5. Clone this repository into your GOPATH
 
    `https://github.com/grvlle/constellation_wallet.git`
 
-### 5. Change to 'develop' branch
+### 6. Change to 'develop' branch
 
    `git checkout develop`
 
-### 6. Compile the wallet using Wails CLI tool
+### 7. Compile the wallet using Wails CLI tool
 
    `wails build -d`

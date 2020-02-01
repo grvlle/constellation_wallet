@@ -1,12 +1,17 @@
 package main
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
-	"os"
 )
 
+// formTXChain retains the order of the blockchain across all accounts.
+// Also calls the methods to create block objects (write json to file),
+// and the method that pushes them to the network(HTTP POST).
+// To retain order, formTXChain will poll the last sent TX for it's Failed state.
+// if the last TX failed, it'll switch up the order to account for that not to break the chain.
+// This means that all failed attempts att creating a block is also stored in the DB with
+// a Failed state bool.
 func (a *WalletApplication) formTXChain(amount float64, fee float64, address string, ptxObj *Transaction, ltxObj *Transaction) {
 
 	statusLastTX := TXHistory{}
@@ -14,8 +19,9 @@ func (a *WalletApplication) formTXChain(amount float64, fee float64, address str
 		a.log.Warnln("No previous TX detected for this wallet. Reason: ", err)
 	}
 
-	a.log.Infoln(statusLastTX.Failed)
-
+	if statusLastTX.Failed {
+		a.log.Warnln("Previous Transaction has a failed state. Adapting...", statusLastTX.Failed)
+	}
 	// Queries the number of previous transactions for this wallet.
 	numberOfTX := a.DB.Model(&a.wallet).Association("TXHistory").Count()
 
@@ -39,6 +45,7 @@ func (a *WalletApplication) formTXChain(amount float64, fee float64, address str
 		return
 	}
 
+	// Returns the TX object that has the highest ordinal (the highest determines if it's to be referenced or reference the other tx)
 	newTX := a.determineBlockOrder(ptxObj, ltxObj)
 
 	// If the last TX is in failed state, we reset the order.
@@ -59,7 +66,7 @@ func (a *WalletApplication) formTXChain(amount float64, fee float64, address str
 
 func (a *WalletApplication) determineBlockOrder(ptxObj, ltxObj *Transaction) string {
 	// The higher ordinal will always be the TX carrying the TX Ref.
-	a.log.Info("ltx: ", ltxObj.LastTxRef.Ordinal, "ptx: ", ptxObj.LastTxRef.Ordinal)
+	a.log.Info("Last TX Ordinal: ", ltxObj.LastTxRef.Ordinal, "Previous TX Ordinal: ", ptxObj.LastTxRef.Ordinal)
 	if ltxObj.LastTxRef.Ordinal > ptxObj.LastTxRef.Ordinal {
 		return a.paths.PrevTXFile
 	}
@@ -67,6 +74,8 @@ func (a *WalletApplication) determineBlockOrder(ptxObj, ltxObj *Transaction) str
 
 }
 
+// convertToTXObject takes the Path to the prev_tx and last_tx files and returns a
+// pointer to two workable objects.
 func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *Transaction) {
 	var ptxObj Transaction
 	var ltxObj Transaction
@@ -88,19 +97,19 @@ func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *T
 // collectTXHistory is called by initTransactionHistory to read and parse the LastTXFile.
 // It will scan the lines and WalletApplicationend them to txObjects which is later returned to
 // initTransactionHistory
-func loadTXFromFile(txFile string) string {
-	var txObjects string
-	file, err := os.Open(txFile) // acct
-	if err != nil {
-		fmt.Println(err)
-	}
+// func loadTXFromFile(txFile string) string {
+// 	var txObjects string
+// 	file, err := os.Open(txFile) // acct
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
 
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
+// 	scanner := bufio.NewScanner(file)
+// 	scanner.Split(bufio.ScanLines)
 
-	for scanner.Scan() {
-		txObjects = scanner.Text()
-	}
-	defer file.Close()
-	return txObjects
-}
+// 	for scanner.Scan() {
+// 		txObjects = scanner.Text()
+// 	}
+// 	defer file.Close()
+// 	return txObjects
+// }

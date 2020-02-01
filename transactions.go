@@ -57,6 +57,25 @@ func (a *WalletApplication) networkHeartbeat() {
 	//TODO
 }
 
+// PrepareTransaction is triggered from the frontend (Transaction.vue) and will initialize a new tx.
+// methods called are defined in buildchain.go
+func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, address string) {
+
+	// TODO: Temp comments. Re-add once wallet goes live.
+	// if amount+fee > a.wallet.AvailableBalance {
+	// 	a.log.Warnln("Insufficient Balance")
+	// 	a.sendWarning("Insufficent Balance.")
+	// 	return nil
+	// }
+
+	ptx := a.loadTXFromFile(a.paths.PrevTXFile)
+	ltx := a.loadTXFromFile(a.paths.LastTXFile)
+
+	ptxObj, ltxObj := a.convertToTXObject(ptx, ltx)
+
+	a.formTXChain(amount, fee, address, ptxObj, ltxObj)
+}
+
 func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 	a.log.Info("Attempting to communicate with mainnet on: http://" + a.Network.URL + a.Network.Handles.Transaction)
 	bytesRepresentation, err := json.Marshal(tx)
@@ -104,15 +123,12 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 
 func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 
-	txObject, err := a.loadTX(txFile)
-	if err != nil {
-		a.log.Errorln("Unable to read tx file.")
-	}
+	txObject := a.loadTXFromFile(txFile)
 
 	tx := &Transaction{}
 
 	bytes := []byte(txObject)
-	err = json.Unmarshal(bytes, &tx)
+	err := json.Unmarshal(bytes, &tx)
 	if err != nil {
 		a.sendError("Unable to parse the last transaction. Reason:", err)
 		a.log.Errorf("Unable to parse contents of last_tx. Reason: %s", err)
@@ -160,30 +176,29 @@ func (a *WalletApplication) storeTX(txData *TXHistory) {
 	a.log.Infoln("Successfully stored tx in DB")
 }
 
-// loadTX will scan the lines and append them to txObjects which is later returned to
-// initTransactionHistory
-func (a *WalletApplication) loadTX(txFile string) (string, error) {
+// loadTXFromFile takes a file, scan it and returns it in an object
+func (a *WalletApplication) loadTXFromFile(txFile string) string {
 	var txObjects string
 
 	fi, err := os.Stat(txFile)
 	if err != nil {
 		a.log.Errorln("Unable to stat last_tx. Reason: ", err)
 		a.sendError("Unable to stat last_tx. Reason: ", err)
-		return "", err
+		return ""
 	}
 	// get the size
 	size := fi.Size()
 	if size <= 0 {
 		a.log.Errorln("last_tx is empty. Reason: ", err)
 		a.sendError("Unable to send transaction. Please report this issue. Your funds are safe. Reason: ", err)
-		return "", err
+		return ""
 	}
 
 	file, err := os.Open(txFile) // acct
 	if err != nil {
 		a.log.Errorln("Unable to open last_tx. Reason: ", err)
 		a.sendError("Unable to read last tx. Aborting... Reason: ", err)
-		return "", err
+		return ""
 	}
 
 	scanner := bufio.NewScanner(file)
@@ -193,24 +208,5 @@ func (a *WalletApplication) loadTX(txFile string) (string, error) {
 		txObjects = scanner.Text()
 	}
 	defer file.Close()
-	return txObjects, nil
-}
-
-// PrepareTransaction is triggered from the frontend (Transaction.vue) and will initialize a new tx.
-// methods called are defined in buildchain.go
-func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, address string) {
-
-	// TODO: Temp comments. Re-add once wallet goes live.
-	// if amount+fee > a.wallet.AvailableBalance {
-	// 	a.log.Warnln("Insufficient Balance")
-	// 	a.sendWarning("Insufficent Balance.")
-	// 	return nil
-	// }
-
-	ptx := loadTXFromFile(a.paths.PrevTXFile)
-	ltx := loadTXFromFile(a.paths.LastTXFile)
-
-	ptxObj, ltxObj := a.convertToTXObject(ptx, ltx)
-
-	a.formTXChain(amount, fee, address, ptxObj, ltxObj)
+	return txObjects
 }

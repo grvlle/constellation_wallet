@@ -53,6 +53,7 @@ type TXHistory struct {
 	Fee             float64 `json:"fee"`
 	TransactionHash string  `json:"txhash"`
 	TS              string  `json:"date"`
+	Failed          bool
 }
 
 type Address string

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -73,34 +74,32 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
-
-		a.sendSuccess("Transaction successfully sent!")
 		/* TEMPORARILY COMMENTED OUT */
-		// bodyBytes, err := ioutil.ReadAll(resp.Body)
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		// bodyString := string(bodyBytes)
-		// if len(bodyBytes) == 64 {
-		// 	a.log.Info(bodyString)
-		// 	a.log.Infoln("Transaction has been successfully sent to the network.")
-		// 	a.sendSuccess("Transaction successfully sent!")
-		// 	return true
-		// }
-		// a.log.Warn(bodyString)
-		// a.sendWarning("Unable to put transaction on the network. Reason: " + bodyString)
-		// return false
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			a.log.Fatal(err)
+		}
+		bodyString := string(bodyBytes)
+		if len(bodyBytes) == 64 {
+			a.log.Info(bodyString)
+			a.log.Infoln("Transaction has been successfully sent to the network.")
+			a.sendSuccess("Transaction successfully sent!")
+			return true
+		}
+		a.log.Warn(bodyString)
+		a.sendWarning("Unable to put transaction on the network. Reason: " + bodyString)
+		return false
 	}
 
-	// bodyBytes, err := ioutil.ReadAll(resp.Body)
-	// if err != nil {
-	// 	a.log.Errorln(err)
-	// }
-	// bodyString := string(bodyBytes)
-	// a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
-	// a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		a.log.Errorln(err)
+	}
+	bodyString := string(bodyBytes)
+	a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
+	a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
 	time.Sleep(3 * time.Second)
-	return true /* TEMPORARILY SET TO TRUE. CHANGE TO FALSE */
+	return false /* TEMPORARILY SET TO TRUE. CHANGE TO FALSE */
 }
 
 func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
@@ -128,16 +127,23 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 			Fee:             tx.Edge.Data.Fee,
 			TransactionHash: tx.Edge.ObservationEdge.Data.Hash,
 			TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
+			Failed:          false,
 		}
-		a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
-
 		a.storeTX(txData)
-
+		a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
 		return txData
 	}
-
-	a.log.Errorln("TX Failed, skipping database.")
-	return nil
+	txData := &TXHistory{
+		Amount:          tx.Edge.Data.Amount,
+		Address:         tx.Edge.ObservationEdge.Parents[1].Hash,
+		Fee:             tx.Edge.Data.Fee,
+		TransactionHash: tx.Edge.ObservationEdge.Data.Hash,
+		TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
+		Failed:          true,
+	}
+	a.storeTX(txData)
+	a.log.Errorln("TX Failed, storing with failed state.")
+	return txData
 
 	//a.updateLastTransactions()
 }

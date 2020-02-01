@@ -8,12 +8,18 @@ import (
 )
 
 func (a *WalletApplication) formTXChain(amount float64, fee float64, address string, ptxObj *Transaction, ltxObj *Transaction) {
-	a.log.Infoln("Amount: ", amount)
+
+	statusLastTX := TXHistory{}
+	if err := a.DB.Last(&statusLastTX).Error; err != nil {
+		a.log.Warnln("No previous TX detected for this wallet. Reason: ", err)
+	}
+
+	a.log.Infoln(statusLastTX.Failed)
+
 	// Queries the number of previous transactions for this wallet.
 	numberOfTX := a.DB.Model(&a.wallet).Association("TXHistory").Count()
 
-	a.log.Infoln("Nr tx: ", numberOfTX)
-
+	// First TX does not contain a TXref
 	if numberOfTX == 0 {
 		a.log.Infoln("Detected that this is the first TX sent from this key.")
 		a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.EmptyTXFile)
@@ -21,7 +27,13 @@ func (a *WalletApplication) formTXChain(amount float64, fee float64, address str
 		return
 	}
 
+	// Manually control the second TX, to ensure the following order
 	if numberOfTX == 1 {
+		// If the first transaction failed, enforce the order
+		if statusLastTX.Failed {
+			a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.EmptyTXFile)
+			a.sendTransaction(a.paths.LastTXFile)
+		}
 		a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
 		a.sendTransaction(a.paths.PrevTXFile)
 		return
@@ -29,7 +41,14 @@ func (a *WalletApplication) formTXChain(amount float64, fee float64, address str
 
 	newTX := a.determineBlockOrder(ptxObj, ltxObj)
 
-	if newTX != a.paths.PrevTXFile {
+	// If the last TX is in failed state, we reset the order.
+	if newTX == a.paths.PrevTXFile && statusLastTX.Failed {
+		a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
+		a.sendTransaction(a.paths.PrevTXFile)
+		return
+	}
+
+	if newTX != a.paths.PrevTXFile && !statusLastTX.Failed {
 		a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.PrevTXFile)
 		a.sendTransaction(a.paths.LastTXFile)
 		return

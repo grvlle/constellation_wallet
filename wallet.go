@@ -252,7 +252,9 @@ func (a *WalletApplication) initTXFromDB() {
 	}
 
 	for i := range a.wallet.TXHistory {
-		a.RT.Events.Emit("new_transaction", &a.wallet.TXHistory[i]) // Pass the tx to the frontend as a new transaction.
+		if !a.wallet.TXHistory[i].Failed {
+			a.RT.Events.Emit("new_transaction", &a.wallet.TXHistory[i]) // Pass the tx to the frontend as a new transaction.
+		}
 	}
 
 }

@@ -58,9 +58,10 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 				a.LoginError("Unable to query database object for the imported wallet.")
 				return false
 			}
+
 			a.UserLoggedIn = false
 			a.NewUser = true
-			a.initWallet(a.wallet.KeyStorePath)
+			a.initWallet(keystorePath)
 
 			return true
 
@@ -81,8 +82,7 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 // CreateUser is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
-	a.TempPrintCreds()
-	a.log.Warnln(keystorePath, keystorePassword, keyPassword, alias)
+
 	if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
 		return false
@@ -117,8 +117,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 
 	if err := a.DB.Create(&a.wallet).Error; err != nil {
 		a.log.Errorf("Unable to create database object for new wallet. Reason: ", err)
-		a.sendError("Unable to create database object for new wallet. Reason: ", err)
-		a.log.Infoln("BeforeBefore: ", a.wallet.WalletAlias, alias)
+		a.LoginError("Unable to create new wallet. Alias already exists.")
 		return false
 	}
 
@@ -139,7 +138,23 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 	a.KeyStoreAccess = a.WalletKeystoreAccess()
 
 	if a.KeyStoreAccess {
+		a.paths.LastTXFile = a.TempFileName("tx-", "")
+		a.paths.PrevTXFile = a.TempFileName("tx-", "")
+		a.paths.EmptyTXFile = a.TempFileName("tx-", "")
+
+		err := a.createTXFiles()
+		if err != nil {
+			a.log.Fatalln("Unable to create TX files. Check fs permissions. Reason: ", err)
+			a.sendError("Unable to create TX files. Check fs permissions. Reason: ", err)
+		}
+
+		if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Update("Path", Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
+			a.log.Errorf("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
+			a.sendError("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
+		}
+
 		a.UserLoggedIn = false
+		a.FirstTX = true
 		a.NewUser = true
 
 		a.initNewWallet()
@@ -171,6 +186,13 @@ func (a *WalletApplication) initWallet(keystorePath string) {
 
 	a.paths.EncPrivKeyFile = keystorePath
 
+	a.log.Infoln("PATH: ", a.wallet.Path.LastTXFile)
+	a.log.Infoln("Wallet: ", a.wallet.WalletAlias)
+	a.initTXFilePath()
+
+	a.log.Infoln("PATH: ", a.wallet.Path.LastTXFile)
+	// Update paths from DB.
+
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
 	}
@@ -198,6 +220,19 @@ func (a *WalletApplication) initDashboardWidgets() {
 	a.WidgetRunning.DashboardWidgets = true
 }
 
+func (a *WalletApplication) createTXFiles() error {
+	files := []string{a.paths.LastTXFile, a.paths.PrevTXFile, a.paths.EmptyTXFile}
+
+	for _, f := range files {
+		file, err := os.Create(f)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+	}
+	return nil
+}
+
 // ImportKeys is called from the frontend to use a file dialog to select key file.
 func (a *WalletApplication) ImportKeys() error {
 	filename := a.RT.Dialog.SelectFile()
@@ -215,11 +250,26 @@ func (a *WalletApplication) ExportKeys() error {
 
 func (a *WalletApplication) initTXFromDB() {
 	transactions := &a.wallet.TXHistory
-	a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory").Find(&transactions)
+	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory").Find(&transactions).Error; err != nil {
+		a.log.Error("Unable to initialize historic Transactions from DB", err)
+		a.sendError("Unable to initialize historic Transactions from DB", err)
+	}
 
 	for i := range a.wallet.TXHistory {
 		a.RT.Events.Emit("new_transaction", &a.wallet.TXHistory[i]) // Pass the tx to the frontend as a new transaction.
 	}
+
+}
+
+func (a *WalletApplication) initTXFilePath() {
+	paths := &a.wallet.Path
+	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("Path").Find(&paths).Error; err != nil {
+		a.log.Error("Unable to initialize historic Transactions from DB", err)
+		a.sendError("Unable to initialize historic Transactions from DB", err)
+	}
+	a.paths.LastTXFile = a.wallet.Path.LastTXFile
+	a.paths.PrevTXFile = a.wallet.Path.PrevTXFile
+	a.paths.EmptyTXFile = a.wallet.Path.EmptyTXFile
 
 }
 

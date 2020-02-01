@@ -38,8 +38,10 @@ type WalletApplication struct {
 	paths struct {
 		HomeDir        string
 		DAGDir         string
+		TMPDir         string
 		EncryptedDir   string
 		EncPrivKeyFile string
+		EmptyTXFile    string
 		PrevTXFile     string
 		LastTXFile     string
 		AddressFile    string
@@ -49,6 +51,8 @@ type WalletApplication struct {
 	KeyStoreAccess bool
 	UserLoggedIn   bool
 	NewUser        bool
+	FirstTX        bool
+	SecondTX       bool
 	WidgetRunning  struct {
 		PassKeysToFrontend bool
 		DashboardWidgets   bool
@@ -81,7 +85,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 		a.log.Panicf("failed to connect database", err)
 	}
 	// Migrate the schema
-	a.DB.AutoMigrate(&Wallet{}, &TXHistory{})
+	a.DB.AutoMigrate(&Wallet{}, &TXHistory{}, &Path{})
 	a.detectJavaPath()
 	a.initMainnetConnection()
 
@@ -112,27 +116,18 @@ func (a *WalletApplication) initDirectoryStructure() error {
 
 	a.paths.HomeDir = user.HomeDir             // Home directory of the user
 	a.paths.DAGDir = a.paths.HomeDir + "/.dag" // DAG directory for configuration files and wallet specific data
-	a.paths.EncryptedDir = a.paths.DAGDir + "/keys"
+	a.paths.TMPDir = a.paths.DAGDir + "/tmp"
 	a.paths.EncPrivKeyFile = a.paths.EncryptedDir + "/key.p12"
-	a.paths.LastTXFile = a.paths.DAGDir + "/last_tx"
-	a.paths.PrevTXFile = a.paths.DAGDir + "/prev_tx"
+	a.paths.LastTXFile = a.paths.TMPDir + "/last_tx"
+	a.paths.PrevTXFile = a.paths.TMPDir + "/prev_tx"
+	a.paths.EmptyTXFile = a.paths.TMPDir + "/genesis_tx"
 	a.paths.ImageDir = "./frontend/src/assets/img/" // Image Folder
 
 	a.log.Info("DAG Directory: ", a.paths.DAGDir)
 
-	err = a.directoryCreator(a.paths.DAGDir, a.paths.EncryptedDir)
+	err = a.directoryCreator(a.paths.DAGDir, a.paths.TMPDir)
 	if err != nil {
 		return err
-	}
-
-	files := []string{a.paths.LastTXFile, a.paths.PrevTXFile}
-
-	for _, f := range files {
-		file, err := os.Create(f)
-		if err != nil {
-			return err
-		}
-		defer file.Close()
 	}
 
 	return nil

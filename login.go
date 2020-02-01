@@ -25,7 +25,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	a.wallet.WalletAlias = alias
 
 	if err := a.DB.First(&a.wallet, "wallet_alias = ?", alias).Error; err != nil {
-		a.log.Errorf("Unable to query database object for new wallet. Reason: ", err)
+		a.log.Errorf("Unable to query database object for existing wallet. Reason: ", err)
 		a.LoginError("Access Denied. Alias not found.")
 		return false
 	}
@@ -53,6 +53,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	}
 
 	if a.UserLoggedIn && a.KeyStoreAccess && !a.NewUser {
+
 		a.initWallet(keystorePath)
 	}
 

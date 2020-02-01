@@ -153,14 +153,14 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 // or pass in a path to an encrypted .p12 file
 
 // java -jar cl-wallet.jar create-transaction --keystore testkey.p12 --alias alias --storepass storepass --keypass keypass -d DAG6o9dcxo2QXCuJS8wnrR944YhFBpwc2jsh5j8f -p prev_tx -f new_tx --fee 0 --amount 1
-func (a *WalletApplication) produceTXObject(amount float64, fee float64, address string) {
+func (a *WalletApplication) produceTXObject(amount float64, fee float64, address, newTX, prevTX string) {
 
 	// Convert to string
 	amountStr := fmt.Sprintf("%g", amount)
 	feeStr := fmt.Sprintf("%g", fee)
 
 	// newTX is the full command to sign a new transaction
-	err := a.runWalletCMD("create-transaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeStr, "-d="+address, "-f="+a.paths.LastTXFile, "-p="+a.paths.PrevTXFile, "--env_args=true")
+	err := a.runWalletCMD("create-transaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeStr, "-d="+address, "-f="+newTX, "-p="+prevTX, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
 		a.log.Errorf("Unable to send transaction. Reason: ", err)

@@ -13,7 +13,8 @@ import (
 
 // Transaction contains all tx information
 type Transaction struct {
-	Edge struct {
+	Alias string `json:"alias"`
+	Edge  struct {
 		ObservationEdge struct {
 			Parents []struct {
 				Hash     string `json:"hash"`
@@ -63,10 +64,13 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 	if err != nil {
 		a.log.Errorln("Unable to parse JSON data for transaction", err)
 		a.sendError("Unable to parse JSON data for transaction", err)
+		return false
 	}
 	resp, err := http.Post("http://"+a.Network.URL+a.Network.Handles.Transaction, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
-		log.Fatalln(err)
+		a.log.Errorf("Failed to send HTTP request. Reason: ", err)
+		a.sendError("Unable to send request to mainnet. Please check your internet connection. Reason: ", err)
+		return false
 	}
 	defer resp.Body.Close()
 
@@ -98,11 +102,13 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 	return false
 }
 
-func (a *WalletApplication) sendTransaction(amount float64, fee float64, address string) *TXHistory {
-	txObject, err := a.loadTX()
+func (a *WalletApplication) sendTransaction(amount float64, fee float64, address string, txFile string) *TXHistory {
+
+	txObject, err := a.loadTX(txFile)
 	if err != nil {
-		return nil
+		a.log.Errorln("Unable to read tx file.")
 	}
+
 	tx := &Transaction{}
 
 	bytes := []byte(txObject)
@@ -149,10 +155,10 @@ func (a *WalletApplication) storeTX(txData *TXHistory) {
 
 // loadTX will scan the lines and append them to txObjects which is later returned to
 // initTransactionHistory
-func (a *WalletApplication) loadTX() (string, error) {
+func (a *WalletApplication) loadTX(txFile string) (string, error) {
 	var txObjects string
 
-	fi, err := os.Stat(a.paths.LastTXFile)
+	fi, err := os.Stat(txFile)
 	if err != nil {
 		a.log.Errorln("Unable to stat last_tx. Reason: ", err)
 		a.sendError("Unable to stat last_tx. Reason: ", err)
@@ -166,7 +172,7 @@ func (a *WalletApplication) loadTX() (string, error) {
 		return "", err
 	}
 
-	file, err := os.Open(a.paths.LastTXFile) // acct
+	file, err := os.Open(txFile) // acct
 	if err != nil {
 		a.log.Errorln("Unable to open last_tx. Reason: ", err)
 		a.sendError("Unable to read last tx. Aborting... Reason: ", err)
@@ -184,7 +190,8 @@ func (a *WalletApplication) loadTX() (string, error) {
 }
 
 // PrepareTransaction is triggered from the frontend (Transaction.vue) and will initialize a new tx.
-func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, address string) *Transaction {
+// methods called are defined in buildchain.go
+func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, address string) {
 
 	// TODO: Temp comments. Re-add once wallet goes live.
 	// if amount+fee > a.wallet.AvailableBalance {
@@ -193,13 +200,11 @@ func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, addr
 	// 	return nil
 	// }
 
-	tx := &Transaction{}
+	ptx := loadTXFromFile(a.paths.PrevTXFile)
+	ltx := loadTXFromFile(a.paths.LastTXFile)
 
-	tx.Edge.Data.Amount = amount
-	tx.Edge.ObservationEdge.Data.Hash = address
-	tx.Edge.Data.Fee = fee
-	a.produceTXObject(amount, fee, address)
-	a.sendTransaction(amount, fee, address)
+	ptxObj, ltxObj := a.convertToTXObject(ptx, ltx)
 
-	return tx
+	a.sendTX(amount, fee, address, ptxObj, ltxObj)
+	time.Sleep(5 * time.Second)
 }

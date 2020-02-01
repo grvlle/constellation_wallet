@@ -2,10 +2,13 @@ package main
 
 import (
 	"bytes"
+	"encoding/hex"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"time"
 )
@@ -44,6 +47,12 @@ func (a *WalletApplication) detectJavaPath() {
 		a.log.Debugln(cmd)
 		a.paths.Java = jwPath
 	}
+}
+
+func (a *WalletApplication) TempFileName(prefix, suffix string) string {
+	randBytes := make([]byte, 16)
+	rand.Read(randBytes)
+	return filepath.Join(a.paths.TMPDir, prefix+hex.EncodeToString(randBytes)+suffix)
 }
 
 // Copy the src file to dst. Any existing file will be overwritten and will not

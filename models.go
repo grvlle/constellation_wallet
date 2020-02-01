@@ -12,6 +12,7 @@ type Wallet struct {
 	CreatedAt            time.Time
 	UpdatedAt            time.Time
 	DeletedAt            *time.Time
+	Path                 Path `gorm:"foreignkey:Alias"`
 	KeystorePasswordHash string
 	KeyPasswordHash      string
 	KeyStorePath         string
@@ -34,6 +35,14 @@ type Wallet struct {
 			EUR float64 `json:"EUR,omitempty"`
 		} `json:"DAG"`
 	} `json:"token_price"`
+}
+
+type Path struct {
+	ID          uint   `json:"id"`
+	Alias       string `json:"alias"`
+	LastTXFile  string
+	PrevTXFile  string
+	EmptyTXFile string
 }
 
 type TXHistory struct {

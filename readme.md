@@ -14,7 +14,7 @@
    The Molly Wallet is build using a light-weight framework for Desktop Applications using Go and VueJS. Wails is very similar to Electron but is not packaging the full Chromium web browser as a dependency.
 
    To install Wails, follow the instructions for your OS below.
-
+---
    #### MacOS
 
    Make sure you have the xcode command line tools installed. This can be done by running:
@@ -63,7 +63,7 @@
 
    Windows requires gcc and related tooling. The recommended download is from [http://tdm-gcc.tdragon.net/download](http://tdm-gcc.tdragon.net/download). Once this is installed, you are good to go.
 
-   ### Installation
+   #### Installation
 
    **Ensure Go modules are enabled: GO111MODULE=on and go/bin is in your PATH variable.**
 
@@ -72,15 +72,16 @@
    <pre style='color:white'>
    go get -u github.com/wailsapp/wails/cmd/wails
    </pre>
+---
 
-4. Clone this repository into your GOPATH
+### 4. Clone this repository into your GOPATH
 
    `https://github.com/grvlle/constellation_wallet.git`
 
-5. Change to 'develop' branch
+### 5. Change to 'develop' branch
 
    `git checkout develop`
 
-6. Compile the wallet using Wails CLI tool
+### 6. Compile the wallet using Wails CLI tool
 
    `wails build -d`

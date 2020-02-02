@@ -10,6 +10,7 @@ export const store = new Vuex.Store({
         loginErrorMsg: "",
         displayLoginError: false,
         app: {
+            txFinished: true,
             isLoading: false,
             isLoggedIn: false,
             import: false,

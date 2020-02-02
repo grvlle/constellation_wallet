@@ -48,12 +48,13 @@ type WalletApplication struct {
 		ImageDir       string
 		Java           string
 	}
-	KeyStoreAccess bool
-	UserLoggedIn   bool
-	NewUser        bool
-	FirstTX        bool
-	SecondTX       bool
-	WidgetRunning  struct {
+	KeyStoreAccess      bool
+	TransactionFinished bool
+	UserLoggedIn        bool
+	NewUser             bool
+	FirstTX             bool
+	SecondTX            bool
+	WidgetRunning       struct {
 		PassKeysToFrontend bool
 		DashboardWidgets   bool
 	}
@@ -61,6 +62,7 @@ type WalletApplication struct {
 
 // WailsShutdown is called when the application is closed
 func (a *WalletApplication) WailsShutdown() {
+	a.wallet = Wallet{}
 	a.DB.Close()
 }
 
@@ -78,6 +80,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 
 	a.UserLoggedIn = false
 	a.NewUser = false
+	a.TransactionFinished = true
 	a.RT = runtime
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
@@ -151,20 +154,20 @@ func (a *WalletApplication) sendSuccess(msg string) {
 
 	if len(msg) > 200 {
 		msg = string(msg[:200]) // Restrict error size for frontend
-		a.RT.Events.Emit("success", msg+" ...")
+		a.RT.Events.Emit("success", msg)
 		return
 	}
-	a.RT.Events.Emit("success", msg+" ...")
+	a.RT.Events.Emit("success", msg)
 }
 
 func (a *WalletApplication) sendWarning(msg string) {
 
 	if len(msg) > 200 {
 		msg = string(msg[:200]) // Restrict error size for frontend
-		a.RT.Events.Emit("warning", msg+" ...")
+		a.RT.Events.Emit("warning", msg)
 		return
 	}
-	a.RT.Events.Emit("warning", msg+" ...")
+	a.RT.Events.Emit("warning", msg)
 }
 
 func (a *WalletApplication) sendError(msg string, err error) {

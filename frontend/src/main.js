@@ -14,8 +14,10 @@ import {store} from './store/store'
 import JwPagination from 'jw-vue-pagination';
 import Vuelidate from 'vuelidate'
 import ToggleButton from 'vue-js-toggle-button'
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 Vue.component('jw-pagination', JwPagination);
+Vue.component('pulse-loader', PulseLoader);
 
 Vue.use(ToggleButton)
 Vue.use(Vuelidate)

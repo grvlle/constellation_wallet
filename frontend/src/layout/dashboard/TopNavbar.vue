@@ -59,19 +59,26 @@ export default {
   },
   data() {
     return {
-      activeNotifications: false
+      activeNotifications: false,
     };
   },
   methods: {
     logout() {
-      window.backend.WalletApplication.LogOut()
-      this.$store.state.txInfo.txHistory = []
-      this.$store.state.app.isLoading = false;
-      this.$store.state.app.isLoggedIn = false;
-      this.$store.state.app.register = false;
-      this.$store.state.app.import = false;
-      this.$store.state.app.login = true;
-      this.$store.state.app.margin = 70
+      window.backend.WalletApplication.LogOut().then(txFinishedState => {
+        if (txFinishedState) {
+          this.$store.state.txInfo.txHistory = [];
+          this.$store.state.app.isLoading = false;
+          this.$store.state.app.isLoggedIn = false;
+          this.$store.state.app.register = false;
+          this.$store.state.app.import = false;
+          this.$store.state.app.login = true;
+          this.$store.state.app.margin = 70;
+          return;
+        }
+      }),
+      console.log("no change")
+      return;
+        
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);

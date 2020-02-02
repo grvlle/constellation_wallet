@@ -1,5 +1,7 @@
 ## The following instructions will let you compile the Wallet from source
 
+Make sure that the latest version of Java is installed.
+
 ### 1. Download the Go distribution from the official website.
 
    The Go distribution and tooling is available as an installer for all common operating systems.

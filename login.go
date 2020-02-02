@@ -14,6 +14,11 @@ func (a *WalletApplication) LoginError(errMsg string) {
 
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
+	if !a.TransactionFinished {
+		a.log.Warn("Cannot login to another wallet during a pending transaction.")
+		a.LoginError("Cannot login to another wallet during a pending transaction.")
+		return false
+	}
 	if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
 		return false
@@ -62,9 +67,14 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	return a.UserLoggedIn
 }
 
-func (a *WalletApplication) LogOut() *Wallet {
-	a.UserLoggedIn = false
-	return nil
+func (a *WalletApplication) LogOut() bool {
+	if a.TransactionFinished {
+		a.UserLoggedIn = false
+		a.wallet = Wallet{}
+		return true
+	}
+	a.sendWarning("Cannot log out while in a pending transaction.")
+	return false
 }
 
 func (a *WalletApplication) ImportKey() string {

@@ -104,6 +104,9 @@ export default {
       this.$store.state.txInfo.txHistory = txHistoryFull;
       //this.$store.commit('updateFullTxHistory', txHistoryFull)
     });
+    window.wails.Events.On("tx_in_transit", txFinished => {
+      this.$store.state.app.txFinished = txFinished;
+    });
     window.wails.Events.On("new_transaction", txObject => {
       this.$store.commit("updateTxHistory", txObject);
     });

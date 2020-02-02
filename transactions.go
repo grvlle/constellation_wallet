@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -68,12 +67,24 @@ func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, addr
 	// 	return nil
 	// }
 
-	ptx := a.loadTXFromFile(a.paths.PrevTXFile)
-	ltx := a.loadTXFromFile(a.paths.LastTXFile)
+	if a.TransactionFinished {
+		a.TransactionFinished = false
 
-	ptxObj, ltxObj := a.convertToTXObject(ptx, ltx)
+		// Asynchronously inform FE of TX state
+		go func() {
+			for !a.TransactionFinished {
+				a.RT.Events.Emit("tx_in_transit", a.TransactionFinished)
+				time.Sleep(1 * time.Second)
+			}
+			a.RT.Events.Emit("tx_in_transit", a.TransactionFinished)
+		}()
+		ptx := a.loadTXFromFile(a.paths.PrevTXFile)
+		ltx := a.loadTXFromFile(a.paths.LastTXFile)
 
-	a.formTXChain(amount, fee, address, ptxObj, ltxObj)
+		ptxObj, ltxObj := a.convertToTXObject(ptx, ltx)
+
+		a.formTXChain(amount, fee, address, ptxObj, ltxObj)
+	}
 }
 
 func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
@@ -94,31 +105,32 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 
 	if resp.StatusCode == http.StatusOK {
 		/* TEMPORARILY COMMENTED OUT */
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			a.log.Fatal(err)
-		}
-		bodyString := string(bodyBytes)
-		if len(bodyBytes) == 64 {
-			a.log.Info(bodyString)
-			a.log.Infoln("Transaction has been successfully sent to the network.")
-			a.sendSuccess("Transaction successfully sent!")
-			return true
-		}
-		a.log.Warn(bodyString)
-		a.sendWarning("Unable to put transaction on the network. Reason: " + bodyString)
-		return false
-	}
+		// 	bodyBytes, err := ioutil.ReadAll(resp.Body)
+		// 	if err != nil {
+		// 		a.log.Fatal(err)
+		// 	}
+		// 	bodyString := string(bodyBytes)
+		// 	if len(bodyBytes) == 64 {
+		// 		a.log.Info(bodyString)
+		// 		a.log.Infoln("Transaction has been successfully sent to the network.")
+		// 		a.sendSuccess("Transaction successfully sent!")
+		// 		return true
+		// 	}
+		// 	a.log.Warn(bodyString)
+		// 	a.sendWarning("Unable to put transaction on the network. Reason: " + bodyString)
+		// 	return false
+		// }
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		a.log.Errorln(err)
+		// bodyBytes, err := ioutil.ReadAll(resp.Body)
+		// if err != nil {
+		// 	a.log.Errorln(err)
+		// }
+		// bodyString := string(bodyBytes)
+		// a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
+		// a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
 	}
-	bodyString := string(bodyBytes)
-	a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
-	a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
-	time.Sleep(3 * time.Second)
-	return false /* TEMPORARILY SET TO TRUE. CHANGE TO FALSE */
+	// time.Sleep(3 * time.Second)
+	return true /* TEMPORARILY SET TO TRUE. CHANGE TO FALSE */
 }
 
 func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
@@ -147,6 +159,7 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 		}
 		a.storeTX(txData)
 		a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
+		a.TransactionFinished = true
 		return txData
 	}
 	txData := &TXHistory{
@@ -159,6 +172,7 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 	}
 	a.storeTX(txData)
 	a.log.Errorln("TX Failed, storing with failed state.")
+	a.TransactionFinished = true
 	return txData
 
 	//a.updateLastTransactions()
@@ -189,14 +203,13 @@ func (a *WalletApplication) loadTXFromFile(txFile string) string {
 	// get the size
 	size := fi.Size()
 	if size <= 0 {
-		a.log.Errorln("last_tx is empty. Reason: ", err)
-		a.sendError("Unable to send transaction. Please report this issue. Your funds are safe. Reason: ", err)
+		a.log.Info("TX file is empty.")
 		return ""
 	}
 
 	file, err := os.Open(txFile) // acct
 	if err != nil {
-		a.log.Errorln("Unable to open last_tx. Reason: ", err)
+		a.log.Errorln("Unable to open TX file. Reason: ", err)
 		a.sendError("Unable to read last tx. Aborting... Reason: ", err)
 		return ""
 	}

@@ -14,6 +14,12 @@ func (a *WalletApplication) TempPrintCreds() {
 
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
+	if !a.TransactionFinished {
+		a.log.Warn("Cannot Import wallet in a pending transaction.")
+		a.LoginError("Cannot import a new wallet while there's a pending transaction.")
+		return false
+	}
+
 	if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
 		return false
@@ -83,6 +89,11 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 // CreateUser is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
+	if !a.TransactionFinished {
+		a.log.Warn("Cannot Create wallet in a pending transaction.")
+		a.LoginError("Cannot create a new wallet while there's a pending transaction.")
+		return false
+	}
 	if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
 		return false
@@ -246,8 +257,8 @@ func (a *WalletApplication) ExportKeys() error {
 func (a *WalletApplication) initTXFromDB() {
 	transactions := &a.wallet.TXHistory
 	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory").Find(&transactions).Error; err != nil {
-		a.log.Error("Unable to initialize historic Transactions from DB", err)
-		a.sendError("Unable to initialize historic Transactions from DB", err)
+		a.log.Error("Unable to initialize historic transactions from DB. Reason: ", err)
+		a.sendError("Unable to initialize historic transactions from DB. Reason: ", err)
 		return
 	}
 
@@ -262,8 +273,8 @@ func (a *WalletApplication) initTXFromDB() {
 func (a *WalletApplication) initTXFilePath() {
 	paths := &a.wallet.Path
 	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("Path").Find(&paths).Error; err != nil {
-		a.log.Error("Unable to initialize historic Transactions from DB", err)
-		a.sendError("Unable to initialize historic Transactions from DB", err)
+		a.log.Error("Unable to initialize TX filepaths. Reason: ", err)
+		a.sendError("Unable to initialize TX filepaths. Reason: ", err)
 		return
 	}
 	a.paths.LastTXFile = a.wallet.Path.LastTXFile

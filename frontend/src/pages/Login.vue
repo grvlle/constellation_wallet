@@ -1,4 +1,5 @@
 <template>
+
   <div class="bg">
     
     <center>
@@ -7,7 +8,7 @@
         <p
           v-if="this.$store.state.app.login"
           style="margin-bottom: 20px; margin-top: 5px;"
-        >Please enter your credentials below to access your Molly Wallet.</p>
+        >Please enter your credentials below to access your Molly Wallet.</p>        
         <div style="height:30px;" v-if="!this.$store.state.displayLoginError"></div>
         <div style="height:30px;" v-if="this.$store.state.displayLoginError"><p style="color: firebrick; font-size: 12px;">{{this.$store.state.loginErrorMsg}}</p></div>
         <div>
@@ -38,6 +39,8 @@ Please backup your passwords and Key Store file (key.p12) as these will allow yo
                 
                   </p>
               </div>
+
+
                <div title="Import Wallet" v-if="!this.$store.state.app.register && this.$store.state.app.import" class="col-4 info-box">
                 <p>
                   <br />

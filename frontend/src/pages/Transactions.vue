@@ -57,7 +57,7 @@
                   type="info"
                   block
                   @click.native="tx"
-                  :disabled="submitStatus === 'PENDING'"
+                  :disabled="!this.$store.state.app.txFinished"
                   style="margin-top: 28px; overflow: visible;"
                 >
                   <span
@@ -164,13 +164,14 @@ export default {
         self.submitStatus = "ERROR";
       } else {
         // do your submit logic here
-        self.submitStatus = "PENDING";
-        setTimeout(() => {
-          self.submitStatus = "OK";
-        }, 500);
+        
+        if (!self.$store.state.app.txFinished) {
+          self.submitStatus = "PENDING";
+        }
+        self.submitStatus = "OK";
       }
 
-      if (self.submitStatus != "ERROR") {
+      if (self.submitStatus === "OK") {
         Swal.mixin({
           progressSteps: ["1", "2"]
         })
@@ -329,4 +330,5 @@ p.validate {
   color: firebrick;
   margin-top: -5px;
 }
+
 </style>

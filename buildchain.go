@@ -39,6 +39,7 @@ func (a *WalletApplication) formTXChain(amount float64, fee float64, address str
 		if statusLastTX.Failed {
 			a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.EmptyTXFile)
 			a.sendTransaction(a.paths.LastTXFile)
+			return
 		}
 		a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
 		a.sendTransaction(a.paths.PrevTXFile)

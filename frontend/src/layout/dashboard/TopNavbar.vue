@@ -60,6 +60,7 @@ export default {
   data() {
     return {
       activeNotifications: false,
+      random: "",
     };
   },
   methods: {
@@ -76,7 +77,7 @@ export default {
           return;
         }
       }),
-      console.log("no change")
+      random = ""
       return;
         
     },

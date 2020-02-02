@@ -359,6 +359,7 @@ export default {
   methods: {
     importWallet: function() {
       var self = this;
+      self.$Progress.start();
       window.backend.WalletApplication.ImportWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias
       ).then(walletImported => {
         if (walletImported) {
@@ -368,6 +369,7 @@ export default {
             if (self.access) {
               self.$store.state.app.isLoading = self.access;
               self.$store.state.app.isLoggedIn = self.access;
+              self.$Progress.finish();
               setTimeout(() => {
                 self.$store.state.app.isLoading = false;
               }, 8000);
@@ -477,7 +479,7 @@ export default {
     },
     login: function() {
       var self = this;
-
+        self.$Progress.start();
         window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias)
         .then(result => {
           self.access = result;
@@ -490,6 +492,7 @@ export default {
           if (self.access) {
             self.$store.state.app.isLoading = self.access;
             self.$store.state.app.isLoggedIn = self.access;
+            self.$Progress.finish();
             setTimeout(() => {
               self.$store.state.app.isLoading = false;
             }, 8000);
@@ -501,6 +504,7 @@ export default {
     createLogin: function() {
       // if (this.$store.state.validators.valid_password) {
       var self = this;
+      self.$Progress.start();
       self.$store.state.walletInfo.email = self.newWalletLabel
       
       window.backend.WalletApplication.StoreWalletLabelInDB(self.newWalletLabel)
@@ -513,6 +517,7 @@ export default {
             if (self.access) {
               self.$store.state.app.isLoading = self.access;
               self.$store.state.app.isLoggedIn = self.access;
+              self.$Progress.finish();
               setTimeout(() => {
                 self.$store.state.app.isLoading = false;
               }, 8000);

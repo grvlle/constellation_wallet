@@ -1,5 +1,6 @@
 <template>
   <div>
+    <vue-progress-bar></vue-progress-bar>
     <login-screen
       v-if="!this.$store.state.app.isLoggedIn"
       :isLoggedIn="!this.$store.state.app.isLoggedIn"
@@ -16,7 +17,6 @@
     >
       <notifications v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"></notifications>
       <router-view v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"></router-view>
-      <vue-progress-bar></vue-progress-bar>
     </div>
   </div>
 </template>

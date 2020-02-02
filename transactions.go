@@ -56,6 +56,14 @@ func (a *WalletApplication) networkHeartbeat() {
 	//TODO
 }
 
+func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address string) bool {
+	a.PrepareTransaction(amount, fee, address)
+	for !a.TransactionFinished {
+		time.Sleep(1 * time.Second)
+	}
+	return a.TransactionFailed
+}
+
 // PrepareTransaction is triggered from the frontend (Transaction.vue) and will initialize a new tx.
 // methods called are defined in buildchain.go
 func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, address string) {
@@ -160,6 +168,7 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 		a.storeTX(txData)
 		a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
 		a.TransactionFinished = true
+		a.TransactionFailed = false
 		return txData
 	}
 	txData := &TXHistory{
@@ -170,9 +179,10 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 		TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
 		Failed:          true,
 	}
-	a.storeTX(txData)
 	a.log.Errorln("TX Failed, storing with failed state.")
+	a.storeTX(txData)
 	a.TransactionFinished = true
+	a.TransactionFailed = true
 	return txData
 
 	//a.updateLastTransactions()

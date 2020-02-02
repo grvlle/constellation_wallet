@@ -12,7 +12,7 @@
                 <fg-input
                   v-model.number="txAmountValidation"
                   @change="sendAmount($event.target.value)"
-                  pattern="[0-9]+([,\.][0-9]+)?" 
+                  pattern="[0-9]+([,\.][0-9]+)?"
                   step="0.01"
                   label="Submit the amount of $DAG you wish to send"
                   placeholder="0"
@@ -137,6 +137,40 @@ import {
 
 export default {
   methods: {
+    start() {
+      this.$Progress.start();
+    },
+    set(num) {
+      this.$Progress.set(num);
+    },
+    increase(num) {
+      this.$Progress.increase(num);
+    },
+    decrease(num) {
+      this.$Progress.decrease(num);
+    },
+    finish() {
+      this.$Progress.finish();
+    },
+    fail() {
+      this.$Progress.fail();
+    },
+    test() {
+      this.$Progress.start();
+
+      this.$http
+        .jsonp(
+          "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?apikey=7waqfqbprs7pajbz28mqf6vz"
+        )
+        .then(
+          response => {
+            this.$Progress.finish();
+          },
+          response => {
+            this.$Progress.fail();
+          }
+        );
+    },
     isFloat: function(n) {
       return n === +n && n !== (n | 0);
     },
@@ -164,7 +198,7 @@ export default {
         self.submitStatus = "ERROR";
       } else {
         // do your submit logic here
-        
+
         if (!self.$store.state.app.txFinished) {
           self.submitStatus = "PENDING";
         }
@@ -213,24 +247,37 @@ export default {
           ])
           .then(result => {
             if (result.value) {
+              self.$Progress.start();
               let amount = self.txAmountValidation;
               let address = self.txAddressValidation;
               let fee = result.value;
-              window.backend.WalletApplication.PrepareTransaction(
+              window.backend.WalletApplication.TriggerTXFromFE(
                 parseFloat(amount),
                 parseFloat(fee[1]),
                 address
-              );
-              Swal.fire({
-                title: "Success!",
-                text:
-                  "You have sent " +
-                  self.txAmountValidation +
-                  " $DAG tokens to address " +
-                  self.txAddressValidation +
-                  ".",
-                type: "success"
-              })
+              ).then(txFailed => {
+                if (txFailed) {
+                  Swal.fire({
+                    title: "Transaction Failed!",
+                    text: "Unable to send Transaction",
+                    type: "error"
+                  });
+                  self.$Progress.fail();
+                } if (!txFailed) {
+                Swal.fire({
+                  title: "Success!",
+                  text:
+                    "You have sent " +
+                    self.txAmountValidation +
+                    " $DAG tokens to address " +
+                    self.txAddressValidation +
+                    ".",
+                  type: "success"
+                });
+                self.$Progress.finish();
+                }
+
+              });
             }
           });
       }
@@ -330,5 +377,4 @@ p.validate {
   color: firebrick;
   margin-top: -5px;
 }
-
 </style>

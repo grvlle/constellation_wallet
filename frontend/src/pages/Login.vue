@@ -397,12 +397,6 @@ export default {
       } else {
         this.$store.state.validators.contains_eight_characters = false;
       }
-
-      if (this.$store.state.validators.target === this.keyPasswordValidate && this.$store.state.validators.target === this.keystorePassword) {
-        this.$store.state.validators.duplicate = true;
-      } else {
-        this.$store.state.validators.duplicate = false;
-      }
       
       this.$store.state.validators.contains_number = /\d/.test(this.keyPasswordValidate);
       this.$store.state.validators.contains_uppercase = /[A-Z]/.test(this.keyPasswordValidate);
@@ -426,12 +420,6 @@ export default {
         this.$store.state.validators.storepass.contains_eight_characters = true;
       } else {
         this.$store.state.validators.storepass.contains_eight_characters = false;
-      }
-
-      if (this.$store.state.validators.storepass.target === this.$store.state.validators.target) {
-        this.$store.state.validators.duplicate = true;
-      } else {
-        this.$store.state.validators.duplicate = false;
       }
       
       this.$store.state.validators.storepass.contains_number = /\d/.test(this.keystorePassword);

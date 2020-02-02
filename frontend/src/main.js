@@ -14,11 +14,15 @@ import {store} from './store/store'
 import JwPagination from 'jw-vue-pagination';
 import Vuelidate from 'vuelidate'
 import ToggleButton from 'vue-js-toggle-button'
-import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+import VueProgressBar from 'vue-progressbar'
 
 Vue.component('jw-pagination', JwPagination);
-Vue.component('pulse-loader', PulseLoader);
 
+Vue.use(VueProgressBar, {
+  color: 'rgb(143, 255, 199)',
+  failedColor: 'red',
+  height: '2px'
+})
 Vue.use(ToggleButton)
 Vue.use(Vuelidate)
 Vue.use(VueNotify);

@@ -50,6 +50,7 @@ type WalletApplication struct {
 	}
 	KeyStoreAccess      bool
 	TransactionFinished bool
+	TransactionFailed   bool
 	UserLoggedIn        bool
 	NewUser             bool
 	FirstTX             bool

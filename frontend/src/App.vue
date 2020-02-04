@@ -116,8 +116,10 @@ export default {
     window.wails.Events.On("registeredLogin", event => {});
 
     // Dashboard.vue sockets
-    window.wails.Events.On("token", amount => {
+    window.wails.Events.On("token", (amount, available, total) => {
       this.$store.state.walletInfo.tokenAmount = amount;
+      this.$store.state.walletInfo.availableBalance = available;
+      this.$store.state.walletInfo.totalBalance = total;
     });
     window.wails.Events.On("blocks", number => {
       this.$store.state.walletInfo.blocks = number;

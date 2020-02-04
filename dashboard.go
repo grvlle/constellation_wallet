@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/wailsapp/wails"
@@ -155,6 +157,54 @@ func (a *WalletApplication) blockAmount() {
 			a.RT.Events.Emit("blocks", randomNumber)
 			UpdateCounter(updateIntervalBlocks, "block_counter", time.Second, a.RT)
 			time.Sleep(updateIntervalBlocks * time.Second)
+		}
+	}()
+}
+
+func (a *WalletApplication) pollTokenBalance() {
+	go func() {
+		retryCounter := 0
+		for {
+			a.log.Info("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
+			bytesRepresentation, err := json.Marshal(a.wallet.Address)
+			if err != nil {
+				a.log.Errorln("Unable to convert wallet address to JSON object", err)
+				a.sendError("There was a problem reading your DAG Address. Please report this issue.", err)
+				return
+			}
+			resp, err := http.Post("http://"+a.Network.URL+a.Network.Handles.Balance, "application/json", bytes.NewBuffer(bytesRepresentation))
+			if err != nil {
+				a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+				a.sendWarning("Unable to collect token balance from mainnet. Please check your internet connection.")
+			}
+			if resp != nil {
+				defer resp.Body.Close()
+
+				bodyBytes, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					a.log.Error("Unable to read HTTP response from mainnet. Reason: ", err)
+					a.sendError("Unable to read HTTP response from mainnet. Reason: ", err)
+				}
+
+				balance := string(bodyBytes)
+				balanceFloat, err := strconv.ParseFloat(balance, 8)
+				if err != nil {
+					a.sendWarning("Unable to collect token balance from mainnet. Will retry 9 more times...")
+					a.log.Errorln("Unable to type cast string to float for token balance poller.")
+				}
+
+				a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balanceFloat, balanceFloat, balanceFloat
+
+				a.RT.Events.Emit("token", a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance)
+				time.Sleep(updateIntervalToken * time.Second)
+			} else {
+				retryCounter++
+				time.Sleep(1 * time.Second)
+				if retryCounter >= 10 {
+					a.sendError("Unable to poll token balance. Please check your internet connectivity. Reason: ", err)
+					break
+				}
+			}
 		}
 	}()
 }

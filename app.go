@@ -23,6 +23,7 @@ type WalletApplication struct {
 		Handles struct {
 			Send        string // Takes TX Object, returns TX Hash (200)
 			Transaction string // Takes TX Object, returns TX Hash (200)
+			Balance     string // Polls the wallets available balance
 		}
 		BlockExplorer struct {
 			URL     string
@@ -139,10 +140,11 @@ func (a *WalletApplication) initDirectoryStructure() error {
 
 // initMainnetConnection populates the WalletApplication struct with mainnet data
 func (a *WalletApplication) initMainnetConnection() {
-	a.Network.URL = "35.235.121.52:9000" // Temp
+	a.Network.URL = "cl-lb-111349175.us-west-1.elb.amazonaws.com:9000" // Temp
 
 	a.Network.Handles.Send = "/send"
 	a.Network.Handles.Transaction = "/transaction"
+	a.Network.Handles.Balance = "/balance"
 
 	a.Network.BlockExplorer.URL = "https://2mqil2w38l.execute-api.us-west-1.amazonaws.com/block-explorer-api-dev"
 	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"

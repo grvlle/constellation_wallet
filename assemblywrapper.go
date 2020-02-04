@@ -173,7 +173,6 @@ func (a *WalletApplication) produceTXObject(amount float64, fee float64, address
 
 // java -jar cl-keytool.jar --keystore testkey.p12 --alias alias --storepass storepass --keypass keypass
 func (a *WalletApplication) CreateEncryptedKeyStore() {
-	a.TempPrintCreds()
 	err := a.runKeyToolCMD("--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to write encrypted keys to filesystem. Reason: ", err)

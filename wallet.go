@@ -238,6 +238,7 @@ func (a *WalletApplication) initDashboardWidgets() {
 	a.nodeStats(chartData)
 	a.txStats(chartData)
 	a.networkStats(chartData)
+	a.pollTokenBalance()
 	a.blockAmount()
 	a.tokenAmount()
 	a.pricePoller()

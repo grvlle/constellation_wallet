@@ -2,9 +2,11 @@ package main
 
 import (
 	"bytes"
+	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"io"
+	"math"
 	"math/rand"
 	"os"
 	"os/exec"
@@ -17,7 +19,7 @@ func (a *WalletApplication) detectJavaPath() {
 
 	if runtime.GOOS == "windows" {
 
-		cmd := exec.Command("cmd", "where", "java")
+		cmd := exec.Command("cmd", "/c", "where", "java")
 		a.log.Infoln("Running command: ", cmd)
 
 		var out bytes.Buffer
@@ -47,6 +49,13 @@ func (a *WalletApplication) detectJavaPath() {
 		a.log.Debugln(cmd)
 		a.paths.Java = jwPath
 	}
+}
+
+// Convert byte slice to float64
+func Float64frombytes(bytes []byte) float64 {
+	bits := binary.LittleEndian.Uint64(bytes)
+	float := math.Float64frombits(bits)
+	return float
 }
 
 func (a *WalletApplication) TempFileName(prefix, suffix string) string {

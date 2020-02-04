@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -16,6 +17,8 @@ func (a *WalletApplication) TempPrintCreds() {
 /* Database Model is located in models.go */
 
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
+
+	alias = strings.ToLower(alias)
 
 	if !a.TransactionFinished {
 		a.log.Warn("Cannot Import wallet in a pending transaction.")
@@ -102,6 +105,8 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 // CreateUser is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
+
+	alias = strings.ToLower(alias)
 
 	if !a.TransactionFinished {
 		a.log.Warn("Cannot Create wallet in a pending transaction.")
@@ -281,6 +286,9 @@ func (a *WalletApplication) initTXFilePath() {
 		a.sendError("Unable to initialize TX filepaths. Reason: ", err)
 		return
 	}
+	if a.wallet.Path.LastTXFile == "" && a.wallet.Path.PrevTXFile == "" {
+		a.log.Fatal("Unable to initialize TX filepaths. Both are empty after DB query.")
+	}
 	a.paths.LastTXFile = a.wallet.Path.LastTXFile
 	a.paths.PrevTXFile = a.wallet.Path.PrevTXFile
 	a.paths.EmptyTXFile = a.wallet.Path.EmptyTXFile
@@ -363,19 +371,15 @@ func (a *WalletApplication) passKeysToFrontend() {
 func (a *WalletApplication) passwordsProvided(keystorePassword, keyPassword, alias string) bool {
 	if a.paths.EncPrivKeyFile == "" {
 		a.LoginError("Please provide a valid path to your KeyStore file.")
-		a.TempPrintCreds()
 		return false
 	} else if keystorePassword == "" {
 		a.LoginError("Please provide a Key Store password.")
-		a.TempPrintCreds()
 		return false
 	} else if keyPassword == "" {
 		a.LoginError("Please provide a Key Password.")
-		a.TempPrintCreds()
 		return false
 	} else if alias == "" {
 		a.LoginError("An Alias has not been provided.")
-		a.TempPrintCreds()
 		return false
 	}
 	return true

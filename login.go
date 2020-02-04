@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -13,6 +14,8 @@ func (a *WalletApplication) LoginError(errMsg string) {
 }
 
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
+
+	alias = strings.ToLower(alias)
 
 	if !a.TransactionFinished {
 		a.log.Warn("Cannot login to another wallet during a pending transaction.")

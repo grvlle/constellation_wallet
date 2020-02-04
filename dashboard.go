@@ -200,7 +200,7 @@ func (a *WalletApplication) pollTokenBalance() {
 			} else {
 				retryCounter++
 				time.Sleep(1 * time.Second)
-				if retryCounter >= 10 {
+				if retryCounter >= 50 {
 					a.sendError("Unable to poll token balance. Please check your internet connectivity. Reason: ", err)
 					break
 				}
@@ -246,7 +246,7 @@ func (a *WalletApplication) pricePoller() {
 			} else {
 				retryCounter++
 				time.Sleep(1 * time.Second)
-				if retryCounter >= 10 {
+				if retryCounter >= 50 {
 					a.sendError("Unable to poll token evaluation. Reason: ", err)
 					break
 				}

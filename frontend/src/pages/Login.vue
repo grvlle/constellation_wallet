@@ -116,7 +116,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
         </table>
               </div>
 
-        <div v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
+        <div style="margin-top: 20px;" v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
         <p>Select a directory to store your private key (key.p12) in</p>
         <table style="width:100%;">
           <tr>
@@ -275,12 +275,12 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                   v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register"
                   style="float: right; width: 48%; margin-top: 20px;"
                 >
-                <!-- :disabled="!this.$store.state.validators.valid_password && this.keystorePassword !== '' && this.keyPasswordValidate !== ''" -->
+                
                   <p-button
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="warning"
                     block
-                    
+                    :disabled="!this.$store.state.validators.valid_password && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
                     @click.native="createLogin"
                     style="overflow: visible;"
                   >
@@ -309,12 +309,12 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                   v-if="this.$store.state.app.import && !this.$store.state.app.login && !this.$store.state.app.register"
                   style="float: right; width: 48%; margin-top: 20px;"
                 >
-                <!-- :disabled="!this.$store.state.validators.valid_password && this.keystorePassword !== '' && this.keyPasswordValidate !== ''" -->
+                
                   <p-button
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="info"
                     block
-                    
+                    :disabled="!this.$store.state.validators.valid_password && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
                     @click.native="importWallet()"
                     style="overflow: visible;"
                   >
@@ -373,8 +373,12 @@ export default {
               setTimeout(() => {
                 self.$store.state.app.isLoading = false;
               }, 8000);
+            } else {
+              self.$Progress.fail();
             }
           });
+        } else {
+          self.$Progress.fail();
         }
         self.$Progress.finish();
       });
@@ -484,19 +488,21 @@ export default {
         window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias)
         .then(result => {
           self.access = result;
-          window.backend.WalletApplication.SetWalletTag().then(walletTag =>
+          if (self.access) {
+            window.backend.WalletApplication.SetWalletTag().then(walletTag =>
             self.$store.state.walletInfo.email = walletTag
           )
-          window.backend.WalletApplication.SetImagePath().then(imagePath =>
+            window.backend.WalletApplication.SetImagePath().then(imagePath =>
             self.$store.state.walletInfo.imgPath = imagePath
           )
-          if (self.access) {
             self.$store.state.app.isLoading = self.access;
             self.$store.state.app.isLoggedIn = self.access;
             self.$Progress.finish();
             setTimeout(() => {
               self.$store.state.app.isLoading = false;
             }, 8000);
+          } else {
+            self.$Progress.fail();
           }
         
         }
@@ -507,7 +513,6 @@ export default {
       var self = this;
       self.$Progress.start();
       self.$store.state.walletInfo.email = self.newWalletLabel
-      
       window.backend.WalletApplication.StoreWalletLabelInDB(self.newWalletLabel)
       window.backend.WalletApplication.CreateWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias
       ).then(walletCreated => {
@@ -522,8 +527,12 @@ export default {
               setTimeout(() => {
                 self.$store.state.app.isLoading = false;
               }, 8000);
+            } else {
+              self.$Progress.fail();
             }
           });
+        } else {
+          self.$Progress.fail();
         }
       });
       // }

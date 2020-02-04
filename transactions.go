@@ -158,12 +158,12 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 	// Put TX object on network
 	if a.putTXOnNetwork(tx) {
 		txData := &TXHistory{
-			Amount:          tx.Edge.Data.Amount,
-			Address:         tx.Edge.ObservationEdge.Parents[1].Hash,
-			Fee:             tx.Edge.Data.Fee,
-			TransactionHash: tx.Edge.ObservationEdge.Data.Hash,
-			TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
-			Failed:          false,
+			Amount: tx.Edge.Data.Amount,
+			Sender: tx.Edge.ObservationEdge.Parents[1].Hash,
+			Fee:    tx.Edge.Data.Fee,
+			Hash:   tx.Edge.ObservationEdge.Data.Hash,
+			TS:     time.Now().Format("Mon Jan _2 15:04:05 2006"),
+			Failed: false,
 		}
 		a.storeTX(txData)
 		a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
@@ -172,12 +172,12 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 		return txData
 	}
 	txData := &TXHistory{
-		Amount:          tx.Edge.Data.Amount,
-		Address:         tx.Edge.ObservationEdge.Parents[1].Hash,
-		Fee:             tx.Edge.Data.Fee,
-		TransactionHash: tx.Edge.ObservationEdge.Data.Hash,
-		TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
-		Failed:          true,
+		Amount: tx.Edge.Data.Amount,
+		Sender: tx.Edge.ObservationEdge.Parents[1].Hash,
+		Fee:    tx.Edge.Data.Fee,
+		Hash:   tx.Edge.ObservationEdge.Data.Hash,
+		TS:     time.Now().Format("Mon Jan _2 15:04:05 2006"),
+		Failed: true,
 	}
 	a.log.Errorln("TX Failed, storing with failed state.")
 	a.storeTX(txData)

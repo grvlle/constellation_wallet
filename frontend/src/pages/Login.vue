@@ -376,6 +376,7 @@ export default {
             }
           });
         }
+        self.$Progress.finish();
       });
     },
     checkAlias: function() {

@@ -94,14 +94,14 @@
                     </p>
                   </td>
                   <td>
-                    <p class="description" style="font-size: 15px;">{{tx.address | truncate}}</p>
+                    <p class="description" style="font-size: 15px;">{{tx.sender | truncate}}</p>
                   </td>
                   <td>
                     <p class="description" style="font-size: 15px;">{{tx.fee}}</p>
                   </td>
                   <td>
                     <a id="txhash">
-                      <p style="font-size: 15px;">{{tx.txhash | truncate}}</p>
+                      <p style="font-size: 15px;">{{tx.hash | truncate}}</p>
                     </a>
                   </td>
                   <td>
@@ -121,7 +121,7 @@
 </template>
 
 <script>
-const tableColumns = ["Amount", "Address", "Fee", "TxHash", "Date"];
+const tableColumns = ["Amount", "Sender", "Fee", "Hash", "Date"];
 let tableData = [];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
@@ -245,6 +245,7 @@ export default {
 
               });
             }
+            
           });
       }
     }

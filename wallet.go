@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -210,13 +211,12 @@ func (a *WalletApplication) initWallet(keystorePath string) {
 
 	a.paths.EncPrivKeyFile = keystorePath
 
-	a.initTXFilePath() // Update paths from DB.
-
 	if a.NewUser {
 		a.initTXFromBlockExplorer()
 		a.StoreImagePathInDB("faces/face-0.jpg")
 	} else if !a.NewUser {
-		a.initTXFromDB() // Disregard upon import
+		a.initTXFromDB()   // Disregard upon import
+		a.initTXFilePath() // Update paths from DB.
 	}
 
 	if !a.WidgetRunning.DashboardWidgets {
@@ -273,6 +273,19 @@ func (a *WalletApplication) ExportKeys() error {
 	return nil
 }
 
+func (a *WalletApplication) initTXFilePath() {
+	paths := &a.wallet.Path
+	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("Path").Find(&paths).Error; err != nil {
+		a.log.Fatal("Unable to initialize TX filepaths. Reason: ", err)
+		a.sendError("Unable to initialize TX filepaths. Reason: ", err)
+		return
+	}
+	a.paths.LastTXFile = a.wallet.Path.LastTXFile
+	a.paths.PrevTXFile = a.wallet.Path.PrevTXFile
+	a.paths.EmptyTXFile = a.wallet.Path.EmptyTXFile
+
+}
+
 func (a *WalletApplication) initTXFromDB() {
 	transactions := &a.wallet.TXHistory
 	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory").Find(&transactions).Error; err != nil {
@@ -289,23 +302,10 @@ func (a *WalletApplication) initTXFromDB() {
 
 }
 
-func (a *WalletApplication) initTXFilePath() {
-	paths := &a.wallet.Path
-	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("Path").Find(&paths).Error; err != nil {
-		a.log.Fatal("Unable to initialize TX filepaths. Reason: ", err)
-		a.sendError("Unable to initialize TX filepaths. Reason: ", err)
-		return
-	}
-	a.paths.LastTXFile = a.wallet.Path.LastTXFile
-	a.paths.PrevTXFile = a.wallet.Path.PrevTXFile
-	a.paths.EmptyTXFile = a.wallet.Path.EmptyTXFile
-
-}
-
 func (a *WalletApplication) initTXFromBlockExplorer() {
 	a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
 
-	resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
+	resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + "DAG126JaAtG2GuS7vckr1nCaZzJLSWxV1cUPrfSb")
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
 		a.sendError("Unable to collect previous TX's from blockexplorer. Please check your internet connection. Reason: ", err)
@@ -313,13 +313,33 @@ func (a *WalletApplication) initTXFromBlockExplorer() {
 	}
 	defer resp.Body.Close()
 
+	allTX := []TXHistory{}
+
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		a.log.Fatal(err)
 	}
-	bodyString := string(bodyBytes)
 
-	a.log.Warn(bodyString)
+	err = json.Unmarshal(bodyBytes, &allTX)
+	if err != nil {
+		a.log.Errorln("Unable to fetch TX history from block explorer. Reason: ", err)
+		a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
+	}
+
+	go func() {
+		for _, tx := range allTX {
+			txData := &TXHistory{
+				Amount: tx.Amount,
+				Sender: tx.Sender,
+				Fee:    tx.Fee,
+				Hash:   tx.Hash,
+				TS:     time.Now().Format("Mon Jan _2 15:04:05 2006"),
+				Failed: false,
+			}
+			a.storeTX(txData)
+			a.RT.Events.Emit("new_transaction", txData)
+		}
+	}()
 
 }
 

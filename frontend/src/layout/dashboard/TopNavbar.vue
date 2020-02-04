@@ -77,7 +77,7 @@ export default {
           return;
         }
       }),
-      random = ""
+      this.random = "1"
       return;
         
     },

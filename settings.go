@@ -52,11 +52,13 @@ func (a *WalletApplication) UploadImage() string {
 	return filename
 }
 
-// SetImagePath is called from the Login.Vue
+// SetImagePath is called from the Login.Vue. It'll query the DB for the user's profile picture
+// and return it to the FE to be displayed.
 func (a *WalletApplication) SetImagePath() string {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Error; err != nil {
 		a.log.Errorf("Unable to query the DB record for the Image path. Reason: ", err)
 		a.sendError("Unable to query the DB record for the Image path. Reason: ", err)
+		return ""
 	}
 	a.log.Infoln("Profile Picture selected: ", a.wallet.ProfilePicture)
 	return a.wallet.ProfilePicture

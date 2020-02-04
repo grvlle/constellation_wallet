@@ -117,7 +117,6 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 // java -cp constellation-assembly-1.0.12.jar org.constellation.util.wallet.GenerateAddress --pub_key_str=<base64 hash of pubkey> --store_path=<path to file where address will be stored>
 func (a *WalletApplication) GenerateDAGAddress() string {
 	a.log.Infoln("Creating DAG Address from Public Key...")
-	a.TempPrintCreds()
 
 	rescueStdout := os.Stdout
 	r, w, err := os.Pipe()

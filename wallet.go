@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"time"
 )
@@ -51,12 +53,25 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 				return false
 			}
 
-			a.TempPrintCreds()
-
 			if err := a.DB.Create(&a.wallet).Error; err != nil {
 				a.log.Errorf("Unable to create database object for the imported wallet. Reason: ", err)
-				a.LoginError("Unable to create database object for the imported wallet. Maybe it's already imported? Try to login.")
+				a.LoginError("Unable to create database object for the imported wallet. Maybe it has already been imported? Try to login.")
 				return false
+			}
+
+			a.paths.LastTXFile = a.TempFileName("tx-", "")
+			a.paths.PrevTXFile = a.TempFileName("tx-", "")
+			a.paths.EmptyTXFile = a.TempFileName("tx-", "")
+
+			err = a.createTXFiles()
+			if err != nil {
+				a.log.Fatalln("Unable to create TX files. Check fs permissions. Reason: ", err)
+				a.sendError("Unable to create TX files. Check fs permissions. Reason: ", err)
+			}
+
+			if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("Path", Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
+				a.log.Errorf("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
+				a.sendError("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
 			}
 
 			if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
@@ -71,10 +86,8 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 			return true
 
-		} else if a.DB.NewRecord(&a.wallet) {
+		} else if a.DB.NewRecord(&a.wallet) { // There may already be an existing DB record in some circumstances.
 			a.DB.First(&a.wallet)
-
-			a.TempPrintCreds()
 
 			a.UserLoggedIn = false
 			a.NewUser = false
@@ -198,7 +211,13 @@ func (a *WalletApplication) initWallet(keystorePath string) {
 	a.paths.EncPrivKeyFile = keystorePath
 
 	a.initTXFilePath() // Update paths from DB.
-	a.initTXFromDB()   // Disregard upon import
+
+	if a.NewUser {
+		a.initTXFromBlockExplorer()
+		a.StoreImagePathInDB("faces/face-0.jpg")
+	} else if !a.NewUser {
+		a.initTXFromDB() // Disregard upon import
+	}
 
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
@@ -273,7 +292,7 @@ func (a *WalletApplication) initTXFromDB() {
 func (a *WalletApplication) initTXFilePath() {
 	paths := &a.wallet.Path
 	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("Path").Find(&paths).Error; err != nil {
-		a.log.Error("Unable to initialize TX filepaths. Reason: ", err)
+		a.log.Fatal("Unable to initialize TX filepaths. Reason: ", err)
 		a.sendError("Unable to initialize TX filepaths. Reason: ", err)
 		return
 	}
@@ -284,7 +303,24 @@ func (a *WalletApplication) initTXFilePath() {
 }
 
 func (a *WalletApplication) initTXFromBlockExplorer() {
-	// TODO
+	a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
+
+	resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
+	if err != nil {
+		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+		a.sendError("Unable to collect previous TX's from blockexplorer. Please check your internet connection. Reason: ", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		a.log.Fatal(err)
+	}
+	bodyString := string(bodyBytes)
+
+	a.log.Warn(bodyString)
+
 }
 
 // PassKeysToFrontend emits the keys to the settings.Vue component on a

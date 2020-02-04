@@ -1,6 +1,6 @@
 ## The following instructions will let you compile the Wallet from source
 
-Make sure that the latest version of Java is installed.
+Make sure that the latest version of Java is installed. 
 
 ### 1. Download the Go distribution from the official website.
 
@@ -82,7 +82,7 @@ Make sure that the latest version of Java is installed.
 
 ### 5. Clone this repository into your GOPATH
 
-   `https://github.com/grvlle/constellation_wallet.git`
+   `git clone https://github.com/grvlle/constellation_wallet.git`
 
 ### 6. Change to 'develop' branch
 

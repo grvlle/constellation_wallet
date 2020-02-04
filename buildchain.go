@@ -94,23 +94,3 @@ func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *T
 	}
 	return &ptxObj, &ltxObj
 }
-
-// collectTXHistory is called by initTransactionHistory to read and parse the LastTXFile.
-// It will scan the lines and WalletApplicationend them to txObjects which is later returned to
-// initTransactionHistory
-// func loadTXFromFile(txFile string) string {
-// 	var txObjects string
-// 	file, err := os.Open(txFile) // acct
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-
-// 	scanner := bufio.NewScanner(file)
-// 	scanner.Split(bufio.ScanLines)
-
-// 	for scanner.Scan() {
-// 		txObjects = scanner.Text()
-// 	}
-// 	defer file.Close()
-// 	return txObjects
-// }

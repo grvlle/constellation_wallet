@@ -17,7 +17,7 @@ func (a *WalletApplication) detectJavaPath() {
 
 	if runtime.GOOS == "windows" {
 
-		cmd := exec.Command("cmd", "/c", "where", "java")
+		cmd := exec.Command("cmd", "where", "java")
 		a.log.Infoln("Running command: ", cmd)
 
 		var out bytes.Buffer
@@ -34,7 +34,7 @@ func (a *WalletApplication) detectJavaPath() {
 		jPath := out.String() // Path to java.exe
 		if len(jPath) <= 0 {
 			go func() {
-				for c := 0; c >= 10; c++ {
+				for c := 0; c <= 20; c++ {
 					a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
 					time.Sleep(1 * time.Second)
 				}

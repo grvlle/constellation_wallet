@@ -13,10 +13,15 @@ export const store = new Vuex.Store({
             txFinished: true,
             isLoading: false,
             isLoggedIn: false,
+            isDownloadingDependencies: true,
             import: false,
             register: false,
             login: true,
             margin: 70,
+        },
+        downloading: {
+          filename: "",
+          size: ""
         },
         walletInfo: {
             version: "v1.12",

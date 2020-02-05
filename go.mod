@@ -1,6 +1,7 @@
 module github.com/grvlle/constellation_wallet
 
 require (
+	github.com/dustin/go-humanize v1.0.0
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/google/martian v2.1.0+incompatible
 	github.com/jinzhu/gorm v1.9.12

@@ -530,6 +530,7 @@ export default {
                 self.$store.state.app.isLoading = false;
                 Swal.fire({
                   html:
+                  '<div style="overflow: scroll; width: 1170px; height: 600px;">'+
                     '<p style="text-align: center;background: transparent;margin-bottom: 0.11in;line-height: 108%;"><strong>TERMS OF SERVICE</strong></p>'+
         '<p style="text-align: center;background: transparent;margin-bottom: 0.11in;line-height: 108%;">Last updated: 02.04.2020</p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">Welcome to Molly, a free tool for interacting directly with the Hypergraph Blockchain. Please read these terms and conditions (the <strong>"</strong><u>Terms of Service</u><strong>"</strong>) carefully. They apply to your use of the Constellation Network, Inc.’s, and any subsidiary, parent, or affiliate thereof (collectively, the “<u>Company</u>") Molly Wallet desktop application (the&nbsp;"<u>Site</u>") and any related services offered by the Company through the Site. The Site and related services offered through the Site shall hereinafter be referred to as the “<u>Services</u>.” This Terms of Service together with any additional posted guidelines or rules applicable to related services and features, and the Privacy Policy (as hereinafter defined) shall hereinafter be referred to as the “<u>Agreement</u>.”</p>'+
@@ -603,7 +604,8 @@ export default {
                   '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;"><strong>12.&nbsp;</strong><u><strong>Entire Agreement</strong></u></p>'+
                   '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">This Agreement any other legal notices published by the Company on the Site shall constitute the entire agreement between you and the Company concerning the Services. If any provision of this Agreement is deemed invalid by a court of competent jurisdiction, the invalidity of such provision shall not affect the validity of the remaining provisions of this Agreement, which shall remain in full force and effect. No waiver of any term of this Agreement shall be deemed a further or continuing waiver of such term or any other term, and the Company’s failure to assert any right or provision under this Agreement shall not constitute a waiver of such right or provision.</p>'+
                   '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">Contact information</p>'+
-                  '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">We welcome your comments or questions about this Agreement. You may contact us at legal@constellationnetwork.io</p>',
+                  '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">We welcome your comments or questions about this Agreement. You may contact us at legal@constellationnetwork.io</p>'+
+                  '</div>',
                   showCloseButton: true,
                   showCancelButton: true,
                   width: "1200px",

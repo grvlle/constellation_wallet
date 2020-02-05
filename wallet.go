@@ -324,38 +324,42 @@ func (a *WalletApplication) initTXFromBlockExplorer() {
 
 	allTX := []TXHistory{}
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		a.log.Fatal(err)
-	}
-
-	err = json.Unmarshal(bodyBytes, &allTX)
-	if err != nil {
-		a.log.Errorln("Unable to fetch TX history from block explorer. Reason: ", err)
-		a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
-	}
-
-	go func() {
-		for _, tx := range allTX {
-			txData := &TXHistory{
-				Amount: tx.Amount,
-				Sender: tx.Sender,
-				Fee:    tx.Fee,
-				Hash:   tx.Hash,
-				TS:     time.Now().Format("Mon Jan _2 15:04:05 2006"),
-				Failed: false,
-			}
-			a.storeTX(txData)
-			a.RT.Events.Emit("new_transaction", txData)
-
-			ptx := a.loadTXFromFile(a.paths.PrevTXFile)
-			ltx := a.loadTXFromFile(a.paths.LastTXFile)
-
-			ptxObj, ltxObj := a.convertToTXObject(ptx, ltx)
-
-			a.rebuildImportChain(tx.Amount, tx.Fee, tx.Receiver, ptxObj, ltxObj)
+	if resp.Body != nil {
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			a.log.Fatal(err)
 		}
-	}()
+
+		err = json.Unmarshal(bodyBytes, &allTX)
+		if err != nil {
+			a.log.Errorln("Unable to fetch TX history from block explorer. Reason: ", err)
+			a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
+		}
+
+		go func() {
+			for _, tx := range allTX {
+				txData := &TXHistory{
+					Amount: tx.Amount,
+					Sender: tx.Sender,
+					Fee:    tx.Fee,
+					Hash:   tx.Hash,
+					TS:     time.Now().Format("Mon Jan _2 15:04:05 2006"),
+					Failed: false,
+				}
+				a.storeTX(txData)
+				a.RT.Events.Emit("new_transaction", txData)
+
+				ptx := a.loadTXFromFile(a.paths.PrevTXFile)
+				ltx := a.loadTXFromFile(a.paths.LastTXFile)
+
+				ptxObj, ltxObj := a.convertToTXObject(ptx, ltx)
+
+				a.rebuildImportChain(tx.Amount, tx.Fee, tx.Receiver, ptxObj, ltxObj)
+			}
+		}()
+	} else {
+		a.log.Info("Unable to detect any previous transactions.")
+	}
 
 }
 

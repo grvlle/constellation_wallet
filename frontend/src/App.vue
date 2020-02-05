@@ -28,6 +28,7 @@ import SuccessNotification from "./pages/Notifications/Success";
 import LoadingScreen from "./pages/LoadingScreen";
 import LoginScreen from "./pages/Login";
 
+
 export default {
   components: {
     LoadingScreen,
@@ -57,7 +58,7 @@ export default {
       });
     });
 
-    window.wails.Events.On("warning", (m) => {
+    window.wails.Events.On("warning", m => {
       this.$store.state.warningMessage = m;
       setTimeout(() => {
         this.$notifications.clear();
@@ -75,7 +76,7 @@ export default {
       });
     });
 
-        window.wails.Events.On("success", (m) => {
+    window.wails.Events.On("success", m => {
       this.$store.state.successMessage = m;
       setTimeout(() => {
         this.$notifications.clear();

@@ -8,12 +8,22 @@ import (
 	"io"
 	"math"
 	"math/rand"
+  "net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"time"
+
+  "github.com/dustin/go-humanize"
 )
+
+type WriteCounter struct {
+  Total     uint64
+  LastEmit  uint64
+  Filename  string
+  a         *WalletApplication
+}
 
 func (a *WalletApplication) detectJavaPath() {
 
@@ -86,6 +96,53 @@ func Copy(src, dst string) error {
 	return out.Close()
 }
 
+func (wc *WriteCounter) Write(p []byte) (int, error) {
+  n := len(p)
+  wc.Total += uint64(n)
+
+  if (wc.Total - wc.LastEmit) > uint64(800) {
+    wc.a.RT.Events.Emit("downloading", wc.Filename, humanize.Bytes(wc.Total))
+    wc.LastEmit = wc.Total
+  }
+
+  return n, nil
+}
+
+func (a *WalletApplication) fetchWalletJar(filename string, filepath string) error {
+  url := a.WalletCLI.URL + "-v" + a.WalletCLI.Version + "/" + filename
+  a.log.Info(url)
+
+  out, err := os.Create(filepath + ".tmp")
+  if err != nil {
+    return err
+  }
+
+  resp, err := http.Get(url)
+  if err != nil {
+    out.Close()
+    return err
+  }
+  defer resp.Body.Close()
+
+  counter := &WriteCounter{}
+  counter.a = a
+  counter.Filename = filename
+  counter.LastEmit = uint64(0)
+
+  if _, err = io.Copy(out, io.TeeReader(resp.Body, counter)); err != nil {
+    out.Close()
+    return err
+  }
+
+  out.Close()
+
+  if err = os.Rename(filepath + ".tmp", filepath); err != nil {
+    return err
+  }
+
+  return nil
+}
+
 func (a *WalletApplication) directoryCreator(directories ...string) error {
 	for _, d := range directories {
 		err := os.MkdirAll(d, os.ModePerm)
@@ -94,4 +151,12 @@ func (a *WalletApplication) directoryCreator(directories ...string) error {
 		}
 	}
 	return nil
+}
+
+func (a *WalletApplication) fileExists(path string) bool {
+  info, err := os.Stat(path)
+  if os.IsNotExist(err) {
+    return false
+  }
+  return !info.IsDir()
 }

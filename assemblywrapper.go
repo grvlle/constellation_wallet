@@ -146,6 +146,41 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	return a.wallet.Address
 }
 
+func (a *WalletApplication) CheckAndFetchWalletCLI() {
+  keytoolPath := a.paths.DAGDir + "/cl-keytool.jar"
+  walletPath := a.paths.DAGDir + "/cl-wallet.jar"
+
+  keytoolExists := a.fileExists(keytoolPath)
+  walletExists := a.fileExists(walletPath)
+
+  if keytoolExists && walletExists {
+    a.RT.Events.Emit("downloading_dependencies", false)
+  } else {
+    a.RT.Events.Emit("downloading_dependencies", true)
+  }
+
+  if keytoolExists {
+    a.log.Info(keytoolPath + " file exists. Skipping downloading")
+  } else {
+    if err := a.fetchWalletJar("cl-keytool.jar", keytoolPath); err != nil {
+      a.log.Errorf("Unable to fetch or store cl-keytool.jar", err)
+    }
+  }
+
+  if walletExists {
+    a.log.Info(walletPath + " file exists. Skipping downloading")
+  } else {
+    if err := a.fetchWalletJar("cl-wallet.jar", walletPath); err != nil {
+      a.log.Errorf("Unable to fetch or store cl-wallet.jar", err)
+    }
+  }
+
+  if a.fileExists(keytoolPath) && a.fileExists(walletPath) {
+    a.RT.Events.Emit("downloading_dependencies", false)
+  }
+
+}
+
 // produceTXObject will put an actual transaction on the network. This is called from the
 // transactions.go file, more specifically the sendTransaction func. This in turn is triggered
 // from the frontend (Transactions.vue) and the tx func. note you can either pass a priv key like

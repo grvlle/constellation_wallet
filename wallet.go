@@ -314,7 +314,7 @@ func (a *WalletApplication) initTXFromDB() {
 func (a *WalletApplication) initTXFromBlockExplorer() {
 	a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
 
-	resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + "DAG126JaAtG2GuS7vckr1nCaZzJLSWxV1cUPrfSb")
+	resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
 		a.sendError("Unable to collect previous TX's from blockexplorer. Please check your internet connection. Reason: ", err)
@@ -347,6 +347,13 @@ func (a *WalletApplication) initTXFromBlockExplorer() {
 			}
 			a.storeTX(txData)
 			a.RT.Events.Emit("new_transaction", txData)
+
+			ptx := a.loadTXFromFile(a.paths.PrevTXFile)
+			ltx := a.loadTXFromFile(a.paths.LastTXFile)
+
+			ptxObj, ltxObj := a.convertToTXObject(ptx, ltx)
+
+			a.rebuildImportChain(tx.Amount, tx.Fee, tx.Receiver, ptxObj, ltxObj)
 		}
 	}()
 

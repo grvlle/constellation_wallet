@@ -75,6 +75,38 @@ func (a *WalletApplication) determineBlockOrder(ptxObj, ltxObj *Transaction) str
 
 }
 
+func (a *WalletApplication) rebuildImportChain(amount float64, fee float64, address string, ptxObj *Transaction, ltxObj *Transaction) {
+	// Queries the number of previous transactions for this wallet.
+	numberOfTX := a.DB.Model(&a.wallet).Association("TXHistory").Count()
+
+	// First TX does not contain a TXref
+	if numberOfTX == 0 {
+		a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.EmptyTXFile)
+		return
+	}
+
+	// Manually control the second TX, to ensure the following order
+	if numberOfTX == 1 {
+		a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
+		return
+	}
+
+	// Returns the TX object that has the highest ordinal (the highest determines if it's to be referenced or reference the other tx)
+	newTX := a.determineBlockOrder(ptxObj, ltxObj)
+
+	// If the last TX is in failed state, we reset the order.
+	if newTX == a.paths.PrevTXFile {
+		a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
+		return
+	}
+
+	if newTX != a.paths.PrevTXFile {
+		a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.PrevTXFile)
+		return
+	}
+	a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
+}
+
 // convertToTXObject takes the Path to the prev_tx and last_tx files and returns a
 // pointer to two workable objects.
 func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *Transaction) {

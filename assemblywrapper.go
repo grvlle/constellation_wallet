@@ -22,7 +22,7 @@ func (a *WalletApplication) runWalletCMD(scalaFunc string, scalaArgs ...string) 
 	} else {
 		main = "java"
 	}
-	cmds := []string{"-jar", "cl-wallet.jar", scalaFunc}
+	cmds := []string{"-jar", a.paths.DAGDir + "/cl-wallet.jar", scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
 	a.log.Infoln("Running command: ", cmd)
@@ -51,7 +51,7 @@ func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string)
 	} else {
 		main = "java"
 	}
-	cmds := []string{"-jar", "cl-keytool.jar", scalaFunc}
+	cmds := []string{"-jar", a.paths.DAGDir + "/cl-keytool.jar", scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
 	a.log.Infoln("Running command: ", cmd)

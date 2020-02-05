@@ -1,12 +1,12 @@
 <template>
-    <div>
+    <div id="app">
         <div class="row">
             <div class="col-md-6">
                 <card title="About" sub-title="Get to know the Constellation Wallet">
-                    <p>Thank you for using the Constellation Desktop Wallet!<br><br> The Constellation Desktop Wallet was built by our community member <a href="#">@armedvito</a> and is an application overlay that integrates with the wallet binary produced by
+                    <p>Thank you for using the Constellation Desktop Wallet!<br><br> The Constellation Desktop Wallet was built by our community member <b>@armedvito</b> and is an application overlay that integrates with the wallet binary produced by
                         the Constellation Engineering team. This means that all major aspects around the security of the wallet is managed by the team, as well as yourself - since you will be responsible for handling the wallet backup and private key (see
-                        the <a href="#">FAQ</a> for best practices). <br><br> This is the first iterration of the Desktop Wallet, with many more versions and alternatives to come. If you were to experience any errors with it (you will), or have any feature
-                        requests - then please reach out to <a href="#">@armedvito</a> on <a href="#">Telegram</a> or <a href="#">Twitter</a> DMs. No matter the bug you may run into with the application, keep in mind that <b>your funds will never be jeopordized by this software</b>,
+                        the <b>FAQ</b> for best practices). <br><br> This is the first iterration of the Desktop Wallet, with many more versions and alternatives to come. If you were to experience any errors with it (you will), or have any feature
+                        requests - then please reach out to <b>@armedvito</b> on <b>Telegram</b> or <b>Twitter</b> DMs. No matter the bug you may run into with the application, keep in mind that <b>your funds will never be jeopordized by this software</b>,
                         so don't panic if there's an error message.<br><br>
     
                     </p>
@@ -53,7 +53,7 @@
                         it, double click to highlight it, then copy and store it somewhere safe. <br><br> The Engineering team is right now investigating means of introducing bip32 encryption which would allow us to generate a more memorable Mnemonic Seed.
                         This will then be included in this wallet as well.<br><br>
     
-                        <b>Something is not working. What do I do?</b><br> Please send an e-mail to <a href="#">vito@dagwallet.com (lol fix this)</a> with a thorough explanation of the problem. Also, please include the <b>wallet.log</b> file located in your
+                        <b>Something is not working. What do I do?</b><br> Please send an e-mail to <b>@armedvito</b> with a thorough explanation of the problem. Also, please include the <b>wallet.log</b> file located in your
                         <i>.dag</i> folder.
                         <br><br>
                         <b>I thought $DAG was free to transact, why do I need to enter a fee?</b><br> $DAG transactions are indeed free. The fee is intended for companies with higher data throughput demands.

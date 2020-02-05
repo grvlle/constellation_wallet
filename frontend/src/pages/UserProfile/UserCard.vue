@@ -5,8 +5,8 @@
     </div>
     <div>
       <div class="author">
-        <img class="avatar border-white" src="@/assets/img/faces/face-0.jpg" alt="...">
-        <h4 class="title">user@email.com
+        <img class="avatar border-white" :src="require('@/assets/img/' + this.$store.state.walletInfo.imgPath)" alt="...">
+        <h4 class="title">{{this.$store.state.walletInfo.email}}
           <br>
             <small>{{this.$store.state.walletInfo.address}}</small>
         </h4>
@@ -30,14 +30,13 @@
   </card>
 </template>
 <script>
-import Wallet from "../../../../JSONdata/wallet.json"
+
 export default {
   data() {
     return {
-      wallet: Wallet,
       details: [
         {
-          title: Wallet.deposit,
+          title: this.$store.state.walletInfo.transactions,
           subTitle: "Transactions"
         },
         {

@@ -1,8 +1,6 @@
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
 // GeneralViews
 import NotFound from "@/pages/NotFoundPage.vue";
-
-// Admin pages
 import Dashboard from "@/pages/Dashboard.vue";
 import WalletInformation from "@/pages/WalletInformation.vue";
 import About from "@/pages/About.vue";
@@ -10,6 +8,7 @@ import Settings from "@/pages/Settings.vue";
 import Transactions from "@/pages/Transactions.vue";
 
 const routes = [
+
   {
     path: "/",
     component: DashboardLayout,
@@ -39,9 +38,8 @@ const routes = [
         path: "settings",
         name: "settings",
         component: Settings
-      }
+      },
     ]
-
   },
   { path: "*", component: NotFound }
 ];

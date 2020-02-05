@@ -4,187 +4,232 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
-	"os/exec"
-	"strconv"
 	"time"
 )
 
 // Transaction contains all tx information
 type Transaction struct {
-	Edge struct {
+	Alias string `json:"alias"`
+	Edge  struct {
 		ObservationEdge struct {
 			Parents []struct {
-				Hash     string `json:"hash,omitempty"`
-				HashType string `json:"hashType,omitempty"`
-			} `json:"parents,omitempty"`
+				Hash     string `json:"hash"`
+				HashType string `json:"hashType"`
+			} `json:"parents"`
 			Data struct {
-				Hash     string `json:"hash,omitempty"`
-				HashType string `json:"hashType,omitempty"`
-			} `json:"data,omitempty"`
-		} `json:"observationEdge,omitempty"`
+				Hash     string `json:"hash"`
+				HashType string `json:"hashType"`
+			} `json:"data"`
+		} `json:"observationEdge"`
 		SignedObservationEdge struct {
 			SignatureBatch struct {
-				Hash       string `json:"hash,omitempty"`
+				Hash       string `json:"hash"`
 				Signatures []struct {
-					Signature string `json:"signature,omitempty"`
+					Signature string `json:"signature"`
 					ID        struct {
-						Hex string `json:"hex,omitempty"`
-					} `json:"id,omitempty"`
-				} `json:"signatures,omitempty"`
-			}
-		} `json:"signedObservationEdge,omitempty"`
+						Hex string `json:"hex"`
+					} `json:"id"`
+				} `json:"signatures"`
+			} `json:"signatureBatch"`
+		} `json:"signedObservationEdge"`
 		Data struct {
-			Amount int64 `json:"amount,omitempty"`
-			Salt   int64 `json:"salt,omitempty"`
-			Fee    int   `json:"fee,omitempty"`
-		} `json:"data,omitempty"`
-		PreviousHash string `json:"previousHash,omitempty"`
-		Count        int    `json:"count,omitempty"`
-		IsDummy      bool   `json:"isDummy,omitempty"`
-		Signature    []int  `json:"signature,omitempty"`
-	} `json:"edge,omitempty"`
+			Amount    float64 `json:"amount"`
+			LastTxRef struct {
+				Hash    string `json:"hash"`
+				Ordinal int    `json:"ordinal"`
+			} `json:"lastTxRef"`
+			Fee  float64 `json:"fee"`
+			Salt int64   `json:"salt"`
+		} `json:"data"`
+	} `json:"edge"`
+	LastTxRef struct {
+		Hash    string `json:"hash"`
+		Ordinal int    `json:"ordinal"`
+	} `json:"lastTxRef"`
+	IsDummy bool `json:"isDummy"`
+	IsTest  bool `json:"isTest"`
 }
 
-type txInformation struct {
-	ID              int    `json:"id,omitempty"`
-	Amount          int64  `json:"amount"`
-	Address         string `json:"address"`
-	Fee             int    `json:"fee"`
-	TransactionHash string `json:"txhash,omitempty"`
-	TS              string `json:"date,omitempty"`
+func (a *WalletApplication) networkHeartbeat() {
+	//TODO
 }
 
-// PrepareTransaction is triggered from the frontend and will initialize a new tx
-func (a *WalletApplication) PrepareTransaction(amount int64, fee int, address string) *Transaction {
-
-	tx := &Transaction{}
-
-	tx.Edge.Data.Amount = amount
-	tx.Edge.ObservationEdge.Data.Hash = address
-	tx.Edge.Data.Fee = fee
-
-	a.sendTransaction(amount, fee, address)
-
-	return tx
-}
-
-// sendTransaction is called from the front end code. This function will call the wallet.jar
-// to put the actual transaction on chain. It'll then call updateLastTransaction in order
-// to display transaction history to the user.
-func (a *WalletApplication) sendTransaction(amount int64, fee int, address string) {
-
-	amountStr := strconv.FormatInt(amount, 10)
-	feeStr := strconv.Itoa(fee)
-
-	// newTX is the full command to sign a new transaction
-	main := "java"
-	args := []string{"-cp", "bcprov-jdk15on-1.62.jar:constellation-assembly-1.0.12.jar", "org.constellation.SignNewTx", amountStr, address, feeStr, "fakepassword"}
-
-	os.Setenv("PATH", "/usr/bin:/sbin") // This is neccessary when interacting with the CLI on RedHat and other linux distros
-	cmd := exec.Command(main, args...)
-
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	cmd.Stdout = &out    // Captures STDOUT
-	cmd.Stderr = &stderr // Captures STDERR
-
-	err := cmd.Run()
-	if err != nil {
-		a.sendError("Unable to send transaction. Reason:", err)
-		err := fmt.Sprint(err) + ": " + stderr.String()
-		a.log.Errorf("Unable to send transaction. Reason:", err)
+func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address string) bool {
+	a.PrepareTransaction(amount, fee, address)
+	for !a.TransactionFinished {
+		time.Sleep(1 * time.Second)
 	}
-	fmt.Println(out.String())
-	a.updateLastTransactions()
+	return a.TransactionFailed
 }
 
-// updateLastTransaction will read the contents of txhistory.json into memory and pass it onto
-// the frontend to display transaction history of the user.
-func (a *WalletApplication) updateLastTransactions() {
+// PrepareTransaction is triggered from the frontend (Transaction.vue) and will initialize a new tx.
+// methods called are defined in buildchain.go
+func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, address string) {
+
+	// TODO: Temp comments. Re-add once wallet goes live.
+	if amount+fee > a.wallet.AvailableBalance {
+		a.log.Warnln("Insufficient Balance")
+		a.sendWarning("Insufficent Balance.")
+		return
+	}
+
+	if a.TransactionFinished {
+		a.TransactionFinished = false
+
+		// Asynchronously inform FE of TX state
+		go func() {
+			for !a.TransactionFinished {
+				a.RT.Events.Emit("tx_in_transit", a.TransactionFinished)
+				time.Sleep(1 * time.Second)
+			}
+			a.RT.Events.Emit("tx_in_transit", a.TransactionFinished)
+		}()
+		ptx := a.loadTXFromFile(a.paths.PrevTXFile)
+		ltx := a.loadTXFromFile(a.paths.LastTXFile)
+
+		ptxObj, ltxObj := a.convertToTXObject(ptx, ltx)
+
+		a.formTXChain(amount, fee, address, ptxObj, ltxObj)
+	}
+}
+
+func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
+	a.log.Info("Attempting to communicate with mainnet on: http://" + a.Network.URL + a.Network.Handles.Transaction)
+	bytesRepresentation, err := json.Marshal(tx)
+	if err != nil {
+		a.log.Errorln("Unable to parse JSON data for transaction", err)
+		a.sendError("Unable to parse JSON data for transaction", err)
+		return false
+	}
+	resp, err := http.Post("http://"+a.Network.URL+a.Network.Handles.Transaction, "application/json", bytes.NewBuffer(bytesRepresentation))
+	if err != nil {
+		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+		a.sendError("Unable to send request to mainnet. Please check your internet connection. Reason: ", err)
+		return false
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		/* TEMPORARILY COMMENTED OUT */
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			a.log.Fatal(err)
+		}
+		bodyString := string(bodyBytes)
+		if len(bodyBytes) == 64 {
+			a.log.Info(bodyString)
+			a.log.Infoln("Transaction has been successfully sent to the network.")
+			a.sendSuccess("Transaction successfully sent!")
+			return true
+		}
+		a.log.Warn(bodyString)
+		a.sendWarning("Unable to put transaction on the network. Reason: " + bodyString)
+		return false
+	}
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		a.log.Errorln(err)
+	}
+	bodyString := string(bodyBytes)
+	a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
+	a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
+
+	time.Sleep(3 * time.Second)
+	return true /* TEMPORARILY SET TO TRUE. CHANGE TO FALSE */
+}
+
+func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
+
+	txObject := a.loadTXFromFile(txFile)
+
 	tx := &Transaction{}
-	txObjects := a.collectTXHistory()
 
-	lastTXindex := len(txObjects)
-
-	bytes := []byte(txObjects[lastTXindex-1])
+	bytes := []byte(txObject)
 	err := json.Unmarshal(bytes, &tx)
 	if err != nil {
-		a.sendError("Unable to parse contents of acct. Reason:", err)
-		a.log.Warnf("Unable to parse contents of acct. Reason: %s", err)
-	}
-	txData := &txInformation{
-		ID:              tx.Edge.Count,
-		Amount:          tx.Edge.Data.Amount,
-		Address:         tx.Edge.ObservationEdge.Parents[1].Hash,
-		Fee:             tx.Edge.Data.Fee,
-		TransactionHash: tx.Edge.ObservationEdge.Data.Hash,
-		TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
+		a.sendError("Unable to parse the last transaction. Reason:", err)
+		a.log.Errorf("Unable to parse contents of last_tx. Reason: %s", err)
+		return nil
 	}
 
-	a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
+	// Put TX object on network
+	if a.putTXOnNetwork(tx) {
+		txData := &TXHistory{
+			Amount: tx.Edge.Data.Amount,
+			Sender: tx.Edge.ObservationEdge.Parents[1].Hash,
+			Fee:    tx.Edge.Data.Fee,
+			Hash:   tx.Edge.ObservationEdge.Data.Hash,
+			TS:     time.Now().Format("Mon Jan _2 15:04:05 2006"),
+			Failed: false,
+		}
+		a.storeTX(txData)
+		a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
+		a.TransactionFinished = true
+		a.TransactionFailed = false
+		return txData
+	}
+	txData := &TXHistory{
+		Amount: tx.Edge.Data.Amount,
+		Sender: tx.Edge.ObservationEdge.Parents[1].Hash,
+		Fee:    tx.Edge.Data.Fee,
+		Hash:   tx.Edge.ObservationEdge.Data.Hash,
+		TS:     time.Now().Format("Mon Jan _2 15:04:05 2006"),
+		Failed: true,
+	}
+	a.log.Errorln("TX Failed, storing with failed state.")
+	a.storeTX(txData)
+	a.TransactionFinished = true
+	a.TransactionFailed = true
+	return txData
+
+	//a.updateLastTransactions()
 }
 
-// initTransactions history is called from wailsInit() in main.go. It will parse the tx file
-// generated by the wallet.jar file, append to the data, reverse the objects and write it to
-// txhistory.json
-func (a *WalletApplication) initTransactionHistory() {
-	tx := &Transaction{}
+func (a *WalletApplication) storeTX(txData *TXHistory) {
 
-	txObjects := a.collectTXHistory() // Parses the LastTXFile and returns the json objects
-	var txObjectsPopulated []*txInformation
-	var txObjectsReversed []*txInformation
-
-	for _, txObject := range txObjects {
-		bytes := []byte(txObject)
-		err := json.Unmarshal(bytes, &tx)
-		if err != nil {
-			a.sendError("Unable to parse contents of acct. Reason:", err)
-			a.log.Warnf("Unable to parse contents of acct. Reason: %s", err)
-		}
-		txData := &txInformation{
-			ID:              tx.Edge.Count,
-			Amount:          tx.Edge.Data.Amount,
-			Address:         tx.Edge.ObservationEdge.Parents[1].Hash,
-			Fee:             tx.Edge.Data.Fee,
-			TransactionHash: tx.Edge.ObservationEdge.Data.Hash,
-			TS:              time.Now().Format("Mon Jan _2 15:04:05 2006"),
-		}
-		txObjectsPopulated = append(txObjectsPopulated, txData)
+	if txData == nil {
+		return
 	}
-
-	txObjectsReversed = reverseElement(txObjectsPopulated) // We want to display the last tx at the top
-
-	// Need to emit twice for it to stick. Bug with the Wails lib.
-	go func() {
-		for i := 0; i < 2; i++ {
-			a.RT.Events.Emit("update_tx_history", txObjectsReversed)
-			time.Sleep(1 * time.Second)
-		}
-	}()
-
-	writeToJSON("txhistory.json", txObjectsReversed)
-	writeToJSON("ts", time.Now().Format("Mon Jan _2 15:04:05 2006"))
-
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Association("TXHistory").Append(txData).Error; err != nil {
+		a.log.Errorf("Unable to update the DB record with the new TX. Reason: ", err)
+		a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
+	}
+	a.log.Infoln("Successfully stored tx in DB")
 }
 
-// collectTXHistory is called by initTransactionHistory to read and parse the LastTXFile.
-// It will scan the lines and append them to txObjects which is later returned to
-// initTransactionHistory
-func (a *WalletApplication) collectTXHistory() []string {
-	var txObjects []string
-	file, err := os.Open(a.paths.LastTXFile) // acct
+// loadTXFromFile takes a file, scan it and returns it in an object
+func (a *WalletApplication) loadTXFromFile(txFile string) string {
+	var txObjects string
+
+	fi, err := os.Stat(txFile)
 	if err != nil {
-		a.sendError("Unable to read tx data. Reason:", err)
-		a.log.Errorf("Unable to read tx data. Reason: %s", err)
+		a.log.Errorln("Unable to stat last_tx. Reason: ", err)
+		a.sendError("Unable to stat last_tx. Reason: ", err)
+		return ""
+	}
+	// get the size
+	size := fi.Size()
+	if size <= 0 {
+		a.log.Info("TX file is empty.")
+		return ""
+	}
+
+	file, err := os.Open(txFile) // acct
+	if err != nil {
+		a.log.Errorln("Unable to open TX file. Reason: ", err)
+		a.sendError("Unable to read last tx. Aborting... Reason: ", err)
+		return ""
 	}
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
-		txObjects = append(txObjects, scanner.Text())
+		txObjects = scanner.Text()
 	}
 	defer file.Close()
 	return txObjects

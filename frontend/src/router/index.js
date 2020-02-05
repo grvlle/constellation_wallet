@@ -6,7 +6,10 @@ Vue.use(VueRouter);
 // configure router
 const router = new VueRouter({
   routes, // short for routes: routes
+  mode: 'abstract',
   linkActiveClass: "active"
 });
+
+router.replace('/')
 
 export default router;

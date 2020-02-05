@@ -1,146 +1,97 @@
 package main
 
 import (
-	"encoding/json"
+	"bytes"
+	"encoding/binary"
+	"encoding/hex"
+	"fmt"
+	"io"
+	"math"
+	"math/rand"
 	"os"
-	"os/user"
+	"os/exec"
 	"path/filepath"
-
-	"github.com/fsnotify/fsnotify"
+	"runtime"
+	"time"
 )
 
-// monitorFileState will monitor the state of all files in .dag
-// and act accordingly upon manipulation.
-func (a *WalletApplication) monitorFileState() error {
-	a.log.Info("Starting Watcher")
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		return err
-	}
+func (a *WalletApplication) detectJavaPath() {
 
-	go func() {
-		for {
-			select {
-			case event, ok := <-watcher.Events:
-				if !ok {
-					return
-				} // If a JSONdata/*.json file is written to.
-				if event.Op&fsnotify.Write&fsnotify.Create == fsnotify.Write|fsnotify.Create {
-					a.log.Infof("modified file: %s", event.Name)
-					switch fileModified := event.Name; {
+	if runtime.GOOS == "windows" {
 
-					case fileModified == a.paths.LastTXFile:
-						a.log.Debug("Last TX File has been modified")
+		cmd := exec.Command("cmd", "/c", "where", "java")
+		a.log.Infoln("Running command: ", cmd)
 
-					case fileModified == a.paths.KeyFile:
-						a.log.Debug("Key File has been modified")
-						a.RT.Events.Emit("wallet_keys", a.Wallet.PrivateKey.Key, a.Wallet.PublicKey.Key)
+		var out bytes.Buffer
+		var stderr bytes.Buffer
+		cmd.Stdout = &out    // Captures STDOUT
+		cmd.Stderr = &stderr // Captures STDERR
 
-					case fileModified == "JSONdata/chart_data.json":
-						a.log.Info("Chart Data file modified")
-					}
-				}
-			case err, ok := <-watcher.Errors:
-				if !ok {
-					a.sendError("", err)
-					a.log.Error(err.Error())
-				}
-			}
+		err := cmd.Run()
+		if err != nil {
+			errFormatted := fmt.Sprint(err) + ": " + stderr.String()
+			a.log.Errorf(errFormatted)
+			a.LoginError("Unable to find Java Installation")
 		}
-	}()
-
-	err = watcher.Add(a.paths.DAGDir)
-	if err != nil {
-		a.sendError("Failed to start watcher. Reason: ", err)
-		return err
+		jPath := out.String() // Path to java.exe
+		if len(jPath) <= 0 {
+			go func() {
+				for c := 0; c <= 20; c++ {
+					a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+					time.Sleep(1 * time.Second)
+				}
+			}()
+			a.log.Errorln("Unable to detect your Java Path. Please make sure that Java is installed.")
+			return
+		}
+		jwPath := string(jPath[:len(jPath)-6]) + "w.exe" // Shifting to javaw.exe
+		a.log.Infoln("Java path detected: " + jwPath)
+		a.log.Debugln(cmd)
+		a.paths.Java = jwPath
 	}
-	return nil
 }
 
-func (a *WalletApplication) collectOSPath() error {
-	user, err := user.Current()
-	if err != nil {
-		a.sendError("Unable to retrieve filesystem paths. Reason: ", err)
-		a.log.Errorf("Unable to retrieve filesystem paths. Reason: ", err)
-	}
-
-	a.paths.HomeDir = user.HomeDir             // Home directory of the user
-	a.paths.DAGDir = a.paths.HomeDir + "/.dag" // DAG directory for configuration files and wallet specific data
-	a.paths.EncryptedDir = a.paths.DAGDir + "/encrypted_key"
-	a.paths.KeyFile = a.paths.DAGDir + "/private_decrypted.pem" // DAG wallet keys
-	a.paths.PubKeyFile = a.paths.EncryptedDir + "/pub.pem"
-	a.paths.LastTXFile = a.paths.DAGDir + "/acct" // Account information
-
-	a.log.Info("DAG Directory: " + a.paths.DAGDir)
-
-	return nil
+// Convert byte slice to float64
+func Float64frombytes(bytes []byte) float64 {
+	bits := binary.LittleEndian.Uint64(bytes)
+	float := math.Float64frombits(bits)
+	return float
 }
 
-// This function is called by WailsInit and will initialize the dir structure.
-func (a *WalletApplication) setupDirectoryStructure() error {
-	err := os.MkdirAll(a.paths.DAGDir, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	path := filepath.Join(a.paths.DAGDir, "txhistory.json")
-	f, err := os.OpenFile(
-		path,
-		os.O_CREATE|os.O_WRONLY,
-		0666,
-	)
-	defer f.Close()
-
-	if !fileExists(path) {
-		f.WriteString("{}") // initialies empty JSON object for frontend parsing
-		f.Sync()
-	}
-
-	return nil
+func (a *WalletApplication) TempFileName(prefix, suffix string) string {
+	randBytes := make([]byte, 16)
+	rand.Read(randBytes)
+	return filepath.Join(a.paths.TMPDir, prefix+hex.EncodeToString(randBytes)+suffix)
 }
 
-// writeToJSON is a helper function that will remove a requested file(filename),
-// and recreate it with new data(data). This is to avoid ticking off the
-// monitorFileState function with double write events.
-func writeToJSON(filename string, data interface{}) error {
-	user, err := user.Current()
+// Copy the src file to dst. Any existing file will be overwritten and will not
+// copy file attributes.
+func Copy(src, dst string) error {
+	in, err := os.Open(src)
 	if err != nil {
 		return err
 	}
-	JSON, err := json.Marshal(data)
-	path := filepath.Join(user.HomeDir+"/.dag", filename)
-	os.Remove(path)
+	defer in.Close()
 
-	f, err := os.OpenFile(
-		path,
-		os.O_CREATE|os.O_WRONLY,
-		0666,
-	)
-	defer f.Close()
-
-	f.Write(JSON)
-	f.Sync()
-
+	out, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
+	defer out.Close()
+
+	_, err = io.Copy(out, in)
+	if err != nil {
+		return err
+	}
+	return out.Close()
+}
+
+func (a *WalletApplication) directoryCreator(directories ...string) error {
+	for _, d := range directories {
+		err := os.MkdirAll(d, os.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
-}
-
-// fileExists checks if a file exists and is not a directory before we
-// try using it to prevent further errors.
-func fileExists(filename string) bool {
-	info, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return !info.IsDir()
-}
-
-func reverseElement(elements []*txInformation) []*txInformation {
-	reversed := []*txInformation{}
-	for i := range elements {
-		n := elements[len(elements)-1-i]
-		reversed = append(reversed, n)
-	}
-	return reversed
 }

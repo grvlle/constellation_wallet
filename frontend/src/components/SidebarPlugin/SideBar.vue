@@ -9,7 +9,7 @@
     <!-- -->
     <div class="sidebar-wrapper" id="style-3">
       <div class="logo">
-        <a href="#" class="simple-text">
+        <a class="simple-text">
             <div class="logo-img">
                 <img src="@/assets/img/spots.png" alt="">
             </div>
@@ -19,7 +19,7 @@
         </a>
       </div>
       <slot>
-
+        
       </slot>
       <ul class="nav">
         <!--By default vue-router adds an active class to each route link. This way the links are colored when clicked-->

@@ -1,23 +1,66 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-
-
-import Wallet from "../../../JSONdata/wallet.json"
-//import ChartData from '../../../../../../../.dag/chart_data.json';
-
 Vue.use(Vuex);
 export const store = new Vuex.Store({
     state: {
-        errorMessage: "None",
+        errorMessage: "",
+        warningMessage: "",
+        successMessage: "",
+        loginErrorMsg: "",
+        displayLoginError: false,
+        app: {
+            txFinished: true,
+            isLoading: false,
+            isLoggedIn: false,
+            import: false,
+            register: false,
+            login: true,
+            margin: 70,
+        },
         walletInfo: {
-        tokenAmount: Wallet.balance, 
-        usdValue: "NaN",
-        blocks: "NaN",
-        address: Wallet.address,
-        privateKey: "NaN",
-        publicKey: "NaN",
-        seed: "witch collapse practice feed shame open despair creek road again ice least"
+            version: "v1.12",
+            uiVersion: "v0.1.5 Beta",
+            email: "user@email.com",
+            imgPath: 'faces/face-0.jpg',
+            transactions: 0,
+            tokenAmount: 0, 
+            totalBalance: 0,
+            availableBalance: 0,
+            nonce: 0,
+            usdValue: "NaN",
+            blocks: "NaN",
+            address: "N/A",
+            keystorePath: "",
+            saveKeystorePath: "",
+            alias: "",
+            privateKey: "NaN",
+            publicKey: "NaN",
+            seed: "Mnemonic Seed will be introduced with a later software release"
+        },
+        validators: {
+            target: "",
+            password_length: 0,
+            contains_eight_characters: false,
+            contains_number: false,
+            contains_uppercase: false,
+            contains_special_character: false,
+            duplicate: false,
+            valid_password: false,
+            alias: {
+                alias_length: 0,
+                contains_five_characters: false,
+                valid_alias: false,
+            },
+            storepass: {
+                password_length: 0,
+                contains_eight_characters: false,
+                contains_number: false,
+                contains_uppercase: false,
+                contains_special_character: false,
+                duplicate: false,
+                valid_password: false,
+            },
         },
         txInfo: {
             txHistory: []
@@ -26,6 +69,11 @@ export const store = new Vuex.Store({
             blockCounter: 5,
             tokenCounter: 60,
             nodesOnlineCounter: 24
+        },
+        toggleDashboard: {
+            showNodesOnline: false,
+            showTransactions: true,
+            showThroughput: true,
         },
         pageOfItems: [],
         chartData: {

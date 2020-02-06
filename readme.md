@@ -99,9 +99,9 @@ Simply download from the [official website](https://constellationnetwork.io/tech
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **Ensure Go modules are enabled: GO111MODULE=on and go/bin is in your PATH variable.**
 
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Installation is as simple as running the following command:
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ```
-   go get -u github.com/wailsapp/wails/cmd/wails
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ```
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   `go get -u github.com/wailsapp/wails/cmd/wails`
+  
 ---
 
 ##### 4. Clone this repository into your GOPATH

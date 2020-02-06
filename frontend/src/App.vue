@@ -1,8 +1,13 @@
 <template>
   <div>
     <vue-progress-bar></vue-progress-bar>
+    <downloading-screen
+      v-if="this.$store.state.app.isDownloadingDependencies"
+      :isDownloading="this.$store.state.app.isDownloadingDependencies"
+      :fadeout="!this.$store.state.app.isDownloadingDependencies"
+    />
     <login-screen
-      v-if="!this.$store.state.app.isLoggedIn"
+      v-if="!this.$store.state.app.isDownloadingDependencies && !this.$store.state.app.isLoggedIn"
       :isLoggedIn="!this.$store.state.app.isLoggedIn"
     />
     <loading-screen
@@ -26,13 +31,15 @@ import ErrorNotification from "./pages/Notifications/ErrorMessage";
 import WarningNotification from "./pages/Notifications/Warning";
 import SuccessNotification from "./pages/Notifications/Success";
 import LoadingScreen from "./pages/LoadingScreen";
+import DownloadingScreen from "./pages/DownloadingScreen";
 import LoginScreen from "./pages/Login";
 
 
 export default {
   components: {
     LoadingScreen,
-    LoginScreen
+    LoginScreen,
+    DownloadingScreen
   },
   data() {
     return {};
@@ -111,6 +118,18 @@ export default {
     });
     window.wails.Events.On("new_transaction", txObject => {
       this.$store.commit("updateTxHistory", txObject);
+    });
+
+    // Downloading.vue sockets
+    window.wails.Events.On("downloading_dependencies", isDownloadingDependencies => {
+      this.$store.state.app.isDownloadingDependencies = isDownloadingDependencies;
+    });
+
+    window.wails.Events.On("downloading", (filename, size) => {
+      if (this.$store.state.downloading.filename !== filename) {
+        this.$store.state.downloading.filename = filename;
+      }
+      this.$store.state.downloading.size = size;
     });
 
     // Login.vue sockets

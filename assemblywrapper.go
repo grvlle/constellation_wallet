@@ -22,7 +22,7 @@ func (a *WalletApplication) runWalletCMD(scalaFunc string, scalaArgs ...string) 
 	} else {
 		main = "java"
 	}
-	cmds := []string{"-jar", "cl-wallet.jar", scalaFunc}
+	cmds := []string{"-jar", a.paths.DAGDir + "/cl-wallet.jar", scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
 	a.log.Infoln("Running command: ", cmd)
@@ -51,7 +51,7 @@ func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string)
 	} else {
 		main = "java"
 	}
-	cmds := []string{"-jar", "cl-keytool.jar", scalaFunc}
+	cmds := []string{"-jar", a.paths.DAGDir + "/cl-keytool.jar", scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
 	a.log.Infoln("Running command: ", cmd)
@@ -144,6 +144,41 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	a.wallet.Address = string(dagAddress[:40])
 
 	return a.wallet.Address
+}
+
+func (a *WalletApplication) CheckAndFetchWalletCLI() {
+  keytoolPath := a.paths.DAGDir + "/cl-keytool.jar"
+  walletPath := a.paths.DAGDir + "/cl-wallet.jar"
+
+  keytoolExists := a.fileExists(keytoolPath)
+  walletExists := a.fileExists(walletPath)
+
+  if keytoolExists && walletExists {
+    a.RT.Events.Emit("downloading_dependencies", false)
+  } else {
+    a.RT.Events.Emit("downloading_dependencies", true)
+  }
+
+  if keytoolExists {
+    a.log.Info(keytoolPath + " file exists. Skipping downloading")
+  } else {
+    if err := a.fetchWalletJar("cl-keytool.jar", keytoolPath); err != nil {
+      a.log.Errorf("Unable to fetch or store cl-keytool.jar", err)
+    }
+  }
+
+  if walletExists {
+    a.log.Info(walletPath + " file exists. Skipping downloading")
+  } else {
+    if err := a.fetchWalletJar("cl-wallet.jar", walletPath); err != nil {
+      a.log.Errorf("Unable to fetch or store cl-wallet.jar", err)
+    }
+  }
+
+  if a.fileExists(keytoolPath) && a.fileExists(walletPath) {
+    a.RT.Events.Emit("downloading_dependencies", false)
+  }
+
 }
 
 // produceTXObject will put an actual transaction on the network. This is called from the

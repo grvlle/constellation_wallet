@@ -6,7 +6,7 @@ The Molly Wallet is the official $DAG wallet of the Constellation Network. It'll
 
 ### Here's how the Constellation Team describes it on their website
 
->Created by a Constellation community member, for the best community in crypto, and named after the wallet designer’s daughter, Molly is built with a vision to set >future standards in digital commerce.
+>Created by a Constellation community member, for the best community in crypto, and named after the wallet designer’s daughter, Molly is built with a vision to set future standards in digital commerce.
 
 >Just like your wallet that you use daily to pay for lunch, dinner, clothes, that hold your business cards, ID’s, and that lucky penny, our intention was to design something that people would use everyday. We live in an age where we have an abundance of information, from videos to blogs, that are at our fingertips. Digital commerce is molding how generations interact with one another, consume, and educate themselves. The nature of this wallet is digital and thus we wanted to expand the possibilities of what a wallet could be and do because of its multimedia capabilities. We wanted to make it not only user friendly, but create the space for applications to be developed by our vibrant open source community.
 
@@ -47,60 +47,59 @@ Simply download from the [official website](https://constellationnetwork.io/tech
    The Molly Wallet is build using a light-weight framework for Desktop Applications using Go and VueJS. Wails is very similar to Electron but is not packaging the full Chromium web browser as a dependency.
 
 
- ###### MacOS
+###### MacOS
 
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Make sure you have the xcode command line tools installed. This can be done by running:
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `xcode-select --`
+  Make sure you have the xcode command line tools installed. This can be done by running:
+  `xcode-select --`
    
-   ##### Linux
+##### Linux
+###### Debian/Ubuntu
 
-   ###### Debian/Ubuntu
+`sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   `sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev`
+_Debian: 8, 9, 10_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   _Debian: 8, 9, 10_
+_Ubuntu: 16.04, 18.04, 19.04_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   _Ubuntu: 16.04, 18.04, 19.04_
+ _Also succesfully tested on: Zorin 15, Parrot 4.7, Linuxmint 19, Elementary 5, Kali, Neon_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   _Also succesfully tested on: Zorin 15, Parrot 4.7, Linuxmint 19, Elementary 5, Kali, Neon_
+###### Arch Linux
 
-   ###### Arch Linux
+`sudo pacman -S webkit2gtk gtk3`
 
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`sudo pacman -S webkit2gtk gtk3`
+_Also succesfully test on: Manjaro & ArcoLinux_
 
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_Also succesfully test on: Manjaro & ArcoLinux_
+###### Centos
 
-   ###### Centos
+`sudo yum install webkitgtk3-devel gtk3-devel`
 
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`sudo yum install webkitgtk3-devel gtk3-devel`
+_CentOS 6, 7_
 
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_CentOS 6, 7_
+###### Fedora
 
-   ###### Fedora
+`sudo yum install webkit2gtk3-devel gtk3-devel`
 
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`sudo yum install webkit2gtk3-devel gtk3-devel`
-
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _Fedora 29, 30_
+ _Fedora 29, 30_
  
-   ###### VoidLinux & VoidLinux-musl
+###### VoidLinux & VoidLinux-musl
 
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `xbps-install gtk+3-devel webkit2gtk-devel`
+`xbps-install gtk+3-devel webkit2gtk-devel`
 
    ###### Gentoo
 
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `sudo emerge gtk+:3 webkit-gtk`
+`sudo emerge gtk+:3 webkit-gtk`
 
-   ##### Windows
+ ##### Windows
 
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Windows requires gcc and related tooling. The recommended download is from [http://tdm-gcc.tdragon.net/download](http://tdm-gcc.tdragon.net/download). Once this is installed, you are good to go.
+ Windows requires gcc and related tooling. The recommended download is from [http://tdm-gcc.tdragon.net/download](http://tdm-gcc.tdragon.net/download). Once this is installed, you are good to go.
 
    ##### Installation
 
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **Ensure Go modules are enabled: GO111MODULE=on and go/bin is in your PATH variable.**
+ **Ensure Go modules are enabled: GO111MODULE=on and go/bin is in your PATH variable.**
 
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Installation is as simple as running the following command:
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   `go get -u github.com/wailsapp/wails/cmd/wails`
+ Installation is as simple as running the following command:
+ 
+ `go get -u github.com/wailsapp/wails/cmd/wails`
   
 ---
 
@@ -127,6 +126,7 @@ In the frontend directory, run:
 $ npm run serve
 ```
 
+##### Alternatively:
 If you wish to compile the wallet, simply run:
 ```sh
 wails build

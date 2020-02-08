@@ -112,6 +112,7 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
+	a.TempPrintCreds()
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
@@ -154,7 +155,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		KeyPasswordHash:      keyPasswordHashed,
 		WalletAlias:          alias}
 
-	if a.DB.NewRecord(&a.wallet) {
+	if !a.DB.NewRecord(&a.wallet) {
 		if err := a.DB.Create(&a.wallet).Error; err != nil {
 			a.log.Errorf("Unable to create database object for new wallet. Reason: ", err)
 			a.LoginError("Unable to create new wallet. Alias already exists.")

@@ -24,8 +24,8 @@ export const store = new Vuex.Store({
           size: ""
         },
         walletInfo: {
-            version: "v1.12",
-            uiVersion: "v0.1.5 Beta",
+            version: "v1.13",
+            uiVersion: "v0.1.7 Beta",
             email: "user@email.com",
             imgPath: 'faces/face-0.jpg',
             transactions: 0,

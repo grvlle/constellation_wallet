@@ -12,7 +12,7 @@
         <div style="height:30px;" v-if="!this.$store.state.displayLoginError"></div>
         <div style="height:30px;" v-if="this.$store.state.displayLoginError"><p style="color: firebrick; font-size: 12px;">{{this.$store.state.loginErrorMsg}}</p></div>
         <div>
-          <form @submit.prevent="form">
+          <form ref='textareaform' @submit.prevent="form">
             <div class="row">
               <div class="col-2"></div>
               <div v-if="!this.$store.state.app.register && !this.$store.state.app.import" class="col-2"></div>
@@ -148,7 +148,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                   <fg-input
                     type="text"
                     v-model="alias"
-                    @input="checkAlias(alias)"
+                    @input.native="checkAlias(alias)"
                     :placeholder="this.$store.state.walletInfo.alias"
                     label="Key Alias"
                   ></fg-input>
@@ -209,8 +209,9 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="success"
                     block
-                    @click.native="login"
-                    :disabled="submitStatus === 'PENDING'"
+                    @click.native="login()"
+                  :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+
                     style="overflow: visible;"
                   >
                     <span style="display: block;">
@@ -227,7 +228,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="info"
                     block
-                    @click.native="showImportView"
+                    @click.native="showImportView()"
                     style="overflow: visible;"
                   >
                     <span style="display: block;">
@@ -245,7 +246,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="danger"
                     block
-                    @click.native="newLogin"
+                    @click.native="newLogin()"
                     style="overflow: visible;"
                   >
                     <span style="display: block;">
@@ -262,7 +263,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="default"
                     block
-                    @click.native="cancelEvent"
+                    @click.native="cancelEvent()"
                     style="overflow: visible;"
                   >
                     <span style="display: block;">
@@ -281,7 +282,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     type="warning"
                     block
                     :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
-                    @click.native="createLogin"
+                    @click.native="createLogin()"
                     style="overflow: visible;"
                   >
                     <span style="display: block;">
@@ -297,7 +298,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="default"
                     block
-                    @click.native="cancelImportView"
+                    @click.native="cancelImportView()"
                     style="overflow: visible;"
                   >
                     <span style="display: block;">
@@ -464,21 +465,53 @@ export default {
       );
     },
     showImportView: function() {
+      this.alias = ''
+      this.keystorePath = ''
+      this.keyPasswordValidate = ''
+      this.keystorePassword = ''
+      this.$store.state.walletInfo.keystorePath = ''
+      this.$store.state.walletInfo.alias = ''
+      this.$store.state.walletInfo.keystorePassword = ''
+      this.$store.state.walletInfo.keyPasswordValidate = ''
       this.$store.state.app.import = !this.$store.state.app.import;
       this.$store.state.app.login = !this.$store.state.app.login;
       this.$store.state.app.margin = 150;
     },
-    cancelImportView: function() {
+    cancelImportView: function(event) {
+      this.alias = ''
+      this.keystorePath = ''
+      this.keyPasswordValidate = ''
+      this.keystorePassword = ''
+      this.$store.state.walletInfo.keystorePath = ''
+      this.$store.state.walletInfo.alias = ''
+      this.$store.state.walletInfo.keystorePassword = ''
+      this.$store.state.walletInfo.keyPasswordValidate = ''
       this.$store.state.app.import = !this.$store.state.app.import;
       this.$store.state.app.login = !this.$store.state.app.login;
       this.$store.state.app.margin = 70;
     },
     newLogin: function(event) {
+      this.alias = ''
+      this.keystorePath = ''
+      this.keyPasswordValidate = ''
+      this.keystorePassword = ''
+      this.$store.state.walletInfo.keystorePath = ''
+      this.$store.state.walletInfo.alias = ''
+      this.$store.state.walletInfo.keystorePassword = ''
+      this.$store.state.walletInfo.keyPasswordValidate = ''
       this.$store.state.app.register = !this.$store.state.app.register;
       this.$store.state.app.login = !this.$store.state.app.login;
       this.$store.state.app.margin = 100;
     },
     cancelEvent: function(event) {
+      this.alias = ''
+      this.keystorePath = ''
+      this.keyPasswordValidate = ''
+      this.keystorePassword = ''
+      this.$store.state.walletInfo.keystorePath = ''
+      this.$store.state.walletInfo.alias = ''
+      this.$store.state.walletInfo.keystorePassword = ''
+      this.$store.state.walletInfo.keyPasswordValidate = ''
       this.$store.state.app.register = !this.$store.state.app.register;
       this.$store.state.app.login = !this.$store.state.app.login;
       this.$store.state.app.margin = 70;
@@ -513,8 +546,10 @@ export default {
       // if (this.$store.state.validators.valid_password) {
       var self = this;
       self.$Progress.start();
-      self.$store.state.walletInfo.email = self.newWalletLabel
-      window.backend.WalletApplication.StoreWalletLabelInDB(self.newWalletLabel)
+      if (self.newWalletLabel !== '') {
+          self.$store.state.walletInfo.email = self.newWalletLabel
+          window.backend.WalletApplication.StoreWalletLabelInDB(self.newWalletLabel)
+      }
       window.backend.WalletApplication.CreateWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias
       ).then(walletCreated => {
         if (walletCreated) {
@@ -537,14 +572,14 @@ export default {
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">This Agreement sets forth the legally binding terms for your use of the Services. By using the Services, you agree to be bound by this Agreement, any additional posted guidelines or rules applicable to specific services and features, and our&nbsp;Privacy Policy. If you are accepting this Agreement on behalf of a company or other legal entity, you represent and warrant that you have the authority to bind such entity to the terms set forth herein. If you do not have such authority or do not agree to be bound by this Agreement, you may not access or use the Services. You must agree to this Agreement when you create a wallet via the Site, perform a transaction via the Site, and/or otherwise use the Services.</p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">THIS AGREEMENT CONTAINS IMPORTANT INFORMATION REGARDING YOUR LEGAL RIGHTS, REMEDIES, AND OBLIGATIONS. PLEASE NOTE THAT SECTION 10 OF THIS AGREEMENT INCLUDES AN ARBITRATION AGREEMENT. EXCEPT FOR CERTAIN TYPES OF DISPUTES MENTIONED IN THAT CLAUSE, YOU AND THE COMPANY AGREE THAT DISPUTES BETWEEN US WILL BE RESOLVED BY MANDATORY BINDING ARBITRATION, AND YOU WAIVE ANY RIGHT TO PARTICIPATE IN A CLASS ACTION LAWSUIT OR CLASS ARBITRATION.</p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">The Company may, in its sole discretion, modify or revise this Agreement at any time, and you agree to be bound by such modifications or revisions. Although we may attempt to notify you when major changes are made to this Agreement, you should periodically review the most up-to-date version, which will always be posted at '+
-        '<a href="http://www.constellationnetwork.com/">http://www.constellationnetwork.com</a>. Your continued use of the Services constitutes your acceptance of such changes.</p>'+
+        'http://www.constellationnetwork.com. Your continued use of the Services constitutes your acceptance of such changes.</p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;"><strong>2.&nbsp;</strong><u><strong>Services Eligibility and Information</strong></u></p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;"><strong>2.1 Services Eligibility</strong></p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">The Services are offered and available to users who are 18 years of age or older. Any registration by, use of or access to the Services by anyone under 18 is unauthorized and in violation of this Agreement. By using the Services, you represent and warrant that you are 18 years of age or older and that you agree to abide by this Agreement.</p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;"><strong>2.2 Services Information and Limitations</strong></p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">The Site is a free interface that allows you to interact directly with the Company’s Hypergraph blockchain (the “<u>Blockchain</u>”), while remaining in full control of your keys.</p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">When you access certain features of the Services, you will be able to create a wallet and/or access a wallet to perform a variety of transactions. You will receive a private key and set up a password, but you do not and will not create an account with the Company. You also will not give us any of your tokens, and your tokens are not on the Site or otherwise in the custody of the Company. The only data that leaves your computer is the data that is recorded on the Hypergraph blockchain. The Company does not collect or hold your private keys or information, and the Company cannot access accounts; recover keys, passwords, or other information; reset passwords; or reverse transactions. You are solely responsible for your use of the Services, including without limitation for storing, backing-up, and maintaining the confidentiality of your private keys, passwords, and information, and for the security of any transactions you perform using the Site. You expressly relieve and release the Company from any and all liability and/or loss arising from your use of the Services.</p>'+
-        '<p style="margin-bottom: 0.11in;line-height: 108%;text-align: left;background: transparent;">Prior to using the Services for any purpose, we highly recommend that you read our guides, <a href="https://constellationnetwork.io/token-swap-information/">https://constellationnetwork.io/token-swap-information/</a> on for some recommendations on how to be proactive about your security. In addition, we recommend that you review the additional FAQs, tips, and guidelines provided on the Site.</p>'+
+        '<p style="margin-bottom: 0.11in;line-height: 108%;text-align: left;background: transparent;">Prior to using the Services for any purpose, we highly recommend that you read our guides, https://constellationnetwork.io/token-swap-information/ on for some recommendations on how to be proactive about your security. In addition, we recommend that you review the additional FAQs, tips, and guidelines provided on the Site.</p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;"><strong>3.&nbsp;</strong><u><strong>Rights and Restrictions</strong></u></p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;"><strong>3.1 Our Proprietary Rights</strong></p>'+
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">Our Services are protected by copyright, trademark, and other laws of the United States and foreign countries. Except as expressly provided in this Agreement, we (or our licensors) exclusively own all right, title and interest in and to the Services, including all associated intellectual property rights. You may not remove, alter or obscure any copyright, trademark, service mark or other proprietary rights notices incorporated in or accompanying the Services, including in any content therefrom. You acknowledge and agree that any feedback, comments or suggestions you may provide regarding the Services will be the sole and exclusive property of the Company, and you hereby irrevocably assign to us all of your right, title and interest in and to the foregoing. The Company reserves the right to discontinue any aspect of the Site at any time.</p>'+

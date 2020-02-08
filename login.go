@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"runtime"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
@@ -16,6 +17,10 @@ func (a *WalletApplication) LoginError(errMsg string) {
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
+
+	if runtime.GOOS == "windows" && !a.javaInstalled() {
+		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+	}
 
 	if !a.TransactionFinished {
 		a.log.Warn("Cannot login to another wallet during a pending transaction.")

@@ -170,12 +170,12 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                 </div>
                 <div class="fg-style">
                   <fg-input
-                    @input="checkKeyPassword(keyPasswordValidate)"
                     v-model="keyPasswordValidate"
+                    @input="checkKeyPassword(keyPasswordValidate)"
                     type="password"
                     label="Key Password"
                     placeholder="Enter Key Password..."
-                  ></fg-input>
+                  />
                 </div>
                 <!-- <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keyPasswordValidate !== ''">
                 <p class="validate"> Keystore Password cannot be the same as the Key Password</p>
@@ -280,7 +280,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="warning"
                     block
-                    :disabled="!this.$store.state.validators.valid_password && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                    :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
                     @click.native="createLogin"
                     style="overflow: visible;"
                   >
@@ -314,7 +314,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="info"
                     block
-                    :disabled="!this.$store.state.validators.valid_password && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                    :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
                     @click.native="importWallet()"
                     style="overflow: visible;"
                   >
@@ -382,7 +382,6 @@ export default {
         } else {
           self.$Progress.fail();
         }
-        self.$Progress.finish();
       });
     },
     checkAlias: function() {
@@ -616,7 +615,7 @@ export default {
                   cancelButtonAriaLabel: "Close Application"
               });
               }, 8000);
-              self.$Progress.finish();
+              // self.$Progress.finish();
 
             } else {
               self.$Progress.fail();

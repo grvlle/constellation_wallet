@@ -8,21 +8,31 @@ import (
 	"io"
 	"math"
 	"math/rand"
-  "net/http"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"time"
 
-  "github.com/dustin/go-humanize"
+	"github.com/dustin/go-humanize"
 )
 
 type WriteCounter struct {
-  Total     uint64
-  LastEmit  uint64
-  Filename  string
-  a         *WalletApplication
+	Total    uint64
+	LastEmit uint64
+	Filename string
+	a        *WalletApplication
+}
+
+func (a *WalletApplication) javaInstalled() bool {
+	var javaInstalled bool
+	a.log.Infoln(a.paths.Java[:len(a.paths.Java)-9])
+	if a.paths.Java[:len(a.paths.Java)-9] != "javaw.exe" {
+		javaInstalled = false
+	} else {
+		javaInstalled = true
+	}
+	return javaInstalled
 }
 
 func (a *WalletApplication) detectJavaPath() {
@@ -43,17 +53,7 @@ func (a *WalletApplication) detectJavaPath() {
 			a.log.Errorf(errFormatted)
 			a.LoginError("Unable to find Java Installation")
 		}
-		jPath := out.String() // Path to java.exe
-		if len(jPath) <= 0 {
-			go func() {
-				for c := 0; c <= 20; c++ {
-					a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
-					time.Sleep(1 * time.Second)
-				}
-			}()
-			a.log.Errorln("Unable to detect your Java Path. Please make sure that Java is installed.")
-			return
-		}
+		jPath := out.String()                            // Path to java.exe
 		jwPath := string(jPath[:len(jPath)-6]) + "w.exe" // Shifting to javaw.exe
 		a.log.Infoln("Java path detected: " + jwPath)
 		a.log.Debugln(cmd)
@@ -97,50 +97,50 @@ func Copy(src, dst string) error {
 }
 
 func (wc *WriteCounter) Write(p []byte) (int, error) {
-  n := len(p)
-  wc.Total += uint64(n)
+	n := len(p)
+	wc.Total += uint64(n)
 
-  if (wc.Total - wc.LastEmit) > uint64(800) {
-    wc.a.RT.Events.Emit("downloading", wc.Filename, humanize.Bytes(wc.Total))
-    wc.LastEmit = wc.Total
-  }
+	if (wc.Total - wc.LastEmit) > uint64(800) {
+		wc.a.RT.Events.Emit("downloading", wc.Filename, humanize.Bytes(wc.Total))
+		wc.LastEmit = wc.Total
+	}
 
-  return n, nil
+	return n, nil
 }
 
 func (a *WalletApplication) fetchWalletJar(filename string, filepath string) error {
-  url := a.WalletCLI.URL + "-v" + a.WalletCLI.Version + "/" + filename
-  a.log.Info(url)
+	url := a.WalletCLI.URL + "-v" + a.WalletCLI.Version + "/" + filename
+	a.log.Info(url)
 
-  out, err := os.Create(filepath + ".tmp")
-  if err != nil {
-    return err
-  }
+	out, err := os.Create(filepath + ".tmp")
+	if err != nil {
+		return err
+	}
 
-  resp, err := http.Get(url)
-  if err != nil {
-    out.Close()
-    return err
-  }
-  defer resp.Body.Close()
+	resp, err := http.Get(url)
+	if err != nil {
+		out.Close()
+		return err
+	}
+	defer resp.Body.Close()
 
-  counter := &WriteCounter{}
-  counter.a = a
-  counter.Filename = filename
-  counter.LastEmit = uint64(0)
+	counter := &WriteCounter{}
+	counter.a = a
+	counter.Filename = filename
+	counter.LastEmit = uint64(0)
 
-  if _, err = io.Copy(out, io.TeeReader(resp.Body, counter)); err != nil {
-    out.Close()
-    return err
-  }
+	if _, err = io.Copy(out, io.TeeReader(resp.Body, counter)); err != nil {
+		out.Close()
+		return err
+	}
 
-  out.Close()
+	out.Close()
 
-  if err = os.Rename(filepath + ".tmp", filepath); err != nil {
-    return err
-  }
+	if err = os.Rename(filepath+".tmp", filepath); err != nil {
+		return err
+	}
 
-  return nil
+	return nil
 }
 
 func (a *WalletApplication) directoryCreator(directories ...string) error {
@@ -154,9 +154,9 @@ func (a *WalletApplication) directoryCreator(directories ...string) error {
 }
 
 func (a *WalletApplication) fileExists(path string) bool {
-  info, err := os.Stat(path)
-  if os.IsNotExist(err) {
-    return false
-  }
-  return !info.IsDir()
+	info, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }

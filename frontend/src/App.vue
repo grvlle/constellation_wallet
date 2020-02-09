@@ -133,7 +133,7 @@ export default {
     });
 
     // Login.vue sockets
-    window.wails.Events.On("registeredLogin", event => {});
+    // window.wails.Events.On("registeredLogin", event => {});
 
     // Dashboard.vue sockets
     window.wails.Events.On("token", (amount, available, total) => {

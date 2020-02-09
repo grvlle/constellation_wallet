@@ -63,14 +63,14 @@ func (a *WalletApplication) ChartDataInit() *ChartData {
 	cd.Transactions.SeriesTwo = []int{230, 293, 380, 480, 503, 553, 600, 664, 698, 710, 736, 795}
 
 	cd.Throughput.Labels = []string{
-		"9:00AM",
-		"12:00AM",
-		"3:00PM",
-		"6:00PM",
-		"9:00PM",
-		"12:00PM",
-		"3:00AM",
-		"6:00AM"}
+		"9AM",
+		"12AM",
+		"3PM",
+		"6PM",
+		"9PM",
+		"12PM",
+		"3AM",
+		"6AM"}
 	cd.Throughput.SeriesOne = []int{287, 385, 490, 562, 594, 626, 698, 895, 952}
 	cd.Throughput.SeriesTwo = []int{67, 152, 193, 240, 387, 435, 535, 642, 744}
 

@@ -14,8 +14,8 @@
         <div>
           <form ref='textareaform' @submit.prevent="form">
             <div class="row">
-              <div class="col-2"></div>
-              <div v-if="!this.$store.state.app.register && !this.$store.state.app.import" class="col-2"></div>
+              <div v-if="this.$store.state.app.register || this.$store.state.app.import" class="col-1"></div>
+              <div v-if="this.$store.state.app.login" class="col-sm-3"></div>
               <div title="Create a New Wallet" v-if="this.$store.state.app.register && !this.$store.state.app.import" class="col-4 info-box">
                 <p>
                   <br />
@@ -23,19 +23,15 @@
                   <br />
                   This section will let you create a Molly Wallet to store your <b>$DAG</b> tokens in. You simply browse to a path where you wish to save your KeyStore file, give it a name and select 'save'. <br><br /> 
                   Once the path is selected, you get to set up a password to protect the key store.<br /><br />
-
-                  The Key Store will contain your private key. The only way to access that is with the KeyStore together with the KeyStore Password. The private key that is stored in the aforementioned file is also encrypted using a seperate Key Password. <br />
-                  All three of these variables are required in order to access a $DAG Wallet.
-
-                  <br />
                   <br />
                   <ul>
-  <li><b>Key File</b><i> - Select where to save your private key. <b>You need to back this up</b> as it'll help you restore your wallet at any time. If you lose this, you will be locked out of the wallet.</i></li>
+  <li><b>KeyStore File</b><i> - Select where to save your KeyStore File. </i></li>
   <li><b>Store Password</b><i> - This password unlocks the keystore file. </i></li>
   <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
   <li><b>Token Label</b><i> - This will set the label of your wallet. This is <b>optional</b> and strictly for cosmetic purposes.</i></li>
 </ul>
-Please backup your passwords and Key Store file (key.p12) as these will allow you to restore your wallet at any time. 
+<br />
+<b>Important!</b> Please backup your Alias, Store Passwords, Key Password and KeyStore File (key.p12) as these will allow you to restore your wallet at any time. 
                 
                   </p>
               </div>
@@ -59,7 +55,9 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
               </div>
 
 
-              <div class="col-4">  
+              <div class="col-6">  
+              
+
         <div v-if="this.$store.state.app.login && !this.$store.state.app.register && !this.$store.state.app.import">
           <p>Select your private key (key.p12)</p>
         <table style="width:100%;">
@@ -116,7 +114,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
         </table>
               </div>
 
-        <div style="margin-top: 20px;" v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
+        <div style="margin-top: 10px;" v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
         <p>Select a directory to store your private key (key.p12) in</p>
         <table style="width:100%;">
           <tr>
@@ -210,7 +208,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     type="success"
                     block
                     @click.native="login()"
-                  :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                  :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress || this.alias === '' || this.keystorePassword === '' || this.keyPasswordValidate === ''"
 
                     style="overflow: visible;"
                   >
@@ -281,7 +279,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="warning"
                     block
-                    :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                    :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress || this.alias === '' || this.keystorePassword === '' || this.keyPasswordValidate === ''"
                     @click.native="createLogin()"
                     style="overflow: visible;"
                   >
@@ -315,7 +313,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="info"
                     block
-                    :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                    :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress || this.alias === '' || this.keystorePassword === '' || this.keyPasswordValidate === ''"
                     @click.native="importWallet()"
                     style="overflow: visible;"
                   >
@@ -323,10 +321,10 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                       <i class="fas fa-file-import"></i> IMPORT KEY!
                     </span>
                   </p-button>
-                </div>
-              </div>
-              <div v-if="!this.$store.state.app.register" class="col-2"></div>
-              <div class="col-2"></div>
+                  </div>
+                
+              <div v-if="!this.$store.state.app.register" class="col-3"></div>
+              <div v-if="!this.$store.state.app.login" class="col"></div>
             </div>
 
             <!-- <div class="clearfix"></div> -->
@@ -481,7 +479,7 @@ export default {
       this.$store.state.walletInfo.keyPasswordValidate = ''
       this.$store.state.app.import = !this.$store.state.app.import;
       this.$store.state.app.login = !this.$store.state.app.login;
-      this.$store.state.app.margin = 150;
+      this.$store.state.app.margin = 100;
     },
     cancelImportView: function() {
       this.alias = ''
@@ -494,7 +492,7 @@ export default {
       this.$store.state.walletInfo.keyPasswordValidate = ''
       this.$store.state.app.import = !this.$store.state.app.import;
       this.$store.state.app.login = !this.$store.state.app.login;
-      this.$store.state.app.margin = 70;
+      this.$store.state.app.margin = 20;
     },
     newLogin: function() {
       this.alias = ''
@@ -507,7 +505,7 @@ export default {
       this.$store.state.walletInfo.keyPasswordValidate = ''
       this.$store.state.app.register = !this.$store.state.app.register;
       this.$store.state.app.login = !this.$store.state.app.login;
-      this.$store.state.app.margin = 100;
+      this.$store.state.app.margin = 50;
     },
     cancelEvent: function() {
       this.alias = ''
@@ -520,7 +518,7 @@ export default {
       this.$store.state.walletInfo.keyPasswordValidate = ''
       this.$store.state.app.register = !this.$store.state.app.register;
       this.$store.state.app.login = !this.$store.state.app.login;
-      this.$store.state.app.margin = 70;
+      this.$store.state.app.margin = 20;
     },
     login: function() {
       var self = this;

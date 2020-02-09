@@ -83,11 +83,11 @@
           <table class="table" :class="tableClass">
             <thead>
               <slot txAddressValidation="columns">
-                <th v-for="column in table2.columns">{{column}}</th>
+                <th v-for="column in table2.columns" v-bind:key="column.id">{{column}}</th>
               </slot>
             </thead>
             <tbody>
-              <tr v-for="tx in this.$store.state.txInfo.txHistory">
+              <tr v-for="tx in this.$store.state.txInfo.txHistory" v-bind:key="tx.ID">
                 <slot :row="item">
                   <td>
                     <p class="description" style="font-size: 15px;">
@@ -127,7 +127,6 @@ let tableData = [];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
-import NotificationPending from "./Notifications/PendingNotification";
 import Swal from "sweetalert2";
 import {
   required,

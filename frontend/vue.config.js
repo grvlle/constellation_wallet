@@ -30,7 +30,7 @@ module.exports = {
     let limit = 9999999999999999;
     config.module
       .rule("images")
-      .test(/\.(png|gif|jpg)(\?.*)?$/i)
+      .test(/\.(png|gif|jpg|jpeg)(\?.*)?$/i)
       .use("url-loader")
       .loader("url-loader")
       .tap(options => Object.assign(options, { limit: limit }));

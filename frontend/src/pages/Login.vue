@@ -336,8 +336,6 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
 </template>
 
 <script>
-import ErrorNotification from "./Notifications/ErrorMessage";
-import { required, minLength } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 
 export default {
@@ -403,7 +401,7 @@ export default {
     checkKeyPassword: function() {
       this.$store.state.validators.target = this.keyPasswordValidate
       this.$store.state.validators.password_length = this.keyPasswordValidate.length;
-      const format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+      const format = /[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
       
       if (this.$store.state.validators.password_length >= 8) {
         this.$store.state.validators.contains_eight_characters = true;
@@ -427,7 +425,7 @@ export default {
     checkPassword: function() {
       this.$store.state.validators.target = this.keystorePassword
       this.$store.state.validators.storepass.password_length = this.keystorePassword.length;
-      const format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+      const format = /[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
       
       if (this.$store.state.validators.storepass.password_length > 8) {
         this.$store.state.validators.storepass.contains_eight_characters = true;
@@ -671,7 +669,7 @@ export default {
                   type: "error"
                 });
                 
-              };
+              }
               // self.$Progress.finish();
               }) }, 8000);
               

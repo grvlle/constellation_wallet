@@ -91,7 +91,7 @@
 
               <td style="padding: 0px;">
                 <p-button
-                  style="margin-top: -17px; width: 95%; float: right;"
+                  style="margin-top: -17px; width: 95%; float: right; white-space: nowrap; overflow: hidden; text-overflow: clip;"
                   @click.native="submitLabel()"
                   type="info"
                 >Apply</p-button>
@@ -112,7 +112,7 @@
 
             <td style="padding: 0px;">
               <p-button
-                style="margin-top: -17px; width: 95%; float: right;"
+                style="margin-top: -17px; width: 95%; float: right; white-space: nowrap; overflow: hidden; text-overflow: clip;"
                 @click.native="uploadImage()"
                 type="info"
               >Browse</p-button>

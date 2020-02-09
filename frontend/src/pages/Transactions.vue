@@ -22,13 +22,13 @@
                 <div class="error" v-if="!$v.txAmountValidation.inBetween">
                   <p
                     class="validate"
-                  >Invalid amount. Please specify a number between 0.00000001 - 3,711,998,690.</p>
+                  >Invalid amount. Please verify.</p>
                 </div>
               </div>
               <div class="col-md-1">
                 <i
                   class="fa fa-chevron-circle-right"
-                  style="color: #6DECBB; font-size: 40px; padding: 28px;"
+                  style="color: #6DECBB; font-size: 40px; margin-left: -10px; padding: 28px;"
                 ></i>
               </div>
               <div class="col-md-4">
@@ -61,7 +61,7 @@
                   style="margin-top: 28px; overflow: visible;"
                 >
                   <span
-                    style="width: 80px; margin-left: -20px; overflow: hidden; white-space: nowrap; display: block; text-overflow: ellipsis;"
+                    style="width: 90px; margin-left: -30px; margin-top: -2px; overflow: hidden; white-space: nowrap; display: block; text-overflow: ellipsis;"
                   >
                     <i class="fa fa-paper-plane"></i> SEND
                   </span>

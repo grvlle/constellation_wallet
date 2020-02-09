@@ -3,9 +3,10 @@ package main
 import (
 	"os"
 
+	"runtime"
+
 	"github.com/leaanthony/mewn"
 	"github.com/wailsapp/wails"
-	"runtime"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 	css := mewn.String("./frontend/dist/app.css")
 
 	frontend := wails.CreateApp(&wails.AppConfig{
-		Width:  1530,
+		Width:  1430,
 		Height: 815,
 		Title:  "Molly - Constellation Desktop Wallet [Beta]",
 		JS:     js,

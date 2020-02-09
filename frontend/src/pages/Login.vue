@@ -381,10 +381,12 @@ export default {
                 self.$store.state.app.isLoading = false;
               }, 8000);
             } else {
+              self.loginInProgress = false;
               self.$Progress.fail();
             }
           });
         } else {
+          self.loginInProgress = false;
           self.$Progress.fail();
         }
       });
@@ -542,6 +544,7 @@ export default {
               self.$store.state.app.isLoading = false;
             }, 8000);
           } else {
+            self.loginInProgress = false;
             self.$Progress.fail();
           }
         
@@ -675,11 +678,13 @@ export default {
               }) }, 8000);
               
             } else {
+              self.loginInProgress = false;
               self.$Progress.fail();
             }
             
           });
         } else {
+          self.loginInProgress = false;
           self.$Progress.fail();
         }
       });

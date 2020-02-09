@@ -492,7 +492,7 @@ export default {
       this.$store.state.walletInfo.keyPasswordValidate = ''
       this.$store.state.app.import = !this.$store.state.app.import;
       this.$store.state.app.login = !this.$store.state.app.login;
-      this.$store.state.app.margin = 20;
+      this.$store.state.app.margin = 30;
     },
     newLogin: function() {
       this.alias = ''

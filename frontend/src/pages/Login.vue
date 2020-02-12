@@ -342,23 +342,25 @@ import Swal from "sweetalert2";
 
 export default {
   name: "login-screen",
-  newWalletLabel: "",
-  keystorePassword: '',
-  keyPasswordValidate: '',
-  loginInProgress: false,
-  storepass: "",
-  keypass: "",
-  alias: "",
-  doneLoading: false,
-  password_length: 0,
-  contains_eight_characters: false,
-  contains_number: false,
-  contains_uppercase: false,
-  contains_special_character: false,
-  valid_password: false,
-  access: false,
-  submitStatus: null,
-  termsOfService: "This HTML scroll box has had color added. You can add color to the background of your scroll box. You can also add color to the scroll bars",
+  data: () => ({
+    newWalletLabel: "",
+    keystorePassword: '',
+    keyPasswordValidate: '',
+    loginInProgress: false,
+    storepass: "",
+    keypass: "",
+    alias: "",
+    doneLoading: false,
+    password_length: 0,
+    contains_eight_characters: false,
+    contains_number: false,
+    contains_uppercase: false,
+    contains_special_character: false,
+    valid_password: false,
+    access: false,
+    submitStatus: null,
+    termsOfService: "This HTML scroll box has had color added. You can add color to the background of your scroll box. You can also add color to the scroll bars"
+  }),
   methods: {
     importWallet: function() {
       var self = this;

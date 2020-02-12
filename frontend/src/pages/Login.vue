@@ -160,37 +160,22 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                 </div> 
                 
                 <div class="fg-style">
-                <fg-input @input="checkPassword(keystorePassword)" type="password" v-model="keystorePassword" label="Keystore Password" placeholder="Enter Keystore Password ..." />
+                    <password-input
+                      :value="keystorePassword"
+                      label="Keystore Password"
+                    />
                 </div>
-                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.storepass.valid_password">             
-                            <p v-if="!this.$store.state.validators.storepass.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
-                            <p v-if="!this.$store.state.validators.storepass.contains_number" class="validate"> Number,</p> 
-                            <p v-if="!this.$store.state.validators.storepass.contains_uppercase" class="validate"> Uppercase, </p> 
-                            <p v-if="!this.$store.state.validators.storepass.contains_special_character" class="validate"> Special Character </p>     
-                </div>
+ 
                 <div class="fg-style">
-                  <fg-input
-                    v-model="keyPasswordValidate"
-                    @input="checkKeyPassword(keyPasswordValidate)"
-                    type="password"
-                    label="Key Password"
-                    placeholder="Enter Key Password..."
-                  />
+                    <password-input
+                      :value="keyPasswordValidate"
+                      label="Key Password"
+                    />
                 </div>
+                
                 <!-- <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keyPasswordValidate !== ''">
                 <p class="validate"> Keystore Password cannot be the same as the Key Password</p>
                 </div> -->
-                  
-                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.valid_password">
-               
-                            <p v-if="!this.$store.state.validators.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
-                            <p v-if="!this.$store.state.validators.contains_number" class="validate"> Number,</p> 
-                            <p v-if="!this.$store.state.validators.contains_uppercase" class="validate"> Uppercase, </p> 
-                            <p v-if="!this.$store.state.validators.contains_special_character" class="validate"> Special Character </p> 
-                          
-                </div> 
-
-
 
                 <div v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
                   <fg-input
@@ -401,54 +386,6 @@ export default {
         this.$store.state.validators.alias.contains_five_characters = false;
       }
 
-    },
-    checkKeyPassword: function() {
-      this.$store.state.validators.target = this.keyPasswordValidate
-      this.$store.state.validators.password_length = this.keyPasswordValidate.length;
-      const format = /[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
-      
-      if (this.$store.state.validators.password_length >= 8) {
-        this.$store.state.validators.contains_eight_characters = true;
-      } else {
-        this.$store.state.validators.contains_eight_characters = false;
-      }
-      
-      this.$store.state.validators.contains_number = /\d/.test(this.keyPasswordValidate);
-      this.$store.state.validators.contains_uppercase = /[A-Z]/.test(this.keyPasswordValidate);
-      this.$store.state.validators.contains_special_character = format.test(this.keyPasswordValidate);
-      
-      if (this.$store.state.validators.contains_eight_characters === true &&
-          this.$store.state.validators.contains_special_character === true &&
-          this.$store.state.validators.contains_uppercase === true &&
-          this.$store.state.validators.contains_number === true) {
-            this.$store.state.validators.valid_password = true;			
-      } else {
-        this.$store.state.validators.valid_password = false;
-      }
-    },
-    checkPassword: function() {
-      this.$store.state.validators.target = this.keystorePassword
-      this.$store.state.validators.storepass.password_length = this.keystorePassword.length;
-      const format = /[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
-      
-      if (this.$store.state.validators.storepass.password_length > 8) {
-        this.$store.state.validators.storepass.contains_eight_characters = true;
-      } else {
-        this.$store.state.validators.storepass.contains_eight_characters = false;
-      }
-      
-      this.$store.state.validators.storepass.contains_number = /\d/.test(this.keystorePassword);
-      this.$store.state.validators.storepass.contains_uppercase = /[A-Z]/.test(this.keystorePassword);
-      this.$store.state.validators.storepass.contains_special_character = format.test(this.keystorePassword);
-      
-      if (this.$store.state.validators.storepass.contains_eight_characters === true &&
-          this.$store.state.validators.storepass.contains_special_character === true &&
-          this.$store.state.validators.storepass.contains_uppercase === true &&
-          this.$store.state.validators.storepass.contains_number === true) {
-            this.$store.state.validators.storepass.valid_password = true;			
-      } else {
-        this.$store.state.validators.storepass.valid_password = false;
-      }
     },
     importKey: function() {
       window.backend.WalletApplication.ImportKey().then(

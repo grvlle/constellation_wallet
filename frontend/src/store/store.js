@@ -46,17 +46,19 @@ export const store = new Vuex.Store({
         },
         validators: {
             target: "",
-            password_length: 0,
-            contains_eight_characters: false,
-            contains_number: false,
-            contains_uppercase: false,
-            contains_special_character: false,
-            duplicate: false,
-            valid_password: false,
             alias: {
                 alias_length: 0,
                 contains_five_characters: false,
                 valid_alias: false,
+            },
+            keypass: {
+                password_length: 0,
+                contains_eight_characters: false,
+                contains_number: false,
+                contains_uppercase: false,
+                contains_special_character: false,
+                duplicate: false,
+                valid_password: false
             },
             storepass: {
                 password_length: 0,
@@ -65,7 +67,7 @@ export const store = new Vuex.Store({
                 contains_uppercase: false,
                 contains_special_character: false,
                 duplicate: false,
-                valid_password: false,
+                valid_password: false
             },
         },
         txInfo: {

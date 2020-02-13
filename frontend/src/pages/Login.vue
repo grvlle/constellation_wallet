@@ -161,15 +161,19 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                 
                 <div class="fg-style">
                     <password-input
+                      password_type="storepass"
                       :value="keystorePassword"
                       label="Keystore Password"
+                      placeholder="Enter Keystore Password ..."
                     />
                 </div>
  
                 <div class="fg-style">
                     <password-input
+                      password_type="keypass"
                       :value="keyPasswordValidate"
                       label="Key Password"
+                      placeholder="Enter Key Password..."
                     />
                 </div>
                 
@@ -336,11 +340,6 @@ export default {
     keypass: "",
     alias: "",
     doneLoading: false,
-    password_length: 0,
-    contains_eight_characters: false,
-    contains_number: false,
-    contains_uppercase: false,
-    contains_special_character: false,
     valid_password: false,
     access: false,
     submitStatus: null,

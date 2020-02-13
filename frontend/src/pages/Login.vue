@@ -334,12 +334,10 @@ export default {
   name: "login-screen",
   data: () => ({
     newWalletLabel: "",
+    alias: "",
     keystorePassword: '',
     keyPasswordValidate: '',
     loginInProgress: false,
-    storepass: "",
-    keypass: "",
-    alias: "",
     doneLoading: false,
     access: false,
     submitStatus: null,

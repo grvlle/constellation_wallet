@@ -45,7 +45,6 @@
     methods: {
       checkPassword: function() {
         this.$store.state.validators.target = this.password
-        this.$store.state.validators.storepass.password_length = this.password.length;
         const format = /[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
 
         var validator = null;
@@ -55,7 +54,8 @@
           validator = this.$store.state.validators.keypass;
         }
 
-        if (this.$store.state.validators.storepass.password_length >= 8) {
+        validator.password_length = this.password.length;
+        if (validator.password_length >= 8) {
           validator.contains_eight_characters = true;
         } else {
           validator.contains_eight_characters = false;

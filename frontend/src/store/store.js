@@ -57,7 +57,6 @@ export const store = new Vuex.Store({
                 contains_number: false,
                 contains_uppercase: false,
                 contains_special_character: false,
-                duplicate: false,
                 valid_password: false
             },
             storepass: {
@@ -66,9 +65,9 @@ export const store = new Vuex.Store({
                 contains_number: false,
                 contains_uppercase: false,
                 contains_special_character: false,
-                duplicate: false,
                 valid_password: false
             },
+            duplicate: false
         },
         txInfo: {
             txHistory: []

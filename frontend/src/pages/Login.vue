@@ -199,7 +199,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     type="success"
                     block
                     @click.native="login()"
-                  :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                  :disabled="!this.$store.state.validators.alias.valid_alias || !this.$store.state.validators.keypass.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
 
                     style="overflow: visible;"
                   >
@@ -270,12 +270,13 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="warning"
                     block
-                    :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                    :disabled="!this.$store.state.validators.alias.valid_alias || !this.$store.state.validators.keypass.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
                     @click.native="createLogin()"
                     style="overflow: visible;"
                   >
                     <span style="display: block;">
-                      <i class="fa fa-lock"></i> CREATE!
+                      <i v-if="!this.$store.state.validators.alias.valid_alias || !this.$store.state.validators.keypass.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''" class="fa fa-lock"></i>
+                       CREATE!
                     </span>
                   </p-button>
                 </div>
@@ -304,7 +305,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="info"
                     block
-                    :disabled="!this.$store.state.validators.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                    :disabled="!this.$store.state.validators.alias.valid_alias || !this.$store.state.validators.keypass.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
                     @click.native="importWallet()"
                     style="overflow: visible;"
                   >
@@ -340,7 +341,6 @@ export default {
     keypass: "",
     alias: "",
     doneLoading: false,
-    valid_password: false,
     access: false,
     submitStatus: null,
     termsOfService: "This HTML scroll box has had color added. You can add color to the background of your scroll box. You can also add color to the scroll bars"
@@ -381,8 +381,10 @@ export default {
 
       if (this.$store.state.validators.alias.alias_length >= 5) {
         this.$store.state.validators.alias.contains_five_characters = true;
+        this.$store.state.validators.alias.valid_alias = true;
       } else {
         this.$store.state.validators.alias.contains_five_characters = false;
+        this.$store.state.validators.alias.valid_alias = false;
       }
 
     },

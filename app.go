@@ -60,10 +60,10 @@ type WalletApplication struct {
 		PassKeysToFrontend bool
 		DashboardWidgets   bool
 	}
-  WalletCLI struct {
-    URL     string
-    Version string
-  }
+	WalletCLI struct {
+		URL     string
+		Version string
+	}
 }
 
 // WailsShutdown is called when the application is closed
@@ -88,8 +88,8 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.NewUser = false
 	a.TransactionFinished = true
 	a.RT = runtime
-  a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download/wallet-cli"
-  a.WalletCLI.Version = "0.1"
+	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download/wallet-cli"
+	a.WalletCLI.Version = "0.1"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {
@@ -128,7 +128,7 @@ func (a *WalletApplication) initDirectoryStructure() error {
 	a.paths.HomeDir = user.HomeDir             // Home directory of the user
 	a.paths.DAGDir = a.paths.HomeDir + "/.dag" // DAG directory for configuration files and wallet specific data
 	a.paths.TMPDir = a.paths.DAGDir + "/tmp"
-	a.paths.EncPrivKeyFile = a.paths.EncryptedDir + "/key.p12"
+	a.paths.EncPrivKeyFile = a.paths.EncryptedDir
 	a.paths.LastTXFile = a.paths.TMPDir + "/last_tx"
 	a.paths.PrevTXFile = a.paths.TMPDir + "/prev_tx"
 	a.paths.EmptyTXFile = a.paths.TMPDir + "/genesis_tx"

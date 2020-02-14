@@ -3,7 +3,7 @@
     <center>
       <img
       v-if="this.$store.state.app.isDownloadingDependencies"
-      style="margin-top: 240px;"
+      style="margin-top: 200px;"
       src="~@/assets/img/Constellation-Logo-1.png"
       />
       <p

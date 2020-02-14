@@ -14,7 +14,7 @@
                   @change="sendAmount($event.target.value)"
                   pattern="[0-9]+([,\.][0-9]+)?"
                   step="0.01"
-                  label="Submit the amount of $DAG you wish to send"
+                  label="Submit the amount you wish to send"
                   placeholder="0"
                 ></fg-input>
                 <div style="height: 25px;" class="error" v-if="$v.txAmountValidation.inBetween"></div>
@@ -63,10 +63,11 @@
                   <span
                     style="width: 90px; margin-left: -30px; margin-top: -2px; overflow: hidden; white-space: nowrap; display: block; text-overflow: ellipsis;"
                   >
-                    <i class="fa fa-paper-plane"></i> SEND
+                    <i class="fa fa-paper-plane"></i>SEND
                   </span>
                 </p-button>
               </div>
+              <div class="col-md-1"></div>
             </div>
             <!-- <div class="clearfix"></div> -->
           </form>

@@ -11,8 +11,9 @@
         :placeholder="placeholder"
         aria-describedby="basic-addon2"
         v-model="password"
+        :value="value"
         @input="checkPassword(password)"
-      />
+      >
       <div class="input-group-append">
         <p-button class="btn" @click.native="showPassword()" type="danger">
           <i v-bind:class="btnText" />
@@ -40,10 +41,12 @@
     props: {
       password_type: String,
       label: String,
-      placeholder: String
+      placeholder: String,
+      value: String
     },
     methods: {
       checkPassword: function() {
+        this.$emit("input", this.password);
         this.$store.state.validators.target = this.password
         const format = /[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
 

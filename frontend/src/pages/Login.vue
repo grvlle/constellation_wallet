@@ -162,7 +162,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                 <div class="fg-style">
                     <password-input
                       password_type="storepass"
-                      :value="keystorePassword"
+                      v-model="keystorePassword"
                       label="Keystore Password"
                       placeholder="Enter Keystore Password ..."
                     />
@@ -171,7 +171,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                 <div class="fg-style">
                     <password-input
                       password_type="keypass"
-                      :value="keyPasswordValidate"
+                      v-model="keyPasswordValidate"
                       label="Key Password"
                       placeholder="Enter Key Password..."
                     />
@@ -199,7 +199,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     type="success"
                     block
                     @click.native="login()"
-                  :disabled="!this.$store.state.validators.alias.valid_alias || !this.$store.state.validators.keypass.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                  :disabled="!valid_new_wallet"
 
                     style="overflow: visible;"
                   >
@@ -270,12 +270,12 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="warning"
                     block
-                    :disabled="!this.$store.state.validators.alias.valid_alias || !this.$store.state.validators.keypass.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                    :disabled="!this.valid_new_wallet"
                     @click.native="createLogin()"
                     style="overflow: visible;"
                   >
                     <span style="display: block;">
-                      <i v-if="!this.$store.state.validators.alias.valid_alias || !this.$store.state.validators.keypass.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''" class="fa fa-lock"></i>
+                      <i v-if="!this.valid_new_wallet" class="fa fa-lock"></i>
                        CREATE!
                     </span>
                   </p-button>
@@ -305,7 +305,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="info"
                     block
-                    :disabled="!this.$store.state.validators.alias.valid_alias || !this.$store.state.validators.keypass.valid_password || !this.$store.state.validators.storepass.valid_password || this.loginInProgress && this.alias !== '' && this.keystorePassword !== '' && this.keyPasswordValidate !== ''"
+                    :disabled="invalid_new_wallet"
                     @click.native="importWallet()"
                     style="overflow: visible;"
                   >
@@ -343,6 +343,22 @@ export default {
     submitStatus: null,
     termsOfService: "This HTML scroll box has had color added. You can add color to the background of your scroll box. You can also add color to the scroll bars"
   }),
+  computed: {
+    valid_new_wallet: function () {
+      if (
+        this.$store.state.validators.alias.valid_alias && 
+        this.$store.state.validators.keypass.valid_password && 
+        this.$store.state.validators.storepass.valid_password && 
+        this.alias !== '' && 
+        this.keystorePassword !== '' && 
+        this.keyPasswordValidate !== '' &&
+        !this.loginInProgress) {
+          return true;
+        } else {
+          return false;
+        }
+    }
+  },
   methods: {
     importWallet: function() {
       var self = this;

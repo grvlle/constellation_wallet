@@ -1,7 +1,5 @@
 <template>
-
   <div class="bg">
-    
     <center>
       <div :style="'margin-top: ' + this.$store.state.app.margin + 'px'">
         <img v-if="this.$store.state.app.login" src="~@/assets/img/Constellation-Logo-1.png" />
@@ -10,7 +8,9 @@
           style="margin-bottom: 20px; margin-top: 5px;"
         >Please enter your credentials below to access your Molly Wallet.</p>        
         <div style="height:30px;" v-if="!this.$store.state.displayLoginError"></div>
-        <div style="height:30px;" v-if="this.$store.state.displayLoginError"><p style="color: firebrick; font-size: 12px;">{{this.$store.state.loginErrorMsg}}</p></div>
+        <div style="height:30px;" v-if="this.$store.state.displayLoginError">
+          <p style="color: firebrick; font-size: 12px;">{{this.$store.state.loginErrorMsg}}</p>
+        </div>
         <div>
           <form ref='textareaform' @submit.prevent="form">
             <div class="row">
@@ -25,123 +25,103 @@
                   Once the path is selected, you get to set up a password to protect the key store.<br /><br />
                   <br />
                   <ul>
-  <li><b>KeyStore File</b><i> - Select where to save your KeyStore File. </i></li>
-  <li><b>Store Password</b><i> - This password unlocks the keystore file. </i></li>
-  <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
-  <li><b>Token Label</b><i> - This will set the label of your wallet. This is <b>optional</b> and strictly for cosmetic purposes.</i></li>
-</ul>
-<br />
-<b>Important!</b> Please backup your Alias, Store Passwords, Key Password and KeyStore File (key.p12) as these will allow you to restore your wallet at any time. 
-                
-                  </p>
+                    <li><b>KeyStore File</b><i> - Select where to save your KeyStore File. </i></li>
+                    <li><b>Store Password</b><i> - This password unlocks the keystore file. </i></li>
+                    <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
+                    <li><b>Token Label</b><i> - This will set the label of your wallet. This is <b>optional</b> and strictly for cosmetic purposes.</i></li>
+                  </ul>
+                  <br />
+                  <b>Important!</b> Please backup your Alias, Store Passwords, Key Password and KeyStore File (key.p12) as these will allow you to restore your wallet at any time.            
+                </p>
               </div>
-
-
-               <div title="Import Wallet" v-if="!this.$store.state.app.register && this.$store.state.app.import" class="col-4 info-box">
+              <div title="Import Wallet" v-if="!this.$store.state.app.register && this.$store.state.app.import" class="col-4 info-box">
                 <p>
                   <br />
                   <b>Import an existing wallet.</b>
                   <br />
                   This section will let you import an existing KeyStore (key.p12). Simply browse to the location of the KeyStore file, enter the Store Password as well as the Key Password to access it.<br />
-
                   <br />
                   <ul>
-  <li><b>Key File</b><i> - Select where your <b>existing</b> private key is stored and unlock using the passwords previously set up.</i></li>
-  <li><b>Store Password</b><i> - This password unlocks the keystore file. </i></li>
-  <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
-</ul>
-If you're able to authenticate against the Key Store and Private Key, your Key Store will be unlocked and you'll be able to access your wallet.                
-                  </p>
+                    <li><b>Key File</b><i> - Select where your <b>existing</b> private key is stored and unlock using the passwords previously set up.</i></li>
+                    <li><b>Store Password</b><i> - This password unlocks the keystore file. </i></li>
+                    <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
+                  </ul>
+                  If you're able to authenticate against the Key Store and Private Key, your Key Store will be unlocked and you'll be able to access your wallet.                
+                </p>
               </div>
-
-
-              <div class="col-6">  
-              
-
-        <div v-if="this.$store.state.app.login && !this.$store.state.app.register && !this.$store.state.app.import">
-          <p>Select your private key (key.p12)</p>
-        <table style="width:100%;">
-          <tr>
-            <td style="padding: 0px; width: 81%;">
-    
-              <fg-input
-                type="text"
-                :disabled="true"
-                :placeholder="this.$store.state.walletInfo.keystorePath"
-                v-model="this.$store.state.walletInfo.keystorePath"
-              ></fg-input>
-
-      </td>
-
-            <td style="padding-left: 0px;">
-              <p-button
-                @click.native="importKey"
-                type="default"
-                style="margin-top: -17px; width: 95%; float: right;"
-              ><span style="display: block;">
-               BROWSE
-              </span></p-button>
-         
-            </td>
-          </tr>
-        </table>
-              </div>
-         <div v-if="this.$store.state.app.import && !this.$store.state.app.login && !this.$store.state.app.register">
-        <p>Select the private key you wish to import.</p>
-        <table style="width:100%;">
-          <tr>
-            <td style="padding: 0px; width: 81%;">
-    
-              <fg-input
-                type="text"
-                :disabled="true"
-                :placeholder="this.$store.state.walletInfo.keystorePath"
-                v-model="this.$store.state.walletInfo.keystorePath"
-              ></fg-input>
-            </td>
-
-            <td style="padding-left: 0px;">
-              <p-button
-                @click.native="importKey"
-                type="default"
-                style="margin-top: -17px; width: 95%; float: right;"
-              ><span style="display: block;">
-               BROWSE
-              </span></p-button>
-         
-            </td>
-          </tr>
-        </table>
-              </div>
-
-        <div style="margin-top: 10px;" v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
-        <p>Select a directory to store your private key (key.p12) in</p>
-        <table style="width:100%;">
-          <tr>
-            <td style="padding: 0px; width: 81%;">
-    
-              <fg-input
-                type="text"
-                :disabled="true"
-                :placeholder="this.$store.state.walletInfo.saveKeystorePath"
-                v-model="this.$store.state.walletInfo.saveKeystorePath"
-              ></fg-input>
-
-      </td>
-
-            <td style="padding-left: 0px;">
-              <p-button
-                @click.native="SelectDirToStoreKey"
-                type="default"
-                style="margin-top: -17px; width: 95%; float: right;"
-              ><span style="display: block;">
-               BROWSE
-              </span></p-button>
-         
-            </td>
-          </tr>
-        </table>
-              </div>
+              <div class="col-6"> 
+                <div v-if="this.$store.state.app.login && !this.$store.state.app.register && !this.$store.state.app.import">
+                  <p>Select your private key (key.p12)</p>
+                  <table style="width:100%;">
+                    <tr>
+                      <td style="padding: 0px; width: 81%;">
+                        <fg-input
+                          type="text"
+                          :disabled="true"
+                          :placeholder="this.$store.state.walletInfo.keystorePath"
+                          v-model="this.$store.state.walletInfo.keystorePath"
+                        ></fg-input>
+                      </td>
+                      <td style="padding-left: 0px;">
+                        <p-button
+                          @click.native="importKey"
+                          type="default"
+                          style="margin-top: -17px; width: 95%; float: right;"
+                        ><span style="display: block;">
+                        BROWSE
+                        </span></p-button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div v-if="this.$store.state.app.import && !this.$store.state.app.login && !this.$store.state.app.register">
+                  <p>Select the private key you wish to import.</p>
+                  <table style="width:100%;">
+                    <tr>
+                      <td style="padding: 0px; width: 81%;">
+                        <fg-input
+                          type="text"
+                          :disabled="true"
+                          :placeholder="this.$store.state.walletInfo.keystorePath"
+                          v-model="this.$store.state.walletInfo.keystorePath"
+                        ></fg-input>
+                      </td>
+                      <td style="padding-left: 0px;">
+                        <p-button
+                          @click.native="importKey"
+                          type="default"
+                          style="margin-top: -17px; width: 95%; float: right;"
+                        ><span style="display: block;">
+                        BROWSE
+                        </span></p-button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div style="margin-top: 10px;" v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
+                  <p>Select a directory to store your private key (key.p12) in</p>
+                  <table style="width:100%;">
+                    <tr>
+                      <td style="padding: 0px; width: 81%;">
+                        <fg-input
+                          type="text"
+                          :disabled="true"
+                          :placeholder="this.$store.state.walletInfo.saveKeystorePath"
+                          v-model="this.$store.state.walletInfo.saveKeystorePath"
+                        ></fg-input>
+                      </td>
+                      <td style="padding-left: 0px;">
+                        <p-button
+                          @click.native="SelectDirToStoreKey"
+                          type="default"
+                          style="margin-top: -17px; width: 95%; float: right;"
+                        ><span style="display: block;">
+                        BROWSE
+                        </span></p-button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
                 <div class="fg-style">
                   <fg-input
                     type="text"
@@ -152,11 +132,8 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                   ></fg-input>
                 </div>
                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.alias.valid_alias">
-      
-                  <p v-if="!this.$store.state.validators.alias.contains_five_characters" class="validate"> Alias has to be atleast 5 characters long. </p>  
-                
+                  <p v-if="!this.$store.state.validators.alias.contains_five_characters" class="validate"> Alias has to be atleast 5 characters long. </p>    
                 </div> 
-                
                 <div class="fg-style">
                     <password-input
                       password_type="storepass"
@@ -165,7 +142,6 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                       placeholder="Enter Keystore Password ..."
                     />
                 </div>
- 
                 <div class="fg-style">
                     <password-input
                       password_type="keypass"
@@ -174,7 +150,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                       placeholder="Enter Key Password..."
                     />
                 </div>
-                
+                    
                 <!-- <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keyPasswordValidate !== ''">
                 <p class="validate"> Keystore Password cannot be the same as the Key Password</p>
                 </div> -->
@@ -187,31 +163,28 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     label="Wallet Label (optional)"
                   ></fg-input>
                 </div>
-
                 <div
                   v-if="!this.$store.state.app.import && this.$store.state.app.login && !this.$store.state.app.register"
                   style="margin-top: 20px;"
                 >
-                                  <p-button
+                  <p-button
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="success"
                     block
                     @click.native="login()"
-                  :disabled="!valid_new_wallet"
-
+                    :disabled="!valid_new_wallet"
                     style="overflow: visible;"
                   >
                     <span style="display: block;">
                       <i class="fa fa-unlock"></i> LOGIN
                     </span>
                   </p-button>
-                  </div>
-
+                </div>
                 <div
                   v-if="!this.$store.state.app.import && this.$store.state.app.login && !this.$store.state.app.register"
                   style="float: left; width: 48%; margin-top: 20px;"
                 >
-                            <p-button
+                  <p-button
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="info"
                     block
@@ -222,9 +195,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                       <i class="fas fa-file-import"> </i> IMPORT WALLET
                     </span>
                   </p-button>
-
                 </div>
-
                 <div
                   v-if="!this.$store.state.app.import && this.$store.state.app.login && !this.$store.state.app.register"
                   style="float: right; width: 48%; margin-top: 20px;"
@@ -241,7 +212,6 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     </span>
                   </p-button>
                 </div>
-
                 <div
                   v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register"
                   style="float: left; width: 48%; margin-top: 20px;"
@@ -258,12 +228,10 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     </span>
                   </p-button>
                 </div>
-
                 <div
                   v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register"
                   style="float: right; width: 48%; margin-top: 20px;"
                 >
-                
                   <p-button
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="warning"
@@ -274,7 +242,7 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                   >
                     <span style="display: block;">
                       <i v-if="!this.valid_new_wallet" class="fa fa-lock"></i>
-                       CREATE!
+                        CREATE!
                     </span>
                   </p-button>
                 </div>
@@ -294,11 +262,10 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                     </span>
                   </p-button>
                 </div>
-                                <div
+                <div
                   v-if="this.$store.state.app.import && !this.$store.state.app.login && !this.$store.state.app.register"
                   style="float: right; width: 48%; margin-top: 20px;"
                 >
-                
                   <p-button
                     v-if="!this.$store.state.app.isLoggedIn"
                     type="info"
@@ -311,12 +278,11 @@ If you're able to authenticate against the Key Store and Private Key, your Key S
                       <i class="fas fa-file-import"></i> IMPORT KEY!
                     </span>
                   </p-button>
-                  </div>
-                
-              <div v-if="!this.$store.state.app.register" class="col-3"></div>
-              <div v-if="!this.$store.state.app.login" class="col"></div>
+                </div>  
+                <div v-if="!this.$store.state.app.register" class="col-3"></div>
+                <div v-if="!this.$store.state.app.login" class="col"></div>
+              </div>
             </div>
-
             <!-- <div class="clearfix"></div> -->
           </form>
         </div>
@@ -497,7 +463,6 @@ export default {
             self.loginInProgress = false;
             self.$Progress.fail();
           }
-        
         }
       );
     },
@@ -631,21 +596,15 @@ export default {
               self.loginInProgress = false;
               self.$Progress.fail();
             }
-            
           });
         } else {
           self.loginInProgress = false;
           self.$Progress.fail();
         }
       });
-      // }
     }
-    
   },
-
 }
-
-
 </script>
 
 <style scoped lang="scss">

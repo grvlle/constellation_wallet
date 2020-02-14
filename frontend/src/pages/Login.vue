@@ -134,21 +134,23 @@
                 <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.alias.valid_alias">
                   <p v-if="!this.$store.state.validators.alias.contains_five_characters" class="validate"> Alias has to be atleast 5 characters long. </p>    
                 </div> 
-                <div class="fg-style">
-                    <password-input
-                      password_type="storepass"
-                      v-model="keystorePassword"
-                      label="Keystore Password"
-                      placeholder="Enter Keystore Password ..."
-                    />
+                <div class="fg-style" id="storepass">
+                  <password-input
+                    id="storepass-pw"
+                    password_type="storepass"
+                    v-model="keystorePassword"
+                    label="Keystore Password"
+                    placeholder="Enter Keystore Password ..."
+                  />
                 </div>
-                <div class="fg-style">
-                    <password-input
-                      password_type="keypass"
-                      v-model="keyPasswordValidate"
-                      label="Key Password"
-                      placeholder="Enter Key Password..."
-                    />
+                <div class="fg-style" id="keypass">
+                  <password-input
+                    id="keypass-pw"
+                    password_type="keypass"
+                    v-model="keyPasswordValidate"
+                    label="Key Password"
+                    placeholder="Enter Key Password..."
+                  />
                 </div>
                     
                 <!-- <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keyPasswordValidate !== ''">

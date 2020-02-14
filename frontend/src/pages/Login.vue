@@ -387,45 +387,30 @@ export default {
       );
     },
     showImportView: function() {
-      this.alias = ''
-      this.keystorePath = ''
-      this.keyPasswordValidate = ''
-      this.keystorePassword = ''
-      this.$store.state.walletInfo.keystorePath = ''
-      this.$store.state.walletInfo.alias = ''
-      this.$store.state.walletInfo.keystorePassword = ''
-      this.$store.state.walletInfo.keyPasswordValidate = ''
+      this.resetData();
       this.$store.state.app.import = !this.$store.state.app.import;
       this.$store.state.app.login = !this.$store.state.app.login;
       this.$store.state.app.margin = 100;
     },
     cancelImportView: function() {
-      this.alias = ''
-      this.keystorePath = ''
-      this.keyPasswordValidate = ''
-      this.keystorePassword = ''
-      this.$store.state.walletInfo.keystorePath = ''
-      this.$store.state.walletInfo.alias = ''
-      this.$store.state.walletInfo.keystorePassword = ''
-      this.$store.state.walletInfo.keyPasswordValidate = ''
+      this.resetData();
       this.$store.state.app.import = !this.$store.state.app.import;
       this.$store.state.app.login = !this.$store.state.app.login;
       this.$store.state.app.margin = 30;
     },
     newLogin: function() {
-      this.alias = ''
-      this.keystorePath = ''
-      this.keyPasswordValidate = ''
-      this.keystorePassword = ''
-      this.$store.state.walletInfo.keystorePath = ''
-      this.$store.state.walletInfo.alias = ''
-      this.$store.state.walletInfo.keystorePassword = ''
-      this.$store.state.walletInfo.keyPasswordValidate = ''
+      this.resetData();
       this.$store.state.app.register = !this.$store.state.app.register;
       this.$store.state.app.login = !this.$store.state.app.login;
       this.$store.state.app.margin = 50;
     },
     cancelEvent: function() {
+      this.resetData();
+      this.$store.state.app.register = !this.$store.state.app.register;
+      this.$store.state.app.login = !this.$store.state.app.login;
+      this.$store.state.app.margin = 20;
+    },
+    resetData: function () {
       this.alias = ''
       this.keystorePath = ''
       this.keyPasswordValidate = ''
@@ -434,9 +419,23 @@ export default {
       this.$store.state.walletInfo.alias = ''
       this.$store.state.walletInfo.keystorePassword = ''
       this.$store.state.walletInfo.keyPasswordValidate = ''
-      this.$store.state.app.register = !this.$store.state.app.register;
-      this.$store.state.app.login = !this.$store.state.app.login;
-      this.$store.state.app.margin = 20;
+      this.$store.state.validators.target = ''
+      this.$store.state.validators.alias.alias_length = ''
+      this.$store.state.validators.alias.contains_five_characters = ''
+      this.$store.state.validators.alias.valid_alias = ''
+      this.$store.state.validators.keypass.password_length = ''
+      this.$store.state.validators.keypass.contains_eight_characters = ''
+      this.$store.state.validators.keypass.contains_number = ''
+      this.$store.state.validators.keypass.contains_uppercase = ''
+      this.$store.state.validators.keypass.contains_special_character = ''
+      this.$store.state.validators.keypass.valid_password = ''
+      this.$store.state.validators.storepass.password_length = ''
+      this.$store.state.validators.storepass.contains_eight_characters = ''
+      this.$store.state.validators.storepass.contains_number = ''
+      this.$store.state.validators.storepass.contains_uppercase = ''
+      this.$store.state.validators.storepass.contains_special_character = ''
+      this.$store.state.validators.storepass.valid_password = ''
+      this.$store.state.validators.duplicate = ''
     },
     login: function() {
       var self = this;

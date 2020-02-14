@@ -20,18 +20,23 @@
         </p-button>
       </div>
     </div>
-    <div style="height: 30px; margin-top: -15px;" v-if="password_type == 'storepass' && !this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.storepass.valid_password">             
-              <p v-if="!this.$store.state.validators.storepass.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
-              <p v-if="!this.$store.state.validators.storepass.contains_number" class="validate"> Number,</p> 
-              <p v-if="!this.$store.state.validators.storepass.contains_uppercase" class="validate"> Uppercase, </p> 
-              <p v-if="!this.$store.state.validators.storepass.contains_special_character" class="validate"> Special Character </p>     
+    
+    <div style="height: 30px; margin-top: -15px;" v-if="storepass_validations">             
+      <p v-if="!this.$store.state.validators.storepass.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
+      <p v-if="!this.$store.state.validators.storepass.contains_number" class="validate"> Number,</p> 
+      <p v-if="!this.$store.state.validators.storepass.contains_uppercase" class="validate"> Uppercase, </p> 
+      <p v-if="!this.$store.state.validators.storepass.contains_special_character" class="validate"> Special Character </p>     
     </div>
-    <div style="height: 30px; margin-top: -15px;" v-if="password_type == 'keypass' && !this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.keypass.valid_password">             
-              <p v-if="!this.$store.state.validators.keypass.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
-              <p v-if="!this.$store.state.validators.keypass.contains_number" class="validate"> Number,</p> 
-              <p v-if="!this.$store.state.validators.keypass.contains_uppercase" class="validate"> Uppercase, </p> 
-              <p v-if="!this.$store.state.validators.keypass.contains_special_character" class="validate"> Special Character </p>     
+    <div style="height: 30px; margin-top: -15px;" v-if="!storepass_validations"/> 
+
+    <div style="height: 30px; margin-top: -15px;" v-if="keypass_validations">             
+      <p v-if="!this.$store.state.validators.keypass.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
+      <p v-if="!this.$store.state.validators.keypass.contains_number" class="validate"> Number,</p> 
+      <p v-if="!this.$store.state.validators.keypass.contains_uppercase" class="validate"> Uppercase, </p> 
+      <p v-if="!this.$store.state.validators.keypass.contains_special_character" class="validate"> Special Character </p>     
     </div>
+    <div style="height: 30px; margin-top: -15px;" v-if="!keypass_validations"/>
+
   </div>
 </template>
  
@@ -43,6 +48,39 @@
       label: String,
       placeholder: String,
       value: String
+    },
+    data: () => ({
+      password: null,
+      password_length: 0,
+      contains_eight_characters: false,
+      contains_number: false,
+      contains_uppercase: false,
+      contains_special_character: false,
+      type: "password",
+      btnText: "fa fa-eye"
+    }),
+    computed: {
+      storepass_validations: function () {
+        if (this.password_type == 'storepass' && 
+          !this.$store.state.validators.duplicate && 
+          !this.$store.state.app.login &&
+          !this.$store.state.validators.storepass.valid_password
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      keypass_validations: function () {
+        if (this.password_type == 'keypass' && 
+          !this.$store.state.validators.duplicate && 
+          !this.$store.state.app.login &&
+          !this.$store.state.validators.keypass.valid_password) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     },
     methods: {
       checkPassword: function() {
@@ -86,17 +124,7 @@
           this.btnText = "fa fa-eye";
         }
       }
-    },
-    data: () => ({
-      password: null,
-      password_length: 0,
-      contains_eight_characters: false,
-      contains_number: false,
-      contains_uppercase: false,
-      contains_special_character: false,
-      type: "password",
-      btnText: "fa fa-eye"
-    })
+    }
   }
 </script>
 

@@ -72,6 +72,7 @@ export default {
           this.$store.state.walletInfo.alias = "";
           this.$store.state.walletInfo.keystorePassword = "";
           this.$store.state.walletInfo.keyPasswordValidate = "";
+          this.$store.state.walletInfo.email = "";
           this.$store.state.validators.valid_password = false
           this.$store.state.validators.storepass.valid_password = false
           this.$store.state.validators.alias.contains_five_characters = false
@@ -80,7 +81,7 @@ export default {
           this.$store.state.app.register = false;
           this.$store.state.app.import = false;
           this.$store.state.app.login = true;
-          this.$store.state.app.margin = 70;
+          this.$store.state.app.margin = 20;
           return;
         }
       }),

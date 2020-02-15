@@ -398,7 +398,7 @@ export default {
       this.resetData();
       this.$store.state.app.import = !this.$store.state.app.import;
       this.$store.state.app.login = !this.$store.state.app.login;
-      this.$store.state.app.margin = 30;
+      this.$store.state.app.margin = 20;
     },
     newLogin: function() {
       this.resetData();

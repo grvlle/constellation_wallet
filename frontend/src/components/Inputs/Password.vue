@@ -15,27 +15,27 @@
         @input="checkPassword($event.target.value)"
       >
       <div class="input-group-append">
-        <p-button class="btn" @click.native="showPassword()" type="danger">
+        <p-button class="btn" @click.native="showPassword()" type="default">
           <i v-bind:class="btnText" />
         </p-button>
       </div>
     </div>
     
-    <div style="height: 30px; margin-top: -15px;" v-if="storepass_validations">             
+  <div style="height: 30px; padding-top: 20px; margin-top: -30px; margin-bottom: -10px;" v-if="storepass_validations">             
       <p v-if="!this.$store.state.validators.storepass.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
       <p v-if="!this.$store.state.validators.storepass.contains_number" class="validate"> Number,</p> 
       <p v-if="!this.$store.state.validators.storepass.contains_uppercase" class="validate"> Uppercase, </p> 
       <p v-if="!this.$store.state.validators.storepass.contains_special_character" class="validate"> Special Character </p>     
     </div>
-    <div style="height: 30px; margin-top: -15px;" v-if="!storepass_validations"/> 
+    <div style="height: 30px; margin-top: -30px; margin-bottom: -10px;" v-if="!storepass_validations"/> 
 
-    <div style="height: 30px; margin-top: -15px;" v-if="keypass_validations">             
+    <div style="padding-top: 20px; height: 30px; margin-top: -30px; margin-bottom: -10px;" v-if="keypass_validations">             
       <p v-if="!this.$store.state.validators.keypass.contains_eight_characters" class="validate"> 8 Characters Long, </p> 
       <p v-if="!this.$store.state.validators.keypass.contains_number" class="validate"> Number,</p> 
       <p v-if="!this.$store.state.validators.keypass.contains_uppercase" class="validate"> Uppercase, </p> 
       <p v-if="!this.$store.state.validators.keypass.contains_special_character" class="validate"> Special Character </p>     
     </div>
-    <div style="height: 30px; margin-top: -15px;" v-if="!keypass_validations"/>
+    <div style="height: 30px; margin-top: -30px; margin-bottom: -10px;" v-if="!keypass_validations"/>
 
   </div>
 </template>

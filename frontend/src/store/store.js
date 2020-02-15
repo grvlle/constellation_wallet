@@ -18,7 +18,7 @@ export const store = new Vuex.Store({
             import: false,
             register: false,
             login: true,
-            margin: 30,
+            margin: 20,
         },
         downloading: {
           filename: "",

@@ -490,7 +490,7 @@ export default {
                     self.$store.state.app.isLoading = false
                     Swal.fire({
                       html:
-                      '<div style="overflow: scroll; padding: 20px; width: 1160px; height: 600px;">'+
+                      '<div style="overflow: scroll; padding: 20px; width: 960px; height: 500px;">'+
                         '<p style="text-align: center;background: transparent;margin-bottom: 0.11in;line-height: 108%;"><strong>TERMS OF SERVICE</strong></p>'+
             '<p style="text-align: center;background: transparent;margin-bottom: 0.11in;line-height: 108%;">Last updated: 02.04.2020</p>'+
             '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">Welcome to Molly, a free tool for interacting directly with the Hypergraph Blockchain. Please read these terms and conditions (the <strong>"</strong><u>Terms of Service</u><strong>"</strong>) carefully. They apply to your use of the Constellation Network, Inc.’s, and any subsidiary, parent, or affiliate thereof (collectively, the “<u>Company</u>") Molly Wallet desktop application (the&nbsp;"<u>Site</u>") and any related services offered by the Company through the Site. The Site and related services offered through the Site shall hereinafter be referred to as the “<u>Services</u>.” This Terms of Service together with any additional posted guidelines or rules applicable to related services and features, and the Privacy Policy (as hereinafter defined) shall hereinafter be referred to as the “<u>Agreement</u>.”</p>'+
@@ -568,7 +568,7 @@ export default {
                       '</div>',
                       showCloseButton: true,
                       showCancelButton: true,
-                      width: "1200px",
+                      width: "1000px",
                       focusConfirm: false,
                       confirmButtonText: '<i class="fa fa-thumbs-up"></i> I have read and I Agree to Terms!',
                       confirmButtonAriaLabel: "I have read and I Agree to Terms",
@@ -588,6 +588,13 @@ export default {
                   text: "You need to accept the Terms of Service to use this product.",
                   type: "error"
                 });
+                // LogOut
+                self.$store.state.app.isLoading = false;
+                self.$store.state.app.isLoggedIn = false;
+                self.$store.state.app.register = false;
+                self.$store.state.app.import = false;
+                self.$store.state.app.login = true;
+                self.$store.state.app.margin = 20;
                 
               }
               // self.$Progress.finish();

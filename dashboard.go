@@ -187,7 +187,7 @@ func (a *WalletApplication) pollTokenBalance() {
 				balance := string(bodyBytes)
 				balanceFloat, err := strconv.ParseFloat(balance, 8)
 				if err != nil {
-					a.log.Errorln("Unable to type cast string to float for token balance poller.")
+					a.log.Warnln("Unable to type cast string to float for token balance poller. Is the blockexplorer reachable?")
 				}
 
 				a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balanceFloat, balanceFloat, balanceFloat

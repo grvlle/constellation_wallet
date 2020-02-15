@@ -13,6 +13,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/dustin/go-humanize"
 )
@@ -26,8 +27,7 @@ type WriteCounter struct {
 
 func (a *WalletApplication) javaInstalled() bool {
 	var javaInstalled bool
-	a.log.Infoln(a.paths.Java[:len(a.paths.Java)-9])
-	if a.paths.Java[:len(a.paths.Java)-9] != "javaw.exe" {
+	if a.paths.Java[len(a.paths.Java)-9:] != "javaw.exe" {
 		javaInstalled = false
 	} else {
 		javaInstalled = true
@@ -38,6 +38,7 @@ func (a *WalletApplication) javaInstalled() bool {
 func (a *WalletApplication) detectJavaPath() {
 
 	if runtime.GOOS == "windows" {
+		var jwPath string
 
 		cmd := exec.Command("cmd", "/c", "where", "java")
 		a.log.Infoln("Running command: ", cmd)
@@ -53,9 +54,14 @@ func (a *WalletApplication) detectJavaPath() {
 			a.log.Errorf(errFormatted)
 			a.LoginError("Unable to find Java Installation")
 		}
-		jPath := out.String()                            // Path to java.exe
-		jwPath := string(jPath[:len(jPath)-6]) + "w.exe" // Shifting to javaw.exe
-		a.log.Infoln("Java path detected: " + jwPath)
+		jPath := out.String() // May contain multiple
+		s := strings.Split(strings.Replace(jPath, "\r\n", "\n", -1), "\n")
+		jwPath = string(s[0][:len(s[0])-4]) + "w.exe" // Shifting to javaw.exe
+		if s[1] != "" {
+			jwPath = string(s[1][:len(s[1])-4]) + "w.exe" // Shifting to javaw.exe
+			a.log.Info("Detected a secondary java path. Using that over the first one.")
+		}
+		a.log.Infoln("Java path selected: " + jwPath)
 		a.log.Debugln(cmd)
 		a.paths.Java = jwPath
 	}

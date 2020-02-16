@@ -73,6 +73,7 @@ func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, addr
 	if amount+fee > a.wallet.AvailableBalance {
 		a.log.Warnln("Insufficient Balance")
 		a.sendWarning("Insufficent Balance.")
+		a.TransactionFailed = true
 		return
 	}
 

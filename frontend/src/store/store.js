@@ -10,6 +10,7 @@ export const store = new Vuex.Store({
         loginErrorMsg: "",
         displayLoginError: false,
         app: {
+            toc: false,
             txFinished: true,
             isLoading: false,
             isLoggedIn: false,
@@ -17,15 +18,15 @@ export const store = new Vuex.Store({
             import: false,
             register: false,
             login: true,
-            margin: 70,
+            margin: 20,
         },
         downloading: {
           filename: "",
           size: ""
         },
         walletInfo: {
-            version: "v1.12",
-            uiVersion: "v0.1.5 Beta",
+            version: "v1.13",
+            uiVersion: "v0.1.7 Beta",
             email: "user@email.com",
             imgPath: 'faces/face-0.jpg',
             transactions: 0,
@@ -45,17 +46,18 @@ export const store = new Vuex.Store({
         },
         validators: {
             target: "",
-            password_length: 0,
-            contains_eight_characters: false,
-            contains_number: false,
-            contains_uppercase: false,
-            contains_special_character: false,
-            duplicate: false,
-            valid_password: false,
             alias: {
                 alias_length: 0,
                 contains_five_characters: false,
                 valid_alias: false,
+            },
+            keypass: {
+                password_length: 0,
+                contains_eight_characters: false,
+                contains_number: false,
+                contains_uppercase: false,
+                contains_special_character: false,
+                valid_password: false
             },
             storepass: {
                 password_length: 0,
@@ -63,9 +65,9 @@ export const store = new Vuex.Store({
                 contains_number: false,
                 contains_uppercase: false,
                 contains_special_character: false,
-                duplicate: false,
-                valid_password: false,
+                valid_password: false
             },
+            duplicate: false
         },
         txInfo: {
             txHistory: []

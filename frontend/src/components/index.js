@@ -9,6 +9,8 @@ import ChartCard from "./Cards/ChartCard.vue";
 import StatsCard from "./Cards/StatsCard.vue";
 import WideCard from "./Cards/WideCard.vue";
 
+import Password from "./Inputs/Password.vue";
+
 import SidebarPlugin from "./SidebarPlugin/index";
 
 let components = {
@@ -17,6 +19,7 @@ let components = {
   ChartCard,
   StatsCard,
   WideCard,
+  Password,
   PaperTable,
   DropDown,
   SidebarPlugin
@@ -30,6 +33,7 @@ export {
   ChartCard,
   StatsCard,
   WideCard,
+  Password,
   PaperTable,
   DropDown,
   Button,

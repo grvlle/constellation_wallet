@@ -14,7 +14,7 @@
                   @change="sendAmount($event.target.value)"
                   pattern="[0-9]+([,\.][0-9]+)?"
                   step="0.01"
-                  label="Submit the amount of $DAG you wish to send"
+                  label="Submit the amount you wish to send"
                   placeholder="0"
                 ></fg-input>
                 <div style="height: 25px;" class="error" v-if="$v.txAmountValidation.inBetween"></div>
@@ -22,13 +22,13 @@
                 <div class="error" v-if="!$v.txAmountValidation.inBetween">
                   <p
                     class="validate"
-                  >Invalid amount. Please specify a number between 0.00000001 - 3,711,998,690.</p>
+                  >Invalid amount. Please verify.</p>
                 </div>
               </div>
               <div class="col-md-1">
                 <i
                   class="fa fa-chevron-circle-right"
-                  style="color: #6DECBB; font-size: 40px; padding: 28px;"
+                  style="color: #6DECBB; font-size: 40px; margin-left: -10px; padding: 28px;"
                 ></i>
               </div>
               <div class="col-md-4">
@@ -61,12 +61,13 @@
                   style="margin-top: 28px; overflow: visible;"
                 >
                   <span
-                    style="width: 80px; margin-left: -20px; overflow: hidden; white-space: nowrap; display: block; text-overflow: ellipsis;"
+                    style="width: 90px; margin-left: -30px; margin-top: -2px; overflow: hidden; white-space: nowrap; display: block; text-overflow: ellipsis;"
                   >
-                    <i class="fa fa-paper-plane"></i> SEND
+                    <i class="fa fa-paper-plane"></i>SEND
                   </span>
                 </p-button>
               </div>
+              <div class="col-md-1"></div>
             </div>
             <!-- <div class="clearfix"></div> -->
           </form>
@@ -82,11 +83,11 @@
           <table class="table" :class="tableClass">
             <thead>
               <slot txAddressValidation="columns">
-                <th v-for="column in table2.columns">{{column}}</th>
+                <th v-for="column in table2.columns" v-bind:key="column.id">{{column}}</th>
               </slot>
             </thead>
             <tbody>
-              <tr v-for="tx in this.$store.state.txInfo.txHistory">
+              <tr v-for="tx in this.$store.state.txInfo.txHistory" v-bind:key="tx.ID">
                 <slot :row="item">
                   <td>
                     <p class="description" style="font-size: 15px;">
@@ -126,7 +127,6 @@ let tableData = [];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
-import NotificationPending from "./Notifications/PendingNotification";
 import Swal from "sweetalert2";
 import {
   required,

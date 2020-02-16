@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -20,9 +21,18 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 	alias = strings.ToLower(alias)
 
+	if runtime.GOOS == "windows" && !a.javaInstalled() {
+		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+	}
+
 	if !a.TransactionFinished {
 		a.log.Warn("Cannot Import wallet in a pending transaction.")
 		a.LoginError("Cannot import a new wallet while there's a pending transaction.")
+		return false
+	}
+
+	if keystorePath == "" {
+		a.LoginError("Please provide a path to the KeyStore file.")
 		return false
 	}
 
@@ -108,11 +118,21 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 
 	alias = strings.ToLower(alias)
 
+	if runtime.GOOS == "windows" && !a.javaInstalled() {
+		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+	}
+
 	if !a.TransactionFinished {
 		a.log.Warn("Cannot Create wallet in a pending transaction.")
 		a.LoginError("Cannot create a new wallet while there's a pending transaction.")
 		return false
 	}
+
+	if keystorePath == "" {
+		a.LoginError("Please provide a path to store the KeyStore file.")
+		return false
+	}
+
 	if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
 		return false
@@ -145,51 +165,55 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		KeyPasswordHash:      keyPasswordHashed,
 		WalletAlias:          alias}
 
-	if err := a.DB.Create(&a.wallet).Error; err != nil {
-		a.log.Errorf("Unable to create database object for new wallet. Reason: ", err)
+	if !a.DB.NewRecord(&a.wallet) {
+		if err := a.DB.Create(&a.wallet).Error; err != nil {
+			a.log.Errorf("Unable to create database object for new wallet. Reason: ", err)
+			a.LoginError("Unable to create new wallet. Alias already exists.")
+			return false
+		}
+
+		if err := a.DB.Where("wallet_alias = ?", alias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
+			a.log.Errorf("Unable to query database object for new wallet after wallet creation. Reason: ", err)
+			a.sendError("Unable to query database object for new wallet after wallet creation. Reason: ", err)
+			return false
+		}
+
+		a.CreateEncryptedKeyStore()
+
+		a.wallet.Address = a.GenerateDAGAddress()
+
+		if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("Address", a.wallet.Address).Error; err != nil {
+			a.log.Errorf("Unable to update db object new wallet, with the DAG address. Reason: ", err)
+			a.sendError("Unable to update db object new wallet, with the DAG address. Reason. Reason: ", err)
+		}
+		a.KeyStoreAccess = a.WalletKeystoreAccess()
+
+		if a.KeyStoreAccess {
+			a.paths.LastTXFile = a.TempFileName("tx-", "")
+			a.paths.PrevTXFile = a.TempFileName("tx-", "")
+			a.paths.EmptyTXFile = a.TempFileName("tx-", "")
+
+			err := a.createTXFiles()
+			if err != nil {
+				a.log.Fatalln("Unable to create TX files. Check fs permissions. Reason: ", err)
+				a.sendError("Unable to create TX files. Check fs permissions. Reason: ", err)
+			}
+
+			if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Update("Path", Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
+				a.log.Errorf("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
+				a.sendError("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
+			}
+
+			a.UserLoggedIn = false
+			a.FirstTX = true
+			a.NewUser = true
+
+			a.initNewWallet()
+
+			return true
+		}
+	} else {
 		a.LoginError("Unable to create new wallet. Alias already exists.")
-		return false
-	}
-
-	if err := a.DB.Where("wallet_alias = ?", alias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
-		a.log.Errorf("Unable to query database object for new wallet after wallet creation. Reason: ", err)
-		a.sendError("Unable to query database object for new wallet after wallet creation. Reason: ", err)
-		return false
-	}
-
-	a.CreateEncryptedKeyStore()
-
-	a.wallet.Address = a.GenerateDAGAddress()
-
-	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("Address", a.wallet.Address).Error; err != nil {
-		a.log.Errorf("Unable to update db object new wallet, with the DAG address. Reason: ", err)
-		a.sendError("Unable to update db object new wallet, with the DAG address. Reason. Reason: ", err)
-	}
-	a.KeyStoreAccess = a.WalletKeystoreAccess()
-
-	if a.KeyStoreAccess {
-		a.paths.LastTXFile = a.TempFileName("tx-", "")
-		a.paths.PrevTXFile = a.TempFileName("tx-", "")
-		a.paths.EmptyTXFile = a.TempFileName("tx-", "")
-
-		err := a.createTXFiles()
-		if err != nil {
-			a.log.Fatalln("Unable to create TX files. Check fs permissions. Reason: ", err)
-			a.sendError("Unable to create TX files. Check fs permissions. Reason: ", err)
-		}
-
-		if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Update("Path", Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
-			a.log.Errorf("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
-			a.sendError("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
-		}
-
-		a.UserLoggedIn = false
-		a.FirstTX = true
-		a.NewUser = true
-
-		a.initNewWallet()
-
-		return true
 	}
 
 	return false

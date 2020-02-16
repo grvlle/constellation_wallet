@@ -91,7 +91,7 @@
 
               <td style="padding: 0px;">
                 <p-button
-                  style="margin-top: -17px; width: 95%; float: right;"
+                  style="margin-top: -17px; width: 95%; float: right; white-space: nowrap; overflow: hidden; text-overflow: clip;"
                   @click.native="submitLabel()"
                   type="info"
                 >Apply</p-button>
@@ -112,7 +112,7 @@
 
             <td style="padding: 0px;">
               <p-button
-                style="margin-top: -17px; width: 95%; float: right;"
+                style="margin-top: -17px; width: 95%; float: right; white-space: nowrap; overflow: hidden; text-overflow: clip;"
                 @click.native="uploadImage()"
                 type="info"
               >Browse</p-button>
@@ -148,7 +148,10 @@
           <label class="control-label">
             <p>Private Key</p>
           </label>
-          <p class="small" style="margin-bottom: -5px; margin-top: -20px;">Path to private key (key.p12)</p>
+          <p
+            class="small"
+            style="margin-bottom: -5px; margin-top: -20px;"
+          >Path to private key (key.p12)</p>
           <div class="row">
             <div class="col-md-12">
               <fg-input
@@ -192,7 +195,12 @@
           Select Import if you wish to restore your wallet from a previously exported file.
           <br />Select Export to export your keys into an encrypted .pem file on your filesystem. Store this file in cold storage for optimal security.
         </p>
-        <p-button :disabled="true" @click.native="importKeys()" style="margin-right: 10px;" type="success">
+        <p-button
+          :disabled="true"
+          @click.native="importKeys()"
+          style="margin-right: 10px;"
+          type="success"
+        >
           Import
           <i class="fas fa-file-import" />
         </p-button>
@@ -212,8 +220,38 @@ import Swal from "sweetalert2";
 export default {
   methods: {
     submitLabel: function() {
-      this.$store.state.walletInfo.email = this.newLabel;
-      window.backend.WalletApplication.StoreWalletLabelInDB(this.newLabel);
+      if (this.newLabel === "") {
+        Swal.fire({
+          title: "Failed!",
+          text:
+            "Unable to change wallet label. No new label entered.",
+          type: "error"
+        });
+      } else {
+        Swal.fire({
+          title: "Are you sure?",
+          html:
+            "You are about change wallet label to " +
+            this.newLabel +
+            ". This will replace your wallet label.",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#6DECBB",
+          confirmButtonText: "Yes, change label!"
+        }).then(result => {
+          if (result.value) {
+            this.$store.state.walletInfo.email = this.newLabel;
+            window.backend.WalletApplication.StoreWalletLabelInDB(
+              this.newLabel
+            );
+            Swal.fire({
+              title: "Success!",
+              text: "You have set a new wallet label",
+              type: "success"
+            });
+          }
+        });
+      }
     },
     toggleNodesOnline: function() {
       this.$store.state.toggleDashboard.showNodesOnline = !this.$store.state

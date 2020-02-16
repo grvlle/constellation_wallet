@@ -63,14 +63,14 @@ func (a *WalletApplication) ChartDataInit() *ChartData {
 	cd.Transactions.SeriesTwo = []int{230, 293, 380, 480, 503, 553, 600, 664, 698, 710, 736, 795}
 
 	cd.Throughput.Labels = []string{
-		"9:00AM",
-		"12:00AM",
-		"3:00PM",
-		"6:00PM",
-		"9:00PM",
-		"12:00PM",
-		"3:00AM",
-		"6:00AM"}
+		"9AM",
+		"12AM",
+		"3PM",
+		"6PM",
+		"9PM",
+		"12PM",
+		"3AM",
+		"6AM"}
 	cd.Throughput.SeriesOne = []int{287, 385, 490, 562, 594, 626, 698, 895, 952}
 	cd.Throughput.SeriesTwo = []int{67, 152, 193, 240, 387, 435, 535, 642, 744}
 
@@ -175,7 +175,6 @@ func (a *WalletApplication) pollTokenBalance() {
 			resp, err := http.Post("http://"+a.Network.URL+a.Network.Handles.Balance, "application/json", bytes.NewBuffer(bytesRepresentation))
 			if err != nil {
 				a.log.Errorln("Failed to send HTTP request. Reason: ", err)
-				a.sendWarning("Unable to collect token balance from mainnet. Please check your internet connection.")
 			}
 			if resp != nil {
 				defer resp.Body.Close()
@@ -183,14 +182,12 @@ func (a *WalletApplication) pollTokenBalance() {
 				bodyBytes, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
 					a.log.Error("Unable to read HTTP response from mainnet. Reason: ", err)
-					a.sendError("Unable to read HTTP response from mainnet. Reason: ", err)
 				}
 
 				balance := string(bodyBytes)
 				balanceFloat, err := strconv.ParseFloat(balance, 8)
 				if err != nil {
-					a.sendWarning("Unable to collect token balance from mainnet. Will retry 9 more times...")
-					a.log.Errorln("Unable to type cast string to float for token balance poller.")
+					a.log.Warnln("Unable to type cast string to float for token balance poller. Is the blockexplorer reachable?")
 				}
 
 				a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balanceFloat, balanceFloat, balanceFloat
@@ -201,7 +198,8 @@ func (a *WalletApplication) pollTokenBalance() {
 				retryCounter++
 				time.Sleep(1 * time.Second)
 				if retryCounter >= 50 {
-					a.sendError("Unable to poll token balance. Please check your internet connectivity. Reason: ", err)
+					a.log.Errorln("Killing pollTokenBalance after 50 failed attempts to get balance from mainnet, Reason: ", err)
+					a.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
 					break
 				}
 			}

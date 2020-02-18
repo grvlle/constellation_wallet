@@ -73,7 +73,6 @@ export default {
           this.$store.state.walletInfo.keystorePassword = "";
           this.$store.state.walletInfo.KeyPassword = "";
           this.$store.state.walletInfo.email = "";
-          this.$store.state.validators.alias.contains_five_characters = false
           this.$store.state.app.isLoading = false;
           this.$store.state.app.isLoggedIn = false;
           this.$store.state.app.register = false;

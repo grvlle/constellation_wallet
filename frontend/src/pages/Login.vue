@@ -50,22 +50,22 @@
                 </p>
               </div>
               <div class="col-6"> 
-                <div v-if="this.$store.state.app.login && !this.$store.state.app.register && !this.$store.state.app.import">
-                  <p>Select your private key (key.p12)</p>
+                <div class="fg-style" v-if="this.$store.state.app.login && !this.$store.state.app.register && !this.$store.state.app.import">
+                  <label class="control-label">Select your private key (key.p12)</label>
                     <file-selector
                       v-model="this.$store.state.walletInfo.keystorePath"
                       :placeholder="this.$store.state.walletInfo.keystorePath" 
                       action="SelectFile" />
                 </div>
-                <div v-if="this.$store.state.app.import && !this.$store.state.app.login && !this.$store.state.app.register">
-                  <p>Select the private key you wish to import.</p>
+                <div class="fg-style" v-if="this.$store.state.app.import && !this.$store.state.app.login && !this.$store.state.app.register">
+                  <label class="control-label">Select the private key you wish to import.</label>
                     <file-selector 
                       v-model="this.$store.state.walletInfo.keystorePath" 
                       :placeholder="this.$store.state.walletInfo.keystorePath"
                       action="SelectFile" />
                 </div>
-                <div style="margin-top: 10px;" v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
-                  <p>Select a directory to store your private key (key.p12) in</p>
+                <div class="fg-style" v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
+                  <label class="control-label">Select a directory to store your private key (key.p12) in</label>
                     <file-selector 
                       v-model="this.$store.state.walletInfo.saveKeystorePath" 
                       :placeholder="this.$store.state.walletInfo.saveKeystorePath"
@@ -80,8 +80,8 @@
                     label="Key Alias"
                   ></fg-input>
                 </div>
-                <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.app.login && !this.$store.state.validators.alias.valid_alias">
-                  <p v-if="!this.$store.state.validators.alias.contains_five_characters" class="validate"> Alias has to be atleast 5 characters long. </p>    
+                <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.app.login && !this.aliasValid">
+                  <p v-if="!this.aliasContainsFiveCharacters" class="validate"> Alias has to be atleast 5 characters long. </p>    
                 </div> 
                 <div class="fg-style">
                   <password-input
@@ -244,11 +244,17 @@ export default {
   name: "login-screen",
   data: () => ({
     newWalletLabel: "",
+    
     alias: "",
+    aliasValid: false,
+    aliasLength: 0,
+    aliasContainsFiveCharacters: false,
+
     keystorePassword: '',
     KeystorePasswordValid: false,
     KeyPassword: '',
     KeyPasswordValid: false,
+    
     loginInProgress: false,
     doneLoading: false,
     access: false,
@@ -258,7 +264,7 @@ export default {
   computed: {
     valid_new_wallet: function () {
       if (
-        this.$store.state.validators.alias.valid_alias && 
+        this.aliasValid && 
         this.KeyPasswordValid && 
         this.KeystorePasswordValid && 
         this.alias !== '' && 
@@ -302,14 +308,14 @@ export default {
       });
     },
     checkAlias: function() {
-      this.$store.state.validators.alias.alias_length = this.alias.length;
+      this.aliasLength = this.alias.length;
 
-      if (this.$store.state.validators.alias.alias_length >= 5) {
-        this.$store.state.validators.alias.contains_five_characters = true;
-        this.$store.state.validators.alias.valid_alias = true;
+      if (this.aliasLength >= 5) {
+        this.aliasContainsFiveCharacters = true;
+        this.aliasValid = true;
       } else {
-        this.$store.state.validators.alias.contains_five_characters = false;
-        this.$store.state.validators.alias.valid_alias = false;
+        this.aliasContainsFiveCharacters = false;
+        this.aliasValid = false;
       }
 
     },
@@ -339,6 +345,10 @@ export default {
     },
     resetData: function () {
       this.alias = ''
+      this.aliasLength = 0
+      this.aliasContainsFiveCharacters =false
+      this.aliasValid = false
+
       this.KeyPassword = ''
       this.KeyPasswordValid = false
       this.keystorePassword = ''
@@ -348,10 +358,6 @@ export default {
       this.$store.state.walletInfo.alias = ''
       this.$store.state.walletInfo.keystorePassword = ''
       this.$store.state.walletInfo.KeyPassword = ''
-
-      this.$store.state.validators.alias.alias_length = ''
-      this.$store.state.validators.alias.contains_five_characters = ''
-      this.$store.state.validators.alias.valid_alias = ''
     },
     login: function() {
       var self = this;

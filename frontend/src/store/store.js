@@ -44,13 +44,6 @@ export const store = new Vuex.Store({
             publicKey: "NaN",
             seed: "Mnemonic Seed will be introduced with a later software release"
         },
-        validators: {
-            alias: {
-                alias_length: 0,
-                contains_five_characters: false,
-                valid_alias: false,
-            }
-        },
         txInfo: {
             txHistory: []
         },

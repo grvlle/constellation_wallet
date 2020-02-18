@@ -98,32 +98,27 @@
                     label="Key Alias"
                   ></fg-input>
                 </div>
-                <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.validators.duplicate && !this.$store.state.app.login && !this.$store.state.validators.alias.valid_alias">
+                <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.app.login && !this.$store.state.validators.alias.valid_alias">
                   <p v-if="!this.$store.state.validators.alias.contains_five_characters" class="validate"> Alias has to be atleast 5 characters long. </p>    
                 </div> 
-                <div class="fg-style" id="storepass">
+                <div class="fg-style">
                   <password-input
-                    id="storepass-pw"
-                    password_type="storepass"
                     v-model="keystorePassword"
                     label="Keystore Password"
                     placeholder="Enter Keystore Password ..."
+                    v-on:valid="KeystorePasswordValid = true"
+                    v-on:invalid="KeystorePasswordValid = false"
                   />
                 </div>
-                <div class="fg-style" id="keypass">
+                <div class="fg-style">
                   <password-input
-                    id="keypass-pw"
-                    password_type="keypass"
-                    v-model="keyPasswordValidate"
+                    v-model="KeyPassword"
                     label="Key Password"
                     placeholder="Enter Key Password..."
+                    v-on:valid="KeyPasswordValid = true"
+                    v-on:invalid="KeyPasswordValid = false"
                   />
                 </div>
-                    
-                <!-- <div style="height: 30px; margin-top: -30px;" v-if="this.$store.state.app.register && this.$store.state.validators.duplicate && this.keyPasswordValidate !== ''">
-                <p class="validate"> Keystore Password cannot be the same as the Key Password</p>
-                </div> -->
-
                 <div v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
                   <fg-input
                     type="text"
@@ -269,7 +264,9 @@ export default {
     newWalletLabel: "",
     alias: "",
     keystorePassword: '',
-    keyPasswordValidate: '',
+    KeystorePasswordValid: false,
+    KeyPassword: '',
+    KeyPasswordValid: false,
     loginInProgress: false,
     doneLoading: false,
     access: false,
@@ -280,11 +277,11 @@ export default {
     valid_new_wallet: function () {
       if (
         this.$store.state.validators.alias.valid_alias && 
-        this.$store.state.validators.keypass.valid_password && 
-        this.$store.state.validators.storepass.valid_password && 
+        this.KeyPasswordValid && 
+        this.KeystorePasswordValid && 
         this.alias !== '' && 
         this.keystorePassword !== '' && 
-        this.keyPasswordValidate !== '' &&
+        this.KeyPassword !== '' &&
         !this.loginInProgress) {
           return true;
         } else {
@@ -297,10 +294,10 @@ export default {
       var self = this;
       self.$Progress.start();
       self.loginInProgress = true;
-      window.backend.WalletApplication.ImportWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias
+      window.backend.WalletApplication.ImportWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.KeyPassword, self.alias
       ).then(walletImported => {
         if (walletImported) {
-          window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias
+          window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.KeyPassword, self.alias
           ).then(loggedIn => {
             self.access = loggedIn;
             if (self.access) {
@@ -323,7 +320,6 @@ export default {
       });
     },
     checkAlias: function() {
-      this.$store.state.validators.target = this.alias;
       this.$store.state.validators.alias.alias_length = this.alias.length;
 
       if (this.$store.state.validators.alias.alias_length >= 5) {
@@ -361,35 +357,25 @@ export default {
     },
     resetData: function () {
       this.alias = ''
-      this.keyPasswordValidate = ''
+      this.KeyPassword = ''
+      this.KeyPasswordValid = false
       this.keystorePassword = ''
+      this.KeystorePasswordValid = false
+      
       this.$store.state.walletInfo.keystorePath = ''
       this.$store.state.walletInfo.alias = ''
       this.$store.state.walletInfo.keystorePassword = ''
-      this.$store.state.walletInfo.keyPasswordValidate = ''
-      this.$store.state.validators.target = ''
+      this.$store.state.walletInfo.KeyPassword = ''
+
       this.$store.state.validators.alias.alias_length = ''
       this.$store.state.validators.alias.contains_five_characters = ''
       this.$store.state.validators.alias.valid_alias = ''
-      this.$store.state.validators.keypass.password_length = ''
-      this.$store.state.validators.keypass.contains_eight_characters = ''
-      this.$store.state.validators.keypass.contains_number = ''
-      this.$store.state.validators.keypass.contains_uppercase = ''
-      this.$store.state.validators.keypass.contains_special_character = ''
-      this.$store.state.validators.keypass.valid_password = ''
-      this.$store.state.validators.storepass.password_length = ''
-      this.$store.state.validators.storepass.contains_eight_characters = ''
-      this.$store.state.validators.storepass.contains_number = ''
-      this.$store.state.validators.storepass.contains_uppercase = ''
-      this.$store.state.validators.storepass.contains_special_character = ''
-      this.$store.state.validators.storepass.valid_password = ''
-      this.$store.state.validators.duplicate = ''
     },
     login: function() {
       var self = this;
         self.$Progress.start();
         self.loginInProgress = true
-        window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias)
+        window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.KeyPassword, self.alias)
         .then(result => {
           self.access = result;
           if (self.access) {
@@ -414,7 +400,6 @@ export default {
       );
     },
     createLogin: function() {
-      // if (this.$store.state.validators.valid_password) {
       var self = this;
       self.$Progress.start();
       self.loginInProgress = true;
@@ -422,10 +407,10 @@ export default {
           self.$store.state.walletInfo.email = self.newWalletLabel
           window.backend.WalletApplication.StoreWalletLabelInDB(self.newWalletLabel)
       }
-      window.backend.WalletApplication.CreateWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias
+      window.backend.WalletApplication.CreateWallet(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.KeyPassword, self.alias
       ).then(walletCreated => {
         if (walletCreated) {
-          window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.keyPasswordValidate, self.alias
+          window.backend.WalletApplication.Login(self.$store.state.walletInfo.keystorePath, self.keystorePassword, self.KeyPassword, self.alias
           ).then(loggedIn => {
             self.access = loggedIn;
             if (self.access) {

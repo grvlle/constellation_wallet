@@ -52,42 +52,24 @@
               <div class="col-6"> 
                 <div v-if="this.$store.state.app.login && !this.$store.state.app.register && !this.$store.state.app.import">
                   <p>Select your private key (key.p12)</p>
-                  <table style="width:100%;">
-                    <tr>
-                      <td>
-                        <file-selector
-                          v-model="this.$store.state.walletInfo.keystorePath"
-                          :placeholder="this.$store.state.walletInfo.keystorePath" 
-                          action="SelectFile" />
-                      </td>
-                    </tr>
-                  </table>
+                    <file-selector
+                      v-model="this.$store.state.walletInfo.keystorePath"
+                      :placeholder="this.$store.state.walletInfo.keystorePath" 
+                      action="SelectFile" />
                 </div>
                 <div v-if="this.$store.state.app.import && !this.$store.state.app.login && !this.$store.state.app.register">
                   <p>Select the private key you wish to import.</p>
-                  <table style="width:100%;">
-                    <tr>
-                      <td>
-                        <file-selector 
-                          v-model="this.$store.state.walletInfo.keystorePath" 
-                          :placeholder="this.$store.state.walletInfo.keystorePath"
-                          action="SelectFile" />
-                      </td>
-                    </tr>
-                  </table>
+                    <file-selector 
+                      v-model="this.$store.state.walletInfo.keystorePath" 
+                      :placeholder="this.$store.state.walletInfo.keystorePath"
+                      action="SelectFile" />
                 </div>
                 <div style="margin-top: 10px;" v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
                   <p>Select a directory to store your private key (key.p12) in</p>
-                  <table style="width:100%;">
-                    <tr>
-                      <td>
-                        <file-selector 
-                          v-model="this.$store.state.walletInfo.saveKeystorePath" 
-                          :placeholder="this.$store.state.walletInfo.saveKeystorePath"
-                          action="SelectSaveFile" />
-                      </td>
-                    </tr>
-                  </table>
+                    <file-selector 
+                      v-model="this.$store.state.walletInfo.saveKeystorePath" 
+                      :placeholder="this.$store.state.walletInfo.saveKeystorePath"
+                      action="SelectSaveFile" />
                 </div>
                 <div class="fg-style">
                   <fg-input

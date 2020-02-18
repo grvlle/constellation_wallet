@@ -54,22 +54,11 @@
                   <p>Select your private key (key.p12)</p>
                   <table style="width:100%;">
                     <tr>
-                      <td style="padding: 0px; width: 81%;">
-                        <fg-input
-                          type="text"
-                          :disabled="true"
-                          :placeholder="this.$store.state.walletInfo.keystorePath"
+                      <td>
+                        <file-selector
                           v-model="this.$store.state.walletInfo.keystorePath"
-                        ></fg-input>
-                      </td>
-                      <td style="padding-left: 0px;">
-                        <p-button
-                          @click.native="importKey"
-                          type="default"
-                          style="margin-top: -17px; width: 95%; float: right;"
-                        ><span style="display: block;">
-                        BROWSE
-                        </span></p-button>
+                          :placeholder="this.$store.state.walletInfo.keystorePath" 
+                          action="SelectFile" />
                       </td>
                     </tr>
                   </table>
@@ -78,22 +67,11 @@
                   <p>Select the private key you wish to import.</p>
                   <table style="width:100%;">
                     <tr>
-                      <td style="padding: 0px; width: 81%;">
-                        <fg-input
-                          type="text"
-                          :disabled="true"
+                      <td>
+                        <file-selector 
+                          v-model="this.$store.state.walletInfo.keystorePath" 
                           :placeholder="this.$store.state.walletInfo.keystorePath"
-                          v-model="this.$store.state.walletInfo.keystorePath"
-                        ></fg-input>
-                      </td>
-                      <td style="padding-left: 0px;">
-                        <p-button
-                          @click.native="importKey"
-                          type="default"
-                          style="margin-top: -17px; width: 95%; float: right;"
-                        ><span style="display: block;">
-                        BROWSE
-                        </span></p-button>
+                          action="SelectFile" />
                       </td>
                     </tr>
                   </table>
@@ -102,22 +80,11 @@
                   <p>Select a directory to store your private key (key.p12) in</p>
                   <table style="width:100%;">
                     <tr>
-                      <td style="padding: 0px; width: 81%;">
-                        <fg-input
-                          type="text"
-                          :disabled="true"
+                      <td>
+                        <file-selector 
+                          v-model="this.$store.state.walletInfo.saveKeystorePath" 
                           :placeholder="this.$store.state.walletInfo.saveKeystorePath"
-                          v-model="this.$store.state.walletInfo.saveKeystorePath"
-                        ></fg-input>
-                      </td>
-                      <td style="padding-left: 0px;">
-                        <p-button
-                          @click.native="SelectDirToStoreKey"
-                          type="default"
-                          style="margin-top: -17px; width: 95%; float: right;"
-                        ><span style="display: block;">
-                        BROWSE
-                        </span></p-button>
+                          action="SelectSaveFile" />
                       </td>
                     </tr>
                   </table>
@@ -368,26 +335,6 @@ export default {
       }
 
     },
-    importKey: function() {
-      window.backend.WalletApplication.ImportKey().then(
-        result => {
-          if (result) {
-          this.$store.state.walletInfo.keystorePath = result;
-          }
-          // handle err
-        }
-      );
-    },
-    SelectDirToStoreKey: function() {
-      window.backend.WalletApplication.SelectDirToStoreKey().then(
-        result => {
-          this.$store.state.walletInfo.saveKeystorePath = result;
-          this.$store.state.walletInfo.keystorePath = result;
-          
-          // handle err
-        }
-      );
-    },
     showImportView: function() {
       this.resetData();
       this.$store.state.app.import = !this.$store.state.app.import;
@@ -414,7 +361,6 @@ export default {
     },
     resetData: function () {
       this.alias = ''
-      this.keystorePath = ''
       this.keyPasswordValidate = ''
       this.keystorePassword = ''
       this.$store.state.walletInfo.keystorePath = ''

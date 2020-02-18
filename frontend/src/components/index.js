@@ -10,6 +10,7 @@ import StatsCard from "./Cards/StatsCard.vue";
 import WideCard from "./Cards/WideCard.vue";
 
 import Password from "./Inputs/Password.vue";
+import FileSelector from "./Inputs/FileSelector.vue";
 
 import SidebarPlugin from "./SidebarPlugin/index";
 
@@ -20,6 +21,7 @@ let components = {
   StatsCard,
   WideCard,
   Password,
+  FileSelector,
   PaperTable,
   DropDown,
   SidebarPlugin
@@ -34,6 +36,7 @@ export {
   StatsCard,
   WideCard,
   Password,
+  FileSelector,
   PaperTable,
   DropDown,
   Button,

@@ -55,6 +55,8 @@ github.com/leaanthony/mewn v0.10.7 h1:jCcNJyIUOpwj+I5SuATvCugDjHkoo+j6ubEOxxrxmP
 github.com/leaanthony/mewn v0.10.7/go.mod h1:CRkTx8unLiSSilu/Sd7i1LwrdaAL+3eQ3ses99qGMEQ=
 github.com/leaanthony/slicer v1.3.2 h1:kGWWFoyaY5WzwGrUsHXMmGbssuYthP4qYBNlkNpNAB8=
 github.com/leaanthony/slicer v1.3.2/go.mod h1:VMB/HGvr3uR3MRpFWHWAm0w+DHQLzPHYe2pKfpFlQIQ=
+github.com/leaanthony/slicer v1.4.0 h1:Q9u4w+UBU4WHjXnEDdz+eRLMKF/rnyosRBiqULnc1J8=
+github.com/leaanthony/slicer v1.4.0/go.mod h1:FwrApmf8gOrpzEWM2J/9Lh79tyq8KTX5AzRtwV7m4AY=
 github.com/leaanthony/spinner v0.5.3 h1:IMTvgdQCec5QA4qRy0wil4XsRP+QcG1OwLWVK/LPZ5Y=
 github.com/leaanthony/spinner v0.5.3/go.mod h1:oHlrvWicr++CVV7ALWYi+qHk/XNA91D9IJ48IqmpVUo=
 github.com/leaanthony/synx v0.1.0 h1:R0lmg2w6VMb8XcotOwAe5DLyzwjLrskNkwU7LLWsyL8=
@@ -104,6 +106,8 @@ github.com/wailsapp/wails v0.17.13-pre h1:JqCXP1twVR4ZnSqd4uzn610+/1Nx9AGuIKGAC/
 github.com/wailsapp/wails v0.17.13-pre/go.mod h1:WSlg1CQCI2sqTxSIyMQXxE4lsGpnAU+HIyoCeGpnWIs=
 github.com/wailsapp/wails v0.19.0-pre2 h1:4q+LIX9w0bB8q+bZU/ZVkNDI56vmJPCvjU7xRBXMoP0=
 github.com/wailsapp/wails v0.19.0-pre2/go.mod h1:CEmTAETH2Z9/mW6rf8pqWcMajql2AKi789uBD24z7nU=
+github.com/wailsapp/wails v1.0.2 h1:ztqaLpDb8m8SqAi0u+Ss49zBFrmtm/cAa6ztvKYEjaw=
+github.com/wailsapp/wails v1.0.2/go.mod h1:p+1LmkP+8qF/WFancyMPLKw4jukT9BTAPoZzdn6uwx0=
 github.com/wailsapp/webview v0.2.7 h1:fN5L5H9Oivg9IJPk7uaXQnjqB68Fny11ZWkIaTIZHmk=
 github.com/wailsapp/webview v0.2.7/go.mod h1:XO9HJbKWokDxUYTWQEBCYg95n/To1v7PxvanDNVf8hY=
 github.com/zserge/webview v0.0.0-20190123072648-16c93bcaeaeb/go.mod h1:a1CV8KR4Dd1eP2g+mEijGOp+HKczwdKHWyx0aPHKvo4=

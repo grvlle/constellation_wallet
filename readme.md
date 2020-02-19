@@ -31,7 +31,7 @@ Molly Wallet uses a number of open source projects to work properly:
 
 ### Installation
 
-Molly Wallet requires [Java](https://java.com/) to run.
+Molly Wallet requires [OpenJDK v9](https://java.com/) to run.
 
 Simply download from the [official website](https://constellationnetwork.io/technology/molly-wallet/) for the selected OS.
 

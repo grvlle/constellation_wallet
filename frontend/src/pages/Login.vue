@@ -3,233 +3,215 @@
     <center>
       <div :style="'margin-top: ' + this.$store.state.app.margin + 'px'">
         <img v-if="this.$store.state.app.login" src="~@/assets/img/Constellation-Logo-1.png" />
-        <p
-          v-if="this.$store.state.app.login"
-          style="margin-bottom: 20px; margin-top: 5px;"
-        >Please enter your credentials below to access your Molly Wallet.</p>        
-        <div style="height:30px;" v-if="!this.$store.state.displayLoginError"></div>
+        <p v-if="isLogin" tyle="margin-bottom: 20px; margin-top: 5px;" >
+          Please enter your credentials below to access your Molly Wallet.
+        </p>        
         <div style="height:30px;" v-if="this.$store.state.displayLoginError">
           <p style="color: firebrick; font-size: 12px;">{{this.$store.state.loginErrorMsg}}</p>
         </div>
+        <div style="height:30px;" v-else></div>
         <div>
           <form ref='textareaform' @submit.prevent="form">
             <div class="row">
-              <div v-if="this.$store.state.app.register || this.$store.state.app.import" class="col-1"></div>
-              <div v-if="this.$store.state.app.login" class="col-sm-3"></div>
-              <div title="Create a New Wallet" v-if="this.$store.state.app.register && !this.$store.state.app.import" class="col-4 info-box">
-                <p>
-                  <br />
-                  <b>Create a new wallet</b>
-                  <br />
-                  This section will let you create a Molly Wallet to store your <b>$DAG</b> tokens in. You simply browse to a path where you wish to save your KeyStore file, give it a name and select 'save'. <br><br /> 
-                  Once the path is selected, you get to set up a password to protect the key store.<br /><br />
-                  <br />
-                  <ul>
-                    <li><b>KeyStore File</b><i> - Select where to save your KeyStore File. </i></li>
-                    <li><b>Store Password</b><i> - This password unlocks the keystore file. </i></li>
-                    <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
-                    <li><b>Token Label</b><i> - This will set the label of your wallet. This is <b>optional</b> and strictly for cosmetic purposes.</i></li>
-                  </ul>
-                  <br />
-                  <b>Important!</b> Please backup your Alias, Store Passwords, Key Password and KeyStore File (key.p12) as these will allow you to restore your wallet at any time.            
-                </p>
+              <div class="col-1"></div>
+              <div v-bind:class="{ 'col-2': isLogin, 'col-4': !isLogin }" class="info-box">
+                <div title="Create a New Wallet" v-if="isRegister">
+                  <p>
+                    <br />
+                    <b>Create a new wallet</b>
+                    <br />
+                    This section will let you create a Molly Wallet to store your <b>$DAG</b> tokens in. You simply browse to a path where you wish to save your KeyStore file, give it a name and select 'save'. <br><br /> 
+                    Once the path is selected, you get to set up a password to protect the key store.<br /><br />
+                    <br />
+                    <ul>
+                      <li><b>KeyStore File</b><i> - Select where to save your KeyStore File. </i></li>
+                      <li><b>Store Password</b><i> - This password unlocks the keystore file. </i></li>
+                      <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
+                      <li><b>Token Label</b><i> - This will set the label of your wallet. This is <b>optional</b> and strictly for cosmetic purposes.</i></li>
+                    </ul>
+                    <br />
+                    <b>Important!</b> Please backup your Alias, Store Passwords, Key Password and KeyStore File (key.p12) as these will allow you to restore your wallet at any time.            
+                  </p>
+                </div>
+                <div title="Import Wallet" v-if="isImport">
+                  <p>
+                    <br />
+                    <b>Import an existing wallet.</b>
+                    <br />
+                    This section will let you import an existing KeyStore (key.p12). Simply browse to the location of the KeyStore file, enter the Store Password as well as the Key Password to access it.<br />
+                    <br />
+                    <ul>
+                      <li><b>Key File</b><i> - Select where your <b>existing</b> private key is stored and unlock using the passwords previously set up.</i></li>
+                      <li><b>Store Password</b><i> - This password unlocks the keystore file. </i></li>
+                      <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
+                    </ul>
+                    If you're able to authenticate against the Key Store and Private Key, your Key Store will be unlocked and you'll be able to access your wallet.                
+                  </p>
+                </div>
               </div>
-              <div title="Import Wallet" v-if="!this.$store.state.app.register && this.$store.state.app.import" class="col-4 info-box">
-                <p>
-                  <br />
-                  <b>Import an existing wallet.</b>
-                  <br />
-                  This section will let you import an existing KeyStore (key.p12). Simply browse to the location of the KeyStore file, enter the Store Password as well as the Key Password to access it.<br />
-                  <br />
-                  <ul>
-                    <li><b>Key File</b><i> - Select where your <b>existing</b> private key is stored and unlock using the passwords previously set up.</i></li>
-                    <li><b>Store Password</b><i> - This password unlocks the keystore file. </i></li>
-                    <li><b>Key Password</b><i> - Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i></li>
-                  </ul>
-                  If you're able to authenticate against the Key Store and Private Key, your Key Store will be unlocked and you'll be able to access your wallet.                
-                </p>
+              <div class="col-6 login-box"> 
+                <div class="input-box">
+                  <div class="fg-style" v-if="isLogin">
+                    <label class="control-label">Select your private key (key.p12)</label>
+                      <file-selector
+                        v-model="this.$store.state.walletInfo.keystorePath"
+                        :placeholder="this.$store.state.walletInfo.keystorePath" 
+                        action="SelectFile" />
+                  </div>
+                  <div class="fg-style" v-if="isImport">
+                    <label class="control-label">Select the private key you wish to import.</label>
+                      <file-selector 
+                        v-model="this.$store.state.walletInfo.keystorePath" 
+                        :placeholder="this.$store.state.walletInfo.keystorePath"
+                        action="SelectFile" />
+                  </div>
+                  <div class="fg-style" v-if="isRegister">
+                    <label class="control-label">Select a directory to store your private key (key.p12) in</label>
+                      <file-selector 
+                        v-model="this.$store.state.walletInfo.saveKeystorePath" 
+                        :placeholder="this.$store.state.walletInfo.saveKeystorePath"
+                        action="SelectSaveFile" />
+                  </div>
+                  <div class="fg-style">
+                    <fg-input
+                      type="text"
+                      v-model="alias"
+                      @input.native="checkAlias(alias)"
+                      :placeholder="this.$store.state.walletInfo.alias"
+                      label="Key Alias"
+                    ></fg-input>
+                  </div>
+                  <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.app.login && !this.aliasValid">
+                    <p v-if="!this.aliasContainsFiveCharacters" class="validate"> Alias has to be atleast 5 characters long. </p>    
+                  </div> 
+                  <div class="fg-style">
+                    <password-input
+                      v-model="keystorePassword"
+                      label="Keystore Password"
+                      placeholder="Enter Keystore Password ..."
+                      v-on:valid="KeystorePasswordValid = true"
+                      v-on:invalid="KeystorePasswordValid = false"
+                    />
+                  </div>
+                  <div class="fg-style">
+                    <password-input
+                      v-model="KeyPassword"
+                      label="Key Password"
+                      placeholder="Enter Key Password..."
+                      v-on:valid="KeyPasswordValid = true"
+                      v-on:invalid="KeyPasswordValid = false"
+                    />
+                  </div>
+                  <div v-if="isRegister">
+                    <fg-input
+                      type="text"
+                      v-model="newWalletLabel"
+                      :placeholder="this.$store.state.walletInfo.email"
+                      label="Wallet Label (optional)"
+                    ></fg-input>
+                  </div>
+                </div>
+                <div class="button-box">
+                  <div class="row" v-if="isLogin" >
+                    <div class="col-12">
+                      <p-button
+                        v-if="!this.$store.state.app.isLoggedIn"
+                        type="success"
+                        block
+                        @click.native="login()"
+                        :disabled="!isValidNewWallet"
+                        style="overflow: visible;" >
+                        <span style="display: block;">
+                          <i class="fa fa-unlock"></i> LOGIN
+                        </span>
+                      </p-button>
+                    </div>
+                  </div>
+                  <div class="row" v-if="isLogin" >
+                    <div class="col-6 btn-container">
+                      <p-button
+                        v-if="!this.$store.state.app.isLoggedIn"
+                        type="info"
+                        block
+                        @click.native="showImportView()"
+                        style="overflow: visible;" >
+                        <span style="display: block;">
+                          <i class="fas fa-file-import"> </i> IMPORT WALLET
+                        </span>
+                      </p-button>
+                    </div>
+                    <div class="col-6 btn-container">
+                      <p-button
+                        v-if="!this.$store.state.app.isLoggedIn"
+                        type="danger"
+                        block
+                        @click.native="newLogin()"
+                        style="overflow: visible;" >
+                        <span style="display: block;">
+                          <i class="fa fa-key"></i> CREATE A NEW WALLET
+                        </span>
+                      </p-button>
+                    </div>
+                  </div>
+                  <div class="row" v-if="isRegister" >
+                    <div class="col-6 btn-container">
+                      <p-button
+                        v-if="!this.$store.state.app.isLoggedIn"
+                        type="default"
+                        block
+                        @click.native="cancelEvent()"
+                        style="overflow: visible;" >
+                        <span style="display: block;">
+                          <i class="fa fa-close"></i> CANCEL
+                        </span>
+                      </p-button>
+                    </div>
+                    <div class="col-6 btn-container">
+                      <p-button
+                        v-if="!this.$store.state.app.isLoggedIn"
+                        type="warning"
+                        block
+                        :disabled="!this.isValidNewWallet"
+                        @click.native="createLogin()"
+                        style="overflow: visible;" >
+                        <span style="display: block;">
+                          <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
+                            CREATE!
+                        </span>
+                      </p-button>
+                    </div>
+                  </div>
+                  <div class="row" v-if="isImport" >
+                    <div class="col-6 btn-container">
+                      <p-button
+                        v-if="!this.$store.state.app.isLoggedIn"
+                        type="default"
+                        block
+                        @click.native="cancelImportView()"
+                        style="overflow: visible;" >
+                        <span style="display: block;">
+                          <i class="fa fa-close"></i> CANCEL
+                        </span>
+                      </p-button>
+                    </div>
+                    <div class="col-6 btn-container">
+                      <p-button
+                        v-if="!this.$store.state.app.isLoggedIn"
+                        type="info"
+                        block
+                        :disabled="!this.isValidNewWallet"
+                        @click.native="importWallet()"
+                        style="overflow: visible;" >
+                        <span style="display: block;">
+                          <i class="fas fa-file-import"></i> IMPORT KEY!
+                        </span>
+                      </p-button>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="col-6"> 
-                <div class="fg-style" v-if="this.$store.state.app.login && !this.$store.state.app.register && !this.$store.state.app.import">
-                  <label class="control-label">Select your private key (key.p12)</label>
-                    <file-selector
-                      v-model="this.$store.state.walletInfo.keystorePath"
-                      :placeholder="this.$store.state.walletInfo.keystorePath" 
-                      action="SelectFile" />
-                </div>
-                <div class="fg-style" v-if="this.$store.state.app.import && !this.$store.state.app.login && !this.$store.state.app.register">
-                  <label class="control-label">Select the private key you wish to import.</label>
-                    <file-selector 
-                      v-model="this.$store.state.walletInfo.keystorePath" 
-                      :placeholder="this.$store.state.walletInfo.keystorePath"
-                      action="SelectFile" />
-                </div>
-                <div class="fg-style" v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
-                  <label class="control-label">Select a directory to store your private key (key.p12) in</label>
-                    <file-selector 
-                      v-model="this.$store.state.walletInfo.saveKeystorePath" 
-                      :placeholder="this.$store.state.walletInfo.saveKeystorePath"
-                      action="SelectSaveFile" />
-                </div>
-                <div class="fg-style">
-                  <fg-input
-                    type="text"
-                    v-model="alias"
-                    @input.native="checkAlias(alias)"
-                    :placeholder="this.$store.state.walletInfo.alias"
-                    label="Key Alias"
-                  ></fg-input>
-                </div>
-                <div style="height: 30px; margin-top: -30px;" v-if="!this.$store.state.app.login && !this.aliasValid">
-                  <p v-if="!this.aliasContainsFiveCharacters" class="validate"> Alias has to be atleast 5 characters long. </p>    
-                </div> 
-                <div class="fg-style">
-                  <password-input
-                    v-model="keystorePassword"
-                    label="Keystore Password"
-                    placeholder="Enter Keystore Password ..."
-                    v-on:valid="KeystorePasswordValid = true"
-                    v-on:invalid="KeystorePasswordValid = false"
-                  />
-                </div>
-                <div class="fg-style">
-                  <password-input
-                    v-model="KeyPassword"
-                    label="Key Password"
-                    placeholder="Enter Key Password..."
-                    v-on:valid="KeyPasswordValid = true"
-                    v-on:invalid="KeyPasswordValid = false"
-                  />
-                </div>
-                <div v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register">
-                  <fg-input
-                    type="text"
-                    v-model="newWalletLabel"
-                    :placeholder="this.$store.state.walletInfo.email"
-                    label="Wallet Label (optional)"
-                  ></fg-input>
-                </div>
-                <div
-                  v-if="!this.$store.state.app.import && this.$store.state.app.login && !this.$store.state.app.register"
-                  style="margin-top: 20px;"
-                >
-                  <p-button
-                    v-if="!this.$store.state.app.isLoggedIn"
-                    type="success"
-                    block
-                    @click.native="login()"
-                    :disabled="!valid_new_wallet"
-                    style="overflow: visible;"
-                  >
-                    <span style="display: block;">
-                      <i class="fa fa-unlock"></i> LOGIN
-                    </span>
-                  </p-button>
-                </div>
-                <div
-                  v-if="!this.$store.state.app.import && this.$store.state.app.login && !this.$store.state.app.register"
-                  style="float: left; width: 48%; margin-top: 20px;"
-                >
-                  <p-button
-                    v-if="!this.$store.state.app.isLoggedIn"
-                    type="info"
-                    block
-                    @click.native="showImportView()"
-                    style="overflow: visible;"
-                  >
-                    <span style="display: block;">
-                      <i class="fas fa-file-import"> </i> IMPORT WALLET
-                    </span>
-                  </p-button>
-                </div>
-                <div
-                  v-if="!this.$store.state.app.import && this.$store.state.app.login && !this.$store.state.app.register"
-                  style="float: right; width: 48%; margin-top: 20px;"
-                >
-                  <p-button
-                    v-if="!this.$store.state.app.isLoggedIn"
-                    type="danger"
-                    block
-                    @click.native="newLogin()"
-                    style="overflow: visible;"
-                  >
-                    <span style="display: block;">
-                      <i class="fa fa-key"></i> CREATE A NEW WALLET
-                    </span>
-                  </p-button>
-                </div>
-                <div
-                  v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register"
-                  style="float: left; width: 48%; margin-top: 20px;"
-                >
-                  <p-button
-                    v-if="!this.$store.state.app.isLoggedIn"
-                    type="default"
-                    block
-                    @click.native="cancelEvent()"
-                    style="overflow: visible;"
-                  >
-                    <span style="display: block;">
-                      <i class="fa fa-close"></i> CANCEL
-                    </span>
-                  </p-button>
-                </div>
-                <div
-                  v-if="!this.$store.state.app.import && !this.$store.state.app.login && this.$store.state.app.register"
-                  style="float: right; width: 48%; margin-top: 20px;"
-                >
-                  <p-button
-                    v-if="!this.$store.state.app.isLoggedIn"
-                    type="warning"
-                    block
-                    :disabled="!this.valid_new_wallet"
-                    @click.native="createLogin()"
-                    style="overflow: visible;"
-                  >
-                    <span style="display: block;">
-                      <i v-if="!this.valid_new_wallet" class="fa fa-lock"></i>
-                        CREATE!
-                    </span>
-                  </p-button>
-                </div>
-                <div
-                  v-if="this.$store.state.app.import && !this.$store.state.app.login && !this.$store.state.app.register"
-                  style="float: left; width: 48%; margin-top: 20px;"
-                >
-                  <p-button
-                    v-if="!this.$store.state.app.isLoggedIn"
-                    type="default"
-                    block
-                    @click.native="cancelImportView()"
-                    style="overflow: visible;"
-                  >
-                    <span style="display: block;">
-                      <i class="fa fa-close"></i> CANCEL
-                    </span>
-                  </p-button>
-                </div>
-                <div
-                  v-if="this.$store.state.app.import && !this.$store.state.app.login && !this.$store.state.app.register"
-                  style="float: right; width: 48%; margin-top: 20px;"
-                >
-                  <p-button
-                    v-if="!this.$store.state.app.isLoggedIn"
-                    type="info"
-                    block
-                    :disabled="!this.valid_new_wallet"
-                    @click.native="importWallet()"
-                    style="overflow: visible;"
-                  >
-                    <span style="display: block;">
-                      <i class="fas fa-file-import"></i> IMPORT KEY!
-                    </span>
-                  </p-button>
-                </div>  
-                <div v-if="!this.$store.state.app.register" class="col-3"></div>
-                <div v-if="!this.$store.state.app.login" class="col"></div>
-              </div>
+              <div v-bind:class="{ 'col-3': isLogin, 'col-1': !isLogin }"></div>
             </div>
-            <!-- <div class="clearfix"></div> -->
           </form>
         </div>
       </div>
@@ -244,17 +226,14 @@ export default {
   name: "login-screen",
   data: () => ({
     newWalletLabel: "",
-    
     alias: "",
     aliasValid: false,
     aliasLength: 0,
     aliasContainsFiveCharacters: false,
-
     keystorePassword: '',
     KeystorePasswordValid: false,
     KeyPassword: '',
     KeyPasswordValid: false,
-    
     loginInProgress: false,
     doneLoading: false,
     access: false,
@@ -262,7 +241,7 @@ export default {
     termsOfService: "This HTML scroll box has had color added. You can add color to the background of your scroll box. You can also add color to the scroll bars"
   }),
   computed: {
-    valid_new_wallet: function () {
+    isValidNewWallet: function () {
       if (
         this.aliasValid && 
         this.KeyPasswordValid && 
@@ -275,6 +254,27 @@ export default {
         } else {
           return false;
         }
+    },
+    isRegister: function () {
+      if (this.$store.state.app.register && !this.$store.state.app.import && !this.$store.state.app.login) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    isImport: function () {
+      if (!this.$store.state.app.register && this.$store.state.app.import && !this.$store.state.app.login) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    isLogin: function() {
+      if (this.$store.state.app.login && !this.$store.state.app.register && !this.$store.state.app.import) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {
@@ -613,6 +613,12 @@ text-align: left;
 
 .fg-style {
   margin-bottom: 30px;
+}
+
+.btn-container {
+  float: left; 
+  width: 48%; 
+  margin-top: 20px;
 }
 
 </style>

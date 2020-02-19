@@ -14,11 +14,12 @@ import (
 // WalletApplication holds all application specific objects
 // such as the Client/Server event bus and logger
 type WalletApplication struct {
-	RT      *wails.Runtime
-	log     *logrus.Logger
-	wallet  Wallet
-	DB      *gorm.DB
-	Network struct {
+	RT         *wails.Runtime
+	log        *logrus.Logger
+	wallet     Wallet
+	DB         *gorm.DB
+	killSignal chan struct{}
+	Network    struct {
 		URL     string
 		Handles struct {
 			Send        string // Takes TX Object, returns TX Hash (200)
@@ -69,6 +70,7 @@ type WalletApplication struct {
 // WailsShutdown is called when the application is closed
 func (a *WalletApplication) WailsShutdown() {
 	a.wallet = Wallet{}
+	close(a.killSignal) // Kills the Go Routines
 	a.DB.Close()
 }
 
@@ -88,6 +90,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.NewUser = false
 	a.TransactionFinished = true
 	a.RT = runtime
+	a.killSignal = make(chan struct{}) // Used to kill go routines and hand back system resources
 	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download/wallet-cli"
 	a.WalletCLI.Version = "0.1"
 

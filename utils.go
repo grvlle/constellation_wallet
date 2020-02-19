@@ -55,6 +55,10 @@ func (a *WalletApplication) detectJavaPath() {
 			a.LoginError("Unable to find Java Installation")
 		}
 		jPath := out.String() // May contain multiple
+		if jPath == "" {
+			a.LoginError("Unable to find Java Installation")
+			return
+		}
 		s := strings.Split(strings.Replace(jPath, "\r\n", "\n", -1), "\n")
 		jwPath = string(s[0][:len(s[0])-4]) + "w.exe" // Shifting to javaw.exe
 		if s[1] != "" {

@@ -38,7 +38,7 @@
 
           <slot>
             <li class="nav-item">
-              <a class="nav-link" @click="logout">
+              <a class="nav-link" @click="logout" style="cursor: pointer;">
                 <i class="ti-lock"></i>
                 <p class="nav-item">LOGOUT</p>
               </a>

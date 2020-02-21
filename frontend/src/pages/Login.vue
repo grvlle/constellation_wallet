@@ -119,6 +119,7 @@
                         Alias has to be atleast 5 characters long.
                       </p>
                     </div>
+                    <div class="validate" v-else/> 
                   </div>
                   <div>
                     <password-input

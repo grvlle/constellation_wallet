@@ -1,5 +1,5 @@
 <template>
-  <div class="bg vertical-center">
+  <div class="bg vertical-center" id="app">
     <div class="container">
       <div class="row">
         <div class="col-md-9 mx-auto text-center header">
@@ -409,16 +409,15 @@ export default {
       this.aliasLength = 0;
       this.aliasContainsFiveCharacters = false;
       this.aliasValid = false;
-
       this.KeyPassword = "";
       this.KeyPasswordValid = false;
       this.keystorePassword = "";
       this.KeystorePasswordValid = false;
-
       this.$store.state.walletInfo.keystorePath = "";
       this.$store.state.walletInfo.alias = "";
       this.$store.state.walletInfo.keystorePassword = "";
       this.$store.state.walletInfo.KeyPassword = "";
+      this.$store.state.displayLoginError = false;
     },
     login: function() {
       var self = this;

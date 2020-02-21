@@ -12,11 +12,11 @@
         aria-describedby="basic-addon2"
         :value="value"
         @input="checkPassword($event.target.value)" />
-      <div class="input-group-append">
+      <span class="input-group-btn">
         <p-button class="btn" @click.native="showPassword()" type="default">
           <i v-bind:class="btnText" />
         </p-button>
-      </div>
+      </span>
     </div>
     <div class="validate" v-if="!valid_password && !this.$store.state.app.login">             
       <p v-if="!this.contains_eight_characters"> 8 Characters Long, </p> 

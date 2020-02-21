@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="row">
-      <div class="col-md-6 col-xl-4">
+      <div class="col-md-4">
         <stats-card>
           <div class="icon-big text-center" :class="`icon-success`" slot="header">
             <i class="fas fa-wallet"></i>
@@ -17,7 +17,7 @@
         </stats-card>
       </div>
 
-      <div class="col-md-6 col-xl-4">
+      <div class="col-md-4">
         <stats-card>
           <div class="icon-big text-center" :class="`icon-danger`" slot="header">
             <i class="fas fa-search-dollar"></i>
@@ -33,7 +33,7 @@
         </stats-card>
       </div>
 
-      <div class="col-md-6 col-xl-4">
+      <div class="col-md-4">
         <stats-card>
           <div class="icon-big text-center" :class="`icon-info`" slot="header">
             <i class="fas fa-cube"></i>
@@ -51,25 +51,21 @@
     </div>
 
     <div class="row">
-      <div class="col-md-6 col-xl-12">
+      <div class="col">
         <wide-card>
-          <div class="numbers text-center col-17" slot="content">
+          <div class="numbers text-center" slot="content">
             <p>{{walletCard.title}}</p>
             <hr />
-            <p
-              style="color: #c4c4c4; padding-top: 15px; background-color: #f7f7f7; font-size: 25px; font-weight: 100;"
-            >
+            <div class="wallet-address">
               {{wallet2.address}}
               <input type="hidden" id="testing-code" :value="wallet2.address" />
               <p-button
-                type="info"
-                style="margin-bottom: 15px"
-                icon
+                type="info" icon
                 @click.native="copyTestingCode"
               >
                 <i class="fa fa-copy"></i>
               </p-button>
-            </p>
+            </div>
           </div>
         </wide-card>
       </div>
@@ -292,4 +288,15 @@ export default {
 </script>
 
 <style>
+.wallet-address {
+    color: #c4c4c4;
+    padding-top: 15px;
+    background-color: #f7f7f7;
+    font-size: 25px;
+    font-weight: 100;
+}
+
+.wallet-address > p-button {
+    margin-bottom: 15px;
+}
 </style>

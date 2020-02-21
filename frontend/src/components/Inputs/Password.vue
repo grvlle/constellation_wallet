@@ -13,7 +13,7 @@
         :value="value"
         @input="checkPassword($event.target.value)" />
       <span class="input-group-btn">
-        <p-button class="btn" @click.native="showPassword()" type="default">
+        <p-button tabIndex="-1" class="btn" @click.native="showPassword()" type="default">
           <i v-bind:class="btnText" />
         </p-button>
       </span>

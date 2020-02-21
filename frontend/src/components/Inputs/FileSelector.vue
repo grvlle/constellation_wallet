@@ -8,6 +8,7 @@
 
     <span class="input-group-btn">
       <p-button v-if="action == 'SelectFile'"
+        tabIndex="-1" 
         @click.native="importKey" 
         type="default">
         <span style="display: block;">
@@ -15,6 +16,7 @@
         </span>
       </p-button>
       <p-button v-if="action == 'SelectSaveFile'"
+        tabIndex="-1" 
         @click.native="SelectDirToStoreKey" 
         type="default">
         <span style="display: block;">

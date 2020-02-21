@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="form-group">
     <label v-if="label" class="control-label">
       {{label}}
     </label>
-    <div class="input-group">
+    <div class="input-group" style="margin-bottom: 2px">
       <input
         :type="type"
         class="form-control"
@@ -11,22 +11,21 @@
         :placeholder="placeholder"
         aria-describedby="basic-addon2"
         :value="value"
-        @input="checkPassword($event.target.value)"
-      >
+        @input="checkPassword($event.target.value)" />
       <div class="input-group-append">
         <p-button class="btn" @click.native="showPassword()" type="default">
           <i v-bind:class="btnText" />
         </p-button>
       </div>
     </div>
-    
-  <div class="validate" v-if="!valid_password && !this.$store.state.app.login">             
+    <div class="validate" v-if="!valid_password && !this.$store.state.app.login">             
       <p v-if="!this.contains_eight_characters"> 8 Characters Long, </p> 
       <p v-if="!this.contains_number"> Number,</p> 
       <p v-if="!this.contains_uppercase"> Uppercase, </p> 
       <p v-if="!this.contains_special_character"> Special Character </p>     
     </div>
     <div class="validate" v-else/> 
+
   </div>
 </template>
  
@@ -90,16 +89,14 @@
 
 <style lang="scss" scoped>
 .validate {
-  height: 30px;
-  padding-top: 20px;
-  margin-top: -30px;
-  margin-bottom: -10px;
+  height: 10px;
+  display: flex;
 }
-.validate p {
-      font-size: 10px;
-      color: firebrick;
-      margin-top: 0px;
-      margin-right: 2px;
-      float: left;
-  }
+.validate > p {
+  /*flex: 1;*/
+  font-size: 10px;
+  color: firebrick;
+  margin-top: 0px;
+  margin-right: 2px;
+}
 </style>

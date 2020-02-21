@@ -81,7 +81,7 @@
               </div>
               <div class="col-md-6 mx-auto login-box">
                 <div class="input-box">
-                  <div class="fg-style" v-if="isLogin">
+                  <div v-if="isLogin">
                     <label class="control-label">Select your private key (key.p12)</label>
                     <file-selector
                       v-model="this.$store.state.walletInfo.keystorePath"
@@ -89,7 +89,7 @@
                       action="SelectFile"
                     />
                   </div>
-                  <div class="fg-style" v-if="isImport">
+                  <div v-if="isImport">
                     <label class="control-label">Select the private key you wish to import.</label>
                     <file-selector
                       v-model="this.$store.state.walletInfo.keystorePath"
@@ -97,7 +97,7 @@
                       action="SelectFile"
                     />
                   </div>
-                  <div class="fg-style" v-if="isRegister">
+                  <div v-if="isRegister">
                     <label
                       class="control-label"
                     >Select a directory to store your private key (key.p12) in</label>
@@ -107,41 +107,36 @@
                       action="SelectSaveFile"
                     />
                   </div>
-                  <div class="fg-style">
-                    <fg-input
+                  <div>
+                    <fg-input style="margin-bottom: 2px"
                       type="text"
                       v-model="alias"
                       @input.native="checkAlias(alias)"
-                      :placeholder="this.$store.state.walletInfo.alias"
-                      label="Key Alias"
-                    ></fg-input>
+                      :placeholder="this.$store.state.walletInfo.alias" 
+                      label="Key Alias"/>
+                    <div class="validate" v-if="!this.$store.state.app.login && !this.aliasValid" >
+                      <p v-if="!this.aliasContainsFiveCharacters" >
+                        Alias has to be atleast 5 characters long.
+                      </p>
+                    </div>
                   </div>
-                  <div
-                    style="height: 30px; margin-top: -30px;"
-                    v-if="!this.$store.state.app.login && !this.aliasValid"
-                  >
-                    <p
-                      v-if="!this.aliasContainsFiveCharacters"
-                      class="validate"
-                    >Alias has to be atleast 5 characters long.</p>
-                  </div>
-                  <div class="fg-style"><!--
+                  <div>
                     <password-input
                       v-model="keystorePassword"
                       label="Keystore Password"
                       placeholder="Enter Keystore Password ..."
                       v-on:valid="KeystorePasswordValid = true"
                       v-on:invalid="KeystorePasswordValid = false"
-                    />-->
+                    />
                   </div>
-                  <div class="fg-style"><!--
+                  <div>
                     <password-input
                       v-model="KeyPassword"
                       label="Key Password"
                       placeholder="Enter Key Password..."
                       v-on:valid="KeyPasswordValid = true"
                       v-on:invalid="KeyPasswordValid = false"
-                    />-->
+                    />
                   </div>
                   <div v-if="isRegister">
                     <fg-input
@@ -655,14 +650,6 @@ export default {
   }
 }
 
-p.validate {
-  font-size: 10px;
-  color: firebrick;
-  margin-top: 0px;
-  margin-right: 2px;
-  float: left;
-}
-
 body,
 html {
   height: 100%;
@@ -696,7 +683,7 @@ html {
   align-items: center;
 }
 
-.fg-style {
+.input-box > div {
   margin-bottom: 30px;
 }
 
@@ -729,5 +716,17 @@ html {
 .page-error-box p {
   color: firebrick;
   font-size: 12px;
+}
+
+.validate {
+  height: 10px;
+  display: flex;
+}
+.validate > p {
+  /*flex: 1;*/
+  font-size: 10px;
+  color: firebrick;
+  margin-top: 0px;
+  margin-right: 2px;
 }
 </style>

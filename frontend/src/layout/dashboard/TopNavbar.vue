@@ -78,7 +78,6 @@ export default {
           this.$store.state.app.register = false;
           this.$store.state.app.import = false;
           this.$store.state.app.login = true;
-          this.$store.state.app.margin = 20;
           return;
         }
       }),

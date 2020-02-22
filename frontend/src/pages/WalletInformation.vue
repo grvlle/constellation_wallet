@@ -1,9 +1,9 @@
 <template>
   <div id="app" class="row">
-    <div class="col-xl-6 col-lg-7 col-md-6">
+    <div class="col-md-6 d-flex">
       <user-card></user-card>
     </div>
-    <div class="col-xl-6 col-lg-7 col-md-6">
+    <div class="col-md-6 d-flex">
       <edit-profile-form></edit-profile-form>
     </div>
   </div>
@@ -18,5 +18,15 @@ export default {
   }
 };
 </script>
+
 <style>
+.card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-footer {
+  margin-top: auto;
+}
 </style>

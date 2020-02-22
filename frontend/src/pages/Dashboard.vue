@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="row equal">
+    <div class="row">
       <div class="col-md-4 d-flex">
         <stats-card>
           <div class="icon-big text-center" :class="`icon-success`" slot="header">
@@ -72,7 +72,7 @@
     </div>
 
     <!--Charts-->
-    <div class="row equal">
+    <div class="row">
       <div v-if="this.$store.state.toggleDashboard.showNodesOnline" class="col-md-6 col-12 d-flex">
         <chart-card
           title="Nodes Online"
@@ -288,12 +288,6 @@ export default {
 </script>
 
 <style>
-.equal {
-  display: flex;
-  display: -webkit-flex;
-  flex-wrap: wrap;
-}
-
 .card {
   width: 100%;
   display: flex;

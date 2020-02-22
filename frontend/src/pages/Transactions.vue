@@ -18,11 +18,8 @@
                   placeholder="0"
                 ></fg-input>
                 <div style="height: 25px;" class="error" v-if="$v.txAmountValidation.inBetween"></div>
-
                 <div class="error" v-if="!$v.txAmountValidation.inBetween">
-                  <p
-                    class="validate"
-                  >Invalid amount. Please verify.</p>
+                  <p class="validate">Invalid amount. Please verify.</p>
                 </div>
               </div>
               <div class="col-md-1">
@@ -44,11 +41,9 @@
                   class="error"
                   v-if="$v.txAddressValidation.minLength && $v.txAddressValidation.maxLength && $v.txAddressValidation.verifyPrefix"
                 ></div>
-
                 <div
                   class="error"
-                  v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength"
-                >
+                  v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength">
                   <p class="validate">Invalid wallet address. Please verify.</p>
                 </div>
               </div>
@@ -58,11 +53,9 @@
                   block
                   @click.native="tx"
                   :disabled="!this.$store.state.app.txFinished"
-                  style="margin-top: 28px; overflow: visible;"
-                >
+                  style="margin-top: 28px; overflow: visible;" >
                   <span
-                    style="width: 90px; margin-left: -30px; margin-top: -2px; overflow: hidden; white-space: nowrap; display: block; text-overflow: ellipsis;"
-                  >
+                    style="width: 90px; margin-left: -30px; margin-top: -2px; overflow: hidden; white-space: nowrap; display: block; text-overflow: ellipsis;">
                     <i class="fa fa-paper-plane"></i>SEND
                   </span>
                 </p-button>
@@ -76,7 +69,6 @@
         <br />
       </card>
     </div>
-
     <div class="col-12">
       <card class="card" :title="table2.title" :subTitle="table2.subTitle">
         <div class="table-full-width table-responsive">
@@ -234,23 +226,22 @@ export default {
                     type: "error"
                   });
                   self.$Progress.fail();
-                } if (!txFailed) {
-                Swal.fire({
-                  title: "Success!",
-                  text:
-                    "You have sent " +
-                    self.txAmountValidation +
-                    " $DAG tokens to address " +
-                    self.txAddressValidation +
-                    ".",
-                  type: "success"
-                });
-                self.$Progress.finish();
                 }
-
+                if (!txFailed) {
+                  Swal.fire({
+                    title: "Success!",
+                    text:
+                      "You have sent " +
+                      self.txAmountValidation +
+                      " $DAG tokens to address " +
+                      self.txAddressValidation +
+                      ".",
+                    type: "success"
+                  });
+                  self.$Progress.finish();
+                }
               });
             }
-            
           });
       }
     }

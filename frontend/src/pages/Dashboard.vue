@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <div class="row">
-      <div class="col-md-4">
+    <div class="row equal">
+      <div class="col-md-4 d-flex">
         <stats-card>
           <div class="icon-big text-center" :class="`icon-success`" slot="header">
             <i class="fas fa-wallet"></i>
           </div>
           <div class="numbers text-center" slot="content">
-            <p>$DAG Tokens</p>
+            <p>$DAG</p>
             {{this.$store.state.walletInfo.tokenAmount}}
           </div>
           <div class="stats" slot="footer">
@@ -17,13 +17,13 @@
         </stats-card>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-4 d-flex">
         <stats-card>
           <div class="icon-big text-center" :class="`icon-danger`" slot="header">
             <i class="fas fa-search-dollar"></i>
           </div>
           <div class="numbers text-center" slot="content">
-            <p>USD value</p>
+            <p>USD</p>
             {{this.$store.state.walletInfo.usdValue}}
           </div>
           <div class="stats" slot="footer">
@@ -33,7 +33,7 @@
         </stats-card>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-4 d-flex">
         <stats-card>
           <div class="icon-big text-center" :class="`icon-info`" slot="header">
             <i class="fas fa-cube"></i>
@@ -72,8 +72,8 @@
     </div>
 
     <!--Charts-->
-    <div class="row">
-      <div v-if="this.$store.state.toggleDashboard.showNodesOnline" class="col-md-6 col-12">
+    <div class="row equal">
+      <div v-if="this.$store.state.toggleDashboard.showNodesOnline" class="col-md-6 col-12 d-flex">
         <chart-card
           title="Nodes Online"
           sub-title="Since last 24 hours"
@@ -81,9 +81,9 @@
           chart-type="Pie"
         >
           <div slot="legend">
-            <i class="fa fa-circle text-info"></i> Foundation Nodes
-            <i class="fa fa-circle text-success"></i> Medium Nodes
-            <i class="fa fa-circle text-danger"></i> Light Nodes
+            <i class="fa fa-circle text-info"></i> Foundation
+            <i class="fa fa-circle text-success"></i> Medium
+            <i class="fa fa-circle text-danger"></i> Light
           </div>
           <span slot="footer">
             <i class="ti-timer"></i>
@@ -92,10 +92,10 @@
         </chart-card>
       </div>
 
-      <div v-if="this.$store.state.toggleDashboard.showTransactions" class="col-md-6 col-12">
+      <div v-if="this.$store.state.toggleDashboard.showTransactions" class="col-md-6 col-12 d-flex">
         <chart-card
           title="Transactions"
-          sub-title="The amount of transactions sent vs. received over the last year"
+          sub-title="Sent vs. received over the last year"
           :chart-data="this.$store.state.chartData.transactions"
           :chart-options="activityChart.options"
         >
@@ -110,7 +110,7 @@
         </chart-card>
       </div>
 
-      <div v-if="this.$store.state.toggleDashboard.showThroughput" class="col-md-6 col-12">
+      <div v-if="this.$store.state.toggleDashboard.showThroughput" class="col-md-6 col-12 d-flex">
         <chart-card
           title="Network Throughput (tps)"
           sub-title="24 Hours performance"
@@ -288,6 +288,22 @@ export default {
 </script>
 
 <style>
+.equal {
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
+}
+
+.card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-footer {
+  margin-top: auto;
+}
+
 .wallet-address {
     color: #c4c4c4;
     padding-top: 15px;

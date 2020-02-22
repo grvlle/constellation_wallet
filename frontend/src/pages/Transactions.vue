@@ -136,6 +136,11 @@ import {
 } from "vuelidate/lib/validators";
 
 export default {
+  computed: {
+    tableClass() {
+      return `table-${this.type}`;
+    }
+  },
   methods: {
     isFloat: function(n) {
       return n === +n && n !== (n | 0);

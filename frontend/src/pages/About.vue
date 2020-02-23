@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-6 d-flex">
         <card title="About" sub-title="Get to know the Constellation Wallet">
           <p>
             Thank you for using the Constellation Desktop Wallet!
@@ -25,7 +25,7 @@
           </p>
         </card>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6 d-flex">
         <card title="Frequently Asked Questions">
           <p>
             <b>I thought $DAG was free to transact, why do I need to enter a fee?</b>
@@ -224,5 +224,15 @@ $color-discord: #7289da;
     border-color: transparent;
     transform: translate(-50%, 100%);
   }
+}
+
+.card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-footer {
+  margin-top: auto;
 }
 </style>

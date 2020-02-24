@@ -231,10 +231,10 @@ func (a *WalletApplication) pollTokenBalance() {
 				} else {
 					retryCounter++
 					time.Sleep(1 * time.Second)
-					if retryCounter >= 50 {
+					if retryCounter >= 10 {
 						a.log.Errorln("Killing pollTokenBalance after 50 failed attempts to get balance from mainnet, Reason: ", err)
 						a.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
-						break
+						return
 					}
 				}
 			}

@@ -480,3 +480,8 @@
   }
 
 }
+
+// Improve support for higher resolutions (i.e. anything greater than -lg (1200px))
+@media only screen and (min-width : 1200px) {
+  .container { max-width: 2736px; }
+}

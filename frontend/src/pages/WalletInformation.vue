@@ -1,10 +1,12 @@
 <template>
-  <div id="app" class="row">
-    <div class="col-md-6 d-flex">
-      <user-card></user-card>
-    </div>
-    <div class="col-md-6 d-flex">
-      <edit-profile-form></edit-profile-form>
+  <div id="app" class="container">
+    <div class="row">
+      <div class="col-md-6 d-flex">
+        <user-card></user-card>
+      </div>
+      <div class="col-md-6 d-flex">
+        <edit-profile-form></edit-profile-form>
+      </div>
     </div>
   </div>
 </template>

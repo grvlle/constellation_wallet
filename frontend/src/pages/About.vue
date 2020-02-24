@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="container">
     <div class="row">
       <div class="col-md-6 d-flex">
         <card title="About" sub-title="Get to know the Constellation Wallet">

@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="container">
     <div class="row">
-      <div class="col-md-6 d-flex">
+      <div class="col d-flex">
         <card title="About" sub-title="Get to know the Constellation Wallet">
           <p>
             Thank you for using the Constellation Desktop Wallet!
@@ -25,7 +25,9 @@
           </p>
         </card>
       </div>
-      <div class="col-md-6 d-flex">
+    </div>
+    <div class="row">
+      <div class="col d-flex">
         <card title="Frequently Asked Questions">
           <p>
             <b>I thought $DAG was free to transact, why do I need to enter a fee?</b>

@@ -3,62 +3,57 @@
     <div class="row">
       <div class="col">
         <card :title="table1.title" :subTitle="table1.subTitle">
-          <div>
-            <form @submit.prevent>
-              <br />
-              <div class="row">
-                <div class="col-md-4">
-                  <fg-input
-                    v-model.number="txAmountValidation"
-                    @change="sendAmount($event.target.value)"
-                    pattern="[0-9]+([,\.][0-9]+)?"
-                    step="0.01"
-                    label="The amount to send"
-                    placeholder="0"
-                  ></fg-input>
-                  <div class="validate" v-if="!$v.txAmountValidation.inBetween">
-                    <p>Invalid amount. Please verify.</p>
-                  </div>
-                  <div class="validate" v-else></div>
+          <form @submit.prevent class="container">
+            <div class="form-row align-items-center">
+              <div class="col-md-5">
+                <fg-input style="margin-bottom: 2px;"
+                  v-model.number="txAmountValidation"
+                  @change="sendAmount($event.target.value)"
+                  pattern="[0-9]+([,\.][0-9]+)?"
+                  step="0.01"
+                  label="Amount: "
+                  placeholder="0" >
+                </fg-input>
+                <div class="validate" v-if="!$v.txAmountValidation.inBetween">
+                  <p>Invalid amount. Please verify.</p>
                 </div>
-                <div class="col-md-1" style="margin-top: 27px; margin-left:-10px; margin-right:-10px;">
-                  <i class="fa fa-chevron-circle-right"
-                    style="color: #6DECBB; font-size: 40px; width:100%;"></i>
-                  <div class="validate"></div>
-                </div>
-                <div class="col-md-4">
-                  <fg-input
-                    v-model.trim="txAddressValidation"
-                    @change="setName($event.target.value)"
-                    type="text"
-                    label="Address of Recipient"
-                    placeholder="Enter Recipients Wallet Address"
-                  ></fg-input>
-                  <div class="validate"
-                    v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength">
-                    <p>Invalid wallet address. Please verify.</p>
-                  </div>
-                  <div class="validate" v-else></div>
-                </div>
-                <div class="col-md-3" style="margin-top: 10px;">
-                  <!-- alignment looks strange in the browser however it behaves ok in compiled version
-                      looks like compiled version makes the button higher than when shown in browser -->
-                  <p-button
-                    type="info"
-                    block
-                    @click.native="tx"
-                    :disabled="!this.$store.state.app.txFinished">
-                    <span>
-                      <i class="fa fa-paper-plane"></i> SEND
-                    </span>
-                  </p-button>
-                  <div class="validate"></div>
-                </div>
+                <div class="validate" v-else></div>
               </div>
-            </form>
-          </div>
-          <br />
-          <br />
+              <div class="col-md-2">
+                <i class="fa fa-chevron-circle-right"
+                  style="color: #6DECBB; font-size: 40px; width:100%; margin-top: 25px;"></i>
+                <div class="validate"></div>
+              </div>
+              <div class="col-md-5">
+                <fg-input style="margin-bottom: 2px;"
+                  v-model.trim="txAddressValidation"
+                  @change="setName($event.target.value)"
+                  type="text"
+                  label="Address: "
+                  placeholder="Enter Recipients Wallet Address" >
+                </fg-input>
+                <div class="validate"
+                  v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength">
+                  <p>Invalid wallet address. Please verify.</p>
+                </div>
+                <div class="validate" v-else></div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-md-9" />
+              <div class="col-md-3">
+                <p-button
+                  type="info"
+                  block
+                  @click.native="tx"
+                  :disabled="!this.$store.state.app.txFinished">
+                  <span>
+                    <i class="fa fa-paper-plane"></i> SEND
+                  </span>
+                </p-button>
+              </div>
+            </div>
+          </form>
         </card>
       </div>
     </div>
@@ -331,7 +326,7 @@ txhash p {
 }
 
 .validate {
-  height: 10px;
+  height: 20px;
   display: flex;
 }
 .validate > p {

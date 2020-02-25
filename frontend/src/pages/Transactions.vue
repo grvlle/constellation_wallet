@@ -7,8 +7,8 @@
             <form @submit.prevent>
               <br />
               <div class="row">
-                <div class="col-md-4 d-flex transaction-col">
-                  <fg-input style="margin-bottom: 2px; margin-top: auto"
+                <div class="col-md-4">
+                  <fg-input
                     v-model.number="txAmountValidation"
                     @change="sendAmount($event.target.value)"
                     pattern="[0-9]+([,\.][0-9]+)?"
@@ -21,19 +21,17 @@
                   </div>
                   <div class="validate" v-else></div>
                 </div>
-                <div class="col-md-1 transaction-col" style="margin-top: 6px;">
-                  <div class="text-center" style=" margin-top: auto">
-                    <i class="fa fa-chevron-circle-right"
-                      style="color: #6DECBB; font-size: 40px; width:100%;"></i>
-                    <div class="validate"></div>
-                  </div>
+                <div class="col-md-1" style="margin-top: 27px; margin-left:-10px; margin-right:-10px;">
+                  <i class="fa fa-chevron-circle-right"
+                    style="color: #6DECBB; font-size: 40px; width:100%;"></i>
+                  <div class="validate"></div>
                 </div>
-                <div class="col-md-4 d-flex transaction-col">
-                  <fg-input style="margin-bottom: 2px; margin-top: auto"
+                <div class="col-md-4">
+                  <fg-input
                     v-model.trim="txAddressValidation"
                     @change="setName($event.target.value)"
                     type="text"
-                    label="Wallet Address of Recipient"
+                    label="Address of Recipient"
                     placeholder="Enter Recipients Wallet Address"
                   ></fg-input>
                   <div class="validate"
@@ -42,15 +40,15 @@
                   </div>
                   <div class="validate" v-else></div>
                 </div>
-                <div class="col-md-1" />
-                <div class="col-md-2 d-flex transaction-col">
+                <div class="col-md-3" style="margin-top: 10px;">
+                  <!-- alignment looks strange in the browser however it behaves ok in compiled version
+                      looks like compiled version makes the button higher than when shown in browser -->
                   <p-button
-                    style=" margin-top: auto"
                     type="info"
                     block
                     @click.native="tx"
                     :disabled="!this.$store.state.app.txFinished">
-                    <span style="overflow: hidden; white-space: nowrap; display: block; text-overflow: ellipsis;">
+                    <span>
                       <i class="fa fa-paper-plane"></i> SEND
                     </span>
                   </p-button>
@@ -342,11 +340,5 @@ txhash p {
   color: firebrick;
   margin-top: 0px;
   margin-right: 2px;
-}
-
-.transaction-col {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
 }
 </style>

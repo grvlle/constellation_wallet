@@ -1,16 +1,16 @@
 <template>
-  <component :is="tag"
-             @click.native="hideSidebar"
-             class="nav-item"
-             v-bind="$attrs"
-             tag="li">
-    <!-- <a class="nav-link"> -->
-      <slot>
-        <p class="nav-item"><a class="nav-link"><i v-if="icon" :class="icon"></i> {{name}}</a></p>
-      </slot>
-    <!-- </a> -->
+  <component :is="tag" @click.native="hideSidebar" class="nav-item" v-bind="$attrs" tag="li">
+    <slot>
+      <p class="nav-item">
+        <a class="nav-link">
+          <i v-if="icon" :class="icon"></i>
+          {{name}}
+        </a>
+      </p>
+    </slot>
   </component>
 </template>
+
 <script>
 export default {
   name: "sidebar-link",
@@ -20,10 +20,10 @@ export default {
       default: true
     },
     addLink: {
-      default: ()=>{}
+      default: () => {}
     },
     removeLink: {
-      default: ()=>{}
+      default: () => {}
     }
   },
   props: {
@@ -51,7 +51,7 @@ export default {
   },
   beforeDestroy() {
     if (this.$el && this.$el.parentNode) {
-      this.$el.parentNode.removeChild(this.$el)
+      this.$el.parentNode.removeChild(this.$el);
     }
     if (this.removeLink) {
       this.removeLink(this);
@@ -59,6 +59,7 @@ export default {
   }
 };
 </script>
+
 <style>
-@import url('https://fonts.googleapis.com/css?family=Poppins&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Poppins&display=swap");
 </style>

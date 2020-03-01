@@ -1,82 +1,82 @@
 @media (min-width: 992px) {
   .navbar {
-    min-height: 75px;
+    min-height: 4.6875em;
   }
   .navbar-nav.nav-mobile-menu{
     display: none;
   }
   .navbar-form {
-    margin-top: 21px;
-    margin-bottom: 21px;
-    padding-left: 5px;
-    padding-right: 5px;
+    margin-top: 1.3125em;
+    margin-bottom: 1.3125em;
+    padding-left: 0.3125em;
+    padding-right: 0.3125em;
   }
   .navbar-search-form {
     display: none;
   }
   .navbar-nav > li > .dropdown-menu,
   .dropdown .dropdown-menu {
-    transform: translate3d(0px, -40px, 0px);
+    transform: translate3d(0em, -2.5em, 0em);
     transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1) 0s, opacity 0.3s ease 0s, height 0s linear 0.35s;
   }
   .navbar-nav > li.show > .dropdown-menu, .dropdown.show .dropdown-menu {
-    transform: translate3d(0px, 0px, 0px);
+    transform: translate3d(0em, 0em, 0em);
   }
 
   .navbar-nav > li > .dropdown-menu:before {
-    border-bottom: 11px solid $medium-pale-bg;
-    border-left: 11px solid rgba(0, 0, 0, 0);
-    border-right: 11px solid rgba(0, 0, 0, 0);
+    border-bottom: 0.6875em solid $medium-pale-bg;
+    border-left: 0.6875em solid rgba(0, 0, 0, 0);
+    border-right: 0.6875em solid rgba(0, 0, 0, 0);
     content: "";
     display: inline-block;
     position: absolute;
-    right: 12px;
-    top: -11px;
+    right: 0.75em;
+    top: -0.6875em;
   }
   .navbar-nav > li > .dropdown-menu:after {
-    border-bottom: 11px solid $pale-bg;
-    border-left: 11px solid rgba(0, 0, 0, 0);
-    border-right: 11px solid rgba(0, 0, 0, 0);
+    border-bottom: 0.6875em solid $pale-bg;
+    border-left: 0.6875em solid rgba(0, 0, 0, 0);
+    border-right: 0.6875em solid rgba(0, 0, 0, 0);
     content: "";
     display: inline-block;
     position: absolute;
-    right: 12px;
-    top: -10px;
+    right: 0.75em;
+    top: -0.625em;
   }
 
   .navbar-nav.navbar-left > li > .dropdown-menu:before {
     right: auto;
-    left: 12px;
+    left: 0.75em;
   }
 
   .navbar-nav.navbar-left > li > .dropdown-menu:after {
     right: auto;
-    left: 12px;
+    left: 0.75em;
   }
 
   .navbar {
     .navbar-header {
-      margin-left: 10px;
+      margin-left: 0.625em;
     }
   }
 
   .footer:not(.footer-big) {
     nav > ul {
       li:first-child {
-        margin-left: 0;
+        margin-left: 0em;
       }
     }
   }
   .card {
     form {
       [class*="col-"] {
-        padding: 6px;
+        padding: 0.375em;
       }
       [class*="col-"]:first-child {
-        padding-left: 15px;
+        padding-left: 0.9375em;
       }
       [class*="col-"]:last-child {
-        padding-right: 15px;
+        padding-right: 0.9375em;
       }
     }
   }
@@ -89,12 +89,12 @@
     .main-panel {
       position: absolute;
       left: 0;
-      @include transform-translate-3d(-220px);
+      @include transform-translate-3d(-13.75em);
       @include transition (0.5s, cubic-bezier(0.685, 0.0473, 0.346, 1));
     }
 
     .wrapper .sidebar {
-      @include transform-translate-3d(10px);
+      @include transform-translate-3d(0.625em);
       @include transition (0.5s, cubic-bezier(0.685, 0.0473, 0.346, 1));
     }
   }
@@ -103,22 +103,22 @@
     width: 100%;
     max-height: 100vh;
     overflow: scroll;
-    @include transform-translate-3d(0px);
+    @include transform-translate-3d(0em);
     @include transition (0.5s, cubic-bezier(0.685, 0.0473, 0.346, 1));
   }
 
   .navbar-transparent {
-    padding-top: 15px;
+    padding-top: 0.9375em;
     background-color: rgba(0, 0, 0, 0.45);
   }
   body {
     position: relative;
   }
   h6 {
-    font-size: 1em;
+    font-size: 1rem;
   }
   .wrapper {
-    @include transform-translate-x(0px);
+    @include transform-translate-x(0em);
     @include transition (0.33s, cubic-bezier(0.685, 0.0473, 0.346, 1));
     left: 0;
     background-color: white;
@@ -146,7 +146,7 @@
     display: block;
     top: 0;
     height: 100%;
-    width: 230px;
+    width: 14.375em;
     right: 0;
     z-index: 1032;
     visibility: visible;
@@ -154,10 +154,10 @@
     overflow-y: visible;
     border-top: none;
     text-align: left;
-    padding-right: 0px;
+    padding-right: 0em;
     padding-left: 0;
     left: auto;
-    @include transform-translate-3d(230px);
+    @include transform-translate-3d(14.375em);
     @include transition (0.5s, cubic-bezier(0.685, 0.0473, 0.346, 1));
 
     .sidebar-wrapper {
@@ -165,23 +165,23 @@
       z-index: 3;
       overflow-y: scroll;
       height: 100%;
-      box-shadow: inset 1px 0px 0px 0px $medium-gray;
+      box-shadow: inset 0.0625em 0em 0em 0em $medium-gray;
     }
 
     .nav {
       margin-top: 0;
-      padding: 10px $margin-base-vertical 0;
+      padding: 0.625em $margin-base-vertical 0;
 
       > .nav-item {
 
         > .nav-link {
-          margin: 0px 0px;
+          margin: 0em 0em;
           color: $default-color;
           text-transform: uppercase;
           font-weight: 600;
           font-size: $font-size-small;
           line-height: $line-height-general;
-          padding: 10px 0;
+          padding: 0.625em 0;
 
           &:hover,
           &.active {
@@ -197,13 +197,13 @@
           .caret {
             float: right;
             position: relative;
-            top: 12px;
+            top: 0.75em;
           }
 
           i {
-            font-size: 18px;
-            margin-right: 10px;
-            line-height: 26px;
+            font-size: 1.125rem;
+            margin-right: 0.625em;
+            line-height: 1.625em;
           }
         }
 
@@ -211,24 +211,24 @@
 
           &:before {
             border-right: none;
-            border-left: 12px solid $medium-gray;
-            border-top: 12px solid transparent;
-            border-bottom: 12px solid transparent;
+            border-left: 0.75em solid $medium-gray;
+            border-top: 0.75em solid transparent;
+            border-bottom: 0.75em solid transparent;
             right: auto;
             margin-left: -$margin-base-vertical;
-            left: 0px;
-            top: 10px;
+            left: 0em;
+            top: 0.625em;
           }
 
           &:after {
             border-right: none;
-            border-left: 12px solid $bg-nude;
-            border-top: 12px solid transparent;
-            border-bottom: 12px solid transparent;
+            border-left: 0.75em solid $bg-nude;
+            border-top: 0.75em solid transparent;
+            border-bottom: 0.75em solid transparent;
             right: auto;
             margin-left: -$margin-base-vertical;
-            left: -1px;
-            top: 10px;
+            left: -0.0625em;
+            top: 0.625em;
           }
         }
 
@@ -255,66 +255,66 @@
     .logo {
       position: relative;
       z-index: 4;
-      padding-top: 11px;
-      padding-bottom: 11px;
+      padding-top: 0.6875em;
+      padding-bottom: 0.6875em;
     }
 
     .divider {
-      height: 1px;
-      margin: 10px 0;
+      height: 0.0625em;
+      margin: 0.625em 0;
     }
   }
   .nav-open .navbar-collapse {
-    @include transform-translate-x(0px);
+    @include transform-translate-x(0em);
   }
   .nav-open .sidebar {
     transition: all .5s cubic-bezier(.685, .0473, .346, 1);
-    // left: -230px;
+    // left: -14.375em;
   }
   .nav-open .main-panel {
     left: 0;
-    @include transform-translate-x(-230px);
+    @include transform-translate-x(-14.375em);
   }
   .navbar-toggle .icon-bar {
     display: block;
     position: relative;
     background: #fff;
-    width: 24px;
-    height: 2px;
-    border-radius: 1px;
+    width: 1.5em;
+    height: 0.125em;
+    border-radius: 0.0625em;
     margin: 0 auto;
   }
 
   .navbar-header .navbar-toggle {
-    margin: 10px 15px 10px 0;
-    width: 40px;
-    height: 40px;
+    margin: 0.625em 0.9375em 0.625em 0;
+    width: 2.5em;
+    height: 2.5em;
   }
   .bar1,
   .bar2,
   .bar3 {
-    outline: 1px solid transparent;
+    outline: 0.0625em solid transparent;
   }
   .bar1 {
-    top: 0px;
+    top: 0em;
     @include bar-animation($topbar-back);
   }
   .bar2 {
     opacity: 1;
   }
   .bar3 {
-    bottom: 0px;
+    bottom: 0em;
     @include bar-animation($bottombar-back);
   }
   .toggled .bar1 {
-    top: 6px;
+    top: 0.375em;
     @include bar-animation($topbar-x);
   }
   .toggled .bar2 {
     opacity: 0;
   }
   .toggled .bar3 {
-    bottom: 6px;
+    bottom: 0.375em;
     @include bar-animation($bottombar-x);
   }
 
@@ -353,7 +353,7 @@
   }
 
   .navbar-nav {
-    margin: 1px 0;
+    margin: 0.0625em 0em;
   }
 
   .dropdown-menu {
@@ -377,13 +377,13 @@
     opacity: 0;
     top: 0;
     left: auto;
-    right: 230px;
+    right: 14.375em;
     content: "";
     z-index: 9999;
     overflow-x: hidden;
   }
   .form-control + .form-control-feedback {
-    margin-top: -8px;
+    margin-top: -0.5em;
   }
   .navbar-toggle:hover, .navbar-toggle:focus {
     background-color: transparent !important;
@@ -395,7 +395,7 @@
     width: 20%;
     float: none !important;
     display: block;
-    margin: 0 auto 10px;
+    margin: 0em auto 0.625em;
   }
   .media-post .media-body {
     width: 100%;
@@ -430,7 +430,7 @@
     -webkit-box-shadow: none;
     box-shadow: none;
     .dropdown-item {
-      margin-left: 20px;
+      margin-left: 1.25em;
       color: $white-color !important;
       opacity: 0.7;
     }
@@ -450,7 +450,7 @@
   }
 
   .footer .copyright {
-    padding: 0px 15px;
+    padding: 0em 0.9375em;
     width: 100%;
   }
 }
@@ -459,8 +459,8 @@
 
 @media (min-width: 992px) {
   .table-full-width {
-    margin-left: -15px;
-    margin-right: -15px;
+    margin-left: -0.9375em;
+    margin-right: -0.9375em;
   }
   .table-responsive {
     overflow: visible;
@@ -471,8 +471,8 @@
 @media (max-width: 991px) {
   .table-responsive {
     width: 100%;
-    margin-bottom: 15px;
-    border: 1px solid #dddddd;
+    margin-bottom: 0.9375em;
+    border: 0.0625em solid #dddddd;
     overflow-x: scroll;
     overflow-y: hidden;
     -ms-overflow-style: -ms-autohiding-scrollbar;
@@ -483,5 +483,21 @@
 
 // Improve support for higher resolutions (i.e. anything greater than -lg (1200px))
 @media only screen and (min-width : 1200px) {
-  .container { max-width: 2736px; }
+  .container { max-width: 1792px; }
+  font-size: $font-size-base*1.3;
+}
+
+@media only screen and (min-width : 1920px) {
+  .container { max-width: 2560px; }
+  font-size: $font-size-base*1.6;
+}
+
+@media only screen and (min-width : 2736px) {
+  .container { max-width: 3840; }
+  font-size: $font-size-base*1.8;
+}
+
+@media only screen and (min-width : 3840) {
+  .container { max-width: 3840; }
+  font-size: $font-size-base*2;
 }

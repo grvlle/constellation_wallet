@@ -3,7 +3,7 @@
     <label v-if="label" class="control-label">
       {{label}}
     </label>
-    <div class="input-group" style="margin-bottom: 2px">
+    <div class="input-group" style="margin-bottom: 0.125em">
       <input
         :type="type"
         class="form-control"
@@ -89,14 +89,14 @@
 
 <style lang="scss" scoped>
 .validate {
-  height: 10px;
+  height: 0.625em;
   display: flex;
 }
 .validate > p {
   /*flex: 1;*/
-  font-size: 10px;
+  font-size: 0.625rem;
   color: firebrick;
-  margin-top: 0px;
-  margin-right: 2px;
+  margin-top: 0em;
+  margin-right: 0.125em;
 }
 </style>

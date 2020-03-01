@@ -56,7 +56,7 @@ button:focus {
 }
 
 .fa {
-  width: 21px;
+  width: 1.3125em;
   text-align: center;
 }
 
@@ -65,7 +65,7 @@ button:focus {
 }
 
 .margin-top {
-  margin-top: 50px;
+  margin-top: 3.125em;
 }
 
 hr {
@@ -80,15 +80,15 @@ hr {
 
 @media (min-width: 992px) {
   .typo-line {
-    padding-left: 140px;
-    margin-bottom: 40px;
+    padding-left: 8.75em;
+    margin-bottom: 2.5em;
     position: relative;
   }
 
   .typo-line .category {
     transform: translateY(-50%);
     top: 50%;
-    left: 0px;
+    left: 0em;
     position: absolute;
   }
 }
@@ -100,7 +100,7 @@ hr {
 }
 
 .icon-container {
-  width: 240px;
+  width: 15em;
   padding: .7em 0;
   float: left;
   position: relative;
@@ -111,14 +111,14 @@ hr {
 .icon-container [class*=" ti-"] {
   color: #000;
   position: absolute;
-  margin-top: 3px;
+  margin-top: 0.1875em;
   transition: .3s;
 }
 
 .icon-container:hover [class^="ti-"],
 .icon-container:hover [class*=" ti-"] {
   font-size: 2.2em;
-  margin-top: -5px;
+  margin-top: -0.3125em;
 }
 
 .icon-container:hover .icon-name {
@@ -127,23 +127,23 @@ hr {
 
 .icon-name {
   color: #aaa;
-  margin-left: 35px;
+  margin-left: 2.1875em;
   font-size: .8em;
   transition: .3s;
 }
 
 .icon-container:hover .icon-name {
-  margin-left: 45px;
+  margin-left: 2.8125em;
 }
 
 .places-buttons .btn {
-  margin-bottom: 30px
+  margin-bottom: 1.875em
 }
 
 .sidebar .nav > li.active-pro {
   position: absolute;
   width: 100%;
-  bottom: 10px;
+  bottom: 0.625em;
 }
 
 .sidebar .nav > li.active-pro a {

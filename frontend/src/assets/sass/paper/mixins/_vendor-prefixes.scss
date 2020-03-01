@@ -82,7 +82,7 @@
 @mixin radial-gradient($extern-color, $center-color) {
   background: $extern-color;
   background: -moz-radial-gradient(center, ellipse cover, $center-color 0%, $extern-color 100%); /* FF3.6+ */
-  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, $center-color), color-stop(100%, $extern-color)); /* Chrome,Safari4+ */
+  background: -webkit-gradient(radial, center center, 0em, center center, 100%, color-stop(0%, $center-color), color-stop(100%, $extern-color)); /* Chrome,Safari4+ */
   background: -webkit-radial-gradient(center, ellipse cover, $center-color 0%, $extern-color 100%); /* Chrome10+,Safari5.1+ */
   background: -o-radial-gradient(center, ellipse cover, $center-color 0%, $extern-color 100%); /* Opera 12+ */
   background: -ms-radial-gradient(center, ellipse cover, $center-color 0%, $extern-color 100%); /* IE10+ */
@@ -117,11 +117,11 @@
 @mixin topbar-x-rotation() {
   @keyframes topbar-x {
     0% {
-      top: 0px;
+      top: 0em;
       transform: rotate(0deg);
     }
     45% {
-      top: 6px;
+      top: 0.375em;
       transform: rotate(145deg);
     }
     75% {
@@ -133,11 +133,11 @@
   }
   @-webkit-keyframes topbar-x {
     0% {
-      top: 0px;
+      top: 0em;
       -webkit-transform: rotate(0deg);
     }
     45% {
-      top: 6px;
+      top: 0.375em;
       -webkit-transform: rotate(145deg);
     }
     75% {
@@ -149,11 +149,11 @@
   }
   @-moz-keyframes topbar-x {
     0% {
-      top: 0px;
+      top: 0em;
       -moz-transform: rotate(0deg);
     }
     45% {
-      top: 6px;
+      top: 0.375em;
       -moz-transform: rotate(145deg);
     }
     75% {
@@ -168,7 +168,7 @@
 @mixin topbar-back-rotation() {
   @keyframes topbar-back {
     0% {
-      top: 6px;
+      top: 0.375em;
       transform: rotate(135deg);
     }
     45% {
@@ -178,14 +178,14 @@
       transform: rotate(5deg);
     }
     100% {
-      top: 0px;
+      top: 0em;
       transform: rotate(0);
     }
   }
 
   @-webkit-keyframes topbar-back {
     0% {
-      top: 6px;
+      top: 0.375em;
       -webkit-transform: rotate(135deg);
     }
     45% {
@@ -195,14 +195,14 @@
       -webkit-transform: rotate(5deg);
     }
     100% {
-      top: 0px;
+      top: 0em;
       -webkit-transform: rotate(0);
     }
   }
 
   @-moz-keyframes topbar-back {
     0% {
-      top: 6px;
+      top: 0.375em;
       -moz-transform: rotate(135deg);
     }
     45% {
@@ -212,7 +212,7 @@
       -moz-transform: rotate(5deg);
     }
     100% {
-      top: 0px;
+      top: 0em;
       -moz-transform: rotate(0);
     }
   }
@@ -221,11 +221,11 @@
 @mixin bottombar-x-rotation() {
   @keyframes bottombar-x {
     0% {
-      bottom: 0px;
+      bottom: 0em;
       transform: rotate(0deg);
     }
     45% {
-      bottom: 6px;
+      bottom: 0.375em;
       transform: rotate(-145deg);
     }
     75% {
@@ -237,11 +237,11 @@
   }
   @-webkit-keyframes bottombar-x {
     0% {
-      bottom: 0px;
+      bottom: 0em;
       -webkit-transform: rotate(0deg);
     }
     45% {
-      bottom: 6px;
+      bottom: 0.375em;
       -webkit-transform: rotate(-145deg);
     }
     75% {
@@ -253,11 +253,11 @@
   }
   @-moz-keyframes bottombar-x {
     0% {
-      bottom: 0px;
+      bottom: 0em;
       -moz-transform: rotate(0deg);
     }
     45% {
-      bottom: 6px;
+      bottom: 0.375em;
       -moz-transform: rotate(-145deg);
     }
     75% {
@@ -272,7 +272,7 @@
 @mixin bottombar-back-rotation {
   @keyframes bottombar-back {
     0% {
-      bottom: 6px;
+      bottom: 0.375em;
       transform: rotate(-135deg);
     }
     45% {
@@ -282,13 +282,13 @@
       transform: rotate(-5deg);
     }
     100% {
-      bottom: 0px;
+      bottom: 0em;
       transform: rotate(0);
     }
   }
   @-webkit-keyframes bottombar-back {
     0% {
-      bottom: 6px;
+      bottom: 0.375em;
       -webkit-transform: rotate(-135deg);
     }
     45% {
@@ -298,13 +298,13 @@
       -webkit-transform: rotate(-5deg);
     }
     100% {
-      bottom: 0px;
+      bottom: 0em;
       -webkit-transform: rotate(0);
     }
   }
   @-moz-keyframes bottombar-back {
     0% {
-      bottom: 6px;
+      bottom: 0.375em;
       -moz-transform: rotate(-135deg);
     }
     45% {
@@ -314,7 +314,7 @@
       -moz-transform: rotate(-5deg);
     }
     100% {
-      bottom: 0px;
+      bottom: 0em;
       -moz-transform: rotate(0);
     }
   }

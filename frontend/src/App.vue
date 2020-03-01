@@ -182,13 +182,21 @@ export default {
 .vue-notifyjs.notifications {
   .alert {
     z-index: 10000;
+    font-size: 0.875rem;
+  }
+  .alert[data-notify="container"] {
+    width: 21.875rem;
+  }
+  .alert-icon {
+    margin-left: -0.5em;
+    margin-top: -0.5em;
   }
   .list-move {
     transition: transform 0.3s, opacity 0.4s;
   }
   .list-item {
     display: inline-block;
-    margin-right: 10px;
+    margin-right: 0.625em ;
   }
   .list-enter-active {
     transition: transform 0.2s ease-in, opacity 0.4s ease-in;

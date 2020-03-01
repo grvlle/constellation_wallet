@@ -5,9 +5,7 @@
         <div class="col-md-9 mx-auto text-center header">
           <div v-if="isLogin">
             <img src="~@/assets/img/Constellation-Logo-1.png" />
-            <p
-              style="margin-bottom: 20px; margin-top: 5px;"
-            >Please enter your credentials below to access your Molly Wallet.</p>
+            <p>Please enter your credentials below to access your Molly Wallet.</p>
           </div>
           <div class="page-error-box" v-if="this.$store.state.displayLoginError">
             <p>{{this.$store.state.loginErrorMsg}}</p>
@@ -108,7 +106,7 @@
                     />
                   </div>
                   <div>
-                    <fg-input style="margin-bottom: 2px"
+                    <fg-input style="margin-bottom: 0.125em"
                       type="text"
                       v-model="alias"
                       @input.native="checkAlias(alias)"
@@ -157,8 +155,7 @@
                           type="success"
                           block
                           @click.native="login()"
-                          :disabled="!isValidNewWallet"
-                        >
+                          :disabled="!isValidNewWallet" >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
@@ -168,25 +165,23 @@
                       </div>
                     </div>
                     <div class="row" v-if="isLogin">
-                      <div class="col-md-6" style="padding-right: 10px;">
+                      <div class="col-md-6 pr-md-2">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="info"
                           block
-                          @click.native="showImportView()"
-                        >
+                          @click.native="showImportView()" >
                           <span style="display: block;">
                             <i class="fas fa-file-import"></i> IMPORT
                           </span>
                         </p-button>
                       </div>
-                      <div class="col-md-6" style="padding-left: 10px;">
+                      <div class="col-md-6 pl-md-2">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="danger"
                           block
-                          @click.native="newLogin()"
-                        >
+                          @click.native="newLogin()" >
                           <span style="display: block;">
                             <i class="fa fa-key"></i> CREATE
                           </span>
@@ -194,27 +189,25 @@
                       </div>
                     </div>
                     <div class="row" v-if="isRegister">
-                      <div class="col-md-6" style="padding-right: 10px;">
+                      <div class="col-md-6 pr-md-2">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="default"
                           block
-                          @click.native="cancelEvent()"
-                        >
+                          @click.native="cancelEvent()" >
                           <span style="display: block;">
                             <i class="fa fa-close"></i>
                             CANCEL
                           </span>
                         </p-button>
                       </div>
-                      <div class="col-md-6" style="padding-left: 10px;">
+                      <div class="col-md-6 pl-md-2">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="warning"
                           block
                           :disabled="!this.isValidNewWallet"
-                          @click.native="createLogin()"
-                        >
+                          @click.native="createLogin()" >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
@@ -224,27 +217,25 @@
                       </div>
                     </div>
                     <div class="row" v-if="isImport">
-                      <div class="col-md-6" style="padding-right: 10px;">
+                      <div class="col-md-6 pr-md-2">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="default"
                           block
-                          @click.native="cancelImportView()"
-                        >
+                          @click.native="cancelImportView()" >
                           <span style="display: block;">
                             <i class="fa fa-close"></i>
                             CANCEL
                           </span>
                         </p-button>
                       </div>
-                      <div class="col-md-6" style="padding-left: 10px;">
+                      <div class="col-md-6 pl-md-2">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="info"
                           block
                           :disabled="!this.isValidNewWallet"
-                          @click.native="importWallet()"
-                        >
+                          @click.native="importWallet()" >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
@@ -484,7 +475,7 @@ export default {
 
                 Swal.fire({
                   html:
-                    '<div style="overflow: scroll; padding: 20px; width: 960px; height: 500px;">' +
+                    '<div style="overflow: scroll; padding: 1.25em; width: 60em; height: 31.25em;">' +
                     '<p style="text-align: center;background: transparent;margin-bottom: 0.11in;line-height: 108%;"><strong>TERMS OF SERVICE</strong></p>' +
                     '<p style="text-align: center;background: transparent;margin-bottom: 0.11in;line-height: 108%;">Last updated: 02.04.2020</p>' +
                     '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">Welcome to Molly, a free tool for interacting directly with the Hypergraph Blockchain. Please read these terms and conditions (the <strong>"</strong><u>Terms of Service</u><strong>"</strong>) carefully. They apply to your use of the Constellation Network, Inc.’s, and any subsidiary, parent, or affiliate thereof (collectively, the “<u>Company</u>") Molly Wallet desktop application (the&nbsp;"<u>Site</u>") and any related services offered by the Company through the Site. The Site and related services offered through the Site shall hereinafter be referred to as the “<u>Services</u>.” This Terms of Service together with any additional posted guidelines or rules applicable to related services and features, and the Privacy Policy (as hereinafter defined) shall hereinafter be referred to as the “<u>Agreement</u>.”</p>' +
@@ -562,7 +553,7 @@ export default {
                     "</div>",
                   showCloseButton: true,
                   showCancelButton: true,
-                  width: "1000px",
+                  width: "62.5em",
                   focusConfirm: false,
                   confirmButtonText:
                     '<i class="fa fa-thumbs-up"></i> I have read and I Agree to Terms!',
@@ -621,7 +612,7 @@ export default {
   }
   .list-item {
     display: inline-block;
-    margin-right: 10px;
+    margin-right: 0.625em;
   }
   .list-enter-active {
     transition: transform 0.2s ease-in, opacity 0.4s ease-in;
@@ -684,49 +675,49 @@ html {
 }
 
 .input-box > div {
-  margin-bottom: 30px;
+  margin-bottom: 1.875em;
 }
 
 .button-box .container {
-  margin-left: 0px;
-  margin-right: 0px;
-  padding-left: 0px;
-  padding-right: 0px;
+  margin-left: 0em;
+  margin-right: 0em;
+  padding-left: 0em;
+  padding-right: 0em;
 }
 
 .button-box .container .row {
-  margin-left: 0px;
-  margin-right: 0px;
-  padding-left: 0px;
-  padding-right: 0px;
-  margin-top: 20px;
+  margin-left: 0em;
+  margin-right: 0em;
+  padding-left: 0em;
+  padding-right: 0em;
+  margin-top: 1.25em;
 }
 
 .button-box .container .row [class^="col"] {
-  margin-left: 0px;
-  margin-right: 0px;
-  padding-left: 0px;
-  padding-right: 0px;
+  margin-left: 0em;
+  margin-right: 0em;
+  padding-left: 0em;
+  padding-right: 0em;
 }
 
 .page-error-box {
-  height: 30px;
+  height: 1.875em;
 }
 
 .page-error-box p {
   color: firebrick;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .validate {
-  height: 10px;
+  height: 0.625em;
   display: flex;
 }
 .validate > p {
   /*flex: 1;*/
-  font-size: 10px;
+  font-size: 0.625rem;
   color: firebrick;
-  margin-top: 0px;
-  margin-right: 2px;
+  margin-top: 0em;
+  margin-right: 0.125em;
 }
 </style>

@@ -29,12 +29,12 @@
 @mixin sr-only {
   border: 0;
   clip: rect(0, 0, 0, 0);
-  height: 1px;
-  margin: -1px;
+  height: 0.0625em;
+  margin: -0.0625em;
   overflow: hidden;
   padding: 0;
   position: absolute;
-  width: 1px;
+  width: 0.0625em;
 }
 
 // Use in conjunction with .sr-only to only display content when it's focused.

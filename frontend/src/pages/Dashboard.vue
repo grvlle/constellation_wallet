@@ -103,7 +103,7 @@
             <i class="fa fa-circle text-info"></i> TX
             <i class="fa fa-circle text-success"></i> RX
           </div>
-          <span style="padding-top: 10px;" slot="footer">
+          <span style="padding-top: 0.625em;" slot="footer">
             <i class="ti-timer"></i>
             Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds
           </span>
@@ -235,7 +235,7 @@ export default {
           low: 0,
           high: 1000,
           showArea: true,
-          height: "245px",
+          height: "15.3125em",
           axisX: {
             showGrid: false
           },
@@ -272,7 +272,7 @@ export default {
           axisX: {
             showGrid: false
           },
-          height: "245px"
+          height: "15.3125em"
         }
       },
       preferencesChart: {
@@ -300,13 +300,13 @@ export default {
 
 .wallet-address {
     color: #c4c4c4;
-    padding-top: 15px;
+    padding-top: 0.9375em;
     background-color: #f7f7f7;
-    font-size: 25px;
+    font-size: 1.5625rem;
     font-weight: 100;
 }
 
 .wallet-address > p-button {
-    margin-bottom: 15px;
+    margin-bottom: 0.9375em;
 }
 </style>

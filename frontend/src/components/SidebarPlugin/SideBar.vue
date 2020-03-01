@@ -10,9 +10,7 @@
           <div class="logo-img">
             <img src="@/assets/img/spots.png" alt />
           </div>
-          <a style="font-size: 10px; 10px; margin-left: 5px;">WELCOME TO YOUR</a>
-          {{title}}
-          <a style="font-size: 10px;">WALLET</a>
+          <div class="small">WELCOME TO YOUR WALLET</div>
         </a>
       </div>
       <slot></slot>
@@ -28,7 +26,7 @@
           ></sidebar-link>
         </slot>
       </ul>
-      <moving-arrow :move-y="arrowMovePx"></moving-arrow>
+      <moving-arrow :move-y="arrowMoveEm"></moving-arrow>
     </div>
   </div>
 </template>
@@ -89,13 +87,13 @@ export default {
      * Styles to animate the arrow near the current active sidebar link
      * @returns {{transform: string}}
      */
-    arrowMovePx() {
+    arrowMoveEm() {
       return this.linkHeight * this.activeLinkIndex;
     }
   },
   data() {
     return {
-      linkHeight: 65,
+      linkHeight: 4,
       activeLinkIndex: 0,
       windowWidth: 0,
       isWindows: false,

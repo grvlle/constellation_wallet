@@ -6,13 +6,13 @@
 
   #style-3::-webkit-scrollbar-track
   {
-    -webkit-box-shadow: inset 0 0 6px $background-color;
+    -webkit-box-shadow: inset 0 0 0.375em $background-color;
     background-color: $background-color;
   }
 
   #style-3::-webkit-scrollbar
   {
-    width: 6px;
+    width: 0.375em;
     background-color: $font-color;
   }
 
@@ -23,7 +23,7 @@
 
 
   .logo {
-    border-bottom: 1px solid rgba($font-color, .3);
+    border-bottom: 0.0625em solid rgba($font-color, .3);
 
     p {
       color: $font-color;

@@ -140,8 +140,8 @@ $color-discord: #7289da;
   align-items: center;
   justify-content: center;
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 5em;
+  height: 5em;
   margin: 0 0.5rem;
   border-radius: 50%;
   cursor: pointer;
@@ -158,7 +158,7 @@ $color-discord: #7289da;
     }
   }
   &:active {
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5) inset;
+    box-shadow: 0em 0.0625em 0.1875em rgba(0, 0, 0, 0.5) inset;
   }
   &--linkedin {
     @include social-icon($color-linkedin);
@@ -192,7 +192,7 @@ $color-discord: #7289da;
   }
   i {
     position: relative;
-    top: 1px;
+    top: 0.0625em;
   }
 }
 
@@ -204,7 +204,7 @@ $color-discord: #7289da;
   top: 0;
   left: 50%;
   padding: 0.8rem 1rem;
-  border-radius: 40px;
+  border-radius: 2.5em;
   font-size: 0.8rem;
   font-weight: bold;
   opacity: 0;
@@ -216,13 +216,13 @@ $color-discord: #7289da;
   &:after {
     display: block;
     position: absolute;
-    bottom: 1px;
+    bottom: 0.0625em;
     left: 50%;
     width: 0;
     height: 0;
     content: "";
     border: solid;
-    border-width: 10px 10px 0 10px;
+    border-width: 0.625em 0.625em 0 0.625em;
     border-color: transparent;
     transform: translate(-50%, 100%);
   }

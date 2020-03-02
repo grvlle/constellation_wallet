@@ -240,8 +240,7 @@
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="info"
                           block
-                          :disabled="!this.isValidNewWallet"
-                          @click.native="importWallet()" >
+                          @click.native="importWallet()">
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>

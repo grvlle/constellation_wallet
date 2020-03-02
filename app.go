@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"os"
 	"os/user"
@@ -81,7 +82,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.log = logrus.New()
 	err = a.initDirectoryStructure()
 	if err != nil {
-		a.log.Errorf("Unable to set up directory structure. Reason: ", err)
+		a.log.Errorln("Unable to set up directory structure. Reason: ", err)
 	}
 
 	a.initLogger()
@@ -96,7 +97,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {
-		a.log.Panicf("failed to connect database", err)
+		a.log.Panicln("failed to connect database", err)
 	}
 	// Migrate the schema
 	a.DB.AutoMigrate(&Wallet{}, &TXHistory{}, &Path{})
@@ -149,17 +150,37 @@ func (a *WalletApplication) initDirectoryStructure() error {
 
 // initMainnetConnection populates the WalletApplication struct with mainnet data
 func (a *WalletApplication) initMainnetConnection() {
-	a.Network.URL = "cl-lb-111349175.us-west-1.elb.amazonaws.com:9000" // Temp
+	a.Network.URL = "http://cl-lb-alb-test-1471406049.us-west-1.elb.amazonaws.com:9000" // Temp
 
 	a.Network.Handles.Send = "/send"
 	a.Network.Handles.Transaction = "/transaction"
-	a.Network.Handles.Balance = "/balance"
+	a.Network.Handles.Balance = "/balance/"
 
-	a.Network.BlockExplorer.URL = "https://2mqil2w38l.execute-api.us-west-1.amazonaws.com/block-explorer-api-dev"
+	a.Network.BlockExplorer.URL = "https://9vxbd3xkg6.execute-api.us-west-1.amazonaws.com/cl-block-explorer-test"
 	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"
 	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoints/"
 	a.Network.BlockExplorer.Handles.Snapshots = "/snapshots/"
 	a.Network.BlockExplorer.Handles.CollectTX = "/transactions?sender="
+}
+
+// Errors reported by the blockexplerer/loadbalancer are reported in the following format
+// {"error": "Cannot find transactions for sender"}
+type APIError struct {
+	Error string
+}
+
+// verifyAPIResponse takes API response converted to a byte array and checks if the API returned
+// an error. If it did, it'll return the error message.
+func (a *WalletApplication) verifyAPIResponse(r []byte) (bool, string) {
+	APIErr := APIError{}
+	if string(r[3:8]) == "error" {
+		err := json.Unmarshal(r, &APIErr)
+		if err != nil {
+			a.log.Errorln("Unable to parse API error. Reason: ", err)
+		}
+		return false, APIErr.Error
+	}
+	return true, ""
 }
 
 func (a *WalletApplication) sendSuccess(msg string) {

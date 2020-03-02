@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -200,13 +200,8 @@ func (a *WalletApplication) pollTokenBalance() {
 				return
 			default:
 				a.log.Info("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
-				bytesRepresentation, err := json.Marshal(a.wallet.Address)
-				if err != nil {
-					a.log.Errorln("Unable to convert wallet address to JSON object", err)
-					a.sendError("There was a problem reading your DAG Address. Please report this issue.", err)
-					return
-				}
-				resp, err := http.Post("http://"+a.Network.URL+a.Network.Handles.Balance, "application/json", bytes.NewBuffer(bytesRepresentation))
+
+				resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
 				if err != nil {
 					a.log.Errorln("Failed to send HTTP request. Reason: ", err)
 				}
@@ -217,14 +212,20 @@ func (a *WalletApplication) pollTokenBalance() {
 					if err != nil {
 						a.log.Error("Unable to read HTTP response from mainnet. Reason: ", err)
 					}
-
-					balance := string(bodyBytes)
-					balanceFloat, err := strconv.ParseFloat(balance, 8)
+					s := string(bodyBytes)
+					i, err := strconv.ParseInt(s, 10, 64)
 					if err != nil {
-						a.log.Warnln("Unable to type cast string to float for token balance poller. Is the blockexplorer reachable?")
+						a.log.Warnln("Unable to parse balance. Reason:", err)
+					}
+					f := fmt.Sprintf("%.2f", float64(i)/1e8) // Reverse normalized float
+					a.log.Infoln("Current Balance: ", f)
+
+					balance, err := strconv.ParseFloat(f, 64)
+					if err != nil {
+						a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
 					}
 
-					a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balanceFloat, balanceFloat, balanceFloat
+					a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balance, balance, balance
 
 					a.RT.Events.Emit("token", a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance)
 					time.Sleep(updateIntervalToken * time.Second)
@@ -262,18 +263,18 @@ func (a *WalletApplication) pricePoller() {
 			default:
 				resp, err := http.Get(url)
 				if err != nil {
-					a.log.Warnf("Unable to poll token evaluation. Reason: ", err) // Log this
+					a.log.Warnln("Unable to poll token evaluation. Reason: ", err) // Log this
 				}
 				if resp != nil {
 					body, err := ioutil.ReadAll(resp.Body)
 					if err != nil {
 						a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
-						a.log.Warnf("Unable to read HTTP resonse from Token API. Reason: ", err)
+						a.log.Warnln("Unable to read HTTP resonse from Token API. Reason: ", err)
 					}
 					err = json.Unmarshal([]byte(body), &a.wallet.TokenPrice)
 					if err != nil {
 						a.sendError("Unable to display token price. Reason: ", err)
-						a.log.Warnf("Unable to display token price. Reason:", err)
+						a.log.Warnln("Unable to display token price. Reason:", err)
 					}
 					a.log.Debugf("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
 

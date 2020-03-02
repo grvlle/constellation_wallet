@@ -73,7 +73,10 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 
 	if a.UserLoggedIn && a.KeyStoreAccess && !a.NewUser {
 
-		a.initWallet(keystorePath)
+		err := a.initWallet(keystorePath)
+		if err != nil {
+			a.UserLoggedIn = false
+		}
 	}
 
 	a.NewUser = false

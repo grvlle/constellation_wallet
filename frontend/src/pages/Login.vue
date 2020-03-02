@@ -242,7 +242,7 @@
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="info"
                           block
-                          :disabled="!this.isValidNewWallet"
+                          
                           @click.native="importWallet()"
                         >
                           <span style="display: block;">

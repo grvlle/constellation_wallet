@@ -2,7 +2,10 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"time"
 )
@@ -67,12 +70,12 @@ func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address
 func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, address string) {
 
 	// TODO: Temp comments. Re-add once wallet goes live.
-	// if amount+fee > a.wallet.AvailableBalance {
-	// 	a.log.Warnln("Insufficient Balance")
-	// 	a.sendWarning("Insufficent Balance.")
-	// 	a.TransactionFailed = true
-	// 	return
-	// }
+	if amount+fee > a.wallet.AvailableBalance {
+		a.log.Warnln("Insufficient Balance")
+		a.sendWarning("Insufficent Balance.")
+		a.TransactionFailed = true
+		return
+	}
 
 	if a.TransactionFinished {
 		a.TransactionFinished = false
@@ -95,50 +98,50 @@ func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, addr
 }
 
 func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
-	a.log.Info("Attempting to communicate with mainnet on: http://" + a.Network.URL + a.Network.Handles.Transaction)
+	a.log.Info("Attempting to communicate with mainnet on: " + a.Network.URL + a.Network.Handles.Transaction)
 	/* TEMPORARILY COMMENTED OUT */
-	// bytesRepresentation, err := json.Marshal(tx)
-	// if err != nil {
-	// 	a.log.Errorln("Unable to parse JSON data for transaction", err)
-	// 	a.sendError("Unable to parse JSON data for transaction", err)
-	// 	return false
-	// }
-	// resp, err := http.Post("http://"+a.Network.URL+a.Network.Handles.Transaction, "application/json", bytes.NewBuffer(bytesRepresentation))
-	// if err != nil {
-	// 	a.log.Errorln("Failed to send HTTP request. Reason: ", err)
-	// 	a.sendError("Unable to send request to mainnet. Please check your internet connection. Reason: ", err)
-	// 	return false
-	// }
-	// defer resp.Body.Close()
+	bytesRepresentation, err := json.Marshal(tx)
+	if err != nil {
+		a.log.Errorln("Unable to parse JSON data for transaction", err)
+		a.sendError("Unable to parse JSON data for transaction", err)
+		return false
+	}
+	resp, err := http.Post(a.Network.URL+a.Network.Handles.Transaction, "application/json", bytes.NewBuffer(bytesRepresentation))
+	if err != nil {
+		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+		a.sendError("Unable to send request to mainnet. Please check your internet connection. Reason: ", err)
+		return false
+	}
+	defer resp.Body.Close()
 
-	// if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode == http.StatusOK {
 
-	// 	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	// 	if err != nil {
-	// 		a.log.Fatal(err)
-	// 	}
-	// 	bodyString := string(bodyBytes)
-	// 	if len(bodyBytes) == 64 {
-	// 		a.log.Info(bodyString)
-	// 		a.log.Infoln("Transaction has been successfully sent to the network.")
-	// 		a.sendSuccess("Transaction successfully sent!")
-	// 		return true
-	// 	}
-	// 	a.log.Warn(bodyString)
-	// 	a.sendWarning("Unable to put transaction on the network. Reason: " + bodyString)
-	// 	return false
-	// }
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			a.log.Fatal(err)
+		}
+		bodyString := string(bodyBytes)
+		if len(bodyBytes) == 64 {
+			a.log.Info(bodyString)
+			a.log.Infoln("Transaction has been successfully sent to the network.")
+			a.sendSuccess("Transaction successfully sent!")
+			return true
+		}
+		a.log.Warn(bodyString)
+		a.sendWarning("Unable to put transaction on the network. Reason: " + bodyString)
+		return false
+	}
 
-	// bodyBytes, err := ioutil.ReadAll(resp.Body)
-	// if err != nil {
-	// 	a.log.Errorln(err)
-	// }
-	// bodyString := string(bodyBytes)
-	// a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
-	// a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		a.log.Errorln(err)
+	}
+	bodyString := string(bodyBytes)
+	a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
+	a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
 
 	time.Sleep(3 * time.Second)
-	return true /* TEMPORARILY SET TO TRUE. CHANGE TO FALSE */
+	return false /* TEMPORARILY SET TO TRUE. CHANGE TO FALSE */
 }
 
 func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {

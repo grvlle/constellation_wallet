@@ -14,10 +14,10 @@
         </div>
       </div>
       <div class="row">
-        <div class="col">
+        <div class="col-md-9 mx-auto">
           <form ref="textareaform" @submit.prevent="form" class="container">
             <div class="row">
-              <div class="col-md-4 info-box" v-if="isRegister">
+              <div class="col-md-5 info-box" v-if="isRegister">
                 <div>
                   <b>Create a new wallet</b>
                   <br />This section will let you create a Molly Wallet to store your
@@ -26,14 +26,17 @@
                   <br />Once the path is selected, you get to set up a password to protect the key store.
                   <br />
                   <br />
-                  <br />
                   <ul>
                     <li>
                       <b>KeyStore File</b>
                       <i>- Select where to save your KeyStore File.</i>
                     </li>
                     <li>
-                      <b>Store Password</b>
+                      <b>Key Alias</b>
+                      <i>- The unique name which is used in the keystore to identify this key entry.</i>
+                    </li>
+                    <li>
+                      <b>Keystore Password</b>
                       <i>- This password unlocks the keystore file.</i>
                     </li>
                     <li>
@@ -41,18 +44,17 @@
                       <i>- Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i>
                     </li>
                     <li>
-                      <b>Token Label</b>
+                      <b>Wallet Label</b>
                       <i>
                         - This will set the label of your wallet. This is
                         <b>optional</b> and strictly for cosmetic purposes.
                       </i>
                     </li>
                   </ul>
-                  <br />
                   <b>Important!</b> Please backup your Alias, Store Passwords, Key Password and KeyStore File (key.p12) as these will allow you to restore your wallet at any time.
                 </div>
               </div>
-              <div class="col-md-4 info-box" v-if="isImport">
+              <div class="col-md-5 info-box" v-if="isImport">
                 <div>
                   <b>Import an existing wallet.</b>
                   <br />This section will let you import an existing KeyStore (key.p12). Simply browse to the location of the KeyStore file, enter the Store Password as well as the Key Password to access it.
@@ -60,14 +62,18 @@
                   <br />
                   <ul>
                     <li>
-                      <b>Key File</b>
+                      <b>Keystore File</b>
                       <i>
                         - Select where your
                         <b>existing</b> private key is stored and unlock using the passwords previously set up.
                       </i>
                     </li>
                     <li>
-                      <b>Store Password</b>
+                      <b>Key Alias</b>
+                      <i>- The unique name which is used in the keystore to identify this key entry.</i>
+                    </li>
+                    <li>
+                      <b>Keystore Password</b>
                       <i>- This password unlocks the keystore file.</i>
                     </li>
                     <li>

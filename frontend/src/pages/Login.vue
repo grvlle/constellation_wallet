@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-9 mx-auto">
+        <div class="col-12">
           <form ref="textareaform" @submit.prevent="form" class="container">
             <div class="row">
               <div class="col-md-5 info-box" v-if="isRegister">
@@ -171,7 +171,7 @@
                       </div>
                     </div>
                     <div class="row" v-if="isLogin">
-                      <div class="col-md-6 pr-md-2">
+                      <div class="col-md-6 pr-md-2 mb-3">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="info"
@@ -182,7 +182,7 @@
                           </span>
                         </p-button>
                       </div>
-                      <div class="col-md-6 pl-md-2">
+                      <div class="col-md-6 pl-md-2 mb-3">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="danger"
@@ -195,7 +195,7 @@
                       </div>
                     </div>
                     <div class="row" v-if="isRegister">
-                      <div class="col-md-6 pr-md-2">
+                      <div class="col-md-6 pr-md-2 mb-3">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="default"
@@ -207,7 +207,7 @@
                           </span>
                         </p-button>
                       </div>
-                      <div class="col-md-6 pl-md-2">
+                      <div class="col-md-6 pl-md-2 mb-3">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="warning"
@@ -223,7 +223,7 @@
                       </div>
                     </div>
                     <div class="row" v-if="isImport">
-                      <div class="col-md-6 pr-md-2">
+                      <div class="col-md-6 pr-md-2 mb-3">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="default"
@@ -235,7 +235,7 @@
                           </span>
                         </p-button>
                       </div>
-                      <div class="col-md-6 pl-md-2">
+                      <div class="col-md-6 pl-md-2 mb-3">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="info"
@@ -677,6 +677,10 @@ html {
 
   display: flex;
   align-items: center;
+}
+
+.login-box {
+  max-width: 29rem;
 }
 
 .input-box > div {

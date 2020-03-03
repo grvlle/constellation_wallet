@@ -6,7 +6,7 @@
           <form @submit.prevent class="container">
             <div class="form-row align-items-center">
               <div class="col-md-5">
-                <fg-input style="margin-bottom: 2px;"
+                <fg-input style="margin-bottom: 0.125em;"
                   v-model.number="txAmountValidation"
                   @change="sendAmount($event.target.value)"
                   pattern="[0-9]+([,\.][0-9]+)?"
@@ -21,11 +21,11 @@
               </div>
               <div class="col-md-2">
                 <i class="fa fa-chevron-circle-right"
-                  style="color: #6DECBB; font-size: 40px; width:100%; margin-top: 25px;"></i>
+                  style="color: #6DECBB; font-size: 2.5rem; width:100%; margin-top: 1.5rem;"></i>
                 <div class="validate"></div>
               </div>
               <div class="col-md-5">
-                <fg-input style="margin-bottom: 2px;"
+                <fg-input style="margin-bottom: 0.125em;"
                   v-model.trim="txAddressValidation"
                   @change="setName($event.target.value)"
                   type="text"
@@ -71,23 +71,23 @@
                 <tr v-for="tx in this.$store.state.txInfo.txHistory" v-bind:key="tx.ID">
                   <slot :row="item">
                     <td>
-                      <p class="description" style="font-size: 15px;">
+                      <p class="description" style="font-size: 0.9375rem;">
                         <b>{{tx.amount | dropzero}}</b> $DAG
                       </p>
                     </td>
                     <td>
-                      <p class="description" style="font-size: 15px;">{{tx.sender | truncate}}</p>
+                      <p class="description" style="font-size: 0.9375rem;">{{tx.sender | truncate}}</p>
                     </td>
                     <td>
-                      <p class="description" style="font-size: 15px;">{{tx.fee}}</p>
+                      <p class="description" style="font-size: 0.9375rem;">{{tx.fee}}</p>
                     </td>
                     <td>
                       <a id="txhash">
-                        <p style="font-size: 15px;">{{tx.hash | truncate}}</p>
+                        <p style="font-size: 0.9375rem;">{{tx.hash | truncate}}</p>
                       </a>
                     </td>
                     <td>
-                      <p class="description" style="font-size: 15px;">{{tx.date}}</p>
+                      <p class="description" style="font-size: 0.9375rem;">{{tx.date}}</p>
                     </td>
                   </slot>
                 </tr>
@@ -326,14 +326,14 @@ txhash p {
 }
 
 .validate {
-  height: 20px;
+  height: 1.25em;
   display: flex;
 }
 .validate > p {
   /*flex: 1;*/
-  font-size: 10px;
+  font-size: 0.625rem;
   color: firebrick;
-  margin-top: 0px;
-  margin-right: 2px;
+  margin-top: 0em;
+  margin-right: 0.125em;
 }
 </style>

@@ -3,12 +3,12 @@
     <center>
       <img
       v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-      style="margin-top: 200px;"
+      style="margin-top: 12.5em;"
       src="~@/assets/img/Constellation-Logo-1.png"
       />
       <p
         v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-        style="color: #c4c4c4; margin-top: 5px;"
+        style="color: #c4c4c4; margin-top: 0.3125em;"
       >Getting your $DAG Wallet ready...</p>
     </center>
     <center>
@@ -75,7 +75,7 @@ export default {
   background-size: cover;
   color: white;
   display: block;
-  font-size: 32px;
+  font-size: 2rem;
   overflow: hidden;
   padding-top: 35vh;
   position: fixed;
@@ -87,7 +87,7 @@ $colorRight: darken(#5c8df6, 15%);
 $colorLeft: darken(#5c8df6, 5%);
 $shadow: #dbe3f4;
 .boxes {
-  --size: 32px;
+  --size: 2em;
   --duration: 800ms;
   text-align: center;
   height: calc(var(--size) * 2);
@@ -95,8 +95,8 @@ $shadow: #dbe3f4;
   position: relative;
   transform-style: preserve-3d;
   transform-origin: 50% 50%;
-  margin-top: 50px;
-  transform: rotateX(60deg) rotateZ(45deg) rotateY(0deg) translateZ(0px);
+  margin-top: 3.125em;
+  transform: rotateX(60deg) rotateZ(45deg) rotateY(0deg) translateZ(0em);
   .box {
     width: var(--size);
     height: var(--size);
@@ -218,27 +218,6 @@ html {
   }
 }
 
-/* // Center & dribbble */
-
-// body {
-//     min-height: 100vh;
-//     font-family: Roboto, Arial;
-//     color: #ADAFB6;
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     background: #F9FBFF;
-//     .dribbble {
-//         position: fixed;
-//         display: block;
-//         right: 20px;
-//         bottom: 20px;
-//         img {
-//             display: block;
-//             height: 28px;
-//         }
-//     }
-// }
 .fadeout {
   animation: fadeout 2s forwards;
 }

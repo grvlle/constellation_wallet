@@ -34,35 +34,35 @@
   }
 }
 .btn-just-icon{
-  border-radius: 4px;
-  height: 30px;
-  width: 30px;
-  min-width: 30px;
-  padding: 0px;
-  margin-top: 10px;
+  border-radius: 0.25em;
+  height: 1.875em;
+  width: 1.875em;
+  min-width: 1.875em;
+  padding: 0em;
+  margin-top: 0.625em;
 
   &.btn-sm{
-    padding: 4px !important;
+    padding: 0.25em !important;
   }
   i{
     font-size: $font-size-medium;
-    padding: 2px 0px;
+    padding: 0.125em 0em;
   }
 }
 .upgrade-pro{
   .btn{
-    margin-top: 30px;
+    margin-top: 1.875em;
   }
 }
 .btn-link.btn-just-icon{
-  padding: 8px;
+  padding: 0.5em;
 }
 
 .btn-group .btn + .btn,
 .btn-group .btn + .btn-group,
 .btn-group .btn-group + .btn,
 .btn-group .btn-group + .btn-group{
-  margin-left: -2px;
+  margin-left: -0.125em;
 }
 
 
@@ -145,7 +145,7 @@
   @include btn-size($padding-small-vertical, $padding-small-horizontal, $font-size-small, $line-height-small);
 }
 .btn-wd {
-  min-width: 140px;
+  min-width: 8.75em;
 }
 
 .btn-group.select{
@@ -157,14 +157,14 @@
 .btn-group.select .caret{
   position: absolute;
   top: 50%;
-  margin-top: -1px;
-  right: 8px;
+  margin-top: -0.0625em;
+  right: 0.5em;
 }
 .btn-just-icon{
   &.btn-sm{
-    height: 30px;
-    width: 30px;
-    min-width: 30px;
+    height: 1.875em;
+    width: 1.875em;
+    min-width: 1.875em;
     padding: 0;
 
     i{
@@ -173,13 +173,13 @@
     }
   }
   &.btn-lg{
-    height: 50px;
-    width: 50px;
-    min-width: 50px;
-    padding: 13px;
+    height: 3.125em;
+    width: 3.125em;
+    min-width: 3.125em;
+    padding: 0.8125em;
 
     i{
-      font-size: 18px;
+      font-size: 1.125rem;
       padding: 0;
     }
 
@@ -187,7 +187,7 @@
 
 }
 .btn-round{
-  border-radius: 30px;
+  border-radius: 1.875em;
 }
 .btn.btn-link:focus{
   box-shadow: none !important;
@@ -195,13 +195,13 @@
 }
 
 .column .btn-link{
-  padding: 7px 0;
+  padding: 0.4375em 0;
 }
 .share-buttons .btn-outline-default{
-  margin-top: 24px;
+  margin-top: 1.5em;
 }
 #modals .btn-outline-neutral{
-  margin-bottom: 10px;
+  margin-bottom: 0.625em;
 }
 .btn-group.select{
   overflow: visible !important;

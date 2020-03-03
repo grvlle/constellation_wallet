@@ -11,11 +11,11 @@
       <slot :row="item">
         <td v-for="(column, index) in columns" :key="index">
           <!-- {{ item[column.toLowerCase()] }} -->
-          <p class="description" style="font-size: 15px;" v-if="index === 0">{{ item.amount | truncate}}</p>
-          <p class="description" style="font-size: 15px;" v-if="index === 1">{{ item.address | truncate}}</p>
-          <p class="description" style="font-size: 15px;" v-if="index === 2">{{ item.fee | truncate}}</p>
-          <p class="description" style="font-size: 15px;" v-if="index === 3">{{ item.txhash | truncate}}</p>
-          <p class="description" style="font-size: 15px;" v-if="index === 4">{{ item.date | truncate}}</p>
+          <p class="description" style="font-size: 1rem;" v-if="index === 0">{{ item.amount | truncate}}</p>
+          <p class="description" style="font-size: 1rem;" v-if="index === 1">{{ item.address | truncate}}</p>
+          <p class="description" style="font-size: 1rem;" v-if="index === 2">{{ item.fee | truncate}}</p>
+          <p class="description" style="font-size: 1rem;" v-if="index === 3">{{ item.txhash | truncate}}</p>
+          <p class="description" style="font-size: 1rem;" v-if="index === 4">{{ item.date | truncate}}</p>
 
 
         

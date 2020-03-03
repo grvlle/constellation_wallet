@@ -41,7 +41,7 @@
     background-color: $success-input-bg;
     color: $success-color;
     &.border-input {
-      border: 1px solid $success-color;
+      border: 0.0625em solid $success-color;
     }
   }
   .has-success &:focus {
@@ -51,7 +51,7 @@
     background-color: $danger-input-bg;
     color: $danger-color;
     &.border-input {
-      border: 1px solid $danger-color;
+      border: 0.0625em solid $danger-color;
     }
   }
   .has-error &:focus {
@@ -61,14 +61,14 @@
   & + .form-control-feedback {
     border-radius: $border-radius-large;
     font-size: $font-size-base;
-    margin-top: -7px;
+    margin-top: -0.4375em;
     position: absolute;
-    right: 10px;
+    right: 0.625em;
     top: 50%;
     vertical-align: middle;
   }
   &.border-input {
-    border: 1px solid $table-line-color;
+    border: 0.0625em solid $table-line-color;
   }
   .open & {
     border-bottom-color: transparent;
@@ -76,7 +76,7 @@
 }
 
 .input-lg {
-  height: 55px;
+  height: 3.4375em;
   padding: $padding-large-vertical $padding-large-horizontal;
 }
 
@@ -115,12 +115,12 @@
 
 .border-input {
   .input-group-addon {
-    border: solid 1px $table-line-color;
+    border: solid 0.0625em $table-line-color;
   }
 }
 
 .input-group {
-  margin-bottom: 15px;
+  margin-bottom: 0.9375em;
 }
 
 .input-group[disabled] {
@@ -180,7 +180,7 @@
 
 textarea.form-control {
   max-width: 100%;
-  padding: 10px 18px;
+  padding: 0.625em 1.125em;
   resize: none;
 }
 

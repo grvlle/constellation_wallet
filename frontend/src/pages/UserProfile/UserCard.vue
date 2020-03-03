@@ -1,7 +1,7 @@
 <template>
   <card class="card-user">
     <div slot="image">
-      <img src="@/assets/img/dotz.png" style="margin-top: -155px" alt="...">
+      <img src="@/assets/img/dotz.png" style="margin-top: -9.6875em" alt="...">
     </div>
     <div>
       <div class="author">

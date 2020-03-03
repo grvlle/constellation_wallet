@@ -300,7 +300,7 @@ export default {
 
 .wallet-address {
     color: #c4c4c4;
-    padding-top: 0.9375em;
+    padding-top: 0.5375em;
     background-color: #f7f7f7;
     font-size: 1.5625rem;
     font-weight: 100;

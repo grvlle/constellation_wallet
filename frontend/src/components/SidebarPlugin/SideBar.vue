@@ -8,9 +8,9 @@
       <div class="logo">
         <a class="simple-text">
           <div class="logo-img">
-            <img src="@/assets/img/spots.png" alt />
+            <center><img src="@/assets/img/spots.png" alt /></center>
           </div>
-          <div class="small">WELCOME TO YOUR WALLET</div>
+          <div class="small" style="text-align:center;">WELCOME TO <b>MOLLY</b> WALLET!</div>
         </a>
       </div>
       <slot></slot>
@@ -93,7 +93,7 @@ export default {
   },
   data() {
     return {
-      linkHeight: 4,
+      linkHeight: 4.2,
       activeLinkIndex: 0,
       windowWidth: 0,
       isWindows: false,

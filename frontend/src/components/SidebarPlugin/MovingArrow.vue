@@ -31,9 +31,9 @@ $bg-nude: #f4f3ef !default;
   border-bottom: 1.0625em solid transparent;
   display: inline-block;
   position: absolute;
-  left: 15.1875em;
+  left: 15.2175em;
   top: 16.5em;
-  transition: all 0.5s cubic-bezier(0.19, 1.42, 0.79, 1);
+  transition: all 0.5s cubic-bezier(0.19, 1.42, 0.09, 1);
 }
 @media (max-width: 992px) {
   .moving-arrow {

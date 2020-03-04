@@ -19,7 +19,7 @@
   border: medium none;
   border-radius: $border-radius-base;
   color: $font-color;
-  font-size: $font-size-base;
+  font-size: $font-size-base*1.2;
   transition: background-color 0.3s ease 0s;
   @include input-size($padding-base-vertical, $padding-base-horizontal, $height-base);
   @include box-shadow(none);
@@ -166,6 +166,7 @@
 }
 
 .input-group-btn .btn {
+  font-size: $font-size-base*1;
   border-width: $border-thin;
   padding: $padding-round-vertical $padding-base-horizontal;
 }

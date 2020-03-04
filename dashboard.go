@@ -218,16 +218,18 @@ func (a *WalletApplication) pollTokenBalance() {
 						a.log.Warnln("Unable to parse balance. Reason:", err)
 					}
 					f := fmt.Sprintf("%.2f", float64(i)/1e8) // Reverse normalized float
-					a.log.Infoln("Current Balance: ", f)
 
 					balance, err := strconv.ParseFloat(f, 64)
 					if err != nil {
 						a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
 					}
+					// Only emit balance if no errors occured.
+					if err == nil {
+						a.log.Infoln("Current Balance: ", f)
+						a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balance, balance, balance
+						a.RT.Events.Emit("token", a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance)
+					}
 
-					a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balance, balance, balance
-
-					a.RT.Events.Emit("token", a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance)
 					time.Sleep(updateIntervalToken * time.Second)
 				} else {
 					retryCounter++
@@ -277,10 +279,12 @@ func (a *WalletApplication) pricePoller() {
 						a.log.Warnln("Unable to display token price. Reason:", err)
 					}
 					a.log.Debugf("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
-
-					tokenUSD := int(float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD)
-					a.RT.Events.Emit("price", "$", tokenUSD)
-					time.Sleep(updateIntervalToken * time.Second)
+					// Only emit USD value if no errors occured.
+					if err == nil {
+						tokenUSD := int(float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD)
+						a.RT.Events.Emit("price", "$", tokenUSD)
+						time.Sleep(updateIntervalToken * time.Second)
+					}
 				} else {
 					retryCounter++
 					time.Sleep(1 * time.Second)

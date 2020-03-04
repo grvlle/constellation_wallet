@@ -497,7 +497,7 @@
   font-size: $font-size-base*1.8;
 }
 
-@media only screen and (min-width : 3840) {
-  .container { max-width: 3840; }
+@media only screen and (min-width : 3840px) {
+  .container { max-width: 3840px; }
   font-size: $font-size-base*2;
 }

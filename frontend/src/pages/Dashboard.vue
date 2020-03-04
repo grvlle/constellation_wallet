@@ -28,7 +28,7 @@
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.counters.tokenCounter}} seconds
+            Updates in {{this.$store.state.counters.usdCounter}} seconds
           </div>
         </stats-card>
       </div>

@@ -276,12 +276,11 @@ func (a *WalletApplication) initDashboardWidgets() {
 	chartData := a.ChartDataInit()
 
 	// Below methods are continously updating the client side modules.
+	a.pollTokenBalance()
 	a.nodeStats(chartData)
 	a.txStats(chartData)
 	a.networkStats(chartData)
-	a.pollTokenBalance()
 	a.blockAmount()
-	a.tokenAmount()
 	a.pricePoller()
 
 	a.WidgetRunning.DashboardWidgets = true

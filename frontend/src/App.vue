@@ -150,6 +150,9 @@ export default {
     window.wails.Events.On("token_counter", count => {
       this.$store.state.counters.tokenCounter = count;
     });
+    window.wails.Events.On("usd_counter", usdCount => {
+      this.$store.state.counters.usdCounter = usdCount;
+    });
     window.wails.Events.On("block_counter", blockCount => {
       this.$store.state.counters.blockCounter = blockCount;
     });

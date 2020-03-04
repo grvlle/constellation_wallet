@@ -14,7 +14,8 @@ import (
 
 const (
 	dummyValue             = 1000
-	updateIntervalToken    = 60 // Seconds
+	updateIntervalToken    = 30 // Seconds
+	updateIntervalUSD      = 50 // Seconds
 	updateIntervalBlocks   = 5  // Seconds
 	updateIntervalPieChart = 6  // Seconds
 )
@@ -157,22 +158,6 @@ func (a *WalletApplication) networkStats(cd *ChartData) {
 	}()
 }
 
-// TokenAmount polls the token balance and stores it in the Wallet.Balance object
-func (a *WalletApplication) tokenAmount() {
-	go func() {
-		for {
-			select {
-			case <-a.killSignal:
-				return
-			default:
-				a.RT.Events.Emit("token", a.wallet.Balance)
-				UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
-				time.Sleep(updateIntervalToken * time.Second)
-			}
-		}
-	}()
-}
-
 // BlockAmount is a temporary function
 func (a *WalletApplication) blockAmount() {
 	var randomNumber int
@@ -193,52 +178,56 @@ func (a *WalletApplication) blockAmount() {
 
 func (a *WalletApplication) pollTokenBalance() {
 	go func() {
-		retryCounter := 0
+		var retryCounter int
 		for {
 			select {
 			case <-a.killSignal:
 				return
 			default:
-				a.log.Info("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
+				for retryCounter <= 10 {
+					a.log.Info("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
 
-				resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
-				if err != nil {
-					a.log.Errorln("Failed to send HTTP request. Reason: ", err)
-				}
-				if resp != nil {
+					resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
+					if err != nil {
+						a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+						retryCounter++
+						break
+					}
+					if resp == nil {
+						retryCounter++
+						a.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
+						a.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
+						break
+					}
 					defer resp.Body.Close()
 
 					bodyBytes, err := ioutil.ReadAll(resp.Body)
 					if err != nil {
+						retryCounter++
 						a.log.Error("Unable to read HTTP response from mainnet. Reason: ", err)
+						break
 					}
 					s := string(bodyBytes)
 					i, err := strconv.ParseInt(s, 10, 64)
 					if err != nil {
+						retryCounter++
 						a.log.Warnln("Unable to parse balance. Reason:", err)
+						break
 					}
 					f := fmt.Sprintf("%.2f", float64(i)/1e8) // Reverse normalized float
 
 					balance, err := strconv.ParseFloat(f, 64)
 					if err != nil {
+						retryCounter++
 						a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
-					}
-					// Only emit balance if no errors occured.
-					if err == nil {
-						a.log.Infoln("Current Balance: ", f)
-						a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balance, balance, balance
-						a.RT.Events.Emit("token", a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance)
+						break
 					}
 
+					a.log.Debugln("Current Balance: ", f)
+					a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balance, balance, balance
+					a.RT.Events.Emit("token", a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance)
+					UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
 					time.Sleep(updateIntervalToken * time.Second)
-				} else {
-					retryCounter++
-					time.Sleep(1 * time.Second)
-					if retryCounter >= 10 {
-						a.log.Errorln("Killing pollTokenBalance after 50 failed attempts to get balance from mainnet, Reason: ", err)
-						a.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
-						return
-					}
 				}
 			}
 		}
@@ -257,41 +246,52 @@ func (a *WalletApplication) pricePoller() {
 	)
 
 	go func() {
-		retryCounter := 0
+		var retryCounter int
+		time.Sleep(3 * time.Second) // Give some space to pollTokenBalance
+
 		for {
 			select {
 			case <-a.killSignal:
 				return
 			default:
-				resp, err := http.Get(url)
-				if err != nil {
-					a.log.Warnln("Unable to poll token evaluation. Reason: ", err) // Log this
-				}
-				if resp != nil {
+				for retryCounter <= 10 {
+					a.log.Info("Contacting token evaluation API on: " + url + ticker)
+
+					resp, err := http.Get(url)
+					if err != nil {
+						a.log.Warnln("Unable to poll token evaluation. Reason: ", err) // Log this
+						retryCounter++
+						break
+					}
+
+					if resp == nil {
+						retryCounter++
+						a.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
+						a.sendWarning("Unable to showcase token USD evaluation. Please check your internet connectivity and restart the wallet application.")
+						break
+					}
+
 					body, err := ioutil.ReadAll(resp.Body)
 					if err != nil {
+						retryCounter++
 						a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
 						a.log.Warnln("Unable to read HTTP resonse from Token API. Reason: ", err)
+						break
 					}
 					err = json.Unmarshal([]byte(body), &a.wallet.TokenPrice)
 					if err != nil {
+						retryCounter++
 						a.sendError("Unable to display token price. Reason: ", err)
 						a.log.Warnln("Unable to display token price. Reason:", err)
-					}
-					a.log.Debugf("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
-					// Only emit USD value if no errors occured.
-					if err == nil {
-						tokenUSD := int(float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD)
-						a.RT.Events.Emit("price", "$", tokenUSD)
-						time.Sleep(updateIntervalToken * time.Second)
-					}
-				} else {
-					retryCounter++
-					time.Sleep(1 * time.Second)
-					if retryCounter >= 50 {
-						a.sendError("Unable to poll token evaluation. Reason: ", err)
 						break
 					}
+					a.log.Debugf("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
+
+					tokenUSD := int(float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD)
+					a.RT.Events.Emit("price", "$", tokenUSD)
+					UpdateCounter(updateIntervalUSD, "usd_counter", time.Second, a.RT)
+					time.Sleep(updateIntervalUSD * time.Second)
+
 				}
 			}
 		}

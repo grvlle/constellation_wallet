@@ -48,7 +48,8 @@ export const store = new Vuex.Store({
         },
         counters: {
             blockCounter: 5,
-            tokenCounter: 60,
+            tokenCounter: 30,
+            usdCounter: 60,
             nodesOnlineCounter: 24
         },
         toggleDashboard: {

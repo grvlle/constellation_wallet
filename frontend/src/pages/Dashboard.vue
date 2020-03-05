@@ -57,14 +57,17 @@
             <p>{{walletCard.title}}</p>
             <hr />
             <div class="wallet-address">
-              {{wallet2.address}}
+            <table style="width: 100%; table-layout: fixed;">
+            <tr style="background-color: #f9f9f9;">
+              <td style="padding-top: 15px; padding-left: 15px; width: 90%;">
+              <span class="text-overflow">{{wallet2.address}}</span>
               <input type="hidden" id="testing-code" :value="wallet2.address" />
-              <p-button
-                type="info" icon
-                @click.native="copyTestingCode"
-              >
+                   </td>
+              <td style="padding-top: 10px;">
+              <p-button type="info" style="margin-bottom: 12px;" icon @click.native="copyTestingCode">
                 <i class="fa fa-copy"></i>
               </p-button>
+              </td></tr></table>
             </div>
           </div>
         </wide-card>
@@ -288,6 +291,14 @@ export default {
 </script>
 
 <style>
+
+.text-overflow {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .card {
   width: 100%;
   display: flex;
@@ -299,14 +310,15 @@ export default {
 }
 
 .wallet-address {
-    color: #c4c4c4;
-    padding-top: 0.5375em;
-    background-color: #f7f7f7;
-    font-size: 1.5625rem;
-    font-weight: 100;
+  color: #c4c4c4;
+  padding-top: 0em;
+  padding-bottom: 0.3em;
+  background-color: #f7f7f7;
+  font-size: 1.5625rem;
+  font-weight: 100;
 }
 
 .wallet-address > p-button {
-    margin-bottom: 0.9375em;
+  margin-bottom: 10em;
 }
 </style>

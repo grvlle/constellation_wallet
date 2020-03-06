@@ -1,9 +1,9 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
-      <img
-        src="https://constellationlabs.io/wp-content/uploads/2019/08/Constellation-Logo-1.png"
-        style="max-height: 6.25em; max-width: 12.5em;" />
+      <img class="img-fluid"
+        src="~@/assets/img/Constellation-Graphic02B-Color-SML.png"
+        style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem;" />
       <button
         class="navbar-toggler navbar-burger"
         type="button"

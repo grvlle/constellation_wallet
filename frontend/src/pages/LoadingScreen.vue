@@ -1,44 +1,46 @@
 <template>
-  <div class="bg">
-    <center>
-      <img
-      v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-      style="margin-top: 12.5em;"
-      src="~@/assets/img/Constellation-Logo-1.png"
-      />
-      <p
-        v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-        style="color: #c4c4c4; margin-top: 0.3125em;"
-      >Getting your $DAG Wallet ready...</p>
-    </center>
-    <center>
-      <div class="boxes">
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
+  <div class="bg vertical-center" id="app">
+    <div class="container">
+      <div class="row" v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn">
+        <div class="col-md-6 mx-auto text-center" style="margin-top: 4rem;">
+          <img class="img-fluid" style="height: 5rem;" src="~@/assets/img/Constellation-Graphic02B-Color-SML.png" />
+          <p>
+            Getting your $DAG Wallet ready...
+          </p>
         </div>
       </div>
-    </center>
+      <div class="row">
+        <div class="col-md-6 mx-auto text-center">
+          <div class="boxes mx-auto">
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="height: 21rem;"/>
+    </div>
   </div>
 </template>
 
@@ -67,6 +69,14 @@ export default {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.vertical-center {
+  min-height: 100%; /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+
+  display: flex;
+  align-items: center;
 }
 
 .loader {

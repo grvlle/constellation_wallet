@@ -1,47 +1,49 @@
 <template>
-  <div class="bg">
-    <center>
-      <img
-      v-if="this.$store.state.app.isDownloadingDependencies"
-      style="margin-top: 12.5em;"
-      src="~@/assets/img/Constellation-Logo-1.png"
-      />
-      <p
-        v-if="this.$store.state.app.isDownloadingDependencies"
-        style="color: #c4c4c4; margin-top: 0.3125em;"
-      >Downloading $DAG wallet dependencies...</p>
-      <p v-if="this.$store.state.downloading.filename !== ''">
-        {{this.$store.state.downloading.filename}}: {{this.$store.state.downloading.size}}
-      </p>
-    </center>
-    <center>
-      <div class="boxes">
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
+  <div class="bg vertical-center" id="app">
+    <div class="container">
+      <div class="row" v-if="this.$store.state.app.isDownloadingDependencies">
+        <div class="col-md-6 mx-auto text-center" style="margin-top: 4rem;">
+          <img class="img-fluid" style="height: 5rem;" src="~@/assets/img/Constellation-Graphic02B-Color-SML.png"/>
+          <p style="color: #c4c4c4; margin-top: 0.3125em;">
+            Downloading $DAG wallet dependencies...
+          </p>
+          <p v-if="this.$store.state.downloading.filename !== ''">
+            {{this.$store.state.downloading.filename}}: {{this.$store.state.downloading.size}}
+          </p>
         </div>
       </div>
-    </center>
+      <div class="row">
+        <div class="col-md-6 mx-auto text-center">
+          <div class="boxes mx-auto">
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="height: 21rem;"/>
+    </div>
   </div>
 </template>
 
@@ -73,6 +75,14 @@ export default {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.vertical-center {
+  min-height: 100%; /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+
+  display: flex;
+  align-items: center;
 }
 
 .loader {

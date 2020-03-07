@@ -4,28 +4,21 @@
       <card>
         <h4 class="card-title">Settings</h4>
         <p class="card-category">Configure the Constellation Wallet to your personal preferences</p>
-
         <br />
         <p>This section let's you personalize and tailor your wallet to your needs. The right hand side lets you manage your wallet keys.</p>
         <br />
-
         <label class="control-label">
           <p>Toggle Dashboard Widgets</p>
         </label>
-        <p
-          class="small"
-          style="margin-bottom: -5px; margin-top: -20px;"
-        >This option let's you customize your dashboard by toggling/untoggling widgets from the Dashboard.</p>
-
+        <p class="small" style="margin-bottom: -5px; margin-top: -20px;" >
+          This option let's you customize your dashboard by toggling/untoggling widgets from the Dashboard.
+        </p>
         <div style="padding: 5px;">
           <br />
-          <table style="width:100%; ">
+          <table style="width:100%;">
             <tr style="background-color: #f9f9f9; border-bottom: 3px solid white;">
               <td style="padding-top: 15px; padding-left: 15px;">
-                <p>
-                  Toggle
-                  <b>Nodes Online</b> widget
-                </p>
+                <p>Toggle <b>Nodes Online</b> widget</p>
               </td>
               <td style="padding-top: 10px;">
                 <toggle-button
@@ -39,10 +32,7 @@
             </tr>
             <tr style="background-color: #f9f9f9; border-bottom: 3px solid white;">
               <td style="padding-top: 15px; padding-left: 15px;">
-                <p>
-                  Toggle
-                  <b>Transactions</b> widget
-                </p>
+                <p>Toggle <b>Transactions</b> widget</p>
               </td>
               <td>
                 <toggle-button
@@ -56,10 +46,7 @@
             </tr>
             <tr style="background-color: #f9f9f9; border-bottom: 3px solid white;">
               <td style="padding-top: 15px; padding-left: 15px;">
-                <p>
-                  Toggle
-                  <b>Throughput</b> widget
-                </p>
+                <p> Toggle <b>Throughput</b> widget</p>
               </td>
               <td>
                 <toggle-button
@@ -77,10 +64,9 @@
         <label class="control-label">
           <p>Edit Wallet Information</p>
         </label>
-        <p
-          class="small"
-          style="margin-bottom: -5px; margin-top: -20px;"
-        >This option let's you customize your Wallet Card under Wallet Information with your own label and profile picture.</p>
+        <p class="small" style="margin-bottom: -5px; margin-top: -20px;">
+          This option let's you customize your Wallet Card under Wallet Information with your own label and profile picture.
+        </p>
         <br />
         <form>
           <table style="width:100%;">
@@ -88,7 +74,6 @@
               <td style="padding: 0px; width: 81%;">
                 <fg-input type="text" placeholder="Enter a new Wallet Label" v-model="newLabel"></fg-input>
               </td>
-
               <td style="padding: 0px;">
                 <p-button
                   style="margin-top: -17px; width: 95%; float: right; white-space: nowrap; overflow: hidden; text-overflow: clip;"
@@ -109,7 +94,6 @@
                 v-model="this.$store.state.walletInfo.imgPath"
               ></fg-input>
             </td>
-
             <td style="padding: 0px;">
               <p-button
                 style="margin-top: -17px; width: 95%; float: right; white-space: nowrap; overflow: hidden; text-overflow: clip;"
@@ -126,32 +110,29 @@
         <h4 class="card-title">Backup / Restore</h4>
         <p class="card-category">Backup your Wallet</p>
         <br />
-
         <form @submit.prevent>
           <!-- Below can be revived when Mnemonic Seed is supported -->
-          <!-- <label class="control-label">
-                                                                                              <p>Mnemonic Seed</p>
-                                                                                            </label>
-                                                                                            <p class="small" style="margin-bottom: -5px; margin-top: -20px;">This is the seed that will be used to backup and restore your wallet.</p>
-                                                                                          <div class="row">
-                                                                                            
-                                                                                            <div class="input-group col-md-12">
-                                                                                              
-                                                                                              <input :type=seed class="form-control" :disabled="true" placeholder="Mnemonic Seed" v-model="this.$store.state.walletInfo.seed">
-                                                                                              <div class="input-group-append">
-                                                                                                <p-button class="btn" @click.native="showPassword2()" type="danger"><i v-bind:class="btnText"/></p-button>
-                                                                                              </div>
-                                                                                              
-                                                                                          </div>
+          <!-- 
+          <label class="control-label">
+            <p>Mnemonic Seed</p>
+          </label>
+          <p class="small" style="margin-bottom: -5px; margin-top: -20px;">
+            This is the seed that will be used to backup and restore your wallet.
+          </p>
+          <div class="row">
+            <div class="input-group col-md-12">
+              <input :type=seed class="form-control" :disabled="true" placeholder="Mnemonic Seed" v-model="this.$store.state.walletInfo.seed">
+              <div class="input-group-append">
+                <p-button class="btn" @click.native="showPassword2()" type="danger"><i v-bind:class="btnText"/></p-button>
+              </div>
+            </div>
           </div>-->
-
           <label class="control-label">
             <p>Private Key</p>
           </label>
-          <p
-            class="small"
-            style="margin-bottom: -5px; margin-top: -20px;"
-          >Path to private key (key.p12)</p>
+          <p class="small" style="margin-bottom: -5px; margin-top: -20px;">
+            Path to private key (key.p12)
+          </p>
           <div class="row">
             <div class="col-md-12">
               <fg-input
@@ -165,10 +146,9 @@
           <label class="control-label">
             <p>Mnemonic Seed (coming soon)</p>
           </label>
-          <p
-            class="small"
-            style="margin-bottom: -5px; margin-top: -20px;"
-          >This will be used to restore your wallet</p>
+          <p class="small" style="margin-bottom: -5px; margin-top: -20px;">
+            This will be used to restore your wallet
+          </p>
           <div class="row">
             <div class="input-group col-md-12">
               <input
@@ -204,7 +184,6 @@
           Import
           <i class="fas fa-file-import" />
         </p-button>
-
         <p-button :disabled="true" @click.native="exportKeys()" type="danger">
           Export
           <i class="fas fa-file-export" />
@@ -223,8 +202,7 @@ export default {
       if (this.newLabel === "") {
         Swal.fire({
           title: "Failed!",
-          text:
-            "Unable to change wallet label. No new label entered.",
+          text: "Unable to change wallet label. No new label entered.",
           type: "error"
         });
       } else {

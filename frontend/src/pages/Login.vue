@@ -2,9 +2,9 @@
   <div class="bg vertical-center" id="app">
     <div class="container">
       <div class="row">
-        <div class="col-md-9 mx-auto text-center header">
+        <div class="col-md-6 mx-auto text-center header">
           <div v-if="isLogin">
-            <img src="~@/assets/img/Constellation-Logo-1.png" />
+            <img class="img-fluid" style="max-height: 5.8rem;" src="~@/assets/img/Constellation-Logo-Black.png" />
             <p>Please enter your credentials below to access your Molly Wallet.</p>
           </div>
           <div class="page-error-box" v-if="this.$store.state.displayLoginError">

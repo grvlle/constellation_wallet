@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
       <img class="img-fluid"
-        src="~@/assets/img/Constellation-Graphic02B-Color-SML.png"
+        src="~@/assets/img/Constellation-Logo-Black.png"
         style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem;" />
       <button
         class="navbar-toggler navbar-burger"

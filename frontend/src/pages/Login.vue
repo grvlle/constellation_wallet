@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-md-6 mx-auto text-center header">
           <div v-if="isLogin">
-            <img class="img-fluid" style="height: 5rem;" src="~@/assets/img/Constellation-Graphic02B-Color-SML.png" />
+            <img class="img-fluid" style="max-height: 15.625rem; margin-bottom: -4em;" src="~@/assets/img/Constellation-Logo-Black.png" />
             <p>Please enter your credentials below to access your Molly Wallet.</p>
           </div>
           <div class="page-error-box" v-if="this.$store.state.displayLoginError">

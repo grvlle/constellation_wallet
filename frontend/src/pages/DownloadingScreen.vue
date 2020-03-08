@@ -3,7 +3,7 @@
     <div class="container">
       <div class="row" v-if="this.$store.state.app.isDownloadingDependencies">
         <div class="col-md-6 mx-auto text-center" style="margin-top: 4rem;">
-          <img class="img-fluid" style="height: 5rem;" src="~@/assets/img/Constellation-Graphic02B-Color-SML.png"/>
+          <img class="img-fluid" style="max-height: 15.625rem; margin-bottom: -4em;" src="~@/assets/img/Constellation-Logo-Black.png"/>
           <p style="color: #c4c4c4; margin-top: 0.3125em;">
             Downloading $DAG wallet dependencies...
           </p>

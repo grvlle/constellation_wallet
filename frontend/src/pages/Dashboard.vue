@@ -2,13 +2,13 @@
   <div id="app" class="container">
     <div class="row">
       <div class="col-md-4 d-flex">
-        <stats-card>
+        <stats-card class="stats-card">
           <div class="icon-big text-center" :class="`icon-success`" slot="header">
             <i class="fas fa-wallet"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
-            <p>$DAG</p>
-            {{this.$store.state.walletInfo.tokenAmount}}
+            <p>DAG</p>
+            {{this.$store.state.walletInfo.tokenAmount | DAGs}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
@@ -16,15 +16,14 @@
           </div>
         </stats-card>
       </div>
-
       <div class="col-md-4 d-flex">
-        <stats-card>
+        <stats-card class="stats-card">
           <div class="icon-big text-center" :class="`icon-danger`" slot="header">
             <i class="fas fa-search-dollar"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>USD</p>
-            {{this.$store.state.walletInfo.usdValue}}
+            {{this.$store.state.walletInfo.usdValue | dollars}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
@@ -32,9 +31,8 @@
           </div>
         </stats-card>
       </div>
-
       <div class="col-md-4 d-flex">
-        <stats-card>
+        <stats-card class="stats-card">
           <div class="icon-big text-center" :class="`icon-info`" slot="header">
             <i class="fas fa-cube"></i>
           </div>
@@ -49,32 +47,27 @@
         </stats-card>
       </div>
     </div>
-
     <div class="row">
       <div class="col">
-        <wide-card>
-          <div class="numbers text-center" slot="content">
-            <p>{{walletCard.title}}</p>
-            <hr />
-            <div class="wallet-address">
-            <table style="width: 100%; table-layout: fixed;">
-            <tr style="background-color: #f9f9f9;">
-              <td style="padding-top: 15px; padding-left: 15px; width: 90%;">
-              <span class="text-overflow">{{wallet2.address}}</span>
-              <input type="hidden" id="testing-code" :value="wallet2.address" />
-                   </td>
-              <td style="padding-top: 10px;">
-              <p-button type="info" style="margin-bottom: 12px;" icon @click.native="copyTestingCode">
-                <i class="fa fa-copy"></i>
-              </p-button>
-              </td></tr></table>
-            </div>
+        <card title="Wallet Address" sub-title="">
+          <div class="wallet-address">
+            <table>
+              <tr>
+                <td style="padding-top: 15px; padding-left: 15px; width: 90%;">
+                  <span class="text-overflow">{{wallet2.address}}</span>
+                  <input type="hidden" id="testing-code" :value="wallet2.address" />
+                </td>
+                <td style="padding-top: 10px;">
+                  <p-button type="info" style="margin-bottom: 12px;" icon @click.native="copyTestingCode">
+                    <i class="fa fa-copy"></i>
+                  </p-button>
+                </td>
+              </tr>
+            </table>
           </div>
-        </wide-card>
+        </card>
       </div>
     </div>
-
-    <!--Charts-->
     <div class="row">
       <div v-if="this.$store.state.toggleDashboard.showNodesOnline" class="col-md-6 col-12 d-flex">
         <chart-card
@@ -140,7 +133,7 @@
 </template>
 
 <script>
-import { StatsCard, ChartCard, WideCard } from "@/components/index";
+import { StatsCard, ChartCard } from "@/components/index";
 import Chartist from "chartist";
 import WalletCopiedNotification from "./Notifications/WalletCopied";
 import WalletCopiedFailedNotification from "./Notifications/WalletCopiedFailed";
@@ -148,7 +141,6 @@ import WalletCopiedFailedNotification from "./Notifications/WalletCopiedFailed";
 export default {
   components: {
     StatsCard,
-    WideCard,
     ChartCard
   },
 
@@ -201,6 +193,23 @@ export default {
       return this.$store.state.chartData;
     }
   },
+  filters: {
+    dollars: function (value) {
+      if (typeof value !== "number") {
+          return value;
+      }
+      var formatter = new Intl.NumberFormat(navigator.language, {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 0
+      });
+      return formatter.format(value);
+    },
+    DAGs: function (value) {
+      var formatter = new Intl.NumberFormat(navigator.language);
+      return formatter.format(value);
+    }
+  },
 
   /**
    * Chart data used to render stats, charts. Should be replaced with server data
@@ -211,11 +220,6 @@ export default {
       type: ["", "info", "success", "warning", "danger"],
       notifications: {
         topCenter: false
-      },
-      walletCard: {
-        type: "info",
-        title: "Wallet Address"
-        //address: Wallet.Address
       },
       usersChart: {
         data: {
@@ -299,10 +303,21 @@ export default {
   text-overflow: ellipsis;
 }
 
-.card {
+.stats-card .card {
   width: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.stats-card .card-body .row [class^="col"] {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;  
+}
+
+.stats-card .card-body .row [class^="col"] .numbers {
+  margin-top: 0.5rem;
 }
 
 .card-footer {
@@ -320,5 +335,14 @@ export default {
 
 .wallet-address > p-button {
   margin-bottom: 10em;
+}
+
+.wallet-address > table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.wallet-address > table tr {
+  background-color: #f9f9f9;
 }
 </style>

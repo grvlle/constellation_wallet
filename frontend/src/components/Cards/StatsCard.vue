@@ -2,10 +2,10 @@
   <card>
     <div>
       <div class="row">
-        <div class="col-5" v-if="$slots.header">
+        <div class="col-3" v-if="$slots.header">
           <slot name="header"></slot>
         </div>
-        <div class="col-7" v-if="$slots.content">
+        <div class="col-9" v-if="$slots.content">
           <slot name="content"></slot>
         </div>
       </div>

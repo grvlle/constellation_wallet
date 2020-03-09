@@ -186,7 +186,10 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 			return false
 		}
 
-		a.CreateEncryptedKeyStore()
+		err = a.CreateEncryptedKeyStore()
+		if err != nil {
+			return false
+		}
 
 		a.wallet.Address = a.GenerateDAGAddress()
 

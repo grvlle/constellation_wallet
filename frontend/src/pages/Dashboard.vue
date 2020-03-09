@@ -6,7 +6,7 @@
           <div class="icon-big text-center" :class="`icon-success`" slot="header">
             <i class="fas fa-wallet"></i>
           </div>
-          <div class="numbers text-center" slot="content">
+          <div class="numbers text-center text-overflow" slot="content">
             <p>$DAG</p>
             {{this.$store.state.walletInfo.tokenAmount}}
           </div>
@@ -22,7 +22,7 @@
           <div class="icon-big text-center" :class="`icon-danger`" slot="header">
             <i class="fas fa-search-dollar"></i>
           </div>
-          <div class="numbers text-center" slot="content">
+          <div class="numbers text-center text-overflow" slot="content">
             <p>USD</p>
             {{this.$store.state.walletInfo.usdValue}}
           </div>
@@ -38,7 +38,7 @@
           <div class="icon-big text-center" :class="`icon-info`" slot="header">
             <i class="fas fa-cube"></i>
           </div>
-          <div class="numbers text-center" slot="content">
+          <div class="numbers text-center text-overflow" slot="content">
             <p>Blocks</p>
             {{wallet2.blocks}}
           </div>

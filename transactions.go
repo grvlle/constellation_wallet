@@ -105,7 +105,6 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 		a.sendError("Unable to parse JSON data for transaction", err)
 		return false
 	}
-	a.log.Warnln(a.Network.URL+a.Network.Handles.Transaction, "application/json", string(bytesRepresentation))
 	resp, err := http.Post(a.Network.URL+a.Network.Handles.Transaction, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
@@ -118,7 +117,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 		a.log.Infoln(resp.Body) //TEMP
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			a.log.Fatal(err)
+			a.log.Errorf("Failed to read the response body. Reason: ", err)
 		}
 		bodyString := string(bodyBytes)
 		if len(bodyBytes) == 64 {

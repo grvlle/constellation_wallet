@@ -147,37 +147,37 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 }
 
 func (a *WalletApplication) CheckAndFetchWalletCLI() {
-  keytoolPath := a.paths.DAGDir + "/cl-keytool.jar"
-  walletPath := a.paths.DAGDir + "/cl-wallet.jar"
+	keytoolPath := a.paths.DAGDir + "/cl-keytool.jar"
+	walletPath := a.paths.DAGDir + "/cl-wallet.jar"
 
-  keytoolExists := a.fileExists(keytoolPath)
-  walletExists := a.fileExists(walletPath)
+	keytoolExists := a.fileExists(keytoolPath)
+	walletExists := a.fileExists(walletPath)
 
-  if keytoolExists && walletExists {
-    a.RT.Events.Emit("downloading_dependencies", false)
-  } else {
-    a.RT.Events.Emit("downloading_dependencies", true)
-  }
+	if keytoolExists && walletExists {
+		a.RT.Events.Emit("downloading_dependencies", false)
+	} else {
+		a.RT.Events.Emit("downloading_dependencies", true)
+	}
 
-  if keytoolExists {
-    a.log.Info(keytoolPath + " file exists. Skipping downloading")
-  } else {
-    if err := a.fetchWalletJar("cl-keytool.jar", keytoolPath); err != nil {
-      a.log.Errorf("Unable to fetch or store cl-keytool.jar", err)
-    }
-  }
+	if keytoolExists {
+		a.log.Info(keytoolPath + " file exists. Skipping downloading")
+	} else {
+		if err := a.fetchWalletJar("cl-keytool.jar", keytoolPath); err != nil {
+			a.log.Errorf("Unable to fetch or store cl-keytool.jar", err)
+		}
+	}
 
-  if walletExists {
-    a.log.Info(walletPath + " file exists. Skipping downloading")
-  } else {
-    if err := a.fetchWalletJar("cl-wallet.jar", walletPath); err != nil {
-      a.log.Errorf("Unable to fetch or store cl-wallet.jar", err)
-    }
-  }
+	if walletExists {
+		a.log.Info(walletPath + " file exists. Skipping downloading")
+	} else {
+		if err := a.fetchWalletJar("cl-wallet.jar", walletPath); err != nil {
+			a.log.Errorf("Unable to fetch or store cl-wallet.jar", err)
+		}
+	}
 
-  if a.fileExists(keytoolPath) && a.fileExists(walletPath) {
-    a.RT.Events.Emit("downloading_dependencies", false)
-  }
+	if a.fileExists(keytoolPath) && a.fileExists(walletPath) {
+		a.RT.Events.Emit("downloading_dependencies", false)
+	}
 
 }
 
@@ -203,15 +203,15 @@ func (a *WalletApplication) produceTXObject(amount float64, fee float64, address
 }
 
 // createEncryptedKeyStore is called ONLY when a NEW wallet is created. This
-// will create a new password protected encrypted keypair stored in $HOME/.dag/encrypted_key/priv.p12
-// (a.paths.EncPrivKey)
+// will create a new password protected encrypted keypair stored in user selected location
 
 // java -jar cl-keytool.jar --keystore testkey.p12 --alias alias --storepass storepass --keypass keypass
-func (a *WalletApplication) CreateEncryptedKeyStore() {
+func (a *WalletApplication) CreateEncryptedKeyStore() error {
 	err := a.runKeyToolCMD("--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
-		a.sendError("Unable to write encrypted keys to filesystem. Reason: ", err)
-		a.log.Errorf("Unable to write encrypted keys to filesystem. Reason: %s", err.Error()) // TODO: change to fatal
+		a.LoginError("Unable to write encrypted keys to filesystem.")
+		a.log.Errorf("Unable to write encrypted keys to filesystem. Reason: %s", err.Error())
+		return err
 	}
-
+	return nil
 }

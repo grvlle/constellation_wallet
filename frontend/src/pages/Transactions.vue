@@ -6,34 +6,40 @@
           <form @submit.prevent class="container">
             <div class="form-row align-items-center">
               <div class="col-md-5">
-                <fg-input style="margin-bottom: 0.125em;"
+                <fg-input
+                  style="margin-bottom: 0.125em;"
                   v-model.number="txAmountValidation"
                   @change="sendAmount($event.target.value)"
                   pattern="[0-9]+([,\.][0-9]+)?"
                   step="0.01"
                   label="Amount: "
-                  placeholder="0" >
-                </fg-input>
+                  placeholder="0"
+                ></fg-input>
                 <div class="validate" v-if="!$v.txAmountValidation.inBetween">
                   <p>Invalid amount. Please verify.</p>
                 </div>
                 <div class="validate" v-else></div>
               </div>
               <div class="col-md-2">
-                <i class="fa fa-chevron-circle-right"
-                  style="color: #6DECBB; font-size: 2.5rem; width:100%; margin-top: 1.5rem;"></i>
+                <i
+                  class="fa fa-chevron-circle-right"
+                  style="color: #6DECBB; font-size: 2.5rem; width:100%; margin-top: 1.5rem;"
+                ></i>
                 <div class="validate"></div>
               </div>
               <div class="col-md-5">
-                <fg-input style="margin-bottom: 0.125em;"
+                <fg-input
+                  style="margin-bottom: 0.125em;"
                   v-model.trim="txAddressValidation"
                   @change="setName($event.target.value)"
                   type="text"
                   label="Address: "
-                  placeholder="Enter Recipients Wallet Address" >
-                </fg-input>
-                <div class="validate"
-                  v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength">
+                  placeholder="Enter Recipients Wallet Address"
+                ></fg-input>
+                <div
+                  class="validate"
+                  v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength"
+                >
                   <p>Invalid wallet address. Please verify.</p>
                 </div>
                 <div class="validate" v-else></div>
@@ -46,7 +52,8 @@
                   type="info"
                   block
                   @click.native="tx"
-                  :disabled="!this.$store.state.app.txFinished">
+                  :disabled="!this.$store.state.app.txFinished"
+                >
                   <span>
                     <i class="fa fa-paper-plane"></i> SEND
                   </span>
@@ -70,23 +77,23 @@
               <tbody>
                 <tr v-for="tx in this.$store.state.txInfo.txHistory" v-bind:key="tx.ID">
                   <slot :row="item">
-                    <td>
+                    <td class="columnA">
                       <p class="description" style="font-size: 0.9375rem;">
-                        <b>{{tx.amount | dropzero}}</b> $DAG
+                        <b>{{tx.amount / 1e8}}</b> DAG
                       </p>
                     </td>
-                    <td>
-                      <p class="description" style="font-size: 0.9375rem;">{{tx.sender | truncate}}</p>
+                    <td class="columnB">
+                      <p class="description" style="font-size: 0.9375rem;">{{tx.sender}}</p>
                     </td>
-                    <td>
-                      <p class="description" style="font-size: 0.9375rem;">{{tx.fee}}</p>
+                    <td class="columnC">
+                      <p class="description" style="font-size: 0.9375rem;">{{tx.fee / 1e8}}</p>
                     </td>
-                    <td>
+                    <td class="columnD">
                       <a id="txhash">
-                        <p style="font-size: 0.9375rem;">{{tx.hash | truncate}}</p>
+                        <p style="font-size: 0.9375rem;">{{tx.hash}}</p>
                       </a>
                     </td>
-                    <td>
+                    <td class="columnE">
                       <p class="description" style="font-size: 0.9375rem;">{{tx.date}}</p>
                     </td>
                   </slot>
@@ -312,7 +319,30 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+
+td {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+td.columnA {
+    width: 15%;
+}
+td.columnB {
+    width: 40%;
+}
+td.columnC {
+    width: 10%;
+}
+td.columnD {
+    width: 15%;
+}
+td.columnE {
+    width: 20%;
+}
+
 txhash a {
   color: blue;
 }

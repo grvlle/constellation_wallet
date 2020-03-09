@@ -170,3 +170,7 @@ func (a *WalletApplication) fileExists(path string) bool {
 	}
 	return !info.IsDir()
 }
+
+func (a *WalletApplication) TempPrintCreds() {
+	fmt.Println("address: ", a.wallet.Address, "alias: ", a.wallet.WalletAlias, "keyStorePass: ", os.Getenv("CL_STOREPASS"), "keyPass: ", os.Getenv("CL_KEYPASS"), "key: ", a.paths.EncPrivKeyFile)
+}

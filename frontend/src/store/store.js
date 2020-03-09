@@ -26,7 +26,7 @@ export const store = new Vuex.Store({
         walletInfo: {
             version: "v1.13",
             uiVersion: "v0.1.8 Beta",
-            email: "Wallet Label",
+            email: "Molly Wallet",
             imgPath: 'faces/face-0.jpg',
             transactions: 0,
             tokenAmount: 0, 

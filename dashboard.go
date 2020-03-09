@@ -184,8 +184,9 @@ func (a *WalletApplication) pollTokenBalance() {
 			case <-a.killSignal:
 				return
 			default:
-				for retryCounter <= 10 {
-					a.log.Info("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
+				for retryCounter <= 10 && a.wallet.Address != "" {
+
+					a.log.Debug("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
 
 					resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
 					if err != nil {
@@ -203,11 +204,15 @@ func (a *WalletApplication) pollTokenBalance() {
 
 					bodyBytes, err := ioutil.ReadAll(resp.Body)
 					if err != nil {
+						a.log.Warnln(string(bodyBytes)) // TEMP
 						retryCounter++
 						a.log.Error("Unable to read HTTP response from mainnet. Reason: ", err)
 						break
 					}
 					s := string(bodyBytes)
+					if s == "" {
+						s = "0" // Empty means zero
+					}
 					i, err := strconv.ParseInt(s, 10, 64)
 					if err != nil {
 						retryCounter++
@@ -229,6 +234,7 @@ func (a *WalletApplication) pollTokenBalance() {
 					UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
 					time.Sleep(updateIntervalToken * time.Second)
 				}
+
 			}
 		}
 	}()
@@ -254,8 +260,8 @@ func (a *WalletApplication) pricePoller() {
 			case <-a.killSignal:
 				return
 			default:
-				for retryCounter <= 10 {
-					a.log.Info("Contacting token evaluation API on: " + url + ticker)
+				for retryCounter <= 10 && a.wallet.Balance != 0 {
+					a.log.Debug("Contacting token evaluation API on: " + url + ticker)
 
 					resp, err := http.Get(url)
 					if err != nil {

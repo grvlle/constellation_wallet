@@ -12,8 +12,7 @@ import (
 
 // Transaction contains all tx information
 type Transaction struct {
-	Alias string `json:"alias"`
-	Edge  struct {
+	Edge struct {
 		ObservationEdge struct {
 			Parents []struct {
 				Hash     string `json:"hash"`
@@ -41,7 +40,7 @@ type Transaction struct {
 				Hash    string `json:"hash"`
 				Ordinal int    `json:"ordinal"`
 			} `json:"lastTxRef"`
-			Fee  float64 `json:"fee"`
+			Fee  float64 `json:"fee,omitempty"`
 			Salt int64   `json:"salt"`
 		} `json:"data"`
 	} `json:"edge"`
@@ -106,6 +105,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 		a.sendError("Unable to parse JSON data for transaction", err)
 		return false
 	}
+	a.log.Warnln(a.Network.URL+a.Network.Handles.Transaction, "application/json", string(bytesRepresentation))
 	resp, err := http.Post(a.Network.URL+a.Network.Handles.Transaction, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
@@ -115,7 +115,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
-
+		a.log.Infoln(resp.Body) //TEMP
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			a.log.Fatal(err)

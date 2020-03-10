@@ -33,7 +33,8 @@ export const store = new Vuex.Store({
             totalBalance: 0,
             availableBalance: 0,
             nonce: 0,
-            usdValue: "NaN",
+            currency: "USD",
+            totalValue: "NaN",
             blocks: "NaN",
             address: "N/A",
             keystorePath: "",
@@ -49,7 +50,7 @@ export const store = new Vuex.Store({
         counters: {
             blockCounter: 5,
             tokenCounter: 30,
-            usdCounter: 60,
+            valueCounter: 60,
             nodesOnlineCounter: 24
         },
         toggleDashboard: {

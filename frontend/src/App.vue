@@ -144,14 +144,15 @@ export default {
     window.wails.Events.On("blocks", number => {
       this.$store.state.walletInfo.blocks = number;
     });
-    window.wails.Events.On("price", (currency, dagRate) => {
-      this.$store.state.walletInfo.usdValue = currency + " " + dagRate;
+    window.wails.Events.On("totalValue", (currency, value) => {
+      this.$store.state.walletInfo.currency = currency;
+      this.$store.state.walletInfo.totalValue = value;
     });
     window.wails.Events.On("token_counter", count => {
       this.$store.state.counters.tokenCounter = count;
     });
-    window.wails.Events.On("usd_counter", usdCount => {
-      this.$store.state.counters.usdCounter = usdCount;
+    window.wails.Events.On("value_counter", valueCount => {
+      this.$store.state.counters.valueCounter = valueCount;
     });
     window.wails.Events.On("block_counter", blockCount => {
       this.$store.state.counters.blockCounter = blockCount;

@@ -294,8 +294,8 @@ func (a *WalletApplication) pricePoller() {
 					a.log.Debugf("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
 
 					tokenUSD := int(float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD)
-					a.RT.Events.Emit("price", "$", tokenUSD)
-					UpdateCounter(updateIntervalUSD, "usd_counter", time.Second, a.RT)
+					a.RT.Events.Emit("totalValue", "USD", tokenUSD)
+					UpdateCounter(updateIntervalUSD, "value_counter", time.Second, a.RT)
 					time.Sleep(updateIntervalUSD * time.Second)
 
 				}

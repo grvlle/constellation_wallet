@@ -8,7 +8,7 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>DAG</p>
-            {{this.$store.state.walletInfo.tokenAmount | DAGs}}
+            {{this.$store.state.walletInfo.tokenAmount | asDAGs}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
@@ -22,12 +22,12 @@
             <i class="fas fa-search-dollar"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
-            <p>USD</p>
-            {{this.$store.state.walletInfo.usdValue | dollars}}
+            <p>{{this.$store.state.walletInfo.currency}}</p>
+            {{this.$store.state.walletInfo.totalValue | asCurrency(this.$store.state.walletInfo.currency)}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.counters.usdCounter}} seconds
+            Updates in {{this.$store.state.counters.valueCounter}} seconds
           </div>
         </stats-card>
       </div>
@@ -194,18 +194,15 @@ export default {
     }
   },
   filters: {
-    dollars: function (value) {
-      if (typeof value !== "number") {
-          return value;
-      }
+    asCurrency: function (value, currency) {
       var formatter = new Intl.NumberFormat(navigator.language, {
-          style: 'currency',
-          currency: 'USD',
-          minimumFractionDigits: 0
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: 0
       });
       return formatter.format(value);
     },
-    DAGs: function (value) {
+    asDAGs: function (value) {
       var formatter = new Intl.NumberFormat(navigator.language);
       return formatter.format(value);
     }

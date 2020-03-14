@@ -1,17 +1,17 @@
 .form-control::-moz-placeholder {
-  @include placeholder($medium-gray, 1);
+  @include placeholder($medium-dark-gray, 1);
 }
 
 .form-control:-moz-placeholder {
-  @include placeholder($medium-gray, 1);
+  @include placeholder($medium-dark-gray, 1);
 }
 
 .form-control::-webkit-input-placeholder {
-  @include placeholder($medium-gray, 1);
+  @include placeholder($medium-dark-gray, 1);
 }
 
 .form-control:-ms-input-placeholder {
-  @include placeholder($medium-gray, 1);
+  @include placeholder($medium-dark-gray, 1);
 }
 
 .form-control {
@@ -144,19 +144,19 @@
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
   background-color: $light-gray;
   cursor: not-allowed;
-  @include placeholder($dark-gray, 1);
+  @include placeholder($medium-dark-gray, 1);
 }
 
 .form-control[disabled]::-moz-placeholder {
-  @include placeholder($dark-gray, 1);
+  @include placeholder($medium-dark-gray, 1);
 }
 
 .form-control[disabled]:-moz-placeholder {
-  @include placeholder($medium-gray, 1);
+  @include placeholder($medium-dark-gray, 1);
 }
 
 .form-control[disabled]::-webkit-input-placeholder {
-  @include placeholder($medium-gray, 1);
+  @include placeholder($medium-dark-gray, 1);
 }
 
 .form-control[disabled]:-ms-input-placeholder {

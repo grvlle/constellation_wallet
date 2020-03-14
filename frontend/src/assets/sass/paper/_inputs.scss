@@ -16,7 +16,6 @@
 
 .form-control {
   background-color: $gray-input-bg;
-  border: medium none;
   border-radius: $border-radius-base;
   color: $font-color;
   font-size: $font-size-base*1.2;
@@ -94,7 +93,6 @@
 
 .input-group-addon {
   background-color: $gray-input-bg;
-  border: medium none;
   border-radius: $border-radius-base;
 
   .has-success &,

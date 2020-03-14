@@ -5,60 +5,57 @@
         <card :title="table1.title" :subTitle="table1.subTitle">
           <form @submit.prevent class="container">
             <div class="form-row align-items-center">
-              <div class="col-md-5">
-                <fg-input
-                  style="margin-bottom: 0.125em;"
-                  v-model.number="txAmountValidation"
-                  @change="sendAmount($event.target.value)"
-                  pattern="[0-9]+([,\.][0-9]+)?"
-                  step="0.01"
-                  label="Amount: "
-                  placeholder="0"
-                ></fg-input>
+              <div class="col-md-4">
+                <div class="input-group" style="margin-bottom: 0;">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><small>DAG</small></span>
+                  </div>
+                  <input type="text" class="form-control" aria-label="Amount (in DAGs)"
+                    v-model.number="txAmountValidation"
+                    @change="sendAmount($event.target.value)"
+                    pattern="[0-9]+([,\.][0-9]+)?"
+                    step="0.01"
+                    placeholder="0"/>
+                  <div class="input-group-append">
+                    <button type="button" @click="setMaxDAGs()" 
+                      class="btn btn-outline-light text-dark" 
+                      style="border: 1px solid #ced4da;">
+                      Max.
+                    </button>
+                  </div>
+                </div>
                 <div class="validate" v-if="!$v.txAmountValidation.inBetween">
                   <p>Invalid amount. Please verify.</p>
                 </div>
                 <div class="validate" v-else></div>
               </div>
-              <div class="col-md-2">
-                <i
-                  class="fa fa-chevron-circle-right"
-                  style="color: #6DECBB; font-size: 2.5rem; width:100%; margin-top: 1.5rem;"
-                ></i>
+              <div class="col-md-1">
+                <i class="fa fa-chevron-circle-right icon-point-right"></i>
                 <div class="validate"></div>
               </div>
               <div class="col-md-5">
-                <fg-input
-                  style="margin-bottom: 0.125em;"
+                <input type="text" class="form-control" aria-label="Amount (in DAGs)"
                   v-model.trim="txAddressValidation"
                   @change="setName($event.target.value)"
-                  type="text"
-                  label="Address: "
                   placeholder="Enter Recipients Wallet Address"
-                ></fg-input>
-                <div
-                  class="validate"
+                  />
+                <div class="validate"
                   v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength"
                 >
                   <p>Invalid wallet address. Please verify.</p>
                 </div>
                 <div class="validate" v-else></div>
               </div>
-            </div>
-            <div class="form-row">
-              <div class="col-md-9" />
-              <div class="col-md-3">
-                <p-button
-                  type="info"
-                  block
-                  @click.native="tx"
-                  :disabled="!this.$store.state.app.txFinished"
-                >
+              <div class="col-md-2">
+                <p-button type="info" block @click.native="tx" 
+                  style="max-width: 10rem; margin-left: auto;"
+                  :disabled="!this.$store.state.app.txFinished">
                   <span>
                     <i class="fa fa-paper-plane"></i> SEND
                   </span>
                 </p-button>
-              </div>
+                <div class="validate"></div>
+              </div> 
             </div>
           </form>
         </card>
@@ -134,11 +131,9 @@ export default {
     isFloat: function(n) {
       return n === +n && n !== (n | 0);
     },
-
     isInteger: function(n) {
       return n === +n && n === (n | 0);
     },
-
     onChangePage(pageOfItems) {
       // update page of items
       this.$store.state.pageOfItems = pageOfItems;
@@ -241,6 +236,9 @@ export default {
             }
           });
       }
+    },
+    setMaxDAGs() {
+      this.txAmountValidation = this.$store.state.walletInfo.availableBalance;
     }
   },
 
@@ -365,5 +363,11 @@ txhash p {
   color: firebrick;
   margin-top: 0em;
   margin-right: 0.125em;
+}
+
+.icon-point-right {
+  color: #6DECBB; 
+  font-size: 2.5rem; 
+  width:100%;
 }
 </style>

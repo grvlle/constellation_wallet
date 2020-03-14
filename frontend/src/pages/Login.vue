@@ -129,7 +129,6 @@
                     <password-input
                       v-model="keystorePassword"
                       label="Keystore Password"
-                      placeholder="Enter Keystore Password ..."
                       v-on:valid="KeystorePasswordValid = true"
                       v-on:invalid="KeystorePasswordValid = false"
                     />
@@ -138,7 +137,6 @@
                     <password-input
                       v-model="KeyPassword"
                       label="Key Password"
-                      placeholder="Enter Key Password..."
                       v-on:valid="KeyPasswordValid = true"
                       v-on:invalid="KeyPasswordValid = false"
                     />

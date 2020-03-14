@@ -104,6 +104,7 @@
         </card>
       </div>
     </div>
+    <page-overlay text="Submitting Transaction..." :isActive="overlay"/>
   </div>
 </template>
 
@@ -203,6 +204,7 @@ export default {
           .then(result => {
             if (result.value) {
               self.$Progress.start();
+              self.overlay = true;
               let amount = self.txAmountValidation;
               let address = self.txAddressValidation;
               let fee = result.value;
@@ -218,6 +220,7 @@ export default {
                     type: "error"
                   });
                   self.$Progress.fail();
+                  self.overlay = false;
                 }
                 if (!txFailed) {
                   Swal.fire({
@@ -231,6 +234,7 @@ export default {
                     type: "success"
                   });
                   self.$Progress.finish();
+                  self.overlay = false;
                 }
               });
             }
@@ -241,7 +245,6 @@ export default {
       this.txAmountValidation = this.$store.state.walletInfo.availableBalance;
     }
   },
-
   data() {
     return {
       txAddressValidation: "",
@@ -253,6 +256,7 @@ export default {
       notifications: {
         topCenter: false
       },
+      overlay: false,
 
       table1: {
         title: "Transactions",
@@ -285,7 +289,6 @@ export default {
       return value;
     }
   },
-
   validations: {
     txAddressValidation: {
       required,

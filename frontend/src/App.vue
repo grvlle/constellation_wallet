@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="theme--dark">
     <vue-progress-bar></vue-progress-bar>
     <downloading-screen
       v-if="this.$store.state.app.isDownloadingDependencies"

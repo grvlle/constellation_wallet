@@ -1,3 +1,5 @@
+@import "themes";
+
 .wrapper .sidebar {
   position: fixed;
   top: 0;
@@ -157,13 +159,15 @@
 }
 
 .main-panel {
-  background-color: $bg-nude;
   position: relative;
   z-index: 2;
   float: right;
   width: $sidebar-width;
   min-height: 100%;
   overflow: auto;
+  @include themed() {
+    background-color: t('backgroundColor');
+  }
 
   > .content {
     padding: 1.875em 0.9375em;

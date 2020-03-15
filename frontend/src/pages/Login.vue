@@ -129,7 +129,6 @@
                     <password-input
                       v-model="keystorePassword"
                       label="Keystore Password"
-                      placeholder="Enter Keystore Password ..."
                       v-on:valid="KeystorePasswordValid = true"
                       v-on:invalid="KeystorePasswordValid = false"
                     />
@@ -138,7 +137,6 @@
                     <password-input
                       v-model="KeyPassword"
                       label="Key Password"
-                      placeholder="Enter Key Password..."
                       v-on:valid="KeyPasswordValid = true"
                       v-on:invalid="KeyPasswordValid = false"
                     />
@@ -257,6 +255,7 @@
         </div>
       </div>
     </div>
+    <page-overlay text="Loading..." :isActive="overlay"/>
   </div>
 </template>
 
@@ -275,10 +274,8 @@ export default {
     KeystorePasswordValid: false,
     KeyPassword: "",
     KeyPasswordValid: false,
-    loginInProgress: false,
-    doneLoading: false,
+    overlay: false,
     access: false,
-    submitStatus: null,
     termsOfService:
       "This HTML scroll box has had color added. You can add color to the background of your scroll box. You can also add color to the scroll bars"
   }),
@@ -291,7 +288,7 @@ export default {
         this.alias !== "" &&
         this.keystorePassword !== "" &&
         this.KeyPassword !== "" &&
-        !this.loginInProgress
+        !this.overlay
       ) {
         return true;
       } else {
@@ -336,7 +333,7 @@ export default {
     importWallet: function() {
       var self = this;
       self.$Progress.start();
-      self.loginInProgress = true;
+      self.overlay = true;
       window.backend.WalletApplication.ImportWallet(
         self.$store.state.walletInfo.keystorePath,
         self.keystorePassword,
@@ -352,7 +349,7 @@ export default {
           ).then(loggedIn => {
             self.access = loggedIn;
             if (self.access) {
-              self.loginInProgress = false;
+              self.overlay = false;
               self.$store.state.app.isLoading = self.access;
               self.$store.state.app.isLoggedIn = self.access;
               self.$Progress.finish();
@@ -360,12 +357,12 @@ export default {
                 self.$store.state.app.isLoading = false;
               }, 8000);
             } else {
-              self.loginInProgress = false;
+              self.overlay = false;
               self.$Progress.fail();
             }
           });
         } else {
-          self.loginInProgress = false;
+          self.overlay = false;
           self.$Progress.fail();
         }
       });
@@ -419,7 +416,7 @@ export default {
     login: function() {
       var self = this;
       self.$Progress.start();
-      self.loginInProgress = true;
+      self.overlay = true;
       window.backend.WalletApplication.Login(
         self.$store.state.walletInfo.keystorePath,
         self.keystorePassword,
@@ -434,7 +431,7 @@ export default {
           window.backend.WalletApplication.SetImagePath().then(
             imagePath => (self.$store.state.walletInfo.imgPath = imagePath)
           );
-          self.loginInProgress = false;
+          self.overlay = false;
           self.$store.state.app.isLoading = self.access;
           self.$store.state.app.isLoggedIn = self.access;
           self.$Progress.finish();
@@ -442,7 +439,7 @@ export default {
             self.$store.state.app.isLoading = false;
           }, 8000);
         } else {
-          self.loginInProgress = false;
+          self.overlay = false;
           self.$Progress.fail();
         }
       });
@@ -450,7 +447,7 @@ export default {
     createLogin: function() {
       var self = this;
       self.$Progress.start();
-      self.loginInProgress = true;
+      self.overlay = true;
       if (self.newWalletLabel !== "") {
         self.$store.state.walletInfo.email = self.newWalletLabel;
         window.backend.WalletApplication.StoreWalletLabelInDB(
@@ -472,7 +469,7 @@ export default {
           ).then(loggedIn => {
             self.access = loggedIn;
             if (self.access) {
-              self.loginInProgress = false;
+              self.overlay = false;
               self.$store.state.app.isLoading = self.access;
               self.$store.state.app.isLoggedIn = self.access;
               setTimeout(function() {
@@ -593,12 +590,12 @@ export default {
                 });
               }, 8000);
             } else {
-              self.loginInProgress = false;
+              self.overlay = false;
               self.$Progress.fail();
             }
           });
         } else {
-          self.loginInProgress = false;
+          self.overlay = false;
           self.$Progress.fail();
         }
       });

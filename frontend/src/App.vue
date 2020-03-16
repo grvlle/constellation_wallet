@@ -1,5 +1,5 @@
 <template>
-  <div class="theme--dark">
+  <div :class="this.$store.state.walletInfo.darkMode ? 'theme--dark' : 'theme--light'">
     <vue-progress-bar></vue-progress-bar>
     <downloading-screen
       v-if="this.$store.state.app.isDownloadingDependencies"

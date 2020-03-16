@@ -42,7 +42,8 @@ export const store = new Vuex.Store({
             alias: "",
             privateKey: "NaN",
             publicKey: "NaN",
-            seed: "Mnemonic Seed will be introduced with a later software release"
+            seed: "Mnemonic Seed will be introduced with a later software release",
+            darkMode: false
         },
         txInfo: {
             txHistory: []

@@ -155,6 +155,24 @@
           </div>
         </card>
       </div>
+      <div class="col-md-6 d-flex">
+        <card title="General settings" sub-title="Settings affecting your overall Molly Wallet user experience">
+          <div class="container">
+            <table class="widget-container">
+              <tr>
+                <td><p>Dark Mode</p></td>
+                <td align="right">
+                  <toggle-button @change="toggleDarkMode"
+                    :value="this.$store.state.walletInfo.darkMode"
+                    color="#82C7EB"
+                    :sync="true"
+                    :labels="true" />
+                </td>
+              </tr>
+            </table>
+          </div>
+        </card>
+      </div>
     </div>
   </div>
 </template>
@@ -198,16 +216,16 @@ export default {
       }
     },
     toggleNodesOnline: function() {
-      this.$store.state.toggleDashboard.showNodesOnline = !this.$store.state
-        .toggleDashboard.showNodesOnline;
+      this.$store.state.toggleDashboard.showNodesOnline = !this.$store.state.toggleDashboard.showNodesOnline;
     },
     toggleTransactions: function() {
-      this.$store.state.toggleDashboard.showTransactions = !this.$store.state
-        .toggleDashboard.showTransactions;
+      this.$store.state.toggleDashboard.showTransactions = !this.$store.state.toggleDashboard.showTransactions;
     },
     toggleThroughput: function() {
-      this.$store.state.toggleDashboard.showThroughput = !this.$store.state
-        .toggleDashboard.showThroughput;
+      this.$store.state.toggleDashboard.showThroughput = !this.$store.state.toggleDashboard.showThroughput;
+    },
+    toggleDarkMode: function() {
+      this.$store.state.walletInfo.darkMode = !this.$store.state.walletInfo.darkMode;
     },
     importKeys: function() {
       window.backend.WalletApplication.ImportKeys();

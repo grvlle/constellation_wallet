@@ -51,7 +51,7 @@
       <div class="col">
         <card title="Wallet Address" sub-title="">
           <div class="wallet-address">
-            <table>
+            <table class="table-noheader">
               <tr>
                 <td style="padding-top: 15px; padding-left: 15px; width: 90%;">
                   <span class="text-overflow">{{wallet2.address}}</span>
@@ -322,24 +322,13 @@ export default {
 }
 
 .wallet-address {
-  color: #c4c4c4;
   padding-top: 0em;
   padding-bottom: 0.3em;
-  background-color: #f7f7f7;
   font-size: 1.5625rem;
   font-weight: 100;
 }
 
 .wallet-address > p-button {
   margin-bottom: 10em;
-}
-
-.wallet-address > table {
-  width: 100%;
-  table-layout: fixed;
-}
-
-.wallet-address > table tr {
-  background-color: #f9f9f9;
 }
 </style>

@@ -11,7 +11,7 @@
       <div class="col-md-6 d-flex">
         <card title="Dashboard Widgets" sub-title="Customize your dashboard by activating / deactivating widgets">
           <div class="container">
-            <table class="widget-container">
+            <table class="table-noheader">
               <tr>
                 <td><p>Nodes Online</p></td>
                 <td align="right">
@@ -158,9 +158,9 @@
       <div class="col-md-6 d-flex">
         <card title="General settings" sub-title="Settings affecting your overall Molly Wallet user experience">
           <div class="container">
-            <table class="widget-container">
+            <table class="table-noheader">
               <tr>
-                <td><p>Dark Mode</p></td>
+                <td><p>Dark Mode (Work In Progress...)</p></td>
                 <td align="right">
                   <toggle-button @change="toggleDarkMode"
                     :value="this.$store.state.walletInfo.darkMode"
@@ -326,22 +326,5 @@ export default {
 
 .card-footer {
   margin-top: auto;
-}
-
-.widget-container {
-  width:100%;
-}
-
-.widget-container > tr {
-  background-color: #f9f9f9;
-  border-bottom: 0.625em solid white;
-}
-
-.widget-container > tr > td {
-  padding: 0.625em;
-}
-
-.widget-container > tr > td > p {
-  margin-bottom: 0;
 }
 </style>

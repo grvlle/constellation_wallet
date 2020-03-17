@@ -1,3 +1,5 @@
+@import "themes";
+
 .table {
   thead,
   tbody,
@@ -79,4 +81,25 @@
   > tfoot > tr > td {
     padding: 0.9375em 0.5em;
   }
+}
+
+.table-noheader {
+  width:100%;
+}
+
+.table-noheader > tr {
+  background-color: #f9f9f9;
+  border-bottom: 0.625em solid;
+  @include themed() {
+    background-color: t('cardTableColor');
+    border-color: t('cardBackgroundColor');
+  }
+}
+
+.table-noheader > tr > td {
+  padding: 0.625em;
+}
+
+.table-noheader > tr > td > p {
+  margin-bottom: 0;
 }

@@ -4,11 +4,11 @@
   tfoot {
     tr > th,
     tr > td {
-      border-top: 1px solid $table-line-color;
+      border-top: 0.0625em solid $table-line-color;
     }
   }
   thead th {
-    border-bottom: 1px solid $table-line-color;
+    border-bottom: 0.0625em solid $table-line-color;
     border-top: 0;
   }
   > thead > tr > th {
@@ -20,9 +20,9 @@
   .radio,
   .checkbox {
     margin-top: 0;
-    margin-bottom: 22px;
+    margin-bottom: 1.375em;
     padding: 0;
-    width: 15px;
+    width: 0.9375em;
   }
   > thead > tr > th,
   > tbody > tr > th,
@@ -30,23 +30,23 @@
   > thead > tr > td,
   > tbody > tr > td,
   > tfoot > tr > td {
-    padding: 12px;
+    padding: 0.75em;
     vertical-align: middle;
   }
 
   .th-description {
-    max-width: 150px;
+    max-width: 9.375em;
   }
   .td-price {
-    font-size: 26px;
+    font-size: 1.625em;
     font-weight: $font-weight-light;
-    margin-top: 5px;
+    margin-top: 0.3125em;
     text-align: right;
   }
   .td-total {
     font-weight: $font-weight-bold;
     font-size: $font-size-h5;
-    padding-top: 20px;
+    padding-top: 1.25em;
     text-align: right;
   }
 
@@ -54,8 +54,8 @@
 
     &.btn-sm,
     &.btn-xs {
-      padding-left: 3px;
-      padding-right: 3px;
+      padding-left: 0.1875em;
+      padding-right: 0.1875em;
     }
   }
 
@@ -77,6 +77,6 @@
   > thead > tr > td,
   > tbody > tr > td,
   > tfoot > tr > td {
-    padding: 15px 8px;
+    padding: 0.9375em 0.5em;
   }
 }

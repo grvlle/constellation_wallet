@@ -1,54 +1,39 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
-      <img
-        src="https://constellationlabs.io/wp-content/uploads/2019/08/Constellation-Logo-1.png"
-        style="max-height: 100px; max-width: 200px;"
-      />
-      <!-- <a class="navbar-brand">{{routeName}}</a> -->
+      <img class="img-fluid"
+        src="~@/assets/img/Constellation-Logo-Black.png"
+        style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem;" />
       <button
         class="navbar-toggler navbar-burger"
         type="button"
         @click="toggleSidebar"
         :aria-expanded="$sidebar.showSidebar"
-        aria-label="Toggle navigation"
-      >
+        aria-label="Toggle navigation" >
         <span class="navbar-toggler-bar"></span>
         <span class="navbar-toggler-bar"></span>
         <span class="navbar-toggler-bar"></span>
       </button>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
-          <!-- <p class="nav-item">
-            <drop-down
-              class="nav-item"
-              title="Logout"
-              title-classes="nav-link"
-              icon="ti-lock"
-            >
-              <a class="dropdown-item">Empty</a>
-            </drop-down>
-          </p>-->
           <li class="nav-item">
             <router-link class="nav-link" to="/settings">
               <i class="ti-settings"></i>
               <p class="nav-item">SETTINGS</p>
             </router-link>
           </li>
-
-          <slot>
-            <li class="nav-item">
-              <a class="nav-link" @click="logout">
-                <i class="ti-lock"></i>
-                <p class="nav-item">LOGOUT</p>
-              </a>
-            </li>
-          </slot>
+          <li class="nav-item">
+            <a class="nav-link" @click="logout" style="cursor: pointer;">
+              <i class="ti-lock"></i>
+              <p class="nav-item">LOGOUT</p>
+            </a>
+          </li>
         </ul>
       </div>
     </div>
   </nav>
 </template>
+
 <script>
 export default {
   computed: {
@@ -71,17 +56,13 @@ export default {
           this.$store.state.walletInfo.keystorePath = "";
           this.$store.state.walletInfo.alias = "";
           this.$store.state.walletInfo.keystorePassword = "";
-          this.$store.state.walletInfo.keyPasswordValidate = "";
+          this.$store.state.walletInfo.KeyPassword = "";
           this.$store.state.walletInfo.email = "";
-          this.$store.state.validators.valid_password = false
-          this.$store.state.validators.storepass.valid_password = false
-          this.$store.state.validators.alias.contains_five_characters = false
           this.$store.state.app.isLoading = false;
           this.$store.state.app.isLoggedIn = false;
           this.$store.state.app.register = false;
           this.$store.state.app.import = false;
           this.$store.state.app.login = true;
-          this.$store.state.app.margin = 20;
           return;
         }
       }),
@@ -106,5 +87,6 @@ export default {
   }
 };
 </script>
+
 <style>
 </style>

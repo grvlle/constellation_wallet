@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -10,10 +9,6 @@ import (
 	"strings"
 	"time"
 )
-
-func (a *WalletApplication) TempPrintCreds() {
-	fmt.Println("address: ", a.wallet.Address, "alias: ", a.wallet.WalletAlias, "keyStorePass: ", os.Getenv("CL_STOREPASS"), "keyPass: ", os.Getenv("CL_KEYPASS"), "key: ", a.paths.EncPrivKeyFile)
-}
 
 /* Database Model is located in models.go */
 
@@ -96,7 +91,11 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 			a.UserLoggedIn = false
 			a.NewUser = true
-			a.initWallet(keystorePath)
+			err = a.initWallet(keystorePath)
+			if err != nil {
+				a.log.Errorln("Faled to initialize wallet. Reason: ", err)
+				return false
+			}
 
 			return true
 
@@ -105,7 +104,11 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 			a.UserLoggedIn = false
 			a.NewUser = false
-			a.initWallet(a.wallet.KeyStorePath)
+			err := a.initWallet(a.wallet.KeyStorePath)
+			if err != nil {
+				a.log.Errorln("Faled to initialize wallet. Reason: ", err)
+				return false
+			}
 			return true
 		}
 	}
@@ -178,7 +181,10 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 			return false
 		}
 
-		a.CreateEncryptedKeyStore()
+		err = a.CreateEncryptedKeyStore()
+		if err != nil {
+			return false
+		}
 
 		a.wallet.Address = a.GenerateDAGAddress()
 
@@ -236,12 +242,15 @@ func (a *WalletApplication) initNewWallet() {
 
 // initExistingWallet queries the database for the user wallet and pushes
 // the information to the front end components.
-func (a *WalletApplication) initWallet(keystorePath string) {
+func (a *WalletApplication) initWallet(keystorePath string) error {
 
 	a.paths.EncPrivKeyFile = keystorePath
 
 	if a.NewUser {
-		a.initTXFromBlockExplorer()
+		err := a.initTXFromBlockExplorer()
+		if err != nil {
+			return err
+		}
 		a.StoreImagePathInDB("faces/face-0.jpg")
 	} else if !a.NewUser {
 		a.initTXFromDB()   // Disregard upon import
@@ -256,6 +265,7 @@ func (a *WalletApplication) initWallet(keystorePath string) {
 	}
 
 	a.log.Infoln("User has logged into the wallet")
+	return nil
 
 }
 
@@ -264,12 +274,11 @@ func (a *WalletApplication) initDashboardWidgets() {
 	chartData := a.ChartDataInit()
 
 	// Below methods are continously updating the client side modules.
+	a.pollTokenBalance()
 	a.nodeStats(chartData)
 	a.txStats(chartData)
 	a.networkStats(chartData)
-	a.pollTokenBalance()
 	a.blockAmount()
-	a.tokenAmount()
 	a.pricePoller()
 
 	a.WidgetRunning.DashboardWidgets = true
@@ -335,29 +344,49 @@ func (a *WalletApplication) initTXFromDB() {
 
 }
 
-func (a *WalletApplication) initTXFromBlockExplorer() {
+// initTXFromBlockExplorer is called when an existing wallet is imported.
+func (a *WalletApplication) initTXFromBlockExplorer() error {
 	a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
 
 	resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
 		a.sendError("Unable to collect previous TX's from blockexplorer. Please check your internet connection. Reason: ", err)
-		return
+		return err
 	}
 	defer resp.Body.Close()
-
-	allTX := []TXHistory{}
 
 	if resp.Body != nil {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			a.log.Fatal(err)
 		}
+		ok, error := a.verifyAPIResponse(bodyBytes)
+		// Blockexplorer returns below string when no previous transactions are found
+		if !ok && error != "Cannot find transactions for sender" {
+			a.log.Errorln("API returned the following error", error)
+			// If unable to import previous transactions, remove wallet from DB and logout.
+			if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
+				a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
+				return err
+			}
+			a.LoginError("The wallet import failed. Please check your internet connection and try again.")
+			return err
+		}
+
+		// If no previous transactions for imported wallet - proceed
+		if !ok && error == "Cannot find transactions for sender" {
+			a.log.Info("Unable to detect any previous transactions.")
+			return nil
+		}
+
+		allTX := []TXHistory{}
 
 		err = json.Unmarshal(bodyBytes, &allTX)
 		if err != nil {
 			a.log.Errorln("Unable to fetch TX history from block explorer. Reason: ", err)
 			a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
+			return err
 		}
 
 		go func() {
@@ -383,7 +412,9 @@ func (a *WalletApplication) initTXFromBlockExplorer() {
 		}()
 	} else {
 		a.log.Info("Unable to detect any previous transactions.")
+		return nil
 	}
+	return nil
 
 }
 

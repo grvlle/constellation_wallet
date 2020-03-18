@@ -16,6 +16,10 @@ The Molly Wallet is the official $DAG wallet of the Constellation Network. It'll
 
 [- Official Source](https://constellationnetwork.io/technology/molly-wallet/)
 
+### Publications
+
+* [Constellation’s Molly a Landmark Moment for the $DAG Ecosystem](https://thedailychain.com/constellations-molly-a-landmark-moment-for-the-dag-ecosystem/) - An article written on The Daily Chain by Anna Larse.
+
 ### Technologies
 
 Molly Wallet uses a number of open source projects to work properly:
@@ -27,7 +31,7 @@ Molly Wallet uses a number of open source projects to work properly:
 
 ### Installation
 
-Molly Wallet requires [Java](https://java.com/) to run.
+Molly Wallet requires [OpenJDK v9](https://java.com/) to run.
 
 Simply download from the [official website](https://constellationnetwork.io/technology/molly-wallet/) for the selected OS.
 
@@ -135,3 +139,8 @@ or for the debug version, run:
 ```sh
 wails build -d
 ```
+
+### Top Contributers
+* [digitaltwin](https://github.com/digitaltwinnn)
+* [Marcin Wadoń](https://github.com/marcinwadon)
+

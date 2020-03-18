@@ -17,7 +17,7 @@ export default {
      */
     arrowStyle() {
       return {
-        transform: `translate3d(0px, ${this.moveY}px, 0px)`
+        transform: `translate3d(0em, ${this.moveY}em, 0em)`
       };
     }
   }
@@ -26,13 +26,13 @@ export default {
 <style lang="scss">
 $bg-nude: #f4f3ef !default;
 .moving-arrow {
-  border-right: 17px solid $bg-nude;
-  border-top: 17px solid transparent;
-  border-bottom: 17px solid transparent;
+  border-right: 1.0625em solid $bg-nude;
+  border-top: 1.0625em solid transparent;
+  border-bottom: 1.0625em solid transparent;
   display: inline-block;
   position: absolute;
-  left: 243px;
-  top: 253px;
+  left: 15.2175em;
+  top: 16.5em;
   transition: all 0.5s cubic-bezier(0.19, 1.42, 0.79, 1);
 }
 @media (max-width: 992px) {

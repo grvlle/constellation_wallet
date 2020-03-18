@@ -17,8 +17,7 @@ export const store = new Vuex.Store({
             isDownloadingDependencies: true,
             import: false,
             register: false,
-            login: true,
-            margin: 20,
+            login: true
         },
         downloading: {
           filename: "",
@@ -26,15 +25,16 @@ export const store = new Vuex.Store({
         },
         walletInfo: {
             version: "v1.13",
-            uiVersion: "v0.1.7 Beta",
-            email: "user@email.com",
+            uiVersion: "v0.1.8 Beta",
+            email: "Molly Wallet",
             imgPath: 'faces/face-0.jpg',
             transactions: 0,
             tokenAmount: 0, 
             totalBalance: 0,
             availableBalance: 0,
             nonce: 0,
-            usdValue: "NaN",
+            currency: "USD",
+            totalValue: "NaN",
             blocks: "NaN",
             address: "N/A",
             keystorePath: "",
@@ -44,37 +44,13 @@ export const store = new Vuex.Store({
             publicKey: "NaN",
             seed: "Mnemonic Seed will be introduced with a later software release"
         },
-        validators: {
-            target: "",
-            alias: {
-                alias_length: 0,
-                contains_five_characters: false,
-                valid_alias: false,
-            },
-            keypass: {
-                password_length: 0,
-                contains_eight_characters: false,
-                contains_number: false,
-                contains_uppercase: false,
-                contains_special_character: false,
-                valid_password: false
-            },
-            storepass: {
-                password_length: 0,
-                contains_eight_characters: false,
-                contains_number: false,
-                contains_uppercase: false,
-                contains_special_character: false,
-                valid_password: false
-            },
-            duplicate: false
-        },
         txInfo: {
             txHistory: []
         },
         counters: {
             blockCounter: 5,
-            tokenCounter: 60,
+            tokenCounter: 30,
+            valueCounter: 60,
             nodesOnlineCounter: 24
         },
         toggleDashboard: {

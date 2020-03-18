@@ -144,11 +144,15 @@ export default {
     window.wails.Events.On("blocks", number => {
       this.$store.state.walletInfo.blocks = number;
     });
-    window.wails.Events.On("price", (currency, dagRate) => {
-      this.$store.state.walletInfo.usdValue = currency + " " + dagRate;
+    window.wails.Events.On("totalValue", (currency, value) => {
+      this.$store.state.walletInfo.currency = currency;
+      this.$store.state.walletInfo.totalValue = value;
     });
     window.wails.Events.On("token_counter", count => {
       this.$store.state.counters.tokenCounter = count;
+    });
+    window.wails.Events.On("value_counter", valueCount => {
+      this.$store.state.counters.valueCounter = valueCount;
     });
     window.wails.Events.On("block_counter", blockCount => {
       this.$store.state.counters.blockCounter = blockCount;
@@ -182,13 +186,21 @@ export default {
 .vue-notifyjs.notifications {
   .alert {
     z-index: 10000;
+    font-size: 0.875rem;
+  }
+  .alert[data-notify="container"] {
+    width: 21.875rem;
+  }
+  .alert-icon {
+    margin-left: -0.5em;
+    margin-top: -0.5em;
   }
   .list-move {
     transition: transform 0.3s, opacity 0.4s;
   }
   .list-item {
     display: inline-block;
-    margin-right: 10px;
+    margin-right: 0.625em ;
   }
   .list-enter-active {
     transition: transform 0.2s ease-in, opacity 0.4s ease-in;

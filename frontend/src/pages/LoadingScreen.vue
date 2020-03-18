@@ -1,44 +1,46 @@
 <template>
-  <div class="bg">
-    <center>
-      <img
-      v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-      style="margin-top: 200px;"
-      src="~@/assets/img/Constellation-Logo-1.png"
-      />
-      <p
-        v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-        style="color: #c4c4c4; margin-top: 5px;"
-      >Getting your $DAG Wallet ready...</p>
-    </center>
-    <center>
-      <div class="boxes">
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div class="box">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
+  <div class="bg vertical-center" id="app">
+    <div class="container">
+      <div class="row" v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn">
+        <div class="col-md-6 mx-auto text-center">
+          <img class="img-fluid" style="max-height: 5.8rem;" src="~@/assets/img/Constellation-Logo-Black.png" />
+          <p>
+            Getting your $DAG Wallet ready...
+          </p>
         </div>
       </div>
-    </center>
+      <div class="row">
+        <div class="col-md-6 mx-auto text-center">
+          <div class="boxes mx-auto">
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <div class="box">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="height: 21rem;"/>
+    </div>
   </div>
 </template>
 
@@ -69,13 +71,21 @@ export default {
   background-size: cover;
 }
 
+.vertical-center {
+  min-height: 100%; /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+
+  display: flex;
+  align-items: center;
+}
+
 .loader {
   background: #f2f2f2;
   background-repeat: no-repeat;
   background-size: cover;
   color: white;
   display: block;
-  font-size: 32px;
+  font-size: 2rem;
   overflow: hidden;
   padding-top: 35vh;
   position: fixed;
@@ -87,7 +97,7 @@ $colorRight: darken(#5c8df6, 15%);
 $colorLeft: darken(#5c8df6, 5%);
 $shadow: #dbe3f4;
 .boxes {
-  --size: 32px;
+  --size: 2em;
   --duration: 800ms;
   text-align: center;
   height: calc(var(--size) * 2);
@@ -95,8 +105,8 @@ $shadow: #dbe3f4;
   position: relative;
   transform-style: preserve-3d;
   transform-origin: 50% 50%;
-  margin-top: 50px;
-  transform: rotateX(60deg) rotateZ(45deg) rotateY(0deg) translateZ(0px);
+  margin-top: 3.125em;
+  transform: rotateX(60deg) rotateZ(45deg) rotateY(0deg) translateZ(0em);
   .box {
     width: var(--size);
     height: var(--size);
@@ -218,27 +228,6 @@ html {
   }
 }
 
-/* // Center & dribbble */
-
-// body {
-//     min-height: 100vh;
-//     font-family: Roboto, Arial;
-//     color: #ADAFB6;
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     background: #F9FBFF;
-//     .dribbble {
-//         position: fixed;
-//         display: block;
-//         right: 20px;
-//         bottom: 20px;
-//         img {
-//             display: block;
-//             height: 28px;
-//         }
-//     }
-// }
 .fadeout {
   animation: fadeout 2s forwards;
 }

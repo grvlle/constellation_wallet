@@ -1,7 +1,7 @@
 .footer {
   background-attachment: fixed;
   position: relative;
-  line-height: 20px;
+  line-height: 1.25em;
   nav {
     ul {
       list-style: none;
@@ -10,15 +10,15 @@
       font-weight: normal;
       li {
         display: inline-block;
-        padding: 10px 15px;
-        margin: 15px 3px;
-        line-height: 20px;
+        padding: 0.625em 0.9375em;
+        margin: 0.9375em 0.1875em;
+        line-height: 1.25em;
         text-align: center;
       }
       a:not(.btn) {
         color: $font-color;
         display: block;
-        margin-bottom: 3px;
+        margin-bottom: 0.1875em;
 
         &:focus,
         &:hover {
@@ -29,11 +29,11 @@
   }
   .copyright {
     color: $font-color;
-    padding: 25px 15px;
-    font-size: 14px;
+    padding: 1.5625em 0.9375em;
+    font-size: 0.875rem;
     white-space: nowrap;
-    margin: 15px 3px;
-    line-height: 20px;
+    margin: 0.9375em 0.1875em;
+    line-height: 1.25em;
   }
   .heart {
     color: $danger-color;
@@ -46,10 +46,10 @@ $white : #ccc;
 a.social {
   color: #403D39;
   text-decoration: none;
-  margin-left: 15px;
+  margin-left: 0.9375em;
   transition: 0.3s;
   font-weight: 200;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1em;
   opacity: .8;
   font-family: Poppins;

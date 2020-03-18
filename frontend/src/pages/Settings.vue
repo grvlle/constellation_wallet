@@ -1,215 +1,160 @@
 <template>
-  <div id="app" class="row">
-    <div class="col-md-6">
-      <card>
-        <h4 class="card-title">Settings</h4>
-        <p class="card-category">Configure the Constellation Wallet to your personal preferences</p>
-
-        <br />
-        <p>This section let's you personalize and tailor your wallet to your needs. The right hand side lets you manage your wallet keys.</p>
-        <br />
-
-        <label class="control-label">
-          <p>Toggle Dashboard Widgets</p>
-        </label>
-        <p
-          class="small"
-          style="margin-bottom: -5px; margin-top: -20px;"
-        >This option let's you customize your dashboard by toggling/untoggling widgets from the Dashboard.</p>
-
-        <div style="padding: 5px;">
+  <div id="app" class="container">
+    <div class="row">
+      <div class="col-12">
+        <card title="Settings" sub-title="Configure the Molly Wallet to your personal preferences">
           <br />
-          <table style="width:100%; ">
-            <tr style="background-color: #f9f9f9; border-bottom: 3px solid white;">
-              <td style="padding-top: 15px; padding-left: 15px;">
-                <p>
-                  Toggle
-                  <b>Nodes Online</b> widget
-                </p>
-              </td>
-              <td style="padding-top: 10px;">
-                <toggle-button
-                  @change="toggleNodesOnline"
-                  :value="this.$store.state.toggleDashboard.showNodesOnline"
-                  color="#82C7EB"
-                  :sync="true"
-                  :labels="true"
-                />
-              </td>
-            </tr>
-            <tr style="background-color: #f9f9f9; border-bottom: 3px solid white;">
-              <td style="padding-top: 15px; padding-left: 15px;">
-                <p>
-                  Toggle
-                  <b>Transactions</b> widget
-                </p>
-              </td>
-              <td>
-                <toggle-button
-                  @change="toggleTransactions"
-                  :value="this.$store.state.toggleDashboard.showTransactions"
-                  color="#82C7EB"
-                  :sync="true"
-                  :labels="true"
-                />
-              </td>
-            </tr>
-            <tr style="background-color: #f9f9f9; border-bottom: 3px solid white;">
-              <td style="padding-top: 15px; padding-left: 15px;">
-                <p>
-                  Toggle
-                  <b>Throughput</b> widget
-                </p>
-              </td>
-              <td>
-                <toggle-button
-                  @change="toggleThroughput"
-                  :value="this.$store.state.toggleDashboard.showThroughput"
-                  color="#82C7EB"
-                  :sync="true"
-                  :labels="true"
-                />
-              </td>
-            </tr>
-          </table>
-        </div>
-        <br />
-        <label class="control-label">
-          <p>Edit Wallet Information</p>
-        </label>
-        <p
-          class="small"
-          style="margin-bottom: -5px; margin-top: -20px;"
-        >This option let's you customize your Wallet Card under Wallet Information with your own label and profile picture.</p>
-        <br />
-        <form>
-          <table style="width:100%;">
-            <tr>
-              <td style="padding: 0px; width: 81%;">
-                <fg-input type="text" placeholder="Enter a new Wallet Label" v-model="newLabel"></fg-input>
-              </td>
-
-              <td style="padding: 0px;">
-                <p-button
-                  style="margin-top: -17px; width: 95%; float: right; white-space: nowrap; overflow: hidden; text-overflow: clip;"
-                  @click.native="submitLabel()"
-                  type="info"
-                >Apply</p-button>
-              </td>
-            </tr>
-          </table>
-        </form>
-        <table style="width:100%;">
-          <tr>
-            <td style="padding: 0px; width: 81%;">
-              <fg-input
-                type="text"
-                :disabled="true"
-                :placeholder="this.$store.state.walletInfo.imgPath"
-                v-model="this.$store.state.walletInfo.imgPath"
-              ></fg-input>
-            </td>
-
-            <td style="padding: 0px;">
-              <p-button
-                style="margin-top: -17px; width: 95%; float: right; white-space: nowrap; overflow: hidden; text-overflow: clip;"
-                @click.native="uploadImage()"
-                type="info"
-              >Browse</p-button>
-            </td>
-          </tr>
-        </table>
-      </card>
+        </card>
+      </div>
     </div>
-    <div class="col-md-6">
-      <card>
-        <h4 class="card-title">Backup / Restore</h4>
-        <p class="card-category">Backup your Wallet</p>
-        <br />
-
-        <form @submit.prevent>
-          <!-- Below can be revived when Mnemonic Seed is supported -->
-          <!-- <label class="control-label">
-                                                                                              <p>Mnemonic Seed</p>
-                                                                                            </label>
-                                                                                            <p class="small" style="margin-bottom: -5px; margin-top: -20px;">This is the seed that will be used to backup and restore your wallet.</p>
-                                                                                          <div class="row">
-                                                                                            
-                                                                                            <div class="input-group col-md-12">
-                                                                                              
-                                                                                              <input :type=seed class="form-control" :disabled="true" placeholder="Mnemonic Seed" v-model="this.$store.state.walletInfo.seed">
-                                                                                              <div class="input-group-append">
-                                                                                                <p-button class="btn" @click.native="showPassword2()" type="danger"><i v-bind:class="btnText"/></p-button>
-                                                                                              </div>
-                                                                                              
-                                                                                          </div>
-          </div>-->
-
-          <label class="control-label">
-            <p>Private Key</p>
-          </label>
-          <p
-            class="small"
-            style="margin-bottom: -5px; margin-top: -20px;"
-          >Path to private key (key.p12)</p>
-          <div class="row">
-            <div class="col-md-12">
-              <fg-input
-                type="text"
-                :disabled="true"
-                placeholder="Path to private key (key.p12)"
-                v-model="this.$store.state.walletInfo.keystorePath"
-              ></fg-input>
-            </div>
+    <div class="row">
+      <div class="col-md-6 d-flex">
+        <card title="Dashboard Widgets" sub-title="Customize your dashboard by activating / deactivating widgets">
+          <div class="container">
+            <table class="widget-container">
+              <tr>
+                <td><p>Nodes Online</p></td>
+                <td align="right">
+                  <toggle-button @change="toggleNodesOnline"
+                    :value="this.$store.state.toggleDashboard.showNodesOnline"
+                    color="#82C7EB"
+                    :sync="true"
+                    :labels="true" />
+                </td>
+              </tr>
+              <tr>
+                <td><p>Transactions</p></td>
+                <td align="right">
+                  <toggle-button @change="toggleTransactions"
+                    :value="this.$store.state.toggleDashboard.showTransactions"
+                    color="#82C7EB"
+                    :sync="true"
+                    :labels="true" />
+                </td>
+              </tr>
+              <tr>
+                <td><p>Throughput</p></td>
+                <td align="right">
+                  <toggle-button @change="toggleThroughput"
+                    :value="this.$store.state.toggleDashboard.showThroughput"
+                    color="#82C7EB"
+                    :sync="true"
+                    :labels="true" />
+                </td>
+              </tr>
+            </table>
           </div>
-          <label class="control-label">
-            <p>Mnemonic Seed (coming soon)</p>
-          </label>
-          <p
-            class="small"
-            style="margin-bottom: -5px; margin-top: -20px;"
-          >This will be used to restore your wallet</p>
-          <div class="row">
-            <div class="input-group col-md-12">
-              <input
-                :type="type"
-                label="Private Key"
-                class="form-control"
-                :disabled="true"
-                placeholder="Mnemonic Seed (coming soon)"
-                v-model="this.$store.state.walletInfo.seed"
-                aria-describedby="basic-addon2"
-              />
-              <div class="input-group-append">
-                <p-button class="btn" @click.native="showPassword()" type="danger">
-                  <i v-bind:class="btnText" />
+        </card>
+      </div>
+      <div class="col-md-6 d-flex">
+        <card title="Wallet Information" sub-title="Customize your Wallet with your own label and profile picture">
+          <div class="container">
+            <form>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Enter a new Wallet Label" v-model="newLabel">
+                <span class="input-group-btn" >
+                  <p-button @click.native="submitLabel()" type="info" style="width:6rem;">Apply</p-button>
+                </span>
+              </div>
+              <div class="input-group">
+                <input type="text" :disabled="true" class="form-control" :placeholder="this.$store.state.walletInfo.imgPath" v-model="this.$store.state.walletInfo.imgPath">
+                <span class="input-group-btn">
+                  <p-button @click.native="uploadImage()" type="info" style="width:6rem;">Browse</p-button>
+                </span>
+              </div>
+            </form>
+          </div>
+        </card>
+      </div>
+      <div class="col-md-6 d-flex">
+        <card title="Backup / Restore" sub-title="Backup your Wallet">
+          <div class="container">
+            <form @submit.prevent>
+              <!-- Below can be revived when Mnemonic Seed is supported -->
+              <!-- 
+              <label class="control-label">
+                <p>Mnemonic Seed</p>
+              </label>
+              <p class="small" style="margin-bottom: -5px; margin-top: -20px;">
+                This is the seed that will be used to backup and restore your wallet.
+              </p>
+              <div class="row">
+                <div class="input-group col-md-12">
+                  <input :type=seed class="form-control" :disabled="true" placeholder="Mnemonic Seed" v-model="this.$store.state.walletInfo.seed">
+                  <div class="input-group-append">
+                    <p-button class="btn" @click.native="showPassword2()" type="danger"><i v-bind:class="btnText"/></p-button>
+                  </div>
+                </div>
+              </div>-->
+              <div class="row">
+                <div class="col-12">
+                  <label class="control-label" style="margin-bottom: 0;">
+                    <p style="margin-bottom: 0;">Path to private key (key.p12)</p>
+                  </label>
+                  <fg-input type="text" :disabled="true"
+                    placeholder="Path to private key (key.p12)"
+                    v-model="this.$store.state.walletInfo.keystorePath"
+                  ></fg-input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <label class="control-label" style="margin-bottom: 0;">
+                    <p style="margin-bottom: 0;">Mnemonic Seed (coming soon)</p>
+                  </label>
+                  <p class="small" style="margin-bottom: 2px;">This will be used to restore your wallet</p>
+                  <div class="input-group">
+                    <input :type="type" :disabled="true"
+                      class="form-control"
+                      label="Private Key"
+                      placeholder="Mnemonic Seed (coming soon)"
+                      v-model="this.$store.state.walletInfo.seed"
+                      aria-describedby="basic-addon2" />
+                    <div class="input-group-append">
+                      <p-button class="btn" @click.native="showPassword()" type="danger">
+                        <i v-bind:class="btnText" />
+                      </p-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </card>
+      </div>
+      <div class="col-md-6 d-flex">
+        <card title="Import / Export Keys" sub-title="Restore your Wallet from a previously exported file or create a new export">
+          <div class="container" style="margin-top: auto;">
+            <div class="row">
+              <div class="col">
+                <p class="small">
+                  Select Import if you wish to restore your wallet from a previously exported file.
+                  Select Export to export your keys into an encrypted .pem file on your filesystem. 
+                  Store this file in cold storage for optimal security.
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 pr-md-2 mb-3">
+                <p-button @click.native="importKeys()"
+                type="success" block :disabled="true">
+                  <span style="display: block;">
+                    <i class="fa fa-file-import"></i> IMPORT
+                  </span>
+                </p-button>
+              </div>
+              <div class="col-md-6 pl-md-2 mb-3">
+                <p-button @click.native="exportKeys()"
+                type="danger" block :disabled="true">
+                  <span style="display: block;">
+                    <i class="fa fa-file-export"></i> EXPORT
+                  </span>
                 </p-button>
               </div>
             </div>
           </div>
-        </form>
-        <label class="control-label">
-          <p>Import / Export Keys</p>
-        </label>
-        <p class="small" style="margin-top: -20px;">
-          Select Import if you wish to restore your wallet from a previously exported file.
-          <br />Select Export to export your keys into an encrypted .pem file on your filesystem. Store this file in cold storage for optimal security.
-        </p>
-        <p-button
-          :disabled="true"
-          @click.native="importKeys()"
-          style="margin-right: 10px;"
-          type="success"
-        >
-          Import
-          <i class="fas fa-file-import" />
-        </p-button>
-
-        <p-button :disabled="true" @click.native="exportKeys()" type="danger">
-          Export
-          <i class="fas fa-file-export" />
-        </p-button>
-      </card>
+        </card>
+      </div>
     </div>
   </div>
 </template>
@@ -223,8 +168,7 @@ export default {
       if (this.newLabel === "") {
         Swal.fire({
           title: "Failed!",
-          text:
-            "Unable to change wallet label. No new label entered.",
+          text: "Unable to change wallet label. No new label entered.",
           type: "error"
         });
       } else {
@@ -350,4 +294,36 @@ export default {
 </script>
 
 <style>
+.card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-footer {
+  margin-top: auto;
+}
+
+.widget-container {
+  width:100%;
+}
+
+.widget-container > tr {
+  background-color: #f9f9f9;
+  border-bottom: 0.625em solid white;
+}
+
+.widget-container > tr > td {
+  padding: 0.625em;
+}
+
+.widget-container > tr > td > p {
+  margin-bottom: 0;
+}
 </style>

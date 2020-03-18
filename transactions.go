@@ -12,8 +12,7 @@ import (
 
 // Transaction contains all tx information
 type Transaction struct {
-	Alias string `json:"alias"`
-	Edge  struct {
+	Edge struct {
 		ObservationEdge struct {
 			Parents []struct {
 				Hash     string `json:"hash"`
@@ -41,7 +40,7 @@ type Transaction struct {
 				Hash    string `json:"hash"`
 				Ordinal int    `json:"ordinal"`
 			} `json:"lastTxRef"`
-			Fee  float64 `json:"fee"`
+			Fee  float64 `json:"fee,omitempty"`
 			Salt int64   `json:"salt"`
 		} `json:"data"`
 	} `json:"edge"`
@@ -98,14 +97,15 @@ func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, addr
 }
 
 func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
-	a.log.Info("Attempting to communicate with mainnet on: http://" + a.Network.URL + a.Network.Handles.Transaction)
+	a.log.Info("Attempting to communicate with mainnet on: " + a.Network.URL + a.Network.Handles.Transaction)
+	/* TEMPORARILY COMMENTED OUT */
 	bytesRepresentation, err := json.Marshal(tx)
 	if err != nil {
 		a.log.Errorln("Unable to parse JSON data for transaction", err)
 		a.sendError("Unable to parse JSON data for transaction", err)
 		return false
 	}
-	resp, err := http.Post("http://"+a.Network.URL+a.Network.Handles.Transaction, "application/json", bytes.NewBuffer(bytesRepresentation))
+	resp, err := http.Post(a.Network.URL+a.Network.Handles.Transaction, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
 		a.sendError("Unable to send request to mainnet. Please check your internet connection. Reason: ", err)
@@ -114,10 +114,10 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
-		/* TEMPORARILY COMMENTED OUT */
+		a.log.Infoln(resp.Body) //TEMP
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			a.log.Fatal(err)
+			a.log.Errorf("Failed to read the response body. Reason: ", err)
 		}
 		bodyString := string(bodyBytes)
 		if len(bodyBytes) == 64 {
@@ -140,7 +140,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 	a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
 
 	time.Sleep(3 * time.Second)
-	return true /* TEMPORARILY SET TO TRUE. CHANGE TO FALSE */
+	return false /* TEMPORARILY SET TO TRUE. CHANGE TO FALSE */
 }
 
 func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {

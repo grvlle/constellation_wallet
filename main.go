@@ -20,6 +20,7 @@ func main() {
 	frontend := wails.CreateApp(&wails.AppConfig{
 		Width:  1280,
 		Height: 720,
+		Resizable: true,
 		Title:  "Molly - Constellation Desktop Wallet [Beta]",
 		JS:     js,
 		CSS:    css,

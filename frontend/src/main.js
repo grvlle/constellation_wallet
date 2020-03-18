@@ -21,8 +21,8 @@ Vue.component('jw-pagination', JwPagination);
 Vue.use(VueProgressBar, {
   color: '#6DECBB',
   failedColor: 'red',
-  height: '7px',
-  thickness: '7px'
+  height: '0.4rem',
+  thickness: '0.4rem'
 })
 Vue.use(ToggleButton)
 Vue.use(Vuelidate)

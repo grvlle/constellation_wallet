@@ -119,7 +119,7 @@ func (wc *WriteCounter) Write(p []byte) (int, error) {
 }
 
 func (a *WalletApplication) fetchWalletJar(filename string, filepath string) error {
-	url := a.WalletCLI.URL + "-v" + a.WalletCLI.Version + "/" + filename
+	url := a.WalletCLI.URL + "/v" + a.WalletCLI.Version + "/" + filename
 	a.log.Info(url)
 
 	out, err := os.Create(filepath + ".tmp")

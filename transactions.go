@@ -114,12 +114,12 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
-		a.log.Infoln(resp.Body) //TEMP
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			a.log.Errorf("Failed to read the response body. Reason: ", err)
 		}
 		bodyString := string(bodyBytes)
+		a.log.Infoln("Response: ", bodyBytes)
 		if len(bodyBytes) == 64 {
 			a.log.Info(bodyString)
 			a.log.Infoln("Transaction has been successfully sent to the network.")

@@ -300,12 +300,6 @@ export default {
   text-overflow: ellipsis;
 }
 
-.stats-card .card {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
 .stats-card .card-body .row [class^="col"] {
   margin-left: 0;
   margin-right: 0;

@@ -705,25 +705,4 @@ html {
   padding-left: 0em;
   padding-right: 0em;
 }
-
-.page-error-box {
-  height: 1.875em;
-}
-
-.page-error-box p {
-  color: firebrick;
-  font-size: 0.75rem;
-}
-
-.validate {
-  height: 0.625em;
-  display: flex;
-}
-.validate > p {
-  /*flex: 1;*/
-  font-size: 0.625rem;
-  color: firebrick;
-  margin-top: 0em;
-  margin-right: 0.125em;
-}
 </style>

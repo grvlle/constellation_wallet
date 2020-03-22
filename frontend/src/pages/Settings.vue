@@ -312,19 +312,4 @@ export default {
 </script>
 
 <style>
-.card {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.card-body {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.card-footer {
-  margin-top: auto;
-}
 </style>

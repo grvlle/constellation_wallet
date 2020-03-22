@@ -1,0 +1,43 @@
+.validate {
+  height: 0.625em;
+  display: flex;
+}
+
+.validate > p {
+  /*flex: 1;*/
+  font-size: 0.625rem;
+  color: firebrick;
+  margin-top: 0em;
+  margin-right: 0.125em;
+}
+
+.page-error-box {
+  height: 1.875em;
+}
+
+.page-error-box p {
+    color: firebrick;
+    font-size: 0.75rem;
+}
+
+.icon-point-right {
+  color: $success-color;
+  font-size: 2.5rem; 
+  width:100%;
+}
+
+.card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-footer {
+  margin-top: auto;
+}

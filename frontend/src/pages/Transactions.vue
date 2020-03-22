@@ -358,19 +358,5 @@ txhash p {
 
 .validate {
   height: 1.25em;
-  display: flex;
-}
-.validate > p {
-  /*flex: 1;*/
-  font-size: 0.625rem;
-  color: firebrick;
-  margin-top: 0em;
-  margin-right: 0.125em;
-}
-
-.icon-point-right {
-  color: #6DECBB; 
-  font-size: 2.5rem; 
-  width:100%;
 }
 </style>

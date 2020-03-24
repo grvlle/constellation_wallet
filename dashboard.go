@@ -234,7 +234,6 @@ func (a *WalletApplication) pollTokenBalance() {
 					UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
 					time.Sleep(updateIntervalToken * time.Second)
 				}
-
 			}
 		}
 	}()
@@ -260,7 +259,8 @@ func (a *WalletApplication) pricePoller() {
 			case <-a.killSignal:
 				return
 			default:
-				for retryCounter <= 10 && a.wallet.Balance != 0 {
+				time.Sleep(1 * time.Second)
+				for retryCounter <= 10 && a.wallet.Balance > 0 {
 					a.log.Debug("Contacting token evaluation API on: " + url + ticker)
 
 					resp, err := http.Get(url)

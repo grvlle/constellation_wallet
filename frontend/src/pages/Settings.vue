@@ -13,7 +13,7 @@
           <div class="container">
             <table class="widget-container">
               <tr>
-                <td><p>Nodes Online</p></td>
+                <td><p>Nodes Online (dummy data)</p></td>
                 <td align="right">
                   <toggle-button @change="toggleNodesOnline"
                     :value="this.$store.state.toggleDashboard.showNodesOnline"
@@ -23,7 +23,7 @@
                 </td>
               </tr>
               <tr>
-                <td><p>Transactions</p></td>
+                <td><p>Transactions (dummy data)</p></td>
                 <td align="right">
                   <toggle-button @change="toggleTransactions"
                     :value="this.$store.state.toggleDashboard.showTransactions"
@@ -33,7 +33,7 @@
                 </td>
               </tr>
               <tr>
-                <td><p>Throughput</p></td>
+                <td><p>Throughput (dummy data)</p></td>
                 <td align="right">
                   <toggle-button @change="toggleThroughput"
                     :value="this.$store.state.toggleDashboard.showThroughput"

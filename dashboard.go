@@ -259,6 +259,7 @@ func (a *WalletApplication) pricePoller() {
 			case <-a.killSignal:
 				return
 			default:
+				a.wallet.TokenPrice.DAG.USD = 0
 				time.Sleep(1 * time.Second)
 				for retryCounter <= 10 && a.wallet.Balance > 0 {
 					a.log.Debug("Contacting token evaluation API on: " + url + ticker)

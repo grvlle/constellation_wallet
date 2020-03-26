@@ -1,3 +1,5 @@
+@import "themes";
+
 .validate {
   height: 0.625em;
   display: flex;
@@ -6,9 +8,11 @@
 .validate > p {
   /*flex: 1;*/
   font-size: 0.625rem;
-  color: firebrick;
   margin-top: 0em;
   margin-right: 0.125em;
+  @include themed() {
+    color: t('errorTextColor');
+  }
 }
 
 .page-error-box {
@@ -16,8 +20,10 @@
 }
 
 .page-error-box p {
-    color: firebrick;
     font-size: 0.75rem;
+    @include themed() {
+      color: t('errorTextColor');
+    }
 }
 
 .icon-point-right {
@@ -40,4 +46,19 @@
 
 .card-footer {
   margin-top: auto;
+}
+
+.input-group-append .btn {
+  border: 1px solid;
+  @include themed() {
+    border-color: t('inputBorderColor');
+  }
+}
+
+.input-group-text {
+  @include themed() {
+    background-color: t('inputBackgroundColor');
+    color: t('inputTextColor');
+    border-color: t('inputBorderColor');
+  }
 }

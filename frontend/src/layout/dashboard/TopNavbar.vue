@@ -1,7 +1,10 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
-      <img class="img-fluid"
+      <img class="img-fluid" v-if="this.$store.state.walletInfo.darkMode"
+        src="~@/assets/img/Constellation-Logo-White.png"
+        style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem;" />
+      <img class="img-fluid" v-else
         src="~@/assets/img/Constellation-Logo-Black.png"
         style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem;" />
       <button

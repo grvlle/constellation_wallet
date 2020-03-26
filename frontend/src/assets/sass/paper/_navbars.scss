@@ -1,3 +1,5 @@
+@import "themes";
+
 .nav {
   .nav-item{
     .nav-link:hover,
@@ -14,11 +16,17 @@
   padding: 0;
   background: $white-color;
   box-shadow: 0 0.375em 0.625em -0.25em rgba(0, 0, 0, 0.15);
+  @include themed() {
+    background: t('backgroundColor');
+  }
 
   &.navbar-light {
-    background-color: $bg-nude;
     box-shadow: none;
-    border-bottom: 0.0625em solid $medium-gray;
+    border-bottom: 0.0625em solid;
+    @include themed() {
+      background-color: t('navbarBackgroundColor');
+      border-color: t('navbarBorderColor');
+    }
   }
   .navbar-toggler-right{
     float: right;
@@ -29,9 +37,11 @@
     margin: $navbar-margin-brand;
     padding: $navbar-padding-brand;
     font-size: $font-size-base;
-    color: #403D39;
     transition: 0.3s;
     text-transform: uppercase;
+    @include themed() {
+      color: t('navbarTextColor');
+    }
   }
   .navbar-brand:hover{
     opacity: 1;
@@ -48,7 +58,6 @@
     }
     p{
       margin: 0em 0em;
-      color: #403D39 !important;
       text-transform: uppercase;
       font-weight: 200;
       font-size: 0.875rem;
@@ -56,34 +65,38 @@
       padding: 0.9375em 0em;
       transition: 0.3s;
       font-family: Poppins;
+      @include themed() {
+        color: t('navbarTextColor');
+      }
     }
     p:hover{
       opacity: 1;
     }
     p:active{
-      color: #5fd1fa
+      color: $info-color
     }
   }
-  .navbar-nav{
-    .nav-item .nav-link {
+  .navbar-nav{.nav-item .nav-link {
       line-height: 1.6;
       margin: $navbar-margin-a;
       padding: $navbar-padding-a;
-      opacity: .8;
+      opacity: .7;
       text-transform: uppercase;
       font-weight: 200;
       font-size: 0.875rem;
       line-height: 1em;
-      color: #403D39 !important;
       transition: 0.3s;
       font-family: Poppins;
+      @include themed() {
+        color: t('navbarIconColor');
+      }
 
       &:hover{
         opacity: 1
       }
 
       &:active{
-        color: #5fd1fa
+        color: $info-color
       }
     }
     .nav-item .nav-link.btn{
@@ -123,6 +136,7 @@
     }
   }
 
+  
   .notification-bubble{
     right: 4.5em;
     padding: 0.2em 0.6em;
@@ -209,7 +223,7 @@
     .nav-item .nav-link:hover,
     .nav-item .nav-link:focus{
       background-color: transparent;
-      color: $white-color;
+      color: oranger;
       @include opacity(1);
     }
     .nav .nav-item a.btn:hover{
@@ -533,4 +547,23 @@
 }
 .nav-no-padding{
   padding-top: 0em !important;
+}
+
+.moving-arrow {
+  @include themed() {
+    border-right-color: t('sidebarArrowColor');
+  }
+  border-right: 1.0625em solid;
+  border-top: 1.0625em solid transparent;
+  border-bottom: 1.0625em solid transparent;
+  display: inline-block;
+  position: absolute;
+  left: 15.2175em;
+  top: 16.5em;
+  transition: all 0.5s cubic-bezier(0.19, 1.42, 0.79, 1);
+}
+@media (max-width: 992px) {
+  .moving-arrow {
+    display: none;
+  }
 }

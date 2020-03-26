@@ -17,7 +17,7 @@
                 <td align="right">
                   <toggle-button @change="toggleNodesOnline"
                     :value="this.$store.state.toggleDashboard.showNodesOnline"
-                    color="#82C7EB"
+                    color="#0BD4FF"
                     :sync="true"
                     :labels="true" />
                 </td>
@@ -27,7 +27,7 @@
                 <td align="right">
                   <toggle-button @change="toggleTransactions"
                     :value="this.$store.state.toggleDashboard.showTransactions"
-                    color="#82C7EB"
+                    color="#0BD4FF"
                     :sync="true"
                     :labels="true" />
                 </td>
@@ -37,7 +37,7 @@
                 <td align="right">
                   <toggle-button @change="toggleThroughput"
                     :value="this.$store.state.toggleDashboard.showThroughput"
-                    color="#82C7EB"
+                    color="#0BD4FF"
                     :sync="true"
                     :labels="true" />
                 </td>
@@ -137,7 +137,7 @@
             <div class="row">
               <div class="col-md-6 pr-md-2 mb-3">
                 <p-button @click.native="importKeys()"
-                type="success" block :disabled="true">
+                type="primary" block :disabled="true">
                   <span style="display: block;">
                     <i class="fa fa-file-import"></i> IMPORT
                   </span>
@@ -145,7 +145,7 @@
               </div>
               <div class="col-md-6 pl-md-2 mb-3">
                 <p-button @click.native="exportKeys()"
-                type="danger" block :disabled="true">
+                type="primary" block :disabled="true">
                   <span style="display: block;">
                     <i class="fa fa-file-export"></i> EXPORT
                   </span>
@@ -164,7 +164,7 @@
                 <td align="right">
                   <toggle-button @change="toggleDarkMode"
                     :value="this.$store.state.walletInfo.darkMode"
-                    color="#82C7EB"
+                    color="#0BD4FF"
                     :sync="true"
                     :labels="true" />
                 </td>

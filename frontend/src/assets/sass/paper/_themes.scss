@@ -1,25 +1,63 @@
 $themes: (
   light: (
-    backgroundColor: $bg-nude
-    /*
-    textColor: orange,
-    buttonTextColor: #408bbd,
-    buttonTextTransform: none,
-    buttonTextHoverColor: #61b0e7,
-    buttonColor: #fff,
-    buttonBorder: 2px solid #fff,
-    */
+    backgroundColor: $bg-nude,
+    borderColor: $medium-gray,
+
+    cardBackgroundColor: $white-bg,
+    cardTitleColor: $black-color,
+    cardLabelColor: $dark-gray,
+    cardTextColor: $font-color,
+    cardTableColor: $smoke-bg,
+
+    navbarBackgroundColor: $bg-nude,
+    navbarBorderColor: $medium-gray,
+    navbarTextColor: $black-color,
+    navbarIconColor: $black-color,
+
+    sidebarBackgroundColor: #272727,
+    sidebarTextColor: $medium-gray,
+    sidebarArrowColor: $bg-nude,
+
+    inputBackgroundColor:$gray-input-bg,
+    inputBorderColor: $medium-gray,
+    inputDisabledBackgroundColor: $light-gray,
+    inputPlaceholderColor: $medium-dark-gray,
+    inputTextColor: $font-color,
+
+    chartTextColor: $ct-text-color,
+    chartGridColor: $ct-grid-color,
+
+    errorTextColor: firebrick
   ),
   dark: (
-    backgroundColor: $black-bg
-    /*
-    textColor: purple,
-    buttonTextColor: #aaa,
-    buttonTextTransform: uppercase,
-    buttonTextHoverColor: #ddd,
-    buttonColor: #333,
-    buttonBorder: 1px solid #aaa,
-    */
+    backgroundColor: $black-bg,
+    borderColor: #2E2E2E,
+
+    cardBackgroundColor: #1E1E1E,
+    cardTitleColor: $light-gray,
+    cardLabelColor: #AFAFAF,
+    cardTextColor: #BCBCBC,
+    cardTableColor: #2E2E2E,
+
+    navbarBackgroundColor: #272727,
+    navbarBorderColor: $dark-gray,
+    navbarTextColor: #BCBCBC,
+    navbarIconColor: $info-color,
+
+    sidebarBackgroundColor: $black-bg,
+    sidebarTextColor: #BCBCBC,
+    sidebarArrowColor: $bg-nude,
+
+    inputBackgroundColor:#3b3b3b,
+    inputBorderColor: $dark-gray,
+    inputDisabledBackgroundColor: #2E2E2E,
+    inputPlaceholderColor: $medium-dark-gray,
+    inputTextColor: #F2F2F2,
+
+    chartTextColor: #BCBCBC,
+    chartGridColor: #2E2E2E,
+
+    errorTextColor: orangered
   ),
 );
 

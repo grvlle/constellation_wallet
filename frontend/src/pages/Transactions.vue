@@ -17,11 +17,7 @@
                     step="0.01"
                     placeholder="0"/>
                   <div class="input-group-append">
-                    <button type="button" @click="setMaxDAGs()" 
-                      class="btn btn-outline-light text-dark" 
-                      style="border: 1px solid #ced4da;">
-                      Max.
-                    </button>
+                    <button type="button" @click="setMaxDAGs()" class="btn">Max.</button>
                   </div>
                 </div>
                 <div class="validate" v-if="!$v.txAmountValidation.inBetween">

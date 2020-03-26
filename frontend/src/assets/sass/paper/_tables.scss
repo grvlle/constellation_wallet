@@ -1,16 +1,25 @@
 @import "themes";
 
 .table {
+  @include themed() {
+    color: t('cardTextColor');
+  }
   thead,
   tbody,
   tfoot {
     tr > th,
     tr > td {
-      border-top: 0.0625em solid $table-line-color;
+      border-top: 0.0625em solid;
+      @include themed() {
+        border-top-color: t('borderColor');
+      }
     }
   }
   thead th {
-    border-bottom: 0.0625em solid $table-line-color;
+    border-bottom: 0.0625em solid;
+    @include themed() {
+      border-bottom-color: t('borderColor');
+    }
     border-top: 0;
   }
   > thead > tr > th {
@@ -88,11 +97,10 @@
 }
 
 .table-noheader > tr {
-  background-color: #f9f9f9;
   border-bottom: 0.625em solid;
   @include themed() {
     background-color: t('cardTableColor');
-    border-color: t('cardBackgroundColor');
+    border-bottom-color: t('cardBackgroundColor');
   }
 }
 

@@ -12,7 +12,7 @@ import (
 // if the last TX failed, it'll switch up the order to account for that not to break the chain.
 // This means that all failed attempts att creating a block is also stored in the DB with
 // a Failed state bool.
-func (a *WalletApplication) formTXChain(amount float64, fee float64, address string, ptxObj *Transaction, ltxObj *Transaction) {
+func (a *WalletApplication) formTXChain(amount int64, fee int64, address string, ptxObj *Transaction, ltxObj *Transaction) {
 
 	statusLastTX := TXHistory{}
 	if err := a.DB.Last(&statusLastTX).Error; err != nil {
@@ -75,18 +75,18 @@ func (a *WalletApplication) determineBlockOrder(ptxObj, ltxObj *Transaction) str
 
 }
 
-func (a *WalletApplication) rebuildImportChain(amount float64, fee float64, address string, ptxObj *Transaction, ltxObj *Transaction) {
-	// Queries the number of previous transactions for this wallet.
-	numberOfTX := a.DB.Model(&a.wallet).Association("TXHistory").Count()
+func (a *WalletApplication) rebuildImportChain(amount int64, fee int64, address string, ptxObj *Transaction, ltxObj *Transaction, ordinal int) {
+
+	a.log.Warnln("Own ordinal: ", ordinal)
 
 	// First TX does not contain a TXref
-	if numberOfTX == 0 {
+	if ordinal == 0 {
 		a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.EmptyTXFile)
 		return
 	}
 
 	// Manually control the second TX, to ensure the following order
-	if numberOfTX == 1 {
+	if ordinal == 1 {
 		a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
 		return
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -35,7 +36,7 @@ func (a *WalletApplication) runWalletCMD(scalaFunc string, scalaArgs ...string) 
 	err := cmd.Run()
 	if err != nil {
 		errFormatted := fmt.Sprint(err) + ": " + stderr.String()
-		return fmt.Errorf(errFormatted)
+		return errors.New(errFormatted)
 	}
 	fmt.Println(out.String())
 	a.log.Debugln(cmd)
@@ -64,7 +65,7 @@ func (a *WalletApplication) runKeyToolCMD(scalaFunc string, scalaArgs ...string)
 	err := cmd.Run()
 	if err != nil {
 		errFormatted := fmt.Sprint(err) + ": " + stderr.String()
-		return fmt.Errorf(errFormatted)
+		return errors.New(errFormatted)
 	}
 	fmt.Println(out.String())
 
@@ -79,7 +80,7 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 	rescueStdout := os.Stdout
 	r, w, err := os.Pipe()
 	if err != nil {
-		a.log.Errorf("Unable to pipe STDOUT, Reason: ", err)
+		a.log.Errorln("Unable to pipe STDOUT, Reason: ", err)
 		a.sendError("Unable to pipe STDOUT, Reason: ", err)
 	}
 	os.Stdout = w
@@ -96,7 +97,7 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 	w.Close()
 	dagAddress, err := ioutil.ReadAll(r)
 	if err != nil {
-		a.log.Errorf("Unable to read address from STDOUT", err)
+		a.log.Errorln("Unable to read address from STDOUT", err)
 		a.sendError("Unable to read address from STDOUT", err)
 	}
 	// if STDOUT prefix of show-address output isn't DAG
@@ -121,7 +122,7 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	rescueStdout := os.Stdout
 	r, w, err := os.Pipe()
 	if err != nil {
-		a.log.Errorf("Unable to pipe STDOUT, Reason: ", err)
+		a.log.Errorln("Unable to pipe STDOUT, Reason: ", err)
 		a.sendError("Unable to pipe STDOUT, Reason: ", err)
 		return ""
 	}
@@ -137,7 +138,7 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	w.Close()
 	dagAddress, err := ioutil.ReadAll(r)
 	if err != nil {
-		a.log.Errorf("Unable to read address from STDOUT", err)
+		a.log.Errorln("Unable to read address from STDOUT", err)
 		a.sendError("Unable to read address from STDOUT", err)
 	}
 	os.Stdout = rescueStdout
@@ -163,7 +164,7 @@ func (a *WalletApplication) CheckAndFetchWalletCLI() {
 		a.log.Info(keytoolPath + " file exists. Skipping downloading")
 	} else {
 		if err := a.fetchWalletJar("cl-keytool.jar", keytoolPath); err != nil {
-			a.log.Errorf("Unable to fetch or store cl-keytool.jar", err)
+			a.log.Errorln("Unable to fetch or store cl-keytool.jar", err)
 		}
 	}
 
@@ -171,7 +172,7 @@ func (a *WalletApplication) CheckAndFetchWalletCLI() {
 		a.log.Info(walletPath + " file exists. Skipping downloading")
 	} else {
 		if err := a.fetchWalletJar("cl-wallet.jar", walletPath); err != nil {
-			a.log.Errorf("Unable to fetch or store cl-wallet.jar", err)
+			a.log.Errorln("Unable to fetch or store cl-wallet.jar", err)
 		}
 	}
 
@@ -187,19 +188,33 @@ func (a *WalletApplication) CheckAndFetchWalletCLI() {
 // or pass in a path to an encrypted .p12 file
 
 // java -jar cl-wallet.jar create-transaction --keystore testkey.p12 --alias alias --storepass storepass --keypass keypass -d DAG6o9dcxo2QXCuJS8wnrR944YhFBpwc2jsh5j8f -p prev_tx -f new_tx --fee 0 --amount 1
-func (a *WalletApplication) produceTXObject(amount float64, fee float64, address, newTX, prevTX string) {
+func (a *WalletApplication) produceTXObject(amount int64, fee int64, address, newTX, prevTX string) {
 
 	// Convert to string
-	amountStr := fmt.Sprintf("%g", amount)
-	feeStr := fmt.Sprintf("%g", fee)
+	// amountStr := strconv.FormatInt(amount, 10)
+	// feeStr := strconv.FormatInt(fee, 10)
+
+	amountNorm, err := normalizeAmounts(amount)
+	if err != nil {
+		a.log.Errorln("Unable to normalize amounts when producing tx object. Reason: ", err)
+		a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
+		return
+	}
+	feeNorm, err := normalizeAmounts(fee)
+	if err != nil {
+		a.log.Errorln("Unable to normalize amounts when producing tx object. Reason: ", err)
+		a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
+		return
+	}
 
 	// newTX is the full command to sign a new transaction
-	err := a.runWalletCMD("create-transaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeStr, "-d="+address, "-f="+newTX, "-p="+prevTX, "--env_args=true")
+	err = a.runWalletCMD("create-transaction", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--amount="+amountNorm, "--fee="+feeNorm, "-d="+address, "-f="+newTX, "-p="+prevTX, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
-		a.log.Errorf("Unable to send transaction. Reason: ", err)
+		a.log.Errorln("Unable to send transaction. Reason: ", err)
+		return
 	}
-	time.Sleep(10 * time.Second) // Will sleep for 10 sec between TXs to prevent spamming.
+	time.Sleep(1 * time.Second) // Will sleep for 1 sec between TXs to prevent spamming.
 }
 
 // createEncryptedKeyStore is called ONLY when a NEW wallet is created. This

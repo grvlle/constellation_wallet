@@ -35,13 +35,13 @@ type Transaction struct {
 			} `json:"signatureBatch"`
 		} `json:"signedObservationEdge"`
 		Data struct {
-			Amount    float64 `json:"amount"`
+			Amount    int64 `json:"amount"`
 			LastTxRef struct {
 				Hash    string `json:"hash"`
 				Ordinal int    `json:"ordinal"`
 			} `json:"lastTxRef"`
-			Fee  float64 `json:"fee,omitempty"`
-			Salt int64   `json:"salt"`
+			Fee  int64 `json:"fee,omitempty"`
+			Salt int64 `json:"salt"`
 		} `json:"data"`
 	} `json:"edge"`
 	LastTxRef struct {
@@ -57,7 +57,10 @@ func (a *WalletApplication) networkHeartbeat() {
 }
 
 func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address string) bool {
-	a.PrepareTransaction(amount, fee, address)
+	amountConverted := int64(amount * 1e8)
+	feeConverted := int64(fee * 1e8)
+
+	a.PrepareTransaction(amountConverted, feeConverted, address)
 	for !a.TransactionFinished {
 		time.Sleep(1 * time.Second)
 	}
@@ -66,10 +69,10 @@ func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address
 
 // PrepareTransaction is triggered from the frontend (Transaction.vue) and will initialize a new tx.
 // methods called are defined in buildchain.go
-func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, address string) {
+func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address string) {
 
 	// TODO: Temp comments. Re-add once wallet goes live.
-	if amount+fee > a.wallet.AvailableBalance {
+	if amount+fee > int64(a.wallet.AvailableBalance*1e8) {
 		a.log.Warnln("Insufficient Balance")
 		a.sendWarning("Insufficent Balance.")
 		a.TransactionFailed = true
@@ -99,6 +102,7 @@ func (a *WalletApplication) PrepareTransaction(amount float64, fee float64, addr
 func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 	a.log.Info("Attempting to communicate with mainnet on: " + a.Network.URL + a.Network.Handles.Transaction)
 	/* TEMPORARILY COMMENTED OUT */
+	a.log.Errorln("TX Ordinal:", tx.Edge.Data.LastTxRef.Ordinal)
 	bytesRepresentation, err := json.Marshal(tx)
 	if err != nil {
 		a.log.Errorln("Unable to parse JSON data for transaction", err)
@@ -114,10 +118,9 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
-		a.log.Infoln(resp.Body) //TEMP
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			a.log.Errorf("Failed to read the response body. Reason: ", err)
+			a.log.Errorln("Failed to read the response body. Reason: ", err)
 		}
 		bodyString := string(bodyBytes)
 		if len(bodyBytes) == 64 {
@@ -196,7 +199,7 @@ func (a *WalletApplication) storeTX(txData *TXHistory) {
 		return
 	}
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Association("TXHistory").Append(txData).Error; err != nil {
-		a.log.Errorf("Unable to update the DB record with the new TX. Reason: ", err)
+		a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
 		a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
 	}
 	a.log.Infoln("Successfully stored tx in DB")

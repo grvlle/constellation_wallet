@@ -184,7 +184,8 @@ func (a *WalletApplication) pollTokenBalance() {
 			case <-a.killSignal:
 				return
 			default:
-				for retryCounter <= 10 && a.wallet.Address != "" {
+				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
+				for retryCounter <= 20 && a.wallet.Address != "" {
 
 					a.log.Debug("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
 
@@ -260,8 +261,8 @@ func (a *WalletApplication) pricePoller() {
 				return
 			default:
 				a.wallet.TokenPrice.DAG.USD = 0
-				time.Sleep(1 * time.Second)
-				for retryCounter <= 10 && a.wallet.Balance > 0 {
+				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
+				for retryCounter <= 20 && a.wallet.Balance != 0 {
 					a.log.Debug("Contacting token evaluation API on: " + url + ticker)
 
 					resp, err := http.Get(url)
@@ -292,6 +293,16 @@ func (a *WalletApplication) pricePoller() {
 						a.log.Warnln("Unable to display token price. Reason:", err)
 						break
 					}
+
+					if a.wallet.Balance != 0 && a.wallet.TokenPrice.DAG.USD == 0 {
+						if retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
+							warn := fmt.Sprintf("No data recieved from Token Price API. Will try again in %v seconds.", retryCounter)
+							a.sendWarning(warn)
+						}
+						retryCounter++
+						break
+					}
+
 					a.log.Debugf("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
 
 					tokenUSD := int(float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD)

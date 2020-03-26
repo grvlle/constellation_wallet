@@ -78,6 +78,12 @@ func Float64frombytes(bytes []byte) float64 {
 	return float
 }
 
+//normalizeAmounts takes amount/fee in int64 and normalizes it. Example: passing 821500000000 will return 8215
+func normalizeAmounts(i int64) (string, error) {
+	f := fmt.Sprintf("%.8f", float64(i)/1e8)
+	return f, nil
+}
+
 func (a *WalletApplication) TempFileName(prefix, suffix string) string {
 	randBytes := make([]byte, 16)
 	rand.Read(randBytes)

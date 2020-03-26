@@ -408,7 +408,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 
 		a.log.Infoln("Successfully collected previous transactions. Updating local state...")
 
-		for _, tx := range allTX {
+		for i, tx := range allTX {
 
 			txData := &TXHistory{
 				Amount: tx.Amount,
@@ -421,12 +421,20 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 			a.storeTX(txData)
 			a.RT.Events.Emit("new_transaction", txData)
 
-			ptx := a.loadTXFromFile(a.paths.PrevTXFile)
-			ltx := a.loadTXFromFile(a.paths.LastTXFile)
+			if i+1 == len(allTX) {
+				err := a.rebuildTxChainState(tx.Hash)
+				if err != nil {
+					a.log.Errorln(err)
+					// If unable to import previous transactions, remove wallet from DB and logout.
+					if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
+						a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
+						return err
+					}
+					a.LoginError("Unable to collect previous TX's from blockexplorer. Please try again later.")
+				}
+			}
 
-			ptxObj, ltxObj := a.convertToTXObject(ptx, ltx)
-
-			a.rebuildImportChain(tx.Amount, tx.Fee, tx.Receiver, ptxObj, ltxObj, tx.LastTransactionRef.Ordinal)
+			//a.rebuildImportChain(tx.Amount, tx.Fee, tx.Receiver, ptxObj, ltxObj, tx.LastTransactionRef.Ordinal)
 		}
 
 	} else {

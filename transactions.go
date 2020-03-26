@@ -72,7 +72,7 @@ func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address
 func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address string) {
 
 	// TODO: Temp comments. Re-add once wallet goes live.
-	if amount+fee > int64(a.wallet.AvailableBalance*1e8) {
+	if amount+fee > int64(a.wallet.AvailableBalance)*1e8 {
 		a.log.Warnln("Insufficient Balance")
 		a.sendWarning("Insufficent Balance.")
 		a.TransactionFailed = true
@@ -143,7 +143,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) bool {
 	a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
 
 	time.Sleep(3 * time.Second)
-	return false /* TEMPORARILY SET TO TRUE. CHANGE TO FALSE */
+	return false
 }
 
 func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
@@ -189,8 +189,6 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 	a.TransactionFinished = true
 	a.TransactionFailed = true
 	return txData
-
-	//a.updateLastTransactions()
 }
 
 func (a *WalletApplication) storeTX(txData *TXHistory) {

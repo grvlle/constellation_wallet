@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"math"
 	"math/rand"
 	"net/http"
@@ -90,28 +91,6 @@ func (a *WalletApplication) TempFileName(prefix, suffix string) string {
 	return filepath.Join(a.paths.TMPDir, prefix+hex.EncodeToString(randBytes)+suffix)
 }
 
-// Copy the src file to dst. Any existing file will be overwritten and will not
-// copy file attributes.
-func Copy(src, dst string) error {
-	in, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer in.Close()
-
-	out, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	_, err = io.Copy(out, in)
-	if err != nil {
-		return err
-	}
-	return out.Close()
-}
-
 func (wc *WriteCounter) Write(p []byte) (int, error) {
 	n := len(p)
 	wc.Total += uint64(n)
@@ -177,6 +156,13 @@ func (a *WalletApplication) fileExists(path string) bool {
 	return !info.IsDir()
 }
 
-func (a *WalletApplication) TempPrintCreds() {
-	fmt.Println("address: ", a.wallet.Address, "alias: ", a.wallet.WalletAlias, "keyStorePass: ", os.Getenv("CL_STOREPASS"), "keyPass: ", os.Getenv("CL_KEYPASS"), "key: ", a.paths.EncPrivKeyFile)
+// WriteToFile will print any string of text to a file safely by
+// checking for errors and syncing at the end.
+func WriteToFile(filename string, data []byte) error {
+
+	err := ioutil.WriteFile(filename, data, 0666)
+	if err != nil {
+		return err
+	}
+	return nil
 }

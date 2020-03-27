@@ -138,6 +138,7 @@
   .input-group-addon {
     @include themed() {
       background-color: t('inputDisabledBackgroundColor');
+      color: t('inputDisabledTextColor');
     }
   }
 }
@@ -159,11 +160,9 @@
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
   @include themed() {
     background-color: t('inputDisabledBackgroundColor');
+    color: t('inputDisabledTextColor');
   }
   cursor: not-allowed;
-  @include themed() {
-    color: t('inputPlaceholderColor');
-  }
 }
 
 .form-control[disabled]::-moz-placeholder {

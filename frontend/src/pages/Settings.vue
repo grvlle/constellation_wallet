@@ -51,7 +51,7 @@
           <div class="container">
             <form>
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Enter a new Wallet Label" v-model="newLabel">
+                <input type="text" class="form-control" placeholder="Enter a new Wallet Label..." v-model="newLabel">
                 <span class="input-group-btn" >
                   <p-button @click.native="submitLabel()" type="info" style="width:6rem;">Apply</p-button>
                 </span>
@@ -137,7 +137,7 @@
             <div class="row">
               <div class="col-md-6 pr-md-2 mb-3">
                 <p-button @click.native="importKeys()"
-                type="primary" block :disabled="true">
+                type="info" block :disabled="true">
                   <span style="display: block;">
                     <i class="fa fa-file-import"></i> IMPORT
                   </span>

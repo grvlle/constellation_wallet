@@ -14,15 +14,16 @@ $themes: (
     navbarTextColor: $black-color,
     navbarIconColor: $black-color,
 
-    sidebarBackgroundColor: #272727,
+    sidebarBackgroundColor: #212529,
     sidebarTextColor: $medium-gray,
     sidebarArrowColor: $bg-nude,
 
     inputBackgroundColor:$gray-input-bg,
     inputBorderColor: $medium-gray,
-    inputDisabledBackgroundColor: $light-gray,
-    inputPlaceholderColor: $medium-dark-gray,
+    inputPlaceholderColor: $light-gray,
     inputTextColor: $font-color,
+    inputDisabledBackgroundColor: $light-gray,
+    inputDisabledTextColor: $medium-dark-gray,
 
     chartTextColor: $ct-text-color,
     chartGridColor: $ct-grid-color,
@@ -50,9 +51,10 @@ $themes: (
 
     inputBackgroundColor:#3b3b3b,
     inputBorderColor: $dark-gray,
-    inputDisabledBackgroundColor: #2E2E2E,
-    inputPlaceholderColor: $medium-dark-gray,
+    inputPlaceholderColor: $medium-gray,
     inputTextColor: #F2F2F2,
+    inputDisabledBackgroundColor: #2E2E2E,
+    inputDisabledTextColor: $medium-dark-gray,
 
     chartTextColor: #BCBCBC,
     chartGridColor: #2E2E2E,

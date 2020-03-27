@@ -33,7 +33,7 @@
                 <input type="text" class="form-control" aria-label="Amount (in DAGs)"
                   v-model.trim="txAddressValidation"
                   @change="setName($event.target.value)"
-                  placeholder="Enter Recipients Wallet Address"
+                  placeholder="Enter Recipients Wallet Address..."
                   />
                 <div class="validate"
                   v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength"

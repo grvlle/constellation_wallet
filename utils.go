@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"math"
 	"math/rand"
 	"net/http"
@@ -78,32 +79,16 @@ func Float64frombytes(bytes []byte) float64 {
 	return float
 }
 
+//normalizeAmounts takes amount/fee in int64 and normalizes it. Example: passing 821500000000 will return 8215
+func normalizeAmounts(i int64) (string, error) {
+	f := fmt.Sprintf("%.8f", float64(i)/1e8)
+	return f, nil
+}
+
 func (a *WalletApplication) TempFileName(prefix, suffix string) string {
 	randBytes := make([]byte, 16)
 	rand.Read(randBytes)
 	return filepath.Join(a.paths.TMPDir, prefix+hex.EncodeToString(randBytes)+suffix)
-}
-
-// Copy the src file to dst. Any existing file will be overwritten and will not
-// copy file attributes.
-func Copy(src, dst string) error {
-	in, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer in.Close()
-
-	out, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	_, err = io.Copy(out, in)
-	if err != nil {
-		return err
-	}
-	return out.Close()
 }
 
 func (wc *WriteCounter) Write(p []byte) (int, error) {
@@ -119,7 +104,7 @@ func (wc *WriteCounter) Write(p []byte) (int, error) {
 }
 
 func (a *WalletApplication) fetchWalletJar(filename string, filepath string) error {
-	url := a.WalletCLI.URL + "-v" + a.WalletCLI.Version + "/" + filename
+	url := a.WalletCLI.URL + "/v" + a.WalletCLI.Version + "/" + filename
 	a.log.Info(url)
 
 	out, err := os.Create(filepath + ".tmp")
@@ -171,6 +156,13 @@ func (a *WalletApplication) fileExists(path string) bool {
 	return !info.IsDir()
 }
 
-func (a *WalletApplication) TempPrintCreds() {
-	fmt.Println("address: ", a.wallet.Address, "alias: ", a.wallet.WalletAlias, "keyStorePass: ", os.Getenv("CL_STOREPASS"), "keyPass: ", os.Getenv("CL_KEYPASS"), "key: ", a.paths.EncPrivKeyFile)
+// WriteToFile will print any string of text to a file safely by
+// checking for errors and syncing at the end.
+func WriteToFile(filename string, data []byte) error {
+
+	err := ioutil.WriteFile(filename, data, 0666)
+	if err != nil {
+		return err
+	}
+	return nil
 }

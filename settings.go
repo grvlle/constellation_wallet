@@ -17,14 +17,14 @@ func (a *WalletApplication) UploadImage() string {
 	a.log.Info("Path to user uploaded image: " + filePath)
 	err := CopyFile(filePath, a.paths.ImageDir+filename)
 	if err != nil && filePath != "" {
-		a.log.Errorf("Unable to copy image. ", err)
+		a.log.Errorln("Unable to copy image. ", err)
 		a.sendError("Unable to change Image. ", err)
 		return "None"
 	}
 
 	file, err := os.Open(filePath)
 	if err != nil && filePath != "" {
-		a.log.Errorf("Unable to open image. ", err)
+		a.log.Errorln("Unable to open image. ", err)
 		a.sendError("Unable to find Image on the path provided. ", err)
 		return "None"
 	}
@@ -35,7 +35,7 @@ func (a *WalletApplication) UploadImage() string {
 		a.log.Info("Attempting to decode as JPEG")
 		img, err = jpeg.DecodeConfig(file)
 		if err != nil {
-			a.log.Errorf("Unable to decode image configuration", err)
+			a.log.Errorln("Unable to decode image configuration", err)
 			a.sendError("Unable to change Image. ", err)
 			return "None"
 		}
@@ -56,7 +56,7 @@ func (a *WalletApplication) UploadImage() string {
 // and return it to the FE to be displayed.
 func (a *WalletApplication) SetImagePath() string {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Error; err != nil {
-		a.log.Errorf("Unable to query the DB record for the Image path. Reason: ", err)
+		a.log.Errorln("Unable to query the DB record for the Image path. Reason: ", err)
 		a.sendError("Unable to query the DB record for the Image path. Reason: ", err)
 		return ""
 	}
@@ -66,7 +66,7 @@ func (a *WalletApplication) SetImagePath() string {
 
 func (a *WalletApplication) StoreImagePathInDB(path string) {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("ProfilePicture", path).Error; err != nil {
-		a.log.Errorf("Unable to update the DB record with the Image path. Reason: ", err)
+		a.log.Errorln("Unable to update the DB record with the Image path. Reason: ", err)
 		a.sendError("Unable to update the DB record with the Image path. Reason: ", err)
 	}
 }
@@ -74,7 +74,7 @@ func (a *WalletApplication) StoreImagePathInDB(path string) {
 // SetWalletTag is called from the Login.Vue
 func (a *WalletApplication) SetWalletTag() string {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Error; err != nil {
-		a.log.Errorf("Unable to query the DB record for the Image path. Reason: ", err)
+		a.log.Errorln("Unable to query the DB record for the Image path. Reason: ", err)
 		a.sendError("Unable to query the DB record for the Image path. Reason: ", err)
 	}
 	a.log.Infoln("Wallet Tag selected: ", a.wallet.WalletTag)
@@ -83,7 +83,7 @@ func (a *WalletApplication) SetWalletTag() string {
 
 func (a *WalletApplication) StoreWalletLabelInDB(walletTag string) {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("WalletTag", walletTag).Error; err != nil {
-		a.log.Errorf("Unable to update the DB record with the wallet tag. Reason: ", err)
+		a.log.Errorln("Unable to update the DB record with the wallet tag. Reason: ", err)
 		a.sendError("Unable to update the DB record with the wallet tag. Reason: ", err)
 	}
 }

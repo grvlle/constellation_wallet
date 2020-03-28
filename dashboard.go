@@ -184,7 +184,8 @@ func (a *WalletApplication) pollTokenBalance() {
 			case <-a.killSignal:
 				return
 			default:
-				for retryCounter <= 10 && a.wallet.Address != "" {
+				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
+				for retryCounter <= 20 && a.wallet.Address != "" {
 
 					a.log.Debug("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
 
@@ -204,9 +205,8 @@ func (a *WalletApplication) pollTokenBalance() {
 
 					bodyBytes, err := ioutil.ReadAll(resp.Body)
 					if err != nil {
-						a.log.Warnln(string(bodyBytes)) // TEMP
 						retryCounter++
-						a.log.Error("Unable to read HTTP response from mainnet. Reason: ", err)
+						a.log.Error("Unable to update token balance. Reason: ", err)
 						break
 					}
 					s := string(bodyBytes)
@@ -234,7 +234,6 @@ func (a *WalletApplication) pollTokenBalance() {
 					UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
 					time.Sleep(updateIntervalToken * time.Second)
 				}
-
 			}
 		}
 	}()
@@ -260,7 +259,9 @@ func (a *WalletApplication) pricePoller() {
 			case <-a.killSignal:
 				return
 			default:
-				for retryCounter <= 10 && a.wallet.Balance != 0 {
+				a.wallet.TokenPrice.DAG.USD = 0
+				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
+				for retryCounter <= 20 && a.wallet.Balance != 0 {
 					a.log.Debug("Contacting token evaluation API on: " + url + ticker)
 
 					resp, err := http.Get(url)
@@ -291,6 +292,16 @@ func (a *WalletApplication) pricePoller() {
 						a.log.Warnln("Unable to display token price. Reason:", err)
 						break
 					}
+
+					if a.wallet.Balance != 0 && a.wallet.TokenPrice.DAG.USD == 0 {
+						if retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
+							warn := fmt.Sprintf("No data recieved from Token Price API. Will try again in %v seconds.", retryCounter)
+							a.sendWarning(warn)
+						}
+						retryCounter++
+						break
+					}
+
 					a.log.Debugf("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
 
 					tokenUSD := int(float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD)

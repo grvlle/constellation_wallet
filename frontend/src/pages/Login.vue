@@ -477,7 +477,7 @@ export default {
 
                 Swal.fire({
                   html:
-                    '<div style="overflow: scroll; padding: 1.25em; width: 60em; height: 31.25em;">' +
+                    '<div style="overflow: scroll; padding: 1.25em; width: 53em; height: 31.25em;">' +
                     '<p style="text-align: center;background: transparent;margin-bottom: 0.11in;line-height: 108%;"><strong>TERMS OF SERVICE</strong></p>' +
                     '<p style="text-align: center;background: transparent;margin-bottom: 0.11in;line-height: 108%;">Last updated: 02.04.2020</p>' +
                     '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">Welcome to Molly, a free tool for interacting directly with the Hypergraph Blockchain. Please read these terms and conditions (the <strong>"</strong><u>Terms of Service</u><strong>"</strong>) carefully. They apply to your use of the Constellation Network, Inc.’s, and any subsidiary, parent, or affiliate thereof (collectively, the “<u>Company</u>") Molly Wallet desktop application (the&nbsp;"<u>Site</u>") and any related services offered by the Company through the Site. The Site and related services offered through the Site shall hereinafter be referred to as the “<u>Services</u>.” This Terms of Service together with any additional posted guidelines or rules applicable to related services and features, and the Privacy Policy (as hereinafter defined) shall hereinafter be referred to as the “<u>Agreement</u>.”</p>' +

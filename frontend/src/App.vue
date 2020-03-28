@@ -119,6 +119,11 @@ export default {
     window.wails.Events.On("new_transaction", txObject => {
       this.$store.commit("updateTxHistory", txObject);
     });
+    window.wails.Events.On("tx_pending", txStatus => {
+      this.$store.state.txInfo.txStatus = txStatus;
+    });
+
+    
 
     // Downloading.vue sockets
     window.wails.Events.On("downloading_dependencies", isDownloadingDependencies => {

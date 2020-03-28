@@ -46,7 +46,8 @@ export const store = new Vuex.Store({
             darkMode: false
         },
         txInfo: {
-            txHistory: []
+            txHistory: [],
+            txStatus: "Complete"
         },
         counters: {
             blockCounter: 5,

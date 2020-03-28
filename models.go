@@ -46,18 +46,19 @@ type Path struct {
 }
 
 type TXHistory struct {
-	ID                 uint    `json:"id"`
-	Alias              string  `json:"alias"`
-	Amount             float64 `json:"amount"`
-	Sender             string  `json:"sender"`
-	Receiver           string  `json:"receiver"`
-	Fee                float64 `json:"fee"`
-	Hash               string  `json:"hash"`
+	ID                 uint   `json:"id"`
+	Alias              string `json:"alias"`
+	Amount             int64  `json:"amount"`
+	Sender             string `json:"sender"`
+	Receiver           string `json:"receiver"`
+	Fee                int64  `json:"fee"`
+	Hash               string `json:"hash"`
 	LastTransactionRef struct {
 		Hash    string `json:"hash"`
 		Ordinal int    `json:"ordinal"`
-	} `json:"last_transaction_ref"`
+	} `json:"lastTransactionRef"`
 	TS     string `json:"date"`
+	Status string `json:"status"`
 	Failed bool
 }
 

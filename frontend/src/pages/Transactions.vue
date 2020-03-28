@@ -3,6 +3,7 @@
     <div class="row">
       <div class="col">
         <card :title="table1.title" :subTitle="table1.subTitle">
+          <p>Last Transaction State: {{this.$store.state.txInfo.txStatus}}</p>
           <form @submit.prevent class="container">
             <div class="form-row align-items-center">
               <div class="col-md-4">
@@ -70,23 +71,30 @@
               <tbody>
                 <tr v-for="tx in this.$store.state.txInfo.txHistory" v-bind:key="tx.ID">
                   <slot :row="item">
-                    <td class="columnA">
+                  <td class="columnA">
+                      
+                        <i style="color: #6DECBB;" v-if="tx.status === 'Complete'" class="fa fa-check"></i>
+                        <i style="color: #E2EA6E;" v-if="tx.status === 'Pending'" class="ti-timer"></i>
+                        <i style="color: firebrick;" v-if="tx.status === 'Error'" class="fa fa-times"></i>
+                      
+                    </td>
+                    <td class="columnB">
                       <p class="description" style="font-size: 0.9375rem;">
                         <b>{{tx.amount / 1e8}}</b> DAG
                       </p>
                     </td>
-                    <td class="columnB">
-                      <p class="description" style="font-size: 0.9375rem;">{{tx.sender}}</p>
-                    </td>
                     <td class="columnC">
-                      <p class="description" style="font-size: 0.9375rem;">{{tx.fee / 1e8}}</p>
+                      <p class="description" style="font-size: 0.9375rem;">{{tx.receiver}}</p>
                     </td>
                     <td class="columnD">
+                      <p class="description" style="font-size: 0.9375rem;">{{tx.fee / 1e8}}</p>
+                    </td>
+                    <td class="columnE">
                       <a id="txhash">
                         <p style="font-size: 0.9375rem;">{{tx.hash}}</p>
                       </a>
                     </td>
-                    <td class="columnE">
+                    <td class="columnF">
                       <p class="description" style="font-size: 0.9375rem;">{{tx.date}}</p>
                     </td>
                   </slot>
@@ -105,7 +113,7 @@
 </template>
 
 <script>
-const tableColumns = ["Amount", "Sender", "Fee", "Hash", "Date"];
+const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"];
 let tableData = [];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
@@ -325,19 +333,23 @@ td {
     white-space: nowrap;
 }
 td.columnA {
-    width: 15%;
+    width: 3%;
+    text-align: center;
 }
 td.columnB {
-    width: 40%;
-}
-td.columnC {
-    width: 10%;
-}
-td.columnD {
     width: 15%;
 }
+td.columnC {
+    width: 40%;
+}
+td.columnD {
+    width: 10%;
+}
 td.columnE {
-    width: 20%;
+    width: 15%;
+}
+td.columnF {
+    width: 17%;
 }
 
 txhash a {

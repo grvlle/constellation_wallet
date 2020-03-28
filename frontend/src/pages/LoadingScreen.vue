@@ -3,7 +3,7 @@
     <div class="container">
       <div class="row" v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn">
         <div class="col-md-6 mx-auto text-center">
-          <img class="img-fluid" style="max-height: 5.8rem;" src="~@/assets/img/Constellation-Logo-Black.png" />
+          <img class="img-fluid" style="max-height: 5.8rem; margin-top: 16rem;" src="~@/assets/img/Constellation-Logo-Black.png" />
           <p>
             Getting your $DAG Wallet ready...
           </p>

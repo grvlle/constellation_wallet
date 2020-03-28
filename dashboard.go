@@ -205,9 +205,8 @@ func (a *WalletApplication) pollTokenBalance() {
 
 					bodyBytes, err := ioutil.ReadAll(resp.Body)
 					if err != nil {
-						a.log.Warnln(string(bodyBytes)) // TEMP
 						retryCounter++
-						a.log.Error("Unable to read HTTP response from mainnet. Reason: ", err)
+						a.log.Error("Unable to update token balance. Reason: ", err)
 						break
 					}
 					s := string(bodyBytes)

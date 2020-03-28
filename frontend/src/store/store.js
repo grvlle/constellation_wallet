@@ -45,7 +45,8 @@ export const store = new Vuex.Store({
             seed: "Mnemonic Seed will be introduced with a later software release"
         },
         txInfo: {
-            txHistory: []
+            txHistory: [],
+            txStatus: "Complete"
         },
         counters: {
             blockCounter: 5,

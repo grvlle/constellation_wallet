@@ -92,6 +92,7 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 			a.UserLoggedIn = false
 			a.NewUser = true
+			a.WalletImported = true
 			err = a.initWallet(keystorePath)
 			if err != nil {
 				a.log.Errorln("Faled to initialize wallet. Reason: ", err)
@@ -105,6 +106,7 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 			a.UserLoggedIn = false
 			a.NewUser = false
+			a.WalletImported = true
 			err := a.initWallet(a.wallet.KeyStorePath)
 			if err != nil {
 				a.log.Errorln("Faled to initialize wallet. Reason: ", err)
@@ -406,22 +408,24 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 
 		sort.Sort(txSorter(allTX)) // Sort previous transactions based on ordinal
 
-		a.log.Infoln("Successfully collected previous transactions. Updating local state...")
+		a.log.Infoln("Successfully collected" + string(len(allTX)) + "previous transactions. Updating local state...")
 
 		for i, tx := range allTX {
 
 			txData := &TXHistory{
-				Amount: tx.Amount,
-				Sender: tx.Sender,
-				Fee:    tx.Fee,
-				Hash:   tx.Hash,
-				TS:     time.Now().Format("Mon Jan _2 15:04:05 2006"),
-				Failed: false,
+				Amount:   tx.Amount,
+				Receiver: tx.Receiver,
+				Fee:      tx.Fee,
+				Hash:     tx.Hash,
+				TS:       "Imported at: " + time.Now().Format("Mon Jan _2 15:04:05 2006"),
+				Status:   "Complete",
+				Failed:   false,
 			}
 			a.storeTX(txData)
 			a.RT.Events.Emit("new_transaction", txData)
 
 			if i+1 == len(allTX) {
+
 				err := a.rebuildTxChainState(tx.Hash)
 				if err != nil {
 					a.log.Errorln(err)
@@ -433,8 +437,6 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 					a.LoginError("Unable to collect previous TX's from blockexplorer. Please try again later.")
 				}
 			}
-
-			//a.rebuildImportChain(tx.Amount, tx.Fee, tx.Receiver, ptxObj, ltxObj, tx.LastTransactionRef.Ordinal)
 		}
 
 	} else {

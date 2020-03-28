@@ -35,14 +35,25 @@ func (a *WalletApplication) formTXChain(amount int64, fee int64, address string,
 		return
 	}
 
+	fmt.Println(numberOfTX, a.WalletImported)
+
 	// Manually control the second TX, to ensure the following order
 	if numberOfTX == 1 {
-		// If the first transaction failed, enforce the order
+
+		// If the first transaction failed, enforce the order.
 		if statusLastTX.Failed {
 			a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.EmptyTXFile)
 			a.sendTransaction(a.paths.LastTXFile)
 			return
 		}
+
+		// PrevTXFile has already been written and needs to be referenced.
+		if a.WalletImported {
+			a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.PrevTXFile)
+			a.sendTransaction(a.paths.LastTXFile)
+			return
+		}
+
 		a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
 		a.sendTransaction(a.paths.PrevTXFile)
 		return
@@ -53,8 +64,8 @@ func (a *WalletApplication) formTXChain(amount int64, fee int64, address string,
 
 	// If the last TX is in failed state, we reset the order.
 	if newTX == a.paths.PrevTXFile && statusLastTX.Failed {
-		a.produceTXObject(amount, fee, address, a.paths.PrevTXFile, a.paths.LastTXFile)
-		a.sendTransaction(a.paths.PrevTXFile)
+		a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.PrevTXFile)
+		a.sendTransaction(a.paths.LastTXFile)
 		return
 	}
 

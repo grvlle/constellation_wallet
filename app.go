@@ -56,6 +56,7 @@ type WalletApplication struct {
 	TransactionFailed   bool
 	UserLoggedIn        bool
 	NewUser             bool
+	WalletImported      bool
 	FirstTX             bool
 	SecondTX            bool
 	WidgetRunning       struct {

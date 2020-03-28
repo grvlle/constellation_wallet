@@ -343,6 +343,9 @@ func (a *WalletApplication) initTXFromDB() {
 		if !a.wallet.TXHistory[i].Failed {
 			a.RT.Events.Emit("new_transaction", &a.wallet.TXHistory[i]) // Pass the tx to the frontend as a new transaction.
 		}
+		if a.wallet.TXHistory[i].Status == "Pending" {
+			a.TxPending(a.wallet.TXHistory[i].Hash)
+		}
 	}
 
 }
@@ -417,7 +420,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 				Receiver: tx.Receiver,
 				Fee:      tx.Fee,
 				Hash:     tx.Hash,
-				TS:       "Imported at: " + time.Now().Format("Mon Jan _2 15:04:05 2006"),
+				TS:       time.Now().Format("Mon Jan _2 15:04:05 2006") + " (imported)",
 				Status:   "Complete",
 				Failed:   false,
 			}

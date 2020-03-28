@@ -154,12 +154,13 @@
                   <div class="container">
                     <div class="row" v-if="isLogin">
                       <div class="col">
+                <!-- :diabled="isValidNewWallet" is temporarily set without an exclamation mark infront -->
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="success"
                           block
                           @click.native="login()"
-                          :disabled="!isValidNewWallet" >
+                          :disabled="isValidNewWallet" >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
@@ -234,11 +235,13 @@
                         </p-button>
                       </div>
                       <div class="col-md-6 pl-md-2 mb-3">
+                        <!-- :diabled="isValidNewWallet" is temporarily set without an exclamation mark infront -->
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="info"
                           block
-                          @click.native="importWallet()">
+                          @click.native="importWallet()"
+                          :disabled="isValidNewWallet" > 
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>

@@ -126,7 +126,6 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 			a.log.Errorln("Failed to read the response body. Reason: ", err)
 		}
 		bodyString := string(bodyBytes)
-		a.log.Infoln("Response: ", bodyBytes)
 		if len(bodyBytes) == 64 {
 			a.log.Info("Transaction Hash: ", bodyString)
 			a.TxPending(bodyString)

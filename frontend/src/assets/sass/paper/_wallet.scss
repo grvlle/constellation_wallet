@@ -62,3 +62,9 @@
     border-color: t('inputBorderColor');
   }
 }
+
+.swal2-popup.swal2-modal.swal2-show {
+  @include themed() {
+    background: t('popupBackgroundColor');
+  }
+}

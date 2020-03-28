@@ -167,7 +167,10 @@ export default {
 
       if (self.submitStatus === "OK") {
         Swal.mixin({
-          progressSteps: ["1", "2"]
+          progressSteps: ["1", "2"],
+          customClass: {
+           container: this.$store.state.walletInfo.darkMode ? 'theme--dark' : 'theme--light'
+          }
         })
           .queue([
             {

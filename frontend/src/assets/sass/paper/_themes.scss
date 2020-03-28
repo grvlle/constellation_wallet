@@ -28,7 +28,9 @@ $themes: (
     chartTextColor: $ct-text-color,
     chartGridColor: $ct-grid-color,
 
-    errorTextColor: firebrick
+    errorTextColor: firebrick,
+
+    popupBackgroundColor: $bg-nude
   ),
   dark: (
     backgroundColor: $black-bg,
@@ -59,7 +61,9 @@ $themes: (
     chartTextColor: #BCBCBC,
     chartGridColor: #2E2E2E,
 
-    errorTextColor: orangered
+    errorTextColor: orangered,
+
+    popupBackgroundColor: #272727
   ),
 );
 

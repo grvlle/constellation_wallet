@@ -183,14 +183,19 @@ import Swal from "sweetalert2";
 export default {
   methods: {
     submitLabel: function() {
+      const swalPopup = Swal.mixin({
+        customClass: {
+          container: this.$store.state.walletInfo.darkMode ? 'theme--dark' : 'theme--light'
+        }
+      });
       if (this.newLabel === "") {
-        Swal.fire({
+        swalPopup.fire({
           title: "Failed!",
           text: "Unable to change wallet label. No new label entered.",
           type: "error"
         });
       } else {
-        Swal.fire({
+        swalPopup.fire({
           title: "Are you sure?",
           html:
             "You are about change wallet label to " +
@@ -206,7 +211,7 @@ export default {
             window.backend.WalletApplication.StoreWalletLabelInDB(
               this.newLabel
             );
-            Swal.fire({
+            swalPopup.fire({
               title: "Success!",
               text: "You have set a new wallet label",
               type: "success"

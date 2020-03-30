@@ -1,3 +1,5 @@
+@import "themes";
+
 h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6, p, .navbar, .brand, a, .td-name, td {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -74,23 +76,39 @@ blockquote small {
 }
 
 .text-primary, .text-primary:hover {
-  color: $primary-states-color;
+  @include themed() {
+    color: t('primaryStatesColor');
+  }
+}
+
+.text-secondary, .text-secondary:hover {
+  @include themed() {
+    color: t('secondaryStatesColor');
+  }
 }
 
 .text-info, .text-info:hover {
-  color: $info-states-color;
+  @include themed() {
+    color: t('infoStatesColor');
+  }
 }
 
 .text-success, .text-success:hover {
-  color: $success-states-color;
+  @include themed() {
+    color: t('successStatesColor');
+  }
 }
 
 .text-warning, .text-warning:hover {
-  color: $warning-states-color;
+  @include themed() {
+    color: t('warningStatesColor');
+  }
 }
 
 .text-danger, .text-danger:hover {
-  color: $danger-states-color;
+  @include themed() {
+    color: t('dangerStatesColor');
+  }
 }
 
 .glyphicon {
@@ -102,39 +120,70 @@ strong {
 }
 
 .icon-primary {
-  color: $primary-color;
+  @include themed() {
+    color: t('primaryColor');
+  }
+}
+
+.icon-secondary {
+  @include themed() {
+    color: t('secondaryColor');
+  }
 }
 
 .icon-info {
-  color: $info-color;
+  @include themed() {
+    color: t('infoColor');
+  }
 }
 
 .icon-success {
-  color: $success-color;
+  @include themed() {
+    color: t('successColor');
+  }
 }
 
 .icon-warning {
-  color: $warning-color;
+  @include themed() {
+    color: t('warningColor');
+  }
 }
 
 .icon-danger {
-  color: $danger-color;
+  @include themed() {
+    color: t('dangerColor');
+  }
 }
 
 .chart-legend {
   .text-primary, .text-primary:hover {
-    color: $primary-color;
+    @include themed() {
+      color: t('primaryColor');
+    }
+  }
+  .text-secondary, .text-secondary:hover {
+    @include themed() {
+      color: t('secondaryColor');
+    }
   }
   .text-info, .text-info:hover {
-    color: $info-color;
+    @include themed() {
+      color: t('infoColor');
+    }
   }
   .text-success, .text-success:hover {
-    color: $success-color;
+    @include themed() {
+      color: t('successColor');
+    }
   }
   .text-warning, .text-warning:hover {
-    color: $warning-color;
+    @include themed() {
+      color: t('warningColor');
+    }
   }
   .text-danger, .text-danger:hover {
-    color: $danger-color;
+    @include themed() {
+      color: t('dangerColor');
+    }
   }
 }

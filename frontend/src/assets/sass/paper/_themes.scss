@@ -27,10 +27,32 @@ $themes: (
 
     chartTextColor: $ct-text-color,
     chartGridColor: $ct-grid-color,
+    chartSeriesALineColor: $info-color,
+    chartSeriesAFIllColor: rgba($info-color, .8),
+    chartSeriesBLineColor: $success-color,
+    chartSeriesBFIllColor: rgba($success-color, .8),
+    chartSeriesCLineColor: $secondary-color,
+    chartSeriesCFIllColor: rgba($secondary-color, .8),
+    pieSeriesAFillColor: $info-color,
+    pieSeriesBFillColor: $success-color,
+    pieSeriesCFillolor: $secondary-color,
 
     errorTextColor: firebrick,
 
-    popupBackgroundColor: $bg-nude
+    popupBackgroundColor: $bg-nude,
+
+    primaryColor: $primary-color,
+    primaryStatesColor: $primary-states-color,
+    secondaryColor: $secondary-color,
+    secondaryStatesColor: $secondary-states-color,
+    infoColor: $info-color,
+    infoStatesColor: $info-states-color,
+    successColor: $success-color,
+    successStatesColor: $success-states-color,
+    warningColor: $warning-color,
+    warningStatesColor: $warning-states-color,
+    dangerColor: $danger-color,
+    dangerStatesColor: $danger-states-color
   ),
   dark: (
     backgroundColor: $black-bg,
@@ -60,10 +82,32 @@ $themes: (
 
     chartTextColor: #BCBCBC,
     chartGridColor: #2E2E2E,
+    chartSeriesALineColor: $info-color-dark,
+    chartSeriesAFIllColor: rgba($info-color-dark, .2),
+    chartSeriesBLineColor: rgba($success-color-dark, .5),
+    chartSeriesBFIllColor: rgba($success-color-dark, .2),
+    chartSeriesCLineColor: rgba($secondary-color-dark, .5),
+    chartSeriesCFIllColor: rgba($secondary-color-dark, .2),
+    pieSeriesAFillColor: $info-color-dark,
+    pieSeriesBFillColor: $success-color-dark,
+    pieSeriesCFillColor: $secondary-color-dark,
 
     errorTextColor: orangered,
 
-    popupBackgroundColor: #272727
+    popupBackgroundColor: #272727,
+
+    primaryColor: $primary-color-dark,
+    primaryStatesColor: $primary-states-color-dark,
+    secondaryColor: $secondary-color-dark,
+    secondaryStatesColor: $secondary-states-color-dark,
+    infoColor: $info-color-dark,
+    infoStatesColor: $info-states-color-dark,
+    successColor: $success-color-dark,
+    successStatesColor: $success-states-color-dark,
+    warningColor: $warning-color,
+    warningStatesColor: $warning-states-color,
+    dangerColor: $danger-color,
+    dangerStatesColor: $danger-states-color
   ),
 );
 

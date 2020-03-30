@@ -40,16 +40,32 @@ $default-bg: #66615B !default;
 $default-states-color: #403D39 !default;
 
 $primary-color: #0F41BA !default;
-$primary-bg: #7A9E9F !default;
-$primary-states-color: #427C89 !default;
+$primary-bg: #0F41BA !default;
+$primary-states-color: #2654c0 !default;
+$primary-color-dark: #0d3aa7 !default;
+$primary-bg-dark: #0d3aa7 !default;
+$primary-states-color-dark: #3b65c6 !default;
 
-$success-color: #00F1B7 !default;   // this is the green color from Vue.js branding
+$secondary-color: #6625AC !default;
+$secondary-bg: #6625AC !default;
+$secondary-states-color: #753ab4 !default;
+$secondary-color-dark: #5b219a !default;
+$secondary-bg-dark: #5b219a !default;
+$secondary-states-color-dark: #6b37a4 !default;
+
+$success-color: #6DECBB !default;   // this is the green color from Vue.js branding
 $success-bg: #6DECBB !default;
-$success-states-color: #229863 !default;
+$success-states-color: #7bedc1 !default;
+$success-color-dark: #62d4a8 !default; 
+$success-bg-dark: #62d4a8 !default;
+$success-states-color-dark: #6ed5ad !default;
 
-$info-color: #00c6f1 !default;
+$info-color: #5fd1fa !default;
 $info-bg: #68B3C8 !default;
-$info-states-color: #00c6f1 !default;
+$info-states-color: #3091B2 !default;
+$info-color-dark: #55bce1!default;
+$info-bg-dark: #68b3c8 !default;
+$info-states-color-dark: #2b82a0 !default;
 
 $warning-color: #e2ea6e !default;
 $warning-bg: #F3BB45 !default;

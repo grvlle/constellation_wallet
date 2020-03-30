@@ -77,37 +77,37 @@ blockquote small {
 
 .text-primary, .text-primary:hover {
   @include themed() {
-    color: t('primaryStatesColor');
+    color: t('primaryStatesColor') !important;
   }
 }
 
 .text-secondary, .text-secondary:hover {
   @include themed() {
-    color: t('secondaryStatesColor');
+    color: t('secondaryStatesColor') !important;
   }
 }
 
 .text-info, .text-info:hover {
   @include themed() {
-    color: t('infoStatesColor');
+    color: t('infoStatesColor') !important;
   }
 }
 
 .text-success, .text-success:hover {
   @include themed() {
-    color: t('successStatesColor');
+    color: t('successStatesColor') !important;
   }
 }
 
 .text-warning, .text-warning:hover {
   @include themed() {
-    color: t('warningStatesColor');
+    color: t('warningStatesColor') !important;
   }
 }
 
 .text-danger, .text-danger:hover {
   @include themed() {
-    color: t('dangerStatesColor');
+    color: t('dangerStatesColor') !important;
   }
 }
 

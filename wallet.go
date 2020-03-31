@@ -19,6 +19,7 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+		return false
 	}
 
 	if !a.TransactionFinished {
@@ -126,6 +127,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+		return false
 	}
 
 	if !a.TransactionFinished {

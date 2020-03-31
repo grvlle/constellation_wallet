@@ -20,6 +20,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+		return false
 	}
 
 	if !a.TransactionFinished {

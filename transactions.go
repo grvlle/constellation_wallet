@@ -272,8 +272,6 @@ func (a *WalletApplication) TxProcessed(TXHash string) bool {
 		return false
 	}
 
-	a.log.Infoln(string(bodyBytes))
-
 	// if transaction doesn’t exists -> either unprocessed or already in snapshot
 	return string(bodyBytes) == ""
 

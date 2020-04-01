@@ -307,7 +307,7 @@ func (a *WalletApplication) TxPending(TXHash string) {
 					a.RT.Events.Emit("tx_pending", status.Pending)
 					time.Sleep(time.Duration(retryCounter) * time.Second) // Increase polling interval
 
-					if retryCounter == 99 {
+					if retryCounter == 1 {
 						a.sendWarning("Unable to get verification of processed transaction from the network. Please reach out to the team.")
 						a.log.Errorf("Unable to get status from the network on transaction: %s", TXHash)
 						a.RT.Events.Emit("tx_pending", status.Error)

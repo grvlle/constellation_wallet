@@ -1,7 +1,7 @@
 <template>
   <card class="card-user">
     <div slot="image">
-      <img src="@/assets/img/dotz.png" style="margin-top: -155px" alt="...">
+      <img src="@/assets/img/dotz.png" style="margin-top: -9.6875em" alt="...">
     </div>
     <div>
       <div class="author">
@@ -19,50 +19,47 @@
     <div class="text-center">
       <br>
       <div class="row">
-        <div v-for="(info, index) in details" :key="index" :class="getClasses(index)">
-          <h5>{{info.title}}
+        <div class="col-4">
+          <h5>{{this.$store.state.walletInfo.transactions}}
             <br>
-            <small>{{info.subTitle}}</small>
+            <small>Transactions</small>
+          </h5>
+        </div>
+        <div class="col-4">
+          <h5>{{this.$store.state.walletInfo.tokenAmount | asDAGs}}
+            <br>
+            <small>DAG</small>
+          </h5>
+        </div>
+        <div class="col-4">
+          <h5>{{this.$store.state.walletInfo.totalValue | asCurrency(this.$store.state.walletInfo.currency)}}
+            <br>
+            <small>{{this.$store.state.walletInfo.currency}}</small>
           </h5>
         </div>
       </div>
     </div>
   </card>
 </template>
-<script>
 
+<script>
 export default {
-  data() {
-    return {
-      details: [
-        {
-          title: this.$store.state.walletInfo.transactions,
-          subTitle: "Transactions"
-        },
-        {
-          title: this.$store.state.walletInfo.tokenAmount,
-          subTitle: "$DAG"
-        },
-        {
-          title: this.$store.state.walletInfo.usdValue,
-          subTitle: "USD"
-        }
-      ]
-    };
-  },
-  methods: {
-    getClasses(index) {
-      var remainder = index % 3;
-      if (remainder === 0) {
-        return "col-lg-3 offset-lg-1";
-      } else if (remainder === 2) {
-        return "col-lg-4";
-      } else {
-        return "col-lg-3";
-      }
+  filters: {
+    asCurrency: function (value, currency) {
+      var formatter = new Intl.NumberFormat(navigator.language, {
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: 0
+      });
+      return formatter.format(value);
+    },
+    asDAGs: function (value) {
+      var formatter = new Intl.NumberFormat(navigator.language);
+      return formatter.format(value);
     }
-  }
+  },
 };
 </script>
+
 <style>
 </style>

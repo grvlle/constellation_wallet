@@ -1,1 +1,2 @@
-frontend/src/assets/*.css linguist-vendored
+*.css linguist-vendored
+*.scss linguist-vendored

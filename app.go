@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"os"
 	"os/user"
@@ -14,15 +15,17 @@ import (
 // WalletApplication holds all application specific objects
 // such as the Client/Server event bus and logger
 type WalletApplication struct {
-	RT      *wails.Runtime
-	log     *logrus.Logger
-	wallet  Wallet
-	DB      *gorm.DB
-	Network struct {
+	RT         *wails.Runtime
+	log        *logrus.Logger
+	wallet     Wallet
+	DB         *gorm.DB
+	killSignal chan struct{}
+	Network    struct {
 		URL     string
 		Handles struct {
 			Send        string // Takes TX Object, returns TX Hash (200)
 			Transaction string // Takes TX Object, returns TX Hash (200)
+			Balance     string // Polls the wallets available balance
 		}
 		BlockExplorer struct {
 			URL     string
@@ -48,19 +51,28 @@ type WalletApplication struct {
 		ImageDir       string
 		Java           string
 	}
-	KeyStoreAccess bool
-	UserLoggedIn   bool
-	NewUser        bool
-	FirstTX        bool
-	SecondTX       bool
-	WidgetRunning  struct {
+	KeyStoreAccess      bool
+	TransactionFinished bool
+	TransactionFailed   bool
+	UserLoggedIn        bool
+	NewUser             bool
+	WalletImported      bool
+	FirstTX             bool
+	SecondTX            bool
+	WidgetRunning       struct {
 		PassKeysToFrontend bool
 		DashboardWidgets   bool
+	}
+	WalletCLI struct {
+		URL     string
+		Version string
 	}
 }
 
 // WailsShutdown is called when the application is closed
 func (a *WalletApplication) WailsShutdown() {
+	a.wallet = Wallet{}
+	close(a.killSignal) // Kills the Go Routines
 	a.DB.Close()
 }
 
@@ -71,18 +83,22 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.log = logrus.New()
 	err = a.initDirectoryStructure()
 	if err != nil {
-		a.log.Errorf("Unable to set up directory structure. Reason: ", err)
+		a.log.Errorln("Unable to set up directory structure. Reason: ", err)
 	}
 
 	a.initLogger()
 
 	a.UserLoggedIn = false
 	a.NewUser = false
+	a.TransactionFinished = true
 	a.RT = runtime
+	a.killSignal = make(chan struct{}) // Used to kill go routines and hand back system resources
+	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download"
+	a.WalletCLI.Version = "2.1.0-rc"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {
-		a.log.Panicf("failed to connect database", err)
+		a.log.Panicln("failed to connect database", err)
 	}
 	// Migrate the schema
 	a.DB.AutoMigrate(&Wallet{}, &TXHistory{}, &Path{})
@@ -117,7 +133,7 @@ func (a *WalletApplication) initDirectoryStructure() error {
 	a.paths.HomeDir = user.HomeDir             // Home directory of the user
 	a.paths.DAGDir = a.paths.HomeDir + "/.dag" // DAG directory for configuration files and wallet specific data
 	a.paths.TMPDir = a.paths.DAGDir + "/tmp"
-	a.paths.EncPrivKeyFile = a.paths.EncryptedDir + "/key.p12"
+	a.paths.EncPrivKeyFile = a.paths.EncryptedDir
 	a.paths.LastTXFile = a.paths.TMPDir + "/last_tx"
 	a.paths.PrevTXFile = a.paths.TMPDir + "/prev_tx"
 	a.paths.EmptyTXFile = a.paths.TMPDir + "/genesis_tx"
@@ -135,36 +151,57 @@ func (a *WalletApplication) initDirectoryStructure() error {
 
 // initMainnetConnection populates the WalletApplication struct with mainnet data
 func (a *WalletApplication) initMainnetConnection() {
-	a.Network.URL = "35.235.121.52:9000" // Temp
+	a.Network.URL = "http://cl-lb-alb-testnet-118182741.us-west-1.elb.amazonaws.com:9000" // Temp
 
 	a.Network.Handles.Send = "/send"
 	a.Network.Handles.Transaction = "/transaction"
+	a.Network.Handles.Balance = "/balance/"
 
-	a.Network.BlockExplorer.URL = "https://2mqil2w38l.execute-api.us-west-1.amazonaws.com/block-explorer-api-dev"
+	a.Network.BlockExplorer.URL = "https://3pii1fjixi.execute-api.us-west-1.amazonaws.com/cl-block-explorer-testnet"
 	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"
 	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoints/"
 	a.Network.BlockExplorer.Handles.Snapshots = "/snapshots/"
 	a.Network.BlockExplorer.Handles.CollectTX = "/transactions?sender="
 }
 
+// Errors reported by the blockexplerer/loadbalancer are reported in the following format
+// {"error": "Cannot find transactions for sender"}
+type APIError struct {
+	Error string
+}
+
+// verifyAPIResponse takes API response converted to a byte array and checks if the API returned
+// an error. If it did, it'll return the error message.
+func (a *WalletApplication) verifyAPIResponse(r []byte) (bool, string) {
+	APIErr := APIError{}
+	if string(r[3:8]) == "error" {
+		err := json.Unmarshal(r, &APIErr)
+		if err != nil {
+			a.log.Errorln("Unable to parse API error. Reason: ", err)
+		}
+		return false, APIErr.Error
+	}
+	return true, ""
+}
+
 func (a *WalletApplication) sendSuccess(msg string) {
 
 	if len(msg) > 200 {
 		msg = string(msg[:200]) // Restrict error size for frontend
-		a.RT.Events.Emit("success", msg+" ...")
+		a.RT.Events.Emit("success", msg)
 		return
 	}
-	a.RT.Events.Emit("success", msg+" ...")
+	a.RT.Events.Emit("success", msg)
 }
 
 func (a *WalletApplication) sendWarning(msg string) {
 
 	if len(msg) > 200 {
 		msg = string(msg[:200]) // Restrict error size for frontend
-		a.RT.Events.Emit("warning", msg+" ...")
+		a.RT.Events.Emit("warning", msg)
 		return
 	}
-	a.RT.Events.Emit("warning", msg+" ...")
+	a.RT.Events.Emit("warning", msg)
 }
 
 func (a *WalletApplication) sendError(msg string, err error) {

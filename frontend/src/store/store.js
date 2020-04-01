@@ -10,23 +10,31 @@ export const store = new Vuex.Store({
         loginErrorMsg: "",
         displayLoginError: false,
         app: {
+            toc: false,
+            txFinished: true,
             isLoading: false,
             isLoggedIn: false,
+            isDownloadingDependencies: true,
             import: false,
             register: false,
-            login: true,
-            margin: 70,
+            login: true
+        },
+        downloading: {
+          filename: "",
+          size: ""
         },
         walletInfo: {
-            version: "v1.12",
-            uiVersion: "v0.1.3 Beta",
-            email: "user@email.com",
+            version: "v1.13",
+            uiVersion: "v0.1.8 Beta",
+            email: "Molly Wallet",
             imgPath: 'faces/face-0.jpg',
             transactions: 0,
             tokenAmount: 0, 
             totalBalance: 0,
+            availableBalance: 0,
             nonce: 0,
-            usdValue: "NaN",
+            currency: "USD",
+            totalValue: "NaN",
             blocks: "NaN",
             address: "N/A",
             keystorePath: "",
@@ -36,36 +44,14 @@ export const store = new Vuex.Store({
             publicKey: "NaN",
             seed: "Mnemonic Seed will be introduced with a later software release"
         },
-        validators: {
-            target: "",
-            password_length: 0,
-            contains_eight_characters: false,
-            contains_number: false,
-            contains_uppercase: false,
-            contains_special_character: false,
-            duplicate: false,
-            valid_password: false,
-            alias: {
-                alias_length: 0,
-                contains_five_characters: false,
-                valid_alias: false,
-            },
-            storepass: {
-                password_length: 0,
-                contains_eight_characters: false,
-                contains_number: false,
-                contains_uppercase: false,
-                contains_special_character: false,
-                duplicate: false,
-                valid_password: false,
-            },
-        },
         txInfo: {
-            txHistory: []
+            txHistory: [],
+            txStatus: "Complete"
         },
         counters: {
             blockCounter: 5,
-            tokenCounter: 60,
+            tokenCounter: 30,
+            valueCounter: 60,
             nodesOnlineCounter: 24
         },
         toggleDashboard: {

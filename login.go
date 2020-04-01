@@ -2,6 +2,8 @@ package main
 
 import (
 	"os"
+	"runtime"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -14,6 +16,24 @@ func (a *WalletApplication) LoginError(errMsg string) {
 
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
+	alias = strings.ToLower(alias)
+
+	if runtime.GOOS == "windows" && !a.javaInstalled() {
+		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+		return false
+	}
+
+	if !a.TransactionFinished {
+		a.log.Warn("Cannot login to another wallet during a pending transaction.")
+		a.LoginError("Cannot login to another wallet during a pending transaction.")
+		return false
+	}
+
+	if keystorePath == "" {
+		a.LoginError("Please provide a path to the KeyStore file.")
+		return false
+	}
+
 	if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
 		return false
@@ -25,7 +45,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	a.wallet.WalletAlias = alias
 
 	if err := a.DB.First(&a.wallet, "wallet_alias = ?", alias).Error; err != nil {
-		a.log.Errorf("Unable to query database object for existing wallet. Reason: ", err)
+		a.log.Errorln("Unable to query database object for existing wallet. Reason: ", err)
 		a.LoginError("Access Denied. Alias not found.")
 		return false
 	}
@@ -54,7 +74,10 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 
 	if a.UserLoggedIn && a.KeyStoreAccess && !a.NewUser {
 
-		a.initWallet(keystorePath)
+		err := a.initWallet(keystorePath)
+		if err != nil {
+			a.UserLoggedIn = false
+		}
 	}
 
 	a.NewUser = false
@@ -62,9 +85,14 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	return a.UserLoggedIn
 }
 
-func (a *WalletApplication) LogOut() *Wallet {
-	a.UserLoggedIn = false
-	return nil
+func (a *WalletApplication) LogOut() bool {
+	if a.TransactionFinished {
+		a.UserLoggedIn = false
+		a.wallet = Wallet{}
+		return true
+	}
+	a.sendWarning("Cannot log out while in a pending transaction.")
+	return false
 }
 
 func (a *WalletApplication) ImportKey() string {

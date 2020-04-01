@@ -1,132 +1,127 @@
 <template>
-  <div id="app" class="row">
-    <div class="col-12">
-      <card :title="table1.title" :subTitle="table1.subTitle">
-        <!-- <transaction-form> -->
-        <div>
-          <form @submit.prevent>
-            <br />
-            <div class="row">
-              <div class="col-md-1"></div>
+  <div id="app" class="container">
+    <div class="row">
+      <div class="col">
+        <card :title="table1.title" :subTitle="table1.subTitle">
+          <p>Last Transaction State: {{this.$store.state.txInfo.txStatus}}</p>
+          <form @submit.prevent class="container">
+            <div class="form-row align-items-center">
               <div class="col-md-4">
-                <fg-input
-                  v-model.number="txAmountValidation"
-                  @change="sendAmount($event.target.value)"
-                  pattern="[0-9]+([,\.][0-9]+)?" 
-                  step="0.01"
-                  label="Submit the amount of $DAG you wish to send"
-                  placeholder="0"
-                ></fg-input>
-                <div style="height: 25px;" class="error" v-if="$v.txAmountValidation.inBetween"></div>
-
-                <div class="error" v-if="!$v.txAmountValidation.inBetween">
-                  <p
-                    class="validate"
-                  >Invalid amount. Please specify a number between 0.00000001 - 3,711,998,690.</p>
+                <div class="input-group" style="margin-bottom: 0;">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><small>DAG</small></span>
+                  </div>
+                  <input type="text" class="form-control" aria-label="Amount (in DAGs)"
+                    v-model.number="txAmountValidation"
+                    @change="sendAmount($event.target.value)"
+                    pattern="[0-9]+([,\.][0-9]+)?"
+                    step="0.01"
+                    placeholder="0"/>
+                  <div class="input-group-append">
+                    <button type="button" @click="setMaxDAGs()" 
+                      class="btn btn-outline-light text-dark" 
+                      style="border: 1px solid #ced4da;">
+                      Max.
+                    </button>
+                  </div>
                 </div>
+                <div class="validate" v-if="!$v.txAmountValidation.inBetween">
+                  <p>Invalid amount. Please verify.</p>
+                </div>
+                <div class="validate" v-else></div>
               </div>
               <div class="col-md-1">
-                <i
-                  class="fa fa-chevron-circle-right"
-                  style="color: #6DECBB; font-size: 40px; padding: 28px;"
-                ></i>
+                <i class="fa fa-chevron-circle-right icon-point-right"></i>
+                <div class="validate"></div>
               </div>
-              <div class="col-md-4">
-                <fg-input
+              <div class="col-md-5">
+                <input type="text" class="form-control" aria-label="Amount (in DAGs)"
                   v-model.trim="txAddressValidation"
                   @change="setName($event.target.value)"
-                  type="text"
-                  label="Wallet Address of Recipient"
                   placeholder="Enter Recipients Wallet Address"
-                ></fg-input>
-                <div
-                  style="height: 25px;"
-                  class="error"
-                  v-if="$v.txAddressValidation.minLength && $v.txAddressValidation.maxLength && $v.txAddressValidation.verifyPrefix"
-                ></div>
-
-                <div
-                  class="error"
+                  />
+                <div class="validate"
                   v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength"
                 >
-                  <p class="validate">Invalid wallet address. Please verify.</p>
+                  <p>Invalid wallet address. Please verify.</p>
                 </div>
+                <div class="validate" v-else></div>
               </div>
-              <div class="col-md-1">
-                <p-button
-                  type="info"
-                  block
-                  @click.native="tx"
-                  :disabled="submitStatus === 'PENDING'"
-                  style="margin-top: 28px; overflow: visible;"
-                >
-                  <span
-                    style="width: 80px; margin-left: -20px; overflow: hidden; white-space: nowrap; display: block; text-overflow: ellipsis;"
-                  >
+              <div class="col-md-2">
+                <p-button type="info" block @click.native="tx" 
+                  style="max-width: 10rem; margin-left: auto;"
+                  :disabled="!this.$store.state.app.txFinished">
+                  <span>
                     <i class="fa fa-paper-plane"></i> SEND
                   </span>
                 </p-button>
-              </div>
+                <div class="validate"></div>
+              </div> 
             </div>
-            <!-- <div class="clearfix"></div> -->
           </form>
-        </div>
-        <br />
-        <br />
-      </card>
+        </card>
+      </div>
     </div>
-
-    <div class="col-12">
-      <card class="card" :title="table2.title" :subTitle="table2.subTitle">
-        <div class="table-full-width table-responsive">
-          <table class="table" :class="tableClass">
-            <thead>
-              <slot txAddressValidation="columns">
-                <th v-for="column in table2.columns">{{column}}</th>
-              </slot>
-            </thead>
-            <tbody>
-              <tr v-for="tx in this.$store.state.txInfo.txHistory">
-                <slot :row="item">
-                  <td>
-                    <p class="description" style="font-size: 15px;">
-                      <b>{{tx.amount | dropzero}}</b> $DAG
-                    </p>
-                  </td>
-                  <td>
-                    <p class="description" style="font-size: 15px;">{{tx.address | truncate}}</p>
-                  </td>
-                  <td>
-                    <p class="description" style="font-size: 15px;">{{tx.fee}}</p>
-                  </td>
-                  <td>
-                    <a id="txhash">
-                      <p style="font-size: 15px;">{{tx.txhash | truncate}}</p>
-                    </a>
-                  </td>
-                  <td>
-                    <p class="description" style="font-size: 15px;">{{tx.date}}</p>
-                  </td>
+    <div class="row">
+      <div class="col">
+        <card class="card" :title="table2.title" :subTitle="table2.subTitle">
+          <div class="table-full-width table-responsive">
+            <table class="table" :class="tableClass">
+              <thead>
+                <slot txAddressValidation="columns">
+                  <th v-for="column in table2.columns" v-bind:key="column.id">{{column}}</th>
                 </slot>
-              </tr>
-            </tbody>
-          </table>
-          <center>
-            <jw-pagination :items="table2.data" @changePage="onChangePage"></jw-pagination>
-          </center>
-        </div>
-      </card>
+              </thead>
+              <tbody>
+                <tr v-for="tx in this.$store.state.txInfo.txHistory" v-bind:key="tx.ID">
+                  <slot :row="item">
+                  <td class="columnA">
+                      
+                        <i style="color: #6DECBB;" v-if="tx.status === 'Complete'" class="fa fa-check"></i>
+                        <i style="color: #E2EA6E;" v-if="tx.status === 'Pending'" class="ti-timer"></i>
+                        <i style="color: firebrick;" v-if="tx.status === 'Error'" class="fa fa-times"></i>
+                      
+                    </td>
+                    <td class="columnB">
+                      <p class="description" style="font-size: 0.9375rem;">
+                        <b>{{tx.amount / 1e8}}</b> DAG
+                      </p>
+                    </td>
+                    <td class="columnC">
+                      <p class="description" style="font-size: 0.9375rem;">{{tx.receiver}}</p>
+                    </td>
+                    <td class="columnD">
+                      <p class="description" style="font-size: 0.9375rem;">{{tx.fee / 1e8}}</p>
+                    </td>
+                    <td class="columnE">
+                      <a id="txhash">
+                        <p style="font-size: 0.9375rem;">{{tx.hash}}</p>
+                      </a>
+                    </td>
+                    <td class="columnF">
+                      <p class="description" style="font-size: 0.9375rem;">{{tx.date}}</p>
+                    </td>
+                  </slot>
+                </tr>
+              </tbody>
+            </table>
+            <center>
+              <jw-pagination :items="table2.data" @changePage="onChangePage"></jw-pagination>
+            </center>
+          </div>
+        </card>
+      </div>
     </div>
+    <page-overlay text="Submitting Transaction..." :isActive="overlay"/>
   </div>
 </template>
 
 <script>
-const tableColumns = ["Amount", "Address", "Fee", "TxHash", "Date"];
+const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"];
 let tableData = [];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
-import NotificationPending from "./Notifications/PendingNotification";
 import Swal from "sweetalert2";
 import {
   required,
@@ -136,15 +131,18 @@ import {
 } from "vuelidate/lib/validators";
 
 export default {
+  computed: {
+    tableClass() {
+      return `table-${this.type}`;
+    }
+  },
   methods: {
     isFloat: function(n) {
       return n === +n && n !== (n | 0);
     },
-
     isInteger: function(n) {
       return n === +n && n === (n | 0);
     },
-
     onChangePage(pageOfItems) {
       // update page of items
       this.$store.state.pageOfItems = pageOfItems;
@@ -164,13 +162,14 @@ export default {
         self.submitStatus = "ERROR";
       } else {
         // do your submit logic here
-        self.submitStatus = "PENDING";
-        setTimeout(() => {
-          self.submitStatus = "OK";
-        }, 500);
+
+        if (!self.$store.state.app.txFinished) {
+          self.submitStatus = "PENDING";
+        }
+        self.submitStatus = "OK";
       }
 
-      if (self.submitStatus != "ERROR") {
+      if (self.submitStatus === "OK") {
         Swal.mixin({
           progressSteps: ["1", "2"]
         })
@@ -212,30 +211,48 @@ export default {
           ])
           .then(result => {
             if (result.value) {
+              self.$Progress.start();
+              self.overlay = true;
               let amount = self.txAmountValidation;
               let address = self.txAddressValidation;
               let fee = result.value;
-              window.backend.WalletApplication.PrepareTransaction(
+              window.backend.WalletApplication.TriggerTXFromFE(
                 parseFloat(amount),
                 parseFloat(fee[1]),
                 address
-              );
-              Swal.fire({
-                title: "Success!",
-                text:
-                  "You have sent " +
-                  self.txAmountValidation +
-                  " $DAG tokens to address " +
-                  self.txAddressValidation +
-                  ".",
-                type: "success"
-              })
+              ).then(txFailed => {
+                if (txFailed) {
+                  Swal.fire({
+                    title: "Transaction Failed!",
+                    text: "Unable to send Transaction",
+                    type: "error"
+                  });
+                  self.$Progress.fail();
+                  self.overlay = false;
+                }
+                if (!txFailed) {
+                  Swal.fire({
+                    title: "Success!",
+                    text:
+                      "You have sent " +
+                      self.txAmountValidation +
+                      " $DAG tokens to address " +
+                      self.txAddressValidation +
+                      ".",
+                    type: "success"
+                  });
+                  self.$Progress.finish();
+                  self.overlay = false;
+                }
+              });
             }
           });
       }
+    },
+    setMaxDAGs() {
+      this.txAmountValidation = this.$store.state.walletInfo.availableBalance;
     }
   },
-
   data() {
     return {
       txAddressValidation: "",
@@ -247,6 +264,7 @@ export default {
       notifications: {
         topCenter: false
       },
+      overlay: false,
 
       table1: {
         title: "Transactions",
@@ -279,7 +297,6 @@ export default {
       return value;
     }
   },
-
   validations: {
     txAddressValidation: {
       required,
@@ -311,7 +328,34 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+
+td {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+td.columnA {
+    width: 3%;
+    text-align: center;
+}
+td.columnB {
+    width: 15%;
+}
+td.columnC {
+    width: 40%;
+}
+td.columnD {
+    width: 10%;
+}
+td.columnE {
+    width: 15%;
+}
+td.columnF {
+    width: 17%;
+}
+
 txhash a {
   color: blue;
 }
@@ -324,9 +368,21 @@ txhash p {
   font-weight: bold;
 }
 
-p.validate {
-  font-size: 10px;
+.validate {
+  height: 1.25em;
+  display: flex;
+}
+.validate > p {
+  /*flex: 1;*/
+  font-size: 0.625rem;
   color: firebrick;
-  margin-top: -5px;
+  margin-top: 0em;
+  margin-right: 0.125em;
+}
+
+.icon-point-right {
+  color: #6DECBB; 
+  font-size: 2.5rem; 
+  width:100%;
 }
 </style>

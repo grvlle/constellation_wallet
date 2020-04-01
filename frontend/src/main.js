@@ -14,9 +14,16 @@ import {store} from './store/store'
 import JwPagination from 'jw-vue-pagination';
 import Vuelidate from 'vuelidate'
 import ToggleButton from 'vue-js-toggle-button'
+import VueProgressBar from 'vue-progressbar'
 
 Vue.component('jw-pagination', JwPagination);
 
+Vue.use(VueProgressBar, {
+  color: '#6DECBB',
+  failedColor: 'red',
+  height: '0.4rem',
+  thickness: '0.4rem'
+})
 Vue.use(ToggleButton)
 Vue.use(Vuelidate)
 Vue.use(VueNotify);

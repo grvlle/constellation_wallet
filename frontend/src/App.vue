@@ -1,7 +1,13 @@
 <template>
   <div>
+    <vue-progress-bar></vue-progress-bar>
+    <downloading-screen
+      v-if="this.$store.state.app.isDownloadingDependencies"
+      :isDownloading="this.$store.state.app.isDownloadingDependencies"
+      :fadeout="!this.$store.state.app.isDownloadingDependencies"
+    />
     <login-screen
-      v-if="!this.$store.state.app.isLoggedIn"
+      v-if="!this.$store.state.app.isDownloadingDependencies && !this.$store.state.app.isLoggedIn"
       :isLoggedIn="!this.$store.state.app.isLoggedIn"
     />
     <loading-screen
@@ -25,12 +31,15 @@ import ErrorNotification from "./pages/Notifications/ErrorMessage";
 import WarningNotification from "./pages/Notifications/Warning";
 import SuccessNotification from "./pages/Notifications/Success";
 import LoadingScreen from "./pages/LoadingScreen";
+import DownloadingScreen from "./pages/DownloadingScreen";
 import LoginScreen from "./pages/Login";
+
 
 export default {
   components: {
     LoadingScreen,
-    LoginScreen
+    LoginScreen,
+    DownloadingScreen
   },
   data() {
     return {};
@@ -56,7 +65,7 @@ export default {
       });
     });
 
-    window.wails.Events.On("warning", (m) => {
+    window.wails.Events.On("warning", m => {
       this.$store.state.warningMessage = m;
       setTimeout(() => {
         this.$notifications.clear();
@@ -74,7 +83,7 @@ export default {
       });
     });
 
-        window.wails.Events.On("success", (m) => {
+    window.wails.Events.On("success", m => {
       this.$store.state.successMessage = m;
       setTimeout(() => {
         this.$notifications.clear();
@@ -104,25 +113,51 @@ export default {
       this.$store.state.txInfo.txHistory = txHistoryFull;
       //this.$store.commit('updateFullTxHistory', txHistoryFull)
     });
+    window.wails.Events.On("tx_in_transit", txFinished => {
+      this.$store.state.app.txFinished = txFinished;
+    });
     window.wails.Events.On("new_transaction", txObject => {
       this.$store.commit("updateTxHistory", txObject);
     });
+    window.wails.Events.On("tx_pending", txStatus => {
+      this.$store.state.txInfo.txStatus = txStatus;
+    });
+
+    
+
+    // Downloading.vue sockets
+    window.wails.Events.On("downloading_dependencies", isDownloadingDependencies => {
+      this.$store.state.app.isDownloadingDependencies = isDownloadingDependencies;
+    });
+
+    window.wails.Events.On("downloading", (filename, size) => {
+      if (this.$store.state.downloading.filename !== filename) {
+        this.$store.state.downloading.filename = filename;
+      }
+      this.$store.state.downloading.size = size;
+    });
 
     // Login.vue sockets
-    window.wails.Events.On("registeredLogin", event => {});
+    // window.wails.Events.On("registeredLogin", event => {});
 
     // Dashboard.vue sockets
-    window.wails.Events.On("token", amount => {
+    window.wails.Events.On("token", (amount, available, total) => {
       this.$store.state.walletInfo.tokenAmount = amount;
+      this.$store.state.walletInfo.availableBalance = available;
+      this.$store.state.walletInfo.totalBalance = total;
     });
     window.wails.Events.On("blocks", number => {
       this.$store.state.walletInfo.blocks = number;
     });
-    window.wails.Events.On("price", (currency, dagRate) => {
-      this.$store.state.walletInfo.usdValue = currency + " " + dagRate;
+    window.wails.Events.On("totalValue", (currency, value) => {
+      this.$store.state.walletInfo.currency = currency;
+      this.$store.state.walletInfo.totalValue = value;
     });
     window.wails.Events.On("token_counter", count => {
       this.$store.state.counters.tokenCounter = count;
+    });
+    window.wails.Events.On("value_counter", valueCount => {
+      this.$store.state.counters.valueCounter = valueCount;
     });
     window.wails.Events.On("block_counter", blockCount => {
       this.$store.state.counters.blockCounter = blockCount;
@@ -156,13 +191,21 @@ export default {
 .vue-notifyjs.notifications {
   .alert {
     z-index: 10000;
+    font-size: 0.875rem;
+  }
+  .alert[data-notify="container"] {
+    width: 21.875rem;
+  }
+  .alert-icon {
+    margin-left: -0.5em;
+    margin-top: -0.5em;
   }
   .list-move {
     transition: transform 0.3s, opacity 0.4s;
   }
   .list-item {
     display: inline-block;
-    margin-right: 10px;
+    margin-right: 0.625em ;
   }
   .list-enter-active {
     transition: transform 0.2s ease-in, opacity 0.4s ease-in;

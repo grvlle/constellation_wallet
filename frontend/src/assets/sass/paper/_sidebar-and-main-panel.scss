@@ -11,9 +11,9 @@
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-    width: 260px;
+    width: 16.25em;
     z-index: 4;
-    box-shadow: inset -1px 0px 0px 0px $medium-gray;
+    box-shadow: inset -0.0625em 0em 0em 0em $medium-gray;
   }
   .sidebar-background {
     position: absolute;
@@ -30,57 +30,57 @@
 }
 
 .wrapper .sidebar {
-  width: 260px;
+  width: 16.25em;
   display: block;
   font-weight: 600;
 
   .logo {
-    padding: 13px 0;
-    margin: 0 20px;
+    padding: 0.8125em 0;
+    margin: 0 1.25em;
 
     p {
       float: left;
-      font-size: 20px;
-      margin: 10px 10px;
-      line-height: 20px;
+      font-size: 1.25rem;
+      margin: 0.625em 0.625em;
+      line-height: 1.25em;
     }
 
     .simple-text {
       padding: $padding-small-vertical $padding-zero;
       display: block;
-      font-size: 15px;
+      font-size: 0.9375rem;
       //text-align: center;
       // font-weight: $font-weight-bold;
-      line-height: 46px;
+      line-height: 2.875em;
       text-align: left;
 
       .logo-img{
-          width: 150px;
+          width: 9.375em;
           display: inline-block;
-          height: 150px;
-          margin-left: 27px;
-          // margin-right: 10px;
+          height: 9.375em;
+          margin-left: 1.6875em;
+          // margin-right: 0.625em;
           background: transparent;
-          border-radius: 120px;
+          border-radius: 7.5em;
           text-align: center;
 
         img{
-            margin-top: 4px;
-            max-width: 140px;
+            margin-top: 0.25em;
+            max-width: 8.75em;
         }
       }
     }
   }
 
   .nav {
-    //margin-top: 20px;
+    //margin-top: 1.25em;
 
     .nav-item {
       width: 100%;
       .nav-link {
-        margin: 10px 0px;
-        padding-left: 25px;
-        padding-right: 25px;
+        margin: 0.625em 0em;
+        padding-left: 1.5625em;
+        padding-right: 1.5625em;
 
         opacity: .7;
       }
@@ -97,19 +97,19 @@
 
     p {
       margin: 0;
-      line-height: 30px;
-      font-size: 14px;
+      line-height: 1.875em;
+      font-size: 0.875rem;
       font-weight: 200;
       font-family: Poppins;
       text-transform: uppercase;
     }
 
     i {
-      font-size: 18px;
+      font-size: 1.025rem;
       float: left;
-      margin-right: 15px;
-      line-height: 30px;
-      width: 30px;
+      margin-right: 0.9375em;
+      line-height: 1.375em;
+      width: 1.875em;
       text-align: center;
     }
   }
@@ -166,12 +166,12 @@
   overflow: auto;
 
   > .content {
-    padding: 30px 15px;
-    min-height: calc(100% - 123px);
+    padding: 1.875em 0.9375em;
+    min-height: calc(100% - 7.6875em);
   }
 
   > .footer {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 0.0625em solid rgba(0, 0, 0, 0.1);
   }
 
   .navbar {

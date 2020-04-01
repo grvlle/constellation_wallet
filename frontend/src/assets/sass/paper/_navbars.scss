@@ -13,12 +13,12 @@
   -webkit-transition: all 0.4s;
   padding: 0;
   background: $white-color;
-  box-shadow: 0 6px 10px -4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.375em 0.625em -0.25em rgba(0, 0, 0, 0.15);
 
   &.navbar-light {
     background-color: $bg-nude;
     box-shadow: none;
-    border-bottom: 1px solid $medium-gray;
+    border-bottom: 0.0625em solid $medium-gray;
   }
   .navbar-toggler-right{
     float: right;
@@ -38,22 +38,22 @@
   }
   .nav-link{
     i{
-      font-size: 16px;
+      font-size: 1rem;
       position: relative;
-      top: 3px;
-      right: 4px;
+      top: 0.1875em;
+      right: 0.25em;
     }
     [class^="fa"]{
-      top: 2px;
+      top: 0.125em;
     }
     p{
-      margin: 0px 0px;
+      margin: 0em 0em;
       color: #403D39 !important;
       text-transform: uppercase;
       font-weight: 200;
-      font-size: 14px;
+      font-size: 0.875rem;
       line-height: 1em;
-      padding: 15px 0;
+      padding: 0.9375em 0em;
       transition: 0.3s;
       font-family: Poppins;
     }
@@ -72,7 +72,7 @@
       opacity: .8;
       text-transform: uppercase;
       font-weight: 200;
-      font-size: 14px;
+      font-size: 0.875rem;
       line-height: 1em;
       color: #403D39 !important;
       transition: 0.3s;
@@ -88,13 +88,13 @@
     }
     .nav-item .nav-link.btn{
       margin: $navbar-margin-a-btn;
-      padding: 9px;
+      padding: 0.5625em;
 
     }
 
     .dropdown-menu{
       border-radius: $border-radius-extreme;
-      margin-top: 1px;
+      margin-top: 0.0625em;
     }
   }
   .navbar-collapse{
@@ -106,36 +106,36 @@
       }
       & .dropdown-item{
         i{
-          margin: 0 10px;
-          margin: 0 10px 0px 5px;
-          font-size: 18px;
+          margin: 0 0.625em;
+          margin: 0 0.625em 0em 0.3125em;
+          font-size: 1.125rem;
           position: relative;
-          top: 3px;
+          top: 0.1875em;
         }
       }
     }
     &.show{
       & .navbar-nav{
         & .nav-item{
-          padding-right: 10px;
+          padding-right: 0.625em;
         }
       }
     }
   }
 
   .notification-bubble{
-    right: 72px;
+    right: 4.5em;
     padding: 0.2em 0.6em;
     position: absolute;
-    top: 15px;
+    top: 0.9375em;
   }
   .btn{
     margin: $navbar-margin-btn;
     font-size: $font-size-small;
     i{
-      //    margin-right: 5px !important;
-      font-size: 14px;
-      line-height: 13px;
+      //    margin-right: 0.3125em !important;
+      font-size: 0.875rem;
+      line-height: 0.8125em;
     }
   }
   .btn-simple{
@@ -145,15 +145,15 @@
     @include center-item();
   }
   &.navbar-transparent{
-    padding-top: 25px;
+    padding-top: 1.5625em;
   }
   .logo-container{
-    margin-top: 5px;
+    margin-top: 0.3125em;
     .logo{
       overflow: hidden;
       border-radius: 50%;
-      border: 1px solid #333333;
-      width: 50px;
+      border: 0.0625em solid #333333;
+      width: 3.125em;
       float: left;
 
       img{
@@ -161,28 +161,28 @@
       }
     }
     .brand{
-      font-size: 18px;
+      font-size: 1.125rem;
       color: #FFFFFF;
-      line-height: 20px;
+      line-height: 1.25em;
       float: left;
-      margin-left: 10px;
-      margin-top: 5px;
-      width: 75px;
-      height: 50px;
+      margin-left: 0.625em;
+      margin-top: 0.3125em;
+      width: 4.6875em;
+      height: 3.125em;
     }
   }
 }
 .navbar.fixed-top{
   .nav-link{
     i{
-      top: 4px;
+      top: 0.25em;
     }
   }
 }
 .navbar-absolute{
   position: absolute;
   width: 100%;
-  padding-top: 10px;
+  padding-top: 0.625em;
   z-index: 1029;
 }
 .navbar-transparent, [class*="bg"]{
@@ -268,7 +268,7 @@
     .nav-item .nav-link:not(.btn):hover,
     .nav-item .nav-link:not(.btn):focus {
       background-color: transparent;
-      border-radius: 3px;
+      border-radius: 0.1875em;
       color: $info-color;
       @include opacity(1);
     }
@@ -308,22 +308,22 @@
 
 .navbar-icons{
   &.navbar .navbar-brand{
-    margin-top: 12px;
-    margin-bottom: 12px;
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
   }
   .navbar-nav{
     .nav-item .nav-link{
       text-align: center;
-      padding: 10px;
-      margin: 10px;
+      padding: 0.625em;
+      margin: 0.625em;
     }
 
     [class^="pe"] {
-      font-size: 30px;
+      font-size: 1.875rem;
       position: relative;
     }
     p {
-      margin: 3px 0 0;
+      margin: 0.1875em 0em 0em;
     }
   }
 }
@@ -332,7 +332,7 @@
   @include box-shadow(none);
   .form-control{
     @include light-form();
-    height: 22px;
+    height: 1.375em;
     font-size: $font-size-navbar;
     line-height: $line-height-general;
     color: $light-gray;
@@ -341,14 +341,14 @@
   [class*="bg"] & .form-control{
     color: $white-color;
     border: $none;
-    border-bottom: 1px solid rgba($white-color,.6);
+    border-bottom: 0.0625em solid rgba($white-color,.6);
   }
 
 }
 
 .navbar-toggler{
-  margin-top: 19px;
-  margin-bottom: 19px;
+  margin-top: 1.1875em;
+  margin-bottom: 1.1875em;
   border: $none;
 
   .icon-bar {
@@ -375,7 +375,7 @@
   color: #ff0000;
 }
 .collapse .navbar-text{
-  line-height: 55px;
+  line-height: 3.4375em;
 }
 
 .navbar-default .navbar-brand{
@@ -388,24 +388,24 @@
 .navbar-collapse.show{
   .navbar-nav{
     .nav-item{
-      padding-right: 100px;
+      padding-right: 6.25em;
     }
   }
 }
 .nav-tabs-navigation{
   &:last-child{
     .nav-stacked{
-      border-right: 1px solid #F1EAE0;
-      font-size: 16px;
+      border-right: 0.0625em solid #F1EAE0;
+      font-size: 1rem;
       font-weight: 600;
-      padding: 20px 0;
+      padding: 1.25em 0em;
       .nav-item{
         .nav-link{
-          padding: 7px 25px;
+          padding: 0.4375em 1.5625em;
         }
       }
     }
-    border-bottom: 0 none;
+    border-bottom: 0em none;
   }
 }
 
@@ -433,31 +433,31 @@
   .navbar-toggler-bar{
     display: block;
     position: relative;
-    width: 24px;
-    height: 2px;
-    border-radius: 1px;
-    margin: 0 auto;
+    width: 1.5em;
+    height: 0.125em;
+    border-radius: 0.0625em;
+    margin: 0em auto;
   }
 }
 
 
 .navbar-toggler .navbar-toggler-bar + .navbar-toggler-bar,
 .navbar-toggler .navbar-toggler-icon + .navbar-toggler-icon{
-  margin-top: 4px;
+  margin-top: 0.25em;
 }
 .navbar .navbar-toggler{
-  margin-top: 24px;
+  margin-top: 1.5em;
 }
 .navbar .navbar-burger{
-  margin-top: 20px;
+  margin-top: 1.25em;
 }
 .navbar-toggler-icon{
   display: block;
   position: relative;
-  width: 24px;
-  height: 2px;
-  border-radius: 1px;
-  margin: 0 auto;
+  width: 1.5em;
+  height: 0.125em;
+  border-radius: 0.0625em;
+  margin: 0em auto;
   background: gray;
 }
 .no-transition{
@@ -469,37 +469,37 @@
 }
 #description-areas .nav-stacked .nav-link.active:before,
 #navtabs-row .nav-stacked .nav-link.active:before{
-  border-right: 11px solid #F1EAE0;
-  border-top: 11px solid transparent;
-  border-bottom: 11px solid transparent;
+  border-right: 0.6875em solid #F1EAE0;
+  border-top: 0.6875em solid transparent;
+  border-bottom: 0.6875em solid transparent;
   content: "";
   display: inline-block;
   position: absolute;
-  right: 0;
-  bottom: 7px;
+  right: 0em;
+  bottom: 0.4375em;
 }
 #description-areas .nav-stacked .nav-link.active:after,
 #navtabs-row .nav-stacked .nav-link.active:after{
-  border-right: 11px solid $white-color;
-  border-top: 11px solid transparent;
-  border-bottom: 11px solid transparent;
+  border-right: 0.6875em solid $white-color;
+  border-top: 0.6875em solid transparent;
+  border-bottom: 0.6875em solid transparent;
   content: "";
   display: inline-block;
   position: absolute;
-  right: -1px;
-  bottom: 7px;
+  right: -0.0625em;
+  bottom: 0.4375em;
 }
 #second-tabs{
-  margin-left: 20px;
+  margin-left: 1.25em;
 }
 
 // navigation areas
 
 .scroll-area{
-  max-height: 310px;
+  max-height: 19.375em;
   overflow-y: scroll;
   list-style: outside none none;
-  padding: 0px;
+  padding: 0em;
 }
 
 .burger-menu{
@@ -513,7 +513,7 @@
 }
 .navbar-transparent{
   background: transparent !important;
-  border-bottom: 1px solid transparent;
+  border-bottom: 0.0625em solid transparent;
   box-shadow: none;
 
   .dropdown-menu .divider{
@@ -532,5 +532,5 @@
   }
 }
 .nav-no-padding{
-  padding-top: 0 !important;
+  padding-top: 0em !important;
 }

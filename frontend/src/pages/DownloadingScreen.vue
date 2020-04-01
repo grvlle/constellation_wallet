@@ -1,11 +1,14 @@
 <template>
   <div class="bg vertical-center" id="app">
     <div class="container">
-      <div class="row" v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn">
-        <div class="col-md-6 mx-auto text-center">
-          <img class="img-fluid" style="max-height: 5.8rem; margin-top: 16rem;" src="~@/assets/img/Constellation-Logo-Black.png" />
-          <p>
-            Getting your $DAG Wallet ready...
+      <div class="row" v-if="this.$store.state.app.isDownloadingDependencies">
+        <div class="col-md-6 mx-auto text-center" style="margin-top: 4rem;">
+          <img class="img-fluid" style="max-height: 5.8rem; margin-top: 16rem;" src="~@/assets/img/Constellation-Logo-Black.png"/>
+          <p style="color: #c4c4c4; margin-top: 0.3125em;">
+            Downloading $DAG wallet dependencies...
+          </p>
+          <p v-if="this.$store.state.downloading.filename !== ''">
+            {{this.$store.state.downloading.filename}}: {{this.$store.state.downloading.size}}
           </p>
         </div>
       </div>
@@ -46,8 +49,11 @@
 
 <script>
 export default {
-  name: "loading-screen"
-  // props: ["isLoading"]
+  name: "downloading-screen",
+  created: function() {
+    window.backend.WalletApplication.CheckAndFetchWalletCLI();
+  }
+  // props: ["isDownloading"]
 };
 </script>
 

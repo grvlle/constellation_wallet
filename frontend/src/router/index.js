@@ -10,6 +10,4 @@ const router = new VueRouter({
   linkActiveClass: "active"
 });
 
-router.replace('/')
-
 export default router;

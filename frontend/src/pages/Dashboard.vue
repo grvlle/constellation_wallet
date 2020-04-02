@@ -18,7 +18,7 @@
       </div>
       <div class="col-md-4 d-flex">
         <stats-card class="stats-card">
-          <div class="icon-big text-center" :class="`icon-danger`" slot="header">
+          <div class="icon-big text-center" :class="`icon-secondary`" slot="header">
             <i class="fas fa-search-dollar"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
@@ -79,7 +79,7 @@
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> Foundation
             <i class="fa fa-circle text-success"></i> Medium
-            <i class="fa fa-circle text-danger"></i> Light
+            <i class="fa fa-circle text-secondary"></i> Light
           </div>
           <span slot="footer">
             <i class="ti-timer"></i>
@@ -93,7 +93,7 @@
           title="Transactions"
           sub-title="Sent vs. received over the last year"
           :chart-data="this.$store.state.chartData.transactions"
-          :chart-options="activityChart.options"
+          :chart-options="transactionChart.options"
         >
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> TX
@@ -111,7 +111,7 @@
           title="Network Throughput (tps)"
           sub-title="24 Hours performance"
           :chart-data="this.$store.state.chartData.throughput"
-          :chart-options="usersChart.options"
+          :chart-options="throughputChart.options"
         >
           <span slot="footer">
             <i class="ti-timer"></i>
@@ -121,11 +121,6 @@
             <i class="fa fa-circle text-info"></i> $DAG Tokens
             <i class="fa fa-circle text-success"></i> Data
           </div>
-          <!-- <div slot="legend">
-            <i class="fa fa-circle text-info"></i> Open
-            <i class="fa fa-circle text-danger"></i> Click
-            <i class="fa fa-circle text-warning"></i> Click Second Time
-          </div>-->
         </chart-card>
       </div>
     </div>
@@ -218,23 +213,7 @@ export default {
       notifications: {
         topCenter: false
       },
-      usersChart: {
-        data: {
-          labels: [
-            "9:00AM",
-            "12:00AM",
-            "3:00PM",
-            "6:00PM",
-            "9:00PM",
-            "12:00PM",
-            "3:00AM",
-            "6:00AM"
-          ], //this.$store.state.chartData.throughput.labels,
-          series: [
-            this.$store.state.chartData.throughput.seriesOne,
-            this.$store.state.chartData.throughput.seriesTwo
-          ]
-        },
+      transactionChart: {
         options: {
           low: 0,
           high: 1000,
@@ -250,27 +229,7 @@ export default {
           showPoint: false
         }
       },
-      activityChart: {
-        data: {
-          labels: [
-            "Jan  ",
-            "Feb  ",
-            "Mar  ",
-            "Apr  ",
-            "Mai  ",
-            "Jun  ",
-            "Jul  ",
-            "Aug  ",
-            "Sep  ",
-            "Oct  ",
-            "Nov  ",
-            "Dec  "
-          ], //this.$store.state.chartData.transactions.labels,
-          series: [
-            this.$store.state.chartData.transactions.seriesOne,
-            this.$store.state.chartData.transactions.seriesTwo
-          ]
-        },
+      throughputChart: {
         options: {
           seriesBarDistance: 10,
           axisX: {
@@ -279,13 +238,6 @@ export default {
           height: "15.3125em"
         }
       },
-      preferencesChart: {
-        data: {
-          labels: this.$store.state.chartData.nodesOnline.labels,
-          series: this.$store.state.chartData.nodesOnline.series
-        },
-        options: {}
-      }
     };
   }
 };

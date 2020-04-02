@@ -17,7 +17,7 @@
                 <td align="right">
                   <toggle-button @change="toggleNodesOnline"
                     :value="this.$store.state.toggleDashboard.showNodesOnline"
-                    color="#0BD4FF"
+                    color="#5fd1fa"
                     :sync="true"
                     :labels="true" />
                 </td>
@@ -27,7 +27,7 @@
                 <td align="right">
                   <toggle-button @change="toggleTransactions"
                     :value="this.$store.state.toggleDashboard.showTransactions"
-                    color="#0BD4FF"
+                    color="#5fd1fa"
                     :sync="true"
                     :labels="true" />
                 </td>
@@ -37,7 +37,7 @@
                 <td align="right">
                   <toggle-button @change="toggleThroughput"
                     :value="this.$store.state.toggleDashboard.showThroughput"
-                    color="#0BD4FF"
+                    color="#5fd1fa"
                     :sync="true"
                     :labels="true" />
                 </td>
@@ -164,7 +164,7 @@
                 <td align="right">
                   <toggle-button @change="toggleDarkMode"
                     :value="this.$store.state.walletInfo.darkMode"
-                    color="#0BD4FF"
+                    color="#5fd1fa"
                     :sync="true"
                     :labels="true" />
                 </td>

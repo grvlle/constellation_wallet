@@ -186,7 +186,7 @@ func (a *WalletApplication) pollTokenBalance() {
 				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
 				for retryCounter <= 20 && a.wallet.Address != "" {
 
-					balance, err := a.getTokenBalance()
+					balance, err := a.GetTokenBalance()
 					if err != nil {
 						retryCounter++
 						break

@@ -73,7 +73,7 @@ func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address
 // methods called are defined in buildchain.go
 func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address string) {
 
-	balance, err := a.getTokenBalance()
+	balance, err := a.GetTokenBalance()
 	if err != nil {
 		a.log.Errorln("Error when querying wallet balance. Reason: ", err)
 		a.sendWarning("Unable to poll balance for wallet. Please try again later.")
@@ -90,7 +90,7 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address 
 	if a.TransactionFinished {
 		a.TransactionFinished = false
 
-		// Asynchronously inform FE of TX state
+		// Asynchronously inform FE of TX state in wallet.
 		go func() {
 			for !a.TransactionFinished {
 				a.RT.Events.Emit("tx_in_transit", a.TransactionFinished)
@@ -215,7 +215,7 @@ func (a *WalletApplication) storeTX(txData *TXHistory) {
 	a.log.Infoln("Successfully stored tx in DB")
 }
 
-// loadTXFromFile takes a file, scan it and returns it in an object
+// loadTXFromFile takes a file, scans it and returns it in an object
 func (a *WalletApplication) loadTXFromFile(txFile string) string {
 	var txObjects string
 
@@ -306,16 +306,24 @@ func (a *WalletApplication) TxPending(TXHash string) {
 		go func() bool {
 			for retryCounter := 100; retryCounter > 0; retryCounter-- {
 				processed := a.TxProcessed(TXHash)
-
 				if !processed {
 					a.log.Warnf("Transaction %v pending", TXHash)
 					a.RT.Events.Emit("tx_pending", status.Pending)
 					time.Sleep(time.Duration(retryCounter) * time.Second) // Increase polling interval
 
 					if retryCounter == 1 {
-						a.sendWarning("Unable to get verification of processed transaction from the network. Please reach out to the team.")
+						// Register failed transaction
+						a.sendWarning("Unable to get verification of processed transaction from the network. Please try again later.")
 						a.log.Errorf("Unable to get status from the network on transaction: %s", TXHash)
 						a.RT.Events.Emit("tx_pending", status.Error)
+						if err := a.DB.Table("tx_histories").Where("hash = ?", TXHash).Updates(map[string]interface{}{"status": status.Error, "failed": true}).Error; err != nil {
+							a.log.Errorln("Unable to query database object for the imported wallet. Reason: ", err)
+							a.LoginError("Unable to query database object for the imported wallet.")
+							return false
+						}
+						a.RT.Events.Emit("update_tx_history", []TXHistory{}) // Clear TX history
+						a.initTXFromDB()
+						return false
 					}
 
 					consensus = 0 // Reset consensus

@@ -73,9 +73,15 @@ func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address
 // methods called are defined in buildchain.go
 func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address string) {
 
-	// TODO: Temp comments. Re-add once wallet goes live.
-	if amount+fee > int64(a.wallet.AvailableBalance)*1e8 {
-		a.log.Warnln("Insufficient Balance")
+	balance, err := a.getTokenBalance()
+	if err != nil {
+		a.log.Errorln("Error when querying wallet balance. Reason: ", err)
+		a.sendWarning("Unable to poll balance for wallet. Please try again later.")
+		return
+	}
+	if amount+fee > int64(balance)*1e8 {
+		a.log.Warnf("Trying to send: %d", amount+fee)
+		a.log.Warnf("Insufficient Balance: %d", int64(balance)*1e8)
 		a.sendWarning("Insufficent Balance.")
 		a.TransactionFailed = true
 		return
@@ -146,7 +152,6 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 	a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
 	a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
 
-	time.Sleep(3 * time.Second)
 	return false, ""
 }
 

@@ -160,7 +160,7 @@
                           type="success"
                           block
                           @click.native="login()"
-                          :disabled="!isValidNewWallet" >
+                          :disabled="isValidNewWallet" >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
@@ -241,7 +241,7 @@
                           type="info"
                           block
                           @click.native="importWallet()"
-                          :disabled="!isValidNewWallet" > 
+                          :disabled="isValidNewWallet" > 
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>

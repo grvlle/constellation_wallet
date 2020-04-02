@@ -2,11 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"runtime"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -483,4 +485,43 @@ func (a *WalletApplication) passwordsProvided(keystorePassword, keyPassword, ali
 		return false
 	}
 	return true
+}
+
+func (a *WalletApplication) getTokenBalance() (float64, error) {
+	a.log.Debug("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
+
+	resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
+	if err != nil {
+		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+		return 0, err
+	}
+	if resp == nil {
+		a.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
+		a.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
+		return 0, err
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		a.log.Warn("Unable to update token balance. Reason: ", err)
+		return 0, err
+	}
+	s := string(bodyBytes)
+	if s == "" {
+		s = "0" // Empty means zero
+	}
+	i, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		a.log.Warnln("Unable to parse balance. Reason:", err)
+		return 0, err
+	}
+	f := fmt.Sprintf("%.2f", float64(i)/1e8) // Reverse normalized float
+
+	balance, err := strconv.ParseFloat(f, 64)
+	if err != nil {
+		a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
+		return 0, err
+	}
+	return balance, nil
 }

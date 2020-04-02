@@ -262,3 +262,8 @@
     border-radius: 0.25em;
   }
 }
+
+.theme--dark .card {
+  webkit-box-shadow: none;
+  box-shadow: none;
+}

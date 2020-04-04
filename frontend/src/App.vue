@@ -118,6 +118,19 @@ export default {
     });
     window.wails.Events.On("new_transaction", txObject => {
       this.$store.commit("updateTxHistory", txObject);
+      this.$store.commit("addTxNotification", 
+        {
+          id: Math.random(),
+          type:"transaction",
+          description:"Awaiting confirmation from mainnet", 
+          read: false,
+          tx: {
+            datetime: txObject.TS,
+            hash: txObject.Hash,
+            status: txObject.Status
+          }
+        }
+      );
     });
     window.wails.Events.On("tx_pending", txStatus => {
       this.$store.state.txInfo.txStatus = txStatus;

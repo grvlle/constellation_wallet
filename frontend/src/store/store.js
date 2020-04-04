@@ -48,6 +48,10 @@ export const store = new Vuex.Store({
             txHistory: [],
             txStatus: "Complete"
         },
+        notificationInfo: {
+            txNotifications: [],
+            systemNotifications: []
+        },
         counters: {
             blockCounter: 5,
             tokenCounter: 30,
@@ -76,14 +80,40 @@ export const store = new Vuex.Store({
         }
     },
     mutations: {
-        updateTxHistory(state, tx) {
+        addTxHistory(state, tx) {
             state.txInfo.txHistory.unshift(tx)
         },
         updateFullTxHistory(state, txHistoryUpdated) {
-            
             state.txInfo.txHistory = txHistoryUpdated
-            
         },
+        addTxNotification(state, notification) {
+            state.notificationInfo.txNotifications.unshift(notification)
+        },
+        updateTxNotification (state, notification) {
+            let foundIndex = state.notificationInfo.txNotifications.findIndex(x => x.id == notification.id);
+            state.notificationInfo.txNotifications[foundIndex] = notification;
+        },
+        updateTxNotificationsAsRead (state) {
+            state.notificationInfo.txNotifications.filter(n => n.read == false)
+              .forEach(f => f.read = true);
+        },
+        deleteTxNotifications (state) {
+            state.notificationInfo.txNotifications = [];
+        },
+        addSystemNotification(state, notification) {
+            state.notificationInfo.systemNotifications.unshift(notification)
+        },
+        updateSystemNotification (state, notification) {
+            let foundIndex = state.notificationInfo.systemNotifications.findIndex(x => x.id == notification.id);
+            state.notificationInfo.systemNotifications[foundIndex] = notification;
+        },
+        updateSystemNotificationsAsRead (state) {
+              state.notificationInfo.systemNotifications.filter(n => n.read == false)
+              .forEach(f => f.read = true);
+        },
+        deleteSystemNotifications (state) {
+            state.notificationInfo.systemNotifications = [];
+        }
     }
 
 })

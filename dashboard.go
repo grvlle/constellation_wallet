@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/wailsapp/wails"
@@ -187,48 +186,12 @@ func (a *WalletApplication) pollTokenBalance() {
 				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
 				for retryCounter <= 20 && a.wallet.Address != "" {
 
-					a.log.Debug("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
-
-					resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
-					if err != nil {
-						a.log.Errorln("Failed to send HTTP request. Reason: ", err)
-						retryCounter++
-						break
-					}
-					if resp == nil {
-						retryCounter++
-						a.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
-						a.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
-						break
-					}
-					defer resp.Body.Close()
-
-					bodyBytes, err := ioutil.ReadAll(resp.Body)
+					balance, err := a.GetTokenBalance()
 					if err != nil {
 						retryCounter++
-						a.log.Error("Unable to update token balance. Reason: ", err)
 						break
 					}
-					s := string(bodyBytes)
-					if s == "" {
-						s = "0" // Empty means zero
-					}
-					i, err := strconv.ParseInt(s, 10, 64)
-					if err != nil {
-						retryCounter++
-						a.log.Warnln("Unable to parse balance. Reason:", err)
-						break
-					}
-					f := fmt.Sprintf("%.2f", float64(i)/1e8) // Reverse normalized float
-
-					balance, err := strconv.ParseFloat(f, 64)
-					if err != nil {
-						retryCounter++
-						a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
-						break
-					}
-
-					a.log.Debugln("Current Balance: ", f)
+					a.log.Debugln("Current Balance: ", balance)
 					a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balance, balance, balance
 					a.RT.Events.Emit("token", a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance)
 					UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)

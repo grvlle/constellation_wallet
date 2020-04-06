@@ -91,7 +91,7 @@ func (a *WalletApplication) LogOut() bool {
 		a.wallet = Wallet{}
 		return true
 	}
-	a.sendWarning("Cannot log out while in a pending transaction.")
+	a.sendWarning("Cannot log out while transaction is processing. Please try again.")
 	return false
 }
 

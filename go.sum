@@ -108,6 +108,8 @@ github.com/wailsapp/wails v0.19.0-pre2 h1:4q+LIX9w0bB8q+bZU/ZVkNDI56vmJPCvjU7xRB
 github.com/wailsapp/wails v0.19.0-pre2/go.mod h1:CEmTAETH2Z9/mW6rf8pqWcMajql2AKi789uBD24z7nU=
 github.com/wailsapp/wails v1.0.2 h1:ztqaLpDb8m8SqAi0u+Ss49zBFrmtm/cAa6ztvKYEjaw=
 github.com/wailsapp/wails v1.0.2/go.mod h1:p+1LmkP+8qF/WFancyMPLKw4jukT9BTAPoZzdn6uwx0=
+github.com/wailsapp/wails v1.0.3-pre2 h1:PbrKCWBmF1k0yQZ2jNNnMzT22T167sv/a2Bny9PasVA=
+github.com/wailsapp/wails v1.0.3-pre2/go.mod h1:yb9AUo9LY/6ktxRfYdekH6kpQoxxRs8xesPkNNQu6ZQ=
 github.com/wailsapp/webview v0.2.7 h1:fN5L5H9Oivg9IJPk7uaXQnjqB68Fny11ZWkIaTIZHmk=
 github.com/wailsapp/webview v0.2.7/go.mod h1:XO9HJbKWokDxUYTWQEBCYg95n/To1v7PxvanDNVf8hY=
 github.com/zserge/webview v0.0.0-20190123072648-16c93bcaeaeb/go.mod h1:a1CV8KR4Dd1eP2g+mEijGOp+HKczwdKHWyx0aPHKvo4=

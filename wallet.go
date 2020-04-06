@@ -2,11 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"runtime"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -334,22 +336,25 @@ func (a *WalletApplication) initTXFilePath() {
 }
 
 func (a *WalletApplication) initTXFromDB() {
-	transactions := &a.wallet.TXHistory
-	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory").Find(&transactions).Error; err != nil {
+	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory").Find(&a.wallet.TXHistory).Error; err != nil {
 		a.log.Error("Unable to initialize historic transactions from DB. Reason: ", err)
 		a.sendError("Unable to initialize historic transactions from DB. Reason: ", err)
 		return
 	}
 
-	for i := range a.wallet.TXHistory {
-		if !a.wallet.TXHistory[i].Failed {
-			a.RT.Events.Emit("new_transaction", &a.wallet.TXHistory[i]) // Pass the tx to the frontend as a new transaction.
-		}
+	allTX := []TXHistory{}
+
+	for i, tx := range a.wallet.TXHistory {
+		allTX = append([]TXHistory{tx}, allTX...) // prepend to reverse list for FE
+
+		// if !a.wallet.TXHistory[i].Failed {
+		// 	a.RT.Events.Emit("new_transaction", &a.wallet.TXHistory[i]) // Pass the tx to the frontend as a new transaction.
+		// }
 		if a.wallet.TXHistory[i].Status == "Pending" {
 			a.TxPending(a.wallet.TXHistory[i].Hash)
 		}
 	}
-
+	a.RT.Events.Emit("update_tx_history", allTX) // Pass the tx to the frontend as a new transaction.
 }
 
 // txSorter sorts tx by ordinal.
@@ -413,7 +418,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 
 		sort.Sort(txSorter(allTX)) // Sort previous transactions based on ordinal
 
-		a.log.Infoln("Successfully collected" + string(len(allTX)) + "previous transactions. Updating local state...")
+		a.log.Infof("Successfully collected %d previous transactions. Updating local state...", len(allTX))
 
 		for i, tx := range allTX {
 
@@ -483,4 +488,43 @@ func (a *WalletApplication) passwordsProvided(keystorePassword, keyPassword, ali
 		return false
 	}
 	return true
+}
+
+func (a *WalletApplication) GetTokenBalance() (float64, error) {
+	a.log.Debug("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
+
+	resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
+	if err != nil {
+		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+		return 0, err
+	}
+	if resp == nil {
+		a.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
+		a.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
+		return 0, err
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		a.log.Warn("Unable to update token balance. Reason: ", err)
+		return 0, err
+	}
+	s := string(bodyBytes)
+	if s == "" {
+		s = "0" // Empty means zero
+	}
+	i, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		a.log.Warnln("Unable to parse balance. Reason:", err)
+		return 0, err
+	}
+	f := fmt.Sprintf("%.2f", float64(i)/1e8) // Reverse normalized float
+
+	balance, err := strconv.ParseFloat(f, 64)
+	if err != nil {
+		a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
+		return 0, err
+	}
+	return balance, nil
 }

@@ -277,7 +277,21 @@ func (a *WalletApplication) TxProcessed(TXHash string) bool {
 		return false
 	}
 
-	// if transaction doesn’t exists -> either unprocessed or already in snapshot
+	// Declared an empty interface
+	var result map[string]interface{}
+
+	// Unmarshal or Decode the JSON to the interface.
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		return false
+	}
+
+	if result["cbBaseHash"] != nil {
+		a.log.Infoln("CheckPoint Hash :", result["cbBaseHash"])
+		return true
+	}
+
+	// Empty response means it's snapshotted
 	return string(bodyBytes) == ""
 
 }
@@ -304,7 +318,7 @@ func (a *WalletApplication) TxPending(TXHash string) {
 		return
 	default:
 		go func() bool {
-			for retryCounter := 100; retryCounter > 0; retryCounter-- {
+			for retryCounter := 50; retryCounter > 0; retryCounter-- {
 				processed := a.TxProcessed(TXHash)
 				if !processed {
 					a.log.Warnf("Transaction %v pending", TXHash)
@@ -328,12 +342,12 @@ func (a *WalletApplication) TxPending(TXHash string) {
 
 					consensus = 0 // Reset consensus
 				}
-				if processed && consensus != 10 {
+				if processed && consensus != 5 {
 					consensus++
-					a.log.Infof("TX status check has reached consensus %v/10", consensus)
+					a.log.Infof("TX status check has reached consensus %v/5", consensus)
 					time.Sleep(1 * time.Second)
 				}
-				if processed && consensus == 10 { // Need ten consecative confirmations that TX has been processed.
+				if processed && consensus == 5 { // Need ten consecative confirmations that TX has been processed.
 					break
 				}
 

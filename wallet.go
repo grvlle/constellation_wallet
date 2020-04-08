@@ -510,16 +510,33 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		a.log.Warn("Unable to update token balance. Reason: ", err)
 		return 0, err
 	}
-	s := string(bodyBytes)
+
+	// Declared an empty interface
+	var result map[string]interface{}
+
+	// Unmarshal or Decode the JSON to the interface.
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		return 0, err
+	}
+
+	s := result["balance"]
 	if s == "" {
 		s = "0" // Empty means zero
 	}
-	i, err := strconv.ParseInt(s, 10, 64)
-	if err != nil {
+
+	b, ok := s.(float64)
+	if !ok {
 		a.log.Warnln("Unable to parse balance. Reason:", err)
 		return 0, err
 	}
-	f := fmt.Sprintf("%.2f", float64(i)/1e8) // Reverse normalized float
+
+	// i, err := strconv.ParseInt(s, 10, 64)
+	// if err != nil {
+	// 	a.log.Warnln("Unable to parse balance. Reason:", err)
+	// 	return 0, err
+	// }
+	f := fmt.Sprintf("%.2f", b/1e8) // Reverse normalized float
 
 	balance, err := strconv.ParseFloat(f, 64)
 	if err != nil {

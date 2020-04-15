@@ -12,8 +12,8 @@ import (
 // and the method that pushes them to the network(HTTP POST).
 // To retain order, formTXChain will poll the last sent TX for it's Failed state.
 // if the last TX failed, it'll switch up the order to account for that not to break the chain.
-// This means that all failed attempts att creating a block is also stored in the DB with
-// a Failed state bool.
+// This means that all failed attempts at creating a block is also stored in the DB with
+// a Failed state.
 func (a *WalletApplication) formTXChain(amount int64, fee int64, address string, ptxObj *Transaction, ltxObj *Transaction) {
 
 	statusLastTX := TXHistory{}
@@ -35,20 +35,24 @@ func (a *WalletApplication) formTXChain(amount int64, fee int64, address string,
 		return
 	}
 
-	fmt.Println(numberOfTX, a.WalletImported)
+	a.log.Infoln("Number of previous TX's detected: ", numberOfTX)
 
 	// Manually control the second TX, to ensure the following order
 	if numberOfTX == 1 {
 
 		// If the first transaction failed, enforce the order.
 		if statusLastTX.Failed {
+			a.log.Warnln("Detected that the previous transaction failed.")
 			a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.EmptyTXFile)
 			a.sendTransaction(a.paths.LastTXFile)
 			return
 		}
 
-		// PrevTXFile has already been written and needs to be referenced.
-		if a.WalletImported {
+		// Check for edge case where PrevTXFile has already been written and needs to be referenced.
+		// This occurs when a wallet with 1 previous tx has been imported.
+		prevTXFileContents := a.loadTXFromFile(a.paths.PrevTXFile)
+		if a.WalletImported && prevTXFileContents != "" {
+			a.log.Warnln("One previous transaction has been imported. Using that as reference.")
 			a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.PrevTXFile)
 			a.sendTransaction(a.paths.LastTXFile)
 			return

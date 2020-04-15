@@ -202,7 +202,7 @@ func (a *WalletApplication) pollTokenBalance() {
 	}()
 }
 
-// PricePoller polls the min-api.cryptocompare REST API for DAG token value.
+// pricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token
 // balance evaluation against USD.
 func (a *WalletApplication) pricePoller() {

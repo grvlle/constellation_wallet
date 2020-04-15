@@ -527,7 +527,9 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 
 	b, ok := s.(float64)
 	if !ok {
-		a.log.Warnln("Unable to parse balance. Reason:", err)
+		if err != nil {
+			a.log.Warnln("Unable to parse balance. Reason:", err)
+		}
 		return 0, err
 	}
 

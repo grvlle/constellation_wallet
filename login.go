@@ -8,12 +8,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// LoginError takes a string and pushes it to the login screen as an errror
 func (a *WalletApplication) LoginError(errMsg string) {
 	if errMsg != "" {
 		a.RT.Events.Emit("login_error", errMsg, true)
 	}
 }
 
+// Login is called from the FE when a user logs in with a wallet object
+// already in the DB
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
@@ -85,6 +88,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	return a.UserLoggedIn
 }
 
+// LogOut will reset the wallet UI and clear the wallet objects
 func (a *WalletApplication) LogOut() bool {
 	if a.TransactionFinished {
 		a.UserLoggedIn = false
@@ -95,6 +99,7 @@ func (a *WalletApplication) LogOut() bool {
 	return false
 }
 
+// ImportKey is called from the frontend when browsing the fs for a keyfile
 func (a *WalletApplication) ImportKey() string {
 	a.paths.EncPrivKeyFile = a.RT.Dialog.SelectFile()
 	if a.paths.EncPrivKeyFile == "" {
@@ -110,6 +115,7 @@ func (a *WalletApplication) ImportKey() string {
 	return a.paths.EncPrivKeyFile
 }
 
+// SelectDirToStoreKey is called from the FE when creating a new keyfile
 func (a *WalletApplication) SelectDirToStoreKey() string {
 	a.paths.EncPrivKeyFile = a.RT.Dialog.SelectSaveFile()
 
@@ -124,6 +130,7 @@ func (a *WalletApplication) SelectDirToStoreKey() string {
 	return a.paths.EncPrivKeyFile
 }
 
+// GenerateSaltedHash converts plain text to a salted hash
 func (a *WalletApplication) GenerateSaltedHash(s string) (string, error) {
 	saltedBytes := []byte(s)
 	hashedBytes, err := bcrypt.GenerateFromPassword(saltedBytes, bcrypt.DefaultCost)
@@ -134,6 +141,7 @@ func (a *WalletApplication) GenerateSaltedHash(s string) (string, error) {
 	return hash, nil
 }
 
+// CheckAccess verifies that the user has entered the correct password
 func (a *WalletApplication) CheckAccess(password, passwordHash string) bool {
 	err := a.Compare(password, passwordHash)
 	if err != nil {
@@ -145,6 +153,7 @@ func (a *WalletApplication) CheckAccess(password, passwordHash string) bool {
 	return true
 }
 
+// Compare compares a string with a salted hash
 func (a *WalletApplication) Compare(s, hash string) error {
 	incoming := []byte(s)
 	existing := []byte(hash)

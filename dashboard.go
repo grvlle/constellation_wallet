@@ -177,7 +177,7 @@ func (a *WalletApplication) blockAmount() {
 
 func (a *WalletApplication) pollTokenBalance() {
 	go func() {
-		var retryCounter int
+		retryCounter := 1
 		for {
 			select {
 			case <-a.killSignal:
@@ -214,7 +214,7 @@ func (a *WalletApplication) pricePoller() {
 	)
 
 	go func() {
-		var retryCounter int
+		retryCounter := 1
 		time.Sleep(3 * time.Second) // Give some space to pollTokenBalance
 
 		for {

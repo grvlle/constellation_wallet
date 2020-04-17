@@ -58,6 +58,7 @@ func (a *WalletApplication) networkHeartbeat() {
 
 /* Send a transaction */
 
+// TriggerTXFromFE will initate a new transaction triggered from the frontend.
 func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address string) bool {
 	amountConverted := int64(amount * 1e8)
 	feeConverted := int64(fee * 1e8)
@@ -298,7 +299,7 @@ func (a *WalletApplication) TxProcessed(TXHash string) bool {
 
 }
 
-type TxStatus struct {
+type txStatus struct {
 	Complete string
 	Pending  string
 	Error    string
@@ -307,7 +308,7 @@ type TxStatus struct {
 // TxPending takes a TX Hash and updates the frontend with the current status (Pending/Error/Complete)
 func (a *WalletApplication) TxPending(TXHash string) {
 
-	status := &TxStatus{
+	status := &txStatus{
 		Complete: "Complete",
 		Pending:  "Pending",
 		Error:    "Error",

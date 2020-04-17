@@ -147,9 +147,8 @@ func (a *WalletApplication) CheckAccess(password, passwordHash string) bool {
 	if err != nil {
 		a.log.Warnln("User tried to login with the wrong credentials!")
 		return false
-	} else {
-		a.log.Infoln("Password check OK")
 	}
+	a.log.Infoln("Password check OK")
 	return true
 }
 

@@ -37,6 +37,7 @@ type Wallet struct {
 	} `json:"token_price"`
 }
 
+// Path carries the file paths
 type Path struct {
 	ID          uint   `json:"id"`
 	Alias       string `json:"alias"`
@@ -45,6 +46,7 @@ type Path struct {
 	EmptyTXFile string
 }
 
+// TXHistory stores inidividual transactions
 type TXHistory struct {
 	ID                 uint   `json:"id"`
 	Alias              string `json:"alias"`
@@ -62,4 +64,5 @@ type TXHistory struct {
 	Failed bool
 }
 
+// Address holds the DAG address
 type Address string

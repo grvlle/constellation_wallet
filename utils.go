@@ -54,10 +54,13 @@ func (a *WalletApplication) detectJavaPath() {
 			errFormatted := fmt.Sprint(err) + ": " + stderr.String()
 			a.log.Errorf(errFormatted)
 			a.LoginError("Unable to find Java Installation")
+			a.paths.Java = "No valid path detected"
+			return
 		}
 		jPath := out.String() // May contain multiple
 		if jPath == "" {
 			a.LoginError("Unable to find Java Installation")
+			a.paths.Java = "No valid path detected"
 			return
 		}
 		s := strings.Split(strings.Replace(jPath, "\r\n", "\n", -1), "\n")

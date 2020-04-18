@@ -59,6 +59,20 @@ h1 small, h2 small, h3 small, h1 .small, h2 .small, h3 .small {
   font-size: 60%;
 }
 
+.wallet-address {
+  padding-top: 0em;
+  padding-bottom: 0em;
+  font-size: 1.5625rem;
+  font-weight: 100;
+  @include themed() {
+      color: t('walletAddressColor');
+  }
+}
+
+.wallet-address > p-button {
+  margin-bottom: 10em;
+}
+
 .title-uppercase {
   text-transform: uppercase;
 }

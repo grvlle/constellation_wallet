@@ -15,7 +15,7 @@
     overflow-x: hidden;
     width: 16.25em;
     z-index: 4;
-    box-shadow: inset -0.0625em 0em 0em 0em $medium-gray;
+    // box-shadow: inset -0.0625em 0em 0em 0em $medium-gray;
   }
   .sidebar-background {
     position: absolute;
@@ -157,7 +157,7 @@
     }
     
     .divider {
-      background-color: rgba($font-color, .2);
+      background-color: rgba($black-color, .2);
     }
 
   }

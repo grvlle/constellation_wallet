@@ -18,7 +18,7 @@
       </div>
       <div class="col-md-4 d-flex">
         <stats-card class="stats-card">
-          <div class="icon-big text-center" :class="`icon-secondary`" slot="header">
+          <div class="icon-big text-center" :class="`icon-danger`" slot="header">
             <i class="fas fa-search-dollar"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
@@ -267,14 +267,5 @@ export default {
   margin-top: auto;
 }
 
-.wallet-address {
-  padding-top: 0em;
-  padding-bottom: 0.3em;
-  font-size: 1.5625rem;
-  font-weight: 100;
-}
 
-.wallet-address > p-button {
-  margin-bottom: 10em;
-}
 </style>

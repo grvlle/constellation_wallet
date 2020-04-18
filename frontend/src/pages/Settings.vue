@@ -160,7 +160,7 @@
           <div class="container">
             <table class="table-noheader">
               <tr>
-                <td><p>Dark Mode (Work In Progress...)</p></td>
+                <td><p>Dark Mode [BETA]</p></td>
                 <td align="right">
                   <toggle-button @change="toggleDarkMode"
                     :value="this.$store.state.walletInfo.darkMode"

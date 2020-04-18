@@ -38,6 +38,7 @@ $themes: (
     pieSeriesCFillolor: $secondary-color,
 
     errorTextColor: firebrick,
+    walletAddressColor: $medium-gray,
 
     popupBackgroundColor: $bg-nude,
 
@@ -55,7 +56,7 @@ $themes: (
     dangerStatesColor: $danger-states-color
   ),
   dark: (
-    backgroundColor: $black-bg,
+    backgroundColor: #181818,
     borderColor: #2E2E2E,
 
     cardBackgroundColor: #1E1E1E,
@@ -65,15 +66,15 @@ $themes: (
     cardTableColor: #2E2E2E,
 
     navbarBackgroundColor: #272727,
-    navbarBorderColor: $dark-gray,
+    navbarBorderColor: #272727,
     navbarTextColor: #BCBCBC,
     navbarIconColor: $info-color,
 
-    sidebarBackgroundColor: $black-bg,
+    sidebarBackgroundColor: #1E1E1E,
     sidebarTextColor: #BCBCBC,
-    sidebarArrowColor: $bg-nude,
+    sidebarArrowColor: #181818,
 
-    inputBackgroundColor:#3b3b3b,
+    inputBackgroundColor:#272727,
     inputBorderColor: $dark-gray,
     inputPlaceholderColor: $medium-gray,
     inputTextColor: #F2F2F2,
@@ -93,6 +94,7 @@ $themes: (
     pieSeriesCFillColor: $secondary-color-dark,
 
     errorTextColor: orangered,
+    walletAddressColor: #BCBCBC,
 
     popupBackgroundColor: #272727,
 

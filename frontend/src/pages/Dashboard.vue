@@ -51,14 +51,14 @@
       <div class="col">
         <card title="Wallet Address" sub-title="">
           <div class="wallet-address">
-            <table class="table-noheader">
+            <table style="table-layout:fixed;" class="table-noheader">
               <tr>
-                <td style="padding-top: 15px; padding-left: 15px; width: 90%;">
-                  <span class="text-overflow">{{wallet2.address}}</span>
+                <td class="text-overflow" style="word-wrap:break-word; padding-top: 20px; padding-left: 15px; width: 100%;">
+                  <span style="width: 100%;" class="text-overflow">{{wallet2.address}}</span>
                   <input type="hidden" id="testing-code" :value="wallet2.address" />
                 </td>
-                <td style="padding-top: 10px;">
-                  <p-button type="info" style="margin-bottom: 12px;" icon @click.native="copyTestingCode">
+                <td style="padding-top: 10px; width: 9%;">
+                  <p-button type="info" style="margin-bottom: 5px;" icon @click.native="copyTestingCode">
                     <i class="fa fa-copy"></i>
                   </p-button>
                 </td>
@@ -267,5 +267,8 @@ export default {
   margin-top: auto;
 }
 
+.wallet-address > p-button {
+  margin-bottom: 10em;
+}
 
 </style>

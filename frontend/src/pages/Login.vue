@@ -4,7 +4,11 @@
       <div class="row">
         <div class="col-md-6 mx-auto text-center header">
           <div v-if="isLogin">
-            <img class="img-fluid" style="max-height: 5.8rem;" src="~@/assets/img/Constellation-Logo-Black.png" />
+            <img
+              class="img-fluid"
+              style="max-height: 5.8rem;"
+              src="~@/assets/img/Constellation-Logo-Black.png"
+            />
             <p>Please enter your credentials below to access your Molly Wallet.</p>
           </div>
           <div class="page-error-box" v-if="this.$store.state.displayLoginError">
@@ -112,18 +116,20 @@
                     />
                   </div>
                   <div>
-                    <fg-input style="margin-bottom: 0.125em"
+                    <fg-input
+                      style="margin-bottom: 0.125em"
                       type="text"
                       v-model="alias"
                       @input.native="checkAlias(alias)"
-                      :placeholder="this.$store.state.walletInfo.alias" 
-                      label="Key Alias"/>
-                    <div class="validate" v-if="!this.$store.state.app.login && !this.aliasValid" >
-                      <p v-if="!this.aliasContainsFiveCharacters" >
-                        Alias has to be atleast 5 characters long.
-                      </p>
+                      :placeholder="this.$store.state.walletInfo.alias"
+                      label="Key Alias"
+                    />
+                    <div class="validate" v-if="!this.$store.state.app.login && !this.aliasValid">
+                      <p
+                        v-if="!this.aliasContainsFiveCharacters"
+                      >Alias has to be atleast 5 characters long.</p>
                     </div>
-                    <div class="validate" v-else/> 
+                    <div class="validate" v-else />
                   </div>
                   <div>
                     <password-input
@@ -154,12 +160,14 @@
                   <div class="container">
                     <div class="row" v-if="isLogin">
                       <div class="col">
+                        <!-- :diabled="isValidNewWallet" is temporarily set without an exclamation mark infront -->
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="success"
                           block
                           @click.native="login()"
-                          :disabled="!isValidNewWallet" >
+                          :disabled="isValidNewWallet"
+                        >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
@@ -174,7 +182,8 @@
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="info"
                           block
-                          @click.native="showImportView()" >
+                          @click.native="showImportView()"
+                        >
                           <span style="display: block;">
                             <i class="fas fa-file-import"></i> IMPORT
                           </span>
@@ -185,7 +194,8 @@
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="danger"
                           block
-                          @click.native="newLogin()" >
+                          @click.native="newLogin()"
+                        >
                           <span style="display: block;">
                             <i class="fa fa-key"></i> CREATE
                           </span>
@@ -198,7 +208,8 @@
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="default"
                           block
-                          @click.native="cancelEvent()" >
+                          @click.native="cancelEvent()"
+                        >
                           <span style="display: block;">
                             <i class="fa fa-close"></i>
                             CANCEL
@@ -211,7 +222,8 @@
                           type="warning"
                           block
                           :disabled="!this.isValidNewWallet"
-                          @click.native="createLogin()" >
+                          @click.native="createLogin()"
+                        >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
@@ -226,7 +238,8 @@
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="default"
                           block
-                          @click.native="cancelImportView()" >
+                          @click.native="cancelImportView()"
+                        >
                           <span style="display: block;">
                             <i class="fa fa-close"></i>
                             CANCEL
@@ -234,11 +247,14 @@
                         </p-button>
                       </div>
                       <div class="col-md-6 pl-md-2 mb-3">
+                        <!-- :diabled="isValidNewWallet" is temporarily set without an exclamation mark infront -->
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="info"
                           block
-                          @click.native="importWallet()">
+                          @click.native="importWallet()"
+                          :disabled="isValidNewWallet"
+                        >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
@@ -255,7 +271,7 @@
         </div>
       </div>
     </div>
-    <page-overlay text="Loading..." :isActive="overlay"/>
+    <page-overlay text="Loading..." :isActive="overlay" />
   </div>
 </template>
 

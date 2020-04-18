@@ -19,6 +19,7 @@ import (
 	"github.com/dustin/go-humanize"
 )
 
+// WriteCounter stores dl state of the cl binaries
 type WriteCounter struct {
 	Total    uint64
 	LastEmit uint64
@@ -54,10 +55,13 @@ func (a *WalletApplication) detectJavaPath() {
 			errFormatted := fmt.Sprint(err) + ": " + stderr.String()
 			a.log.Errorf(errFormatted)
 			a.LoginError("Unable to find Java Installation")
+			a.paths.Java = "No valid path detected"
+			return
 		}
 		jPath := out.String() // May contain multiple
 		if jPath == "" {
 			a.LoginError("Unable to find Java Installation")
+			a.paths.Java = "No valid path detected"
 			return
 		}
 		s := strings.Split(strings.Replace(jPath, "\r\n", "\n", -1), "\n")
@@ -72,7 +76,7 @@ func (a *WalletApplication) detectJavaPath() {
 	}
 }
 
-// Convert byte slice to float64
+// Float64frombytes converts byte slice to float64
 func Float64frombytes(bytes []byte) float64 {
 	bits := binary.LittleEndian.Uint64(bytes)
 	float := math.Float64frombits(bits)
@@ -85,12 +89,14 @@ func normalizeAmounts(i int64) (string, error) {
 	return f, nil
 }
 
+// TempFileName creates temporary file names for the transaction files
 func (a *WalletApplication) TempFileName(prefix, suffix string) string {
 	randBytes := make([]byte, 16)
 	rand.Read(randBytes)
 	return filepath.Join(a.paths.TMPDir, prefix+hex.EncodeToString(randBytes)+suffix)
 }
 
+// Write emits the download progress of the CL binaries to the frontend
 func (wc *WriteCounter) Write(p []byte) (int, error) {
 	n := len(p)
 	wc.Total += uint64(n)

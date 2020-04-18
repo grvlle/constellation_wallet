@@ -155,7 +155,7 @@ func (a *WalletApplication) initMainnetConnection() {
 
 	a.Network.Handles.Send = "/send"
 	a.Network.Handles.Transaction = "/transaction"
-	a.Network.Handles.Balance = "/balance/"
+	a.Network.Handles.Balance = "/address/"
 
 	a.Network.BlockExplorer.URL = "https://3pii1fjixi.execute-api.us-west-1.amazonaws.com/cl-block-explorer-testnet"
 	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"
@@ -164,7 +164,7 @@ func (a *WalletApplication) initMainnetConnection() {
 	a.Network.BlockExplorer.Handles.CollectTX = "/transactions?sender="
 }
 
-// Errors reported by the blockexplerer/loadbalancer are reported in the following format
+// APIError reported by the blockexplerer/loadbalancer are reported in the following format
 // {"error": "Cannot find transactions for sender"}
 type APIError struct {
 	Error string

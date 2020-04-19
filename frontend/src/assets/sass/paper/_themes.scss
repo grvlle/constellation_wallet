@@ -56,23 +56,23 @@ $themes: (
     dangerStatesColor: $danger-states-color
   ),
   dark: (
-    backgroundColor: #181818,
+    backgroundColor: #121212,
     borderColor: #2E2E2E,
 
-    cardBackgroundColor: #1E1E1E,
+    cardBackgroundColor: #181818,
     cardTitleColor: $light-gray,
     cardLabelColor: #AFAFAF,
     cardTextColor: #BCBCBC,
-    cardTableColor: #2E2E2E,
+    cardTableColor: #202020,
 
-    navbarBackgroundColor: #272727,
+    navbarBackgroundColor: #1d1d1d,
     navbarBorderColor: #272727,
     navbarTextColor: #BCBCBC,
     navbarIconColor: $info-color,
 
-    sidebarBackgroundColor: #1E1E1E,
+    sidebarBackgroundColor: #181818,
     sidebarTextColor: #BCBCBC,
-    sidebarArrowColor: #181818,
+    sidebarArrowColor: #121212,
 
     inputBackgroundColor:#272727,
     inputBorderColor: $dark-gray,

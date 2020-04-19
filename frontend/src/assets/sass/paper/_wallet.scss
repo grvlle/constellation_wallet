@@ -19,11 +19,11 @@
   display: block;
   overflow: hidden;
   white-space: nowrap;
+  border-radius: 5px;
   text-overflow: ellipsis;
   padding-top: 0em;
   margin-bottom: 0em;
   font-size: 1.5625rem;
-  font-weight: 100;
   @include themed() {
       color: t('walletAddressColor');
   }

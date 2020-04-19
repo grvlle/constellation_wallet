@@ -77,8 +77,8 @@
                   placeholder="Enter a new Wallet Label..."
                   v-model="newLabel"
                 />
-                <span class="input-group-btn">
-                  <p-button @click.native="submitLabel()" type="info" style="width:6rem;">Apply</p-button>
+                <span class="input-group-append">
+                  <p-button @click.native="submitLabel()" type="success" style="width:6rem;">Apply</p-button>
                 </span>
               </div>
               <div class="input-group">
@@ -89,8 +89,8 @@
                   :placeholder="this.$store.state.walletInfo.imgPath"
                   v-model="this.$store.state.walletInfo.imgPath"
                 />
-                <span class="input-group-btn">
-                  <p-button @click.native="uploadImage()" type="info" style="width:6rem;">Browse</p-button>
+                <span class="input-group-append">
+                  <p-button @click.native="uploadImage()" type="default" style="width:6rem;">Browse</p-button>
                 </span>
               </div>
             </form>
@@ -161,7 +161,7 @@
           </div>
         </card>
       </div>
-      <div class="col-md-6 d-flex">
+      <!-- <div class="col-md-6 d-flex">
         <card
           title="Import / Export Keys"
           sub-title="Restore your Wallet from a previously exported file or create a new export"
@@ -186,7 +186,7 @@
                 </p-button>
               </div>
               <div class="col-md-6 pl-md-2 mb-3">
-                <p-button @click.native="exportKeys()" type="primary" block :disabled="true">
+                <p-button @click.native="exportKeys()" type="info" block :disabled="true">
                   <span style="display: block;">
                     <i class="fa fa-file-export"></i> EXPORT
                   </span>
@@ -195,7 +195,7 @@
             </div>
           </div>
         </card>
-      </div>
+      </div> -->
       <div class="col-md-6 d-flex">
         <card
           title="General settings"

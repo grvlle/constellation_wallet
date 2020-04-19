@@ -15,8 +15,23 @@
   }
 }
 
+.wallet-address {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-top: 0em;
+  margin-bottom: 0em;
+  font-size: 1.5625rem;
+  font-weight: 100;
+  @include themed() {
+      color: t('walletAddressColor');
+  }
+}
+
 .page-error-box {
   height: 1.875em;
+  padding-bottom: 10px;
 }
 
 .page-error-box p {

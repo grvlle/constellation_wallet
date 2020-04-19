@@ -9,14 +9,20 @@
               <div class="col-md-4">
                 <div class="input-group" style="margin-bottom: 0;">
                   <div class="input-group-prepend">
-                    <span class="input-group-text"><small>DAG</small></span>
+                    <span class="input-group-text">
+                      <small>DAG</small>
+                    </span>
                   </div>
-                  <input type="text" class="form-control" aria-label="Amount (in DAGs)"
+                  <input
+                    type="text"
+                    class="form-control"
+                    aria-label="Amount (in DAGs)"
                     v-model.number="txAmountValidation"
                     @change="sendAmount($event.target.value)"
                     pattern="[0-9]+([,\.][0-9]+)?"
                     step="0.01"
-                    placeholder="0"/>
+                    placeholder="0"
+                  />
                   <div class="input-group-append">
                     <button type="button" @click="setMaxDAGs()" class="btn">Max.</button>
                   </div>
@@ -31,12 +37,16 @@
                 <div class="validate"></div>
               </div>
               <div class="col-md-5">
-                <input type="text" class="form-control" aria-label="Amount (in DAGs)"
+                <input
+                  type="text"
+                  class="form-control"
+                  aria-label="Amount (in DAGs)"
                   v-model.trim="txAddressValidation"
                   @change="setName($event.target.value)"
                   placeholder="Enter Recipients Wallet Address..."
-                  />
-                <div class="validate"
+                />
+                <div
+                  class="validate"
                   v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength"
                 >
                   <p>Invalid wallet address. Please verify.</p>
@@ -44,15 +54,19 @@
                 <div class="validate" v-else></div>
               </div>
               <div class="col-md-2">
-                <p-button type="info" block @click.native="tx" 
+                <p-button
+                  type="info"
+                  block
+                  @click.native="tx"
                   style="max-width: 10rem; margin-left: auto;"
-                  :disabled="!this.$store.state.app.txFinished">
+                  :disabled="!this.$store.state.app.txFinished"
+                >
                   <span>
                     <i class="fa fa-paper-plane"></i> SEND
                   </span>
                 </p-button>
                 <div class="validate"></div>
-              </div> 
+              </div>
             </div>
           </form>
         </card>
@@ -71,12 +85,14 @@
               <tbody>
                 <tr v-for="tx in this.$store.state.txInfo.txHistory" v-bind:key="tx.ID">
                   <slot :row="item">
-                  <td class="columnA">
-                      
-                        <i style="color: #6DECBB;" v-if="tx.status === 'Complete'" class="fa fa-check"></i>
-                        <i style="color: #E2EA6E;" v-if="tx.status === 'Pending'" class="ti-timer"></i>
-                        <i style="color: firebrick;" v-if="tx.status === 'Error'" class="fa fa-times"></i>
-                      
+                    <td class="columnA">
+                      <i
+                        style="color: #6DECBB;"
+                        v-if="tx.status === 'Complete'"
+                        class="fa fa-check"
+                      ></i>
+                      <i style="color: #E2EA6E;" v-if="tx.status === 'Pending'" class="ti-timer"></i>
+                      <i style="color: firebrick;" v-if="tx.status === 'Error'" class="fa fa-times"></i>
                     </td>
                     <td class="columnB">
                       <p class="description" style="font-size: 0.9375rem;">
@@ -108,7 +124,7 @@
         </card>
       </div>
     </div>
-    <page-overlay text="Submitting Transaction..." :isActive="overlay"/>
+    <page-overlay text="Submitting Transaction..." :isActive="overlay" />
   </div>
 </template>
 
@@ -169,7 +185,9 @@ export default {
         Swal.mixin({
           progressSteps: ["1", "2"],
           customClass: {
-           container: this.$store.state.walletInfo.darkMode ? 'theme--dark' : 'theme--light'
+            container: this.$store.state.walletInfo.darkMode
+              ? "theme--dark"
+              : "theme--light"
           }
         })
           .queue([
@@ -215,13 +233,20 @@ export default {
               let amount = self.txAmountValidation;
               let address = self.txAddressValidation;
               let fee = result.value;
+              const swalPopup = Swal.mixin({
+          customClass: {
+            container: this.$store.state.walletInfo.darkMode
+              ? "theme--dark"
+              : "theme--light"
+          }
+        });
               window.backend.WalletApplication.TriggerTXFromFE(
                 parseFloat(amount),
                 parseFloat(fee[1]),
                 address
               ).then(txFailed => {
                 if (txFailed) {
-                  Swal.fire({
+                  swalPopup.fire({
                     title: "Transaction Failed!",
                     text: "Unable to send Transaction",
                     type: "error"
@@ -230,7 +255,7 @@ export default {
                   self.overlay = false;
                 }
                 if (!txFailed) {
-                  Swal.fire({
+                  swalPopup.fire({
                     title: "Success!",
                     text:
                       "You have sent " +
@@ -328,31 +353,30 @@ export default {
 </script>
 
 <style scoped>
-
 td {
-    max-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 td.columnA {
-    width: 3%;
-    text-align: center;
+  width: 3%;
+  text-align: center;
 }
 td.columnB {
-    width: 15%;
+  width: 15%;
 }
 td.columnC {
-    width: 40%;
+  width: 40%;
 }
 td.columnD {
-    width: 10%;
+  width: 10%;
 }
 td.columnE {
-    width: 15%;
+  width: 15%;
 }
 td.columnF {
-    width: 17%;
+  width: 17%;
 }
 
 txhash a {

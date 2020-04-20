@@ -51,14 +51,14 @@
       <div class="col">
         <card title="Wallet Address" sub-title="">
           <div class="wallet-address">
-            <table>
+            <table style="table-layout:fixed;" class="table-noheader">
               <tr>
-                <td style="padding-top: 15px; padding-left: 15px; width: 90%;">
-                  <span class="text-overflow">{{wallet2.address}}</span>
+                <td class="text-overflow" style="word-wrap:break-word; padding-top: 20px; padding-left: 15px; width: 100%;">
+                  <span style="width: 100%;" class="text-overflow">{{wallet2.address}}</span>
                   <input type="hidden" id="testing-code" :value="wallet2.address" />
                 </td>
-                <td style="padding-top: 10px;">
-                  <p-button type="info" style="margin-bottom: 12px;" icon @click.native="copyTestingCode">
+                <td style="padding-top: 10px; width: 9%;">
+                  <p-button type="info" style="margin-bottom: 5px;" icon @click.native="copyTestingCode">
                     <i class="fa fa-copy"></i>
                   </p-button>
                 </td>
@@ -79,7 +79,7 @@
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> Foundation
             <i class="fa fa-circle text-success"></i> Medium
-            <i class="fa fa-circle text-danger"></i> Light
+            <i class="fa fa-circle text-secondary"></i> Light
           </div>
           <span slot="footer">
             <i class="ti-timer"></i>
@@ -93,7 +93,7 @@
           title="Transactions"
           sub-title="Sent vs. received over the last year"
           :chart-data="this.$store.state.chartData.transactions"
-          :chart-options="activityChart.options"
+          :chart-options="transactionChart.options"
         >
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> TX
@@ -111,7 +111,7 @@
           title="Network Throughput (tps)"
           sub-title="24 Hours performance"
           :chart-data="this.$store.state.chartData.throughput"
-          :chart-options="usersChart.options"
+          :chart-options="throughputChart.options"
         >
           <span slot="footer">
             <i class="ti-timer"></i>
@@ -121,11 +121,6 @@
             <i class="fa fa-circle text-info"></i> $DAG Tokens
             <i class="fa fa-circle text-success"></i> Data
           </div>
-          <!-- <div slot="legend">
-            <i class="fa fa-circle text-info"></i> Open
-            <i class="fa fa-circle text-danger"></i> Click
-            <i class="fa fa-circle text-warning"></i> Click Second Time
-          </div>-->
         </chart-card>
       </div>
     </div>
@@ -218,23 +213,7 @@ export default {
       notifications: {
         topCenter: false
       },
-      usersChart: {
-        data: {
-          labels: [
-            "9:00AM",
-            "12:00AM",
-            "3:00PM",
-            "6:00PM",
-            "9:00PM",
-            "12:00PM",
-            "3:00AM",
-            "6:00AM"
-          ], //this.$store.state.chartData.throughput.labels,
-          series: [
-            this.$store.state.chartData.throughput.seriesOne,
-            this.$store.state.chartData.throughput.seriesTwo
-          ]
-        },
+      transactionChart: {
         options: {
           low: 0,
           high: 1000,
@@ -250,27 +229,7 @@ export default {
           showPoint: false
         }
       },
-      activityChart: {
-        data: {
-          labels: [
-            "Jan  ",
-            "Feb  ",
-            "Mar  ",
-            "Apr  ",
-            "Mai  ",
-            "Jun  ",
-            "Jul  ",
-            "Aug  ",
-            "Sep  ",
-            "Oct  ",
-            "Nov  ",
-            "Dec  "
-          ], //this.$store.state.chartData.transactions.labels,
-          series: [
-            this.$store.state.chartData.transactions.seriesOne,
-            this.$store.state.chartData.transactions.seriesTwo
-          ]
-        },
+      throughputChart: {
         options: {
           seriesBarDistance: 10,
           axisX: {
@@ -279,13 +238,6 @@ export default {
           height: "15.3125em"
         }
       },
-      preferencesChart: {
-        data: {
-          labels: this.$store.state.chartData.nodesOnline.labels,
-          series: this.$store.state.chartData.nodesOnline.series
-        },
-        options: {}
-      }
     };
   }
 };
@@ -298,12 +250,6 @@ export default {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-.stats-card .card {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
 .stats-card .card-body .row [class^="col"] {
@@ -321,25 +267,8 @@ export default {
   margin-top: auto;
 }
 
-.wallet-address {
-  color: #c4c4c4;
-  padding-top: 0em;
-  padding-bottom: 0.3em;
-  background-color: #f7f7f7;
-  font-size: 1.5625rem;
-  font-weight: 100;
-}
-
 .wallet-address > p-button {
   margin-bottom: 10em;
 }
 
-.wallet-address > table {
-  width: 100%;
-  table-layout: fixed;
-}
-
-.wallet-address > table tr {
-  background-color: #f9f9f9;
-}
 </style>

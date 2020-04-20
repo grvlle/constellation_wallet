@@ -1,3 +1,5 @@
+@import "themes";
+
 .wrapper .sidebar {
   position: fixed;
   top: 0;
@@ -13,7 +15,7 @@
     overflow-x: hidden;
     width: 16.25em;
     z-index: 4;
-    box-shadow: inset -0.0625em 0em 0em 0em $medium-gray;
+    // box-shadow: inset -0.0625em 0em 0em 0em $medium-gray;
   }
   .sidebar-background {
     position: absolute;
@@ -82,7 +84,7 @@
         padding-left: 1.5625em;
         padding-right: 1.5625em;
 
-        opacity: .7;
+        opacity: 0.7;
       }
 
       &:hover > .nav-link {
@@ -124,18 +126,40 @@
     top: 0;
     left: 0;
     z-index: 2;
-    background: $white-background-color;
+    @include themed() {
+      background: t('sidebarBackgroundColor');
+    }
   }
 
-  &,
-  &[data-background-color="white"] {
-    @include sidebar-background-color($white-background-color, $default-color);
+  .logo {
+    border-bottom: 0.0625em solid rgba($font-color, .3);
+
+    p {
+      @include themed() {
+        color: t('sidebarTextColor');
+      }
+    }
+
+    .simple-text {
+      @include themed() {
+        color: t('sidebarTextColor');
+      }
+    }
   }
-  &[data-background-color="black"] {
-    @include sidebar-background-color($black-background-color, $white-color);
-  }
-  &[data-background-color="darkblue"] {
-    @include sidebar-background-color($darkblue-background-color, $white-color);
+
+  .nav {
+    .nav-item:not(.active) .nav-item {
+      > .nav-link {
+        @include themed() {
+          color: t('sidebarTextColor');
+        }
+      }
+    }
+    
+    .divider {
+      background-color: rgba($black-color, .2);
+    }
+
   }
 
   &[data-active-color="primary"] {
@@ -157,13 +181,15 @@
 }
 
 .main-panel {
-  background-color: $bg-nude;
   position: relative;
   z-index: 2;
   float: right;
   width: $sidebar-width;
   min-height: 100%;
   overflow: auto;
+  @include themed() {
+    background-color: t('backgroundColor');
+  }
 
   > .content {
     padding: 1.875em 0.9375em;

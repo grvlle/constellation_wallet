@@ -1,0 +1,154 @@
+@import "themes";
+
+.validate {
+  height: 0.625em;
+  display: flex;
+}
+
+.validate > p {
+  /*flex: 1;*/
+  font-size: 0.625rem;
+  margin-top: 0em;
+  margin-right: 0.125em;
+  @include themed() {
+    color: t('errorTextColor');
+  }
+}
+
+.wallet-address {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-radius: 5px;
+  text-overflow: ellipsis;
+  padding-top: 0em;
+  margin-bottom: 0em;
+  font-size: 1.5625rem;
+  @include themed() {
+      color: t('walletAddressColor');
+  }
+}
+
+.page-error-box {
+  height: 1.875em;
+  padding-bottom: 10px;
+}
+
+.page-error-box p {
+    font-size: 0.75rem;
+    @include themed() {
+      color: t('errorTextColor');
+    }
+}
+
+.icon-point-right {
+  @include themed() {
+    color: t('successColor');
+  }
+  font-size: 2.5rem; 
+  width:100%;
+}
+
+.card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-footer {
+  margin-top: auto;
+}
+
+.input-group-append .btn {
+  border: 1px solid;
+  @include themed() {
+    border-color: t('inputBorderColor');
+  }
+}
+
+.input-group-text {
+  @include themed() {
+    background-color: t('inputBackgroundColor');
+    color: t('inputTextColor');
+    border-color: t('inputBorderColor');
+  }
+}
+
+.swal2-popup.swal2-modal.swal2-show {
+  @include themed() {
+    background: t('popupBackgroundColor');
+  }
+}
+
+.ct-series-a .ct-line,
+.ct-series-a .ct-point {
+  @include themed() {
+    stroke: t('chartSeriesALineColor');
+  }
+}
+.ct-series-a .ct-slice-pie, .ct-series-a .ct-area {
+  @include themed() {
+    fill: t('chartSeriesAFIllColor');
+  }
+}
+
+.ct-series-b .ct-line,
+.ct-series-b .ct-point {
+  @include themed() {
+    stroke: t('chartSeriesBLineColor');
+  }
+}
+.ct-series-b .ct-slice-pie, .ct-series-b .ct-area {
+  @include themed() {
+    fill: t('chartSeriesBFIllColor');
+  }
+}
+
+.ct-series-c .ct-line,
+.ct-series-c .ct-point {
+  @include themed() {
+    stroke: t('chartSeriesCLineColor');
+  }
+}
+.ct-series-c .ct-slice-pie, .ct-series-c .ct-area {
+  @include themed() {
+    fill: t('chartSeriesCFIllColor');
+  }
+}
+
+.ct-series-a .ct-slice-pie {
+  @include themed() {
+    fill: t('pieSeriesAFillColor');
+  }
+}
+
+.ct-series-b .ct-slice-pie {
+  @include themed() {
+    fill: t('pieSeriesBFillColor');
+  }
+}
+
+.ct-series-c .ct-slice-pie {
+  @include themed() {
+    fill: t('pieSeriesCFillColor');
+  }
+}
+
+.ct-label {
+  @include themed() {
+    fill: t('chartTextColor');
+    color: t('chartTextColor');
+  }
+}
+
+.ct-grid {
+  @include themed() {
+    stroke: t('chartGridColor');
+  }
+}

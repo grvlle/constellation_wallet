@@ -1,4 +1,6 @@
 /*     General overwrite     */
+@import "themes";
+
 body {
   color: $font-color;
   font-size: $font-size-base;
@@ -69,7 +71,9 @@ button:focus {
 }
 
 hr {
-  border-color: $medium-pale-bg;
+  @include themed() {
+    border-color: t('borderColor');
+  }
 }
 
 .wrapper {

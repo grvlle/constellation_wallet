@@ -2,10 +2,10 @@
   <div class="bg vertical-center" id="app">
     <div class="container">
       <div class="row">
-        <div class="col-md-6 mx-auto text-center header">
+        <div class="col mx-auto text-center header">
           <div v-if="isLogin">
             <img
-              class="img-fluid"
+              
               style="max-height: 5.8rem;"
               src="~@/assets/img/Constellation-Logo-Black.png"
             />
@@ -21,7 +21,7 @@
         <div class="col-12">
           <form ref="textareaform" @submit.prevent="form" class="container">
             <div class="row">
-              <div class="col-md-5 info-box" v-if="isRegister">
+              <div class="col mx-auto login-box" v-if="isRegister">
                 <div>
                   <b>Create a new wallet</b>
                   <br />This section will let you create a Molly Wallet to store your
@@ -58,7 +58,7 @@
                   <b>Important!</b> Please backup your Alias, Store Passwords, Key Password and KeyStore File (key.p12) as these will allow you to restore your wallet at any time.
                 </div>
               </div>
-              <div class="col-md-5 info-box" v-if="isImport">
+              <div class="col-md-6 mx-auto login-box" v-if="isImport">
                 <div>
                   <b>Import an existing wallet.</b>
                   <br />This section will let you import an existing KeyStore (key.p12). Simply browse to the location of the KeyStore file, enter the Store Password as well as the Key Password to access it.
@@ -87,7 +87,7 @@
                   </ul>If you're able to authenticate against the Key Store and Private Key, your Key Store will be unlocked and you'll be able to access your wallet.
                 </div>
               </div>
-              <div class="col-md-6 mx-auto login-box">
+              <div class="col mx-auto login-box">
                 <div class="input-box">
                   <div v-if="isLogin">
                     <label class="control-label">Select your private key (key.p12)</label>
@@ -166,7 +166,7 @@
                           type="success"
                           block
                           @click.native="login()"
-                          :disabled="isValidNewWallet"
+                          :disabled="!isValidNewWallet"
                         >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
@@ -253,7 +253,7 @@
                           type="info"
                           block
                           @click.native="importWallet()"
-                          :disabled="isValidNewWallet"
+                          :disabled="!isValidNewWallet"
                         >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
@@ -694,6 +694,8 @@ html {
 
 .login-box {
   max-width: 29rem;
+  min-width: 29rem;
+  padding-bottom: 2rem;
 }
 
 .input-box > div {
@@ -720,26 +722,5 @@ html {
   margin-right: 0em;
   padding-left: 0em;
   padding-right: 0em;
-}
-
-.page-error-box {
-  height: 1.875em;
-}
-
-.page-error-box p {
-  color: firebrick;
-  font-size: 0.75rem;
-}
-
-.validate {
-  height: 0.625em;
-  display: flex;
-}
-.validate > p {
-  /*flex: 1;*/
-  font-size: 0.625rem;
-  color: firebrick;
-  margin-top: 0em;
-  margin-right: 0.125em;
 }
 </style>

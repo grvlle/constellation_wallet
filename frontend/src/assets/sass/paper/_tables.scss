@@ -1,14 +1,25 @@
+@import "themes";
+
 .table {
+  @include themed() {
+    color: t('cardTextColor');
+  }
   thead,
   tbody,
   tfoot {
     tr > th,
     tr > td {
-      border-top: 0.0625em solid $table-line-color;
+      border-top: 0.0625em solid;
+      @include themed() {
+        border-top-color: t('borderColor');
+      }
     }
   }
   thead th {
-    border-bottom: 0.0625em solid $table-line-color;
+    border-bottom: 0.0625em solid;
+    @include themed() {
+      border-bottom-color: t('borderColor');
+    }
     border-top: 0;
   }
   > thead > tr > th {
@@ -79,4 +90,24 @@
   > tfoot > tr > td {
     padding: 0.9375em 0.5em;
   }
+}
+
+.table-noheader {
+  width:100%;
+}
+
+.table-noheader > tr {
+  border-bottom: 0.625em solid;
+  @include themed() {
+    background-color: t('cardTableColor');
+    border-bottom-color: t('cardBackgroundColor');
+  }
+}
+
+.table-noheader > tr > td {
+  padding: 0.625em;
+}
+
+.table-noheader > tr > td > p {
+  margin-bottom: 0;
 }

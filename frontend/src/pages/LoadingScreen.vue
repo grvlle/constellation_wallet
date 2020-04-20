@@ -64,6 +64,7 @@ export default {
   height: 100%;
   position: absolute;
   width: 100%;
+  overflow: hidden;
 
   /* Center and scale the image nicely */
   background-position: center;

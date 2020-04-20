@@ -227,14 +227,4 @@ $color-discord: #7289da;
     transform: translate(-50%, 100%);
   }
 }
-
-.card {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.card-footer {
-  margin-top: auto;
-}
 </style>

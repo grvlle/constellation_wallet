@@ -78,6 +78,7 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address 
 	if err != nil {
 		a.log.Errorln("Error when querying wallet balance. Reason: ", err)
 		a.sendWarning("Unable to poll balance for wallet. Please try again later.")
+		a.TransactionFailed = true
 		return
 	}
 	if amount+fee > int64(balance)*1e8 {

@@ -72,7 +72,9 @@
 .btn-info    { @include btn-styles($info-color, $info-states-color); }
 .btn-warning { @include btn-styles($warning-color, $warning-states-color); }
 .btn-danger  { @include btn-styles($danger-color, $danger-states-color); }
-.btn-neutral  { @include btn-styles($white-color, $default-states-color); }
+.theme--dark .btn-primary { @include btn-styles($primary-color-dark, $primary-states-color-dark); }
+.theme--dark .btn-success { @include btn-styles($success-color-dark, $success-states-color-dark); }
+.theme--dark .btn-info    { @include btn-styles($info-color-dark, $info-states-color-dark); }
 
 .btn-outline-default { @include btn-outline-styles($default-color, $default-states-color); }
 .btn-outline-primary { @include btn-outline-styles($primary-color, $primary-states-color); }
@@ -80,6 +82,11 @@
 .btn-outline-info    { @include btn-outline-styles($info-color, $info-states-color); }
 .btn-outline-warning { @include btn-outline-styles($warning-color, $warning-states-color); }
 .btn-outline-danger  { @include btn-outline-styles($danger-color, $danger-states-color); }
+.theme--dark .btn-outline-primary { @include btn-outline-styles($primary-color-dark, $primary-states-color-dark); }
+.theme--dark .btn-outline-success { @include btn-outline-styles($success-color-dark, $success-states-color-dark); }
+.theme--dark .btn-outline-info    { @include btn-outline-styles($info-color-dark, $info-states-color-dark); }
+
+.btn-neutral  { @include btn-styles($white-color, $default-states-color); }
 .btn-outline-neutral { @include btn-outline-styles($white-color, $default-states-color);
   &:hover,
   &:focus{

@@ -13,7 +13,7 @@ export const store = new Vuex.Store({
             toc: false,
             txFinished: true,
             isLoading: false,
-            isLoggedIn: false, // Change to false
+            isLoggedIn: true, // Change to false
             isDownloadingDependencies: true,
             import: false,
             register: false,
@@ -85,6 +85,13 @@ export const store = new Vuex.Store({
             state.txInfo.txHistory = txHistoryUpdated
             
         },
+    },
+    getters: {
+        getTxCounter (state) {
+            return state.counters.nodesOnlineCounter
+        }
     }
+    
 
 })
+

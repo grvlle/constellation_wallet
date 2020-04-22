@@ -49,16 +49,24 @@
     </div>
     <div class="row">
       <div class="col">
-        <card title="Wallet Address" sub-title="">
+        <card title="Wallet Address" sub-title>
           <div class="wallet-address">
             <table style="table-layout:fixed;" class="table-noheader">
               <tr>
-                <td class="text-overflow" style="word-wrap:break-word; padding-top: 20px; padding-left: 15px; width: 100%;">
+                <td
+                  class="text-overflow"
+                  style="word-wrap:break-word; padding-top: 20px; padding-left: 15px; width: 100%;"
+                >
                   <span style="width: 100%;" class="text-overflow">{{wallet2.address}}</span>
                   <input type="hidden" id="testing-code" :value="wallet2.address" />
                 </td>
                 <td style="padding-top: 10px; width: 9%;">
-                  <p-button type="info" style="margin-bottom: 5px;" icon @click.native="copyTestingCode">
+                  <p-button
+                    type="info"
+                    style="margin-bottom: 5px;"
+                    icon
+                    @click.native="copyTestingCode"
+                  >
                     <i class="fa fa-copy"></i>
                   </p-button>
                 </td>
@@ -94,6 +102,7 @@
           sub-title="Sent vs. received over the last year"
           :chart-data="this.$store.state.chartData.transactions"
           :chart-options="transactionChart.options"
+          chart-type="Line"
         >
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> TX
@@ -111,7 +120,8 @@
           title="Network Throughput (tps)"
           sub-title="24 Hours performance"
           :chart-data="this.$store.state.chartData.throughput"
-          :chart-options="throughputChart.options"
+          :chart-options="this.throughputChart.options"
+          chart-type="Line"
         >
           <span slot="footer">
             <i class="ti-timer"></i>
@@ -129,7 +139,7 @@
 
 <script>
 import { StatsCard, ChartCard } from "@/components/index";
-import Chartist from "chartist";
+// import Chartist from "chartist";
 import WalletCopiedNotification from "./Notifications/WalletCopied";
 import WalletCopiedFailedNotification from "./Notifications/WalletCopiedFailed";
 
@@ -184,20 +194,20 @@ export default {
     wallet2() {
       return this.$store.state.walletInfo;
     },
-    chartData() {
-      return this.$store.state.chartData;
+    transactionChartData() {
+      return this.$store.state.chartData.transactions;
     }
   },
   filters: {
-    asCurrency: function (value, currency) {
+    asCurrency: function(value, currency) {
       var formatter = new Intl.NumberFormat(navigator.language, {
-        style: 'currency',
+        style: "currency",
         currency: currency,
         minimumFractionDigits: 0
       });
       return formatter.format(value);
     },
-    asDAGs: function (value) {
+    asDAGs: function(value) {
       var formatter = new Intl.NumberFormat(navigator.language);
       return formatter.format(value);
     }
@@ -222,12 +232,12 @@ export default {
           axisX: {
             showGrid: false
           },
-          lineSmooth: Chartist.Interpolation.simple({
-            divisor: 3
-          }),
+          lineSmooth: true,
           showLine: true,
           showPoint: false
-        }
+        },
+          
+        
       },
       throughputChart: {
         options: {
@@ -237,14 +247,16 @@ export default {
           },
           height: "15.3125em"
         }
-      },
+      }
     };
+
   }
+
 };
+
 </script>
 
 <style>
-
 .text-overflow {
   display: block;
   overflow: hidden;
@@ -256,7 +268,7 @@ export default {
   margin-left: 0;
   margin-right: 0;
   padding-left: 0;
-  padding-right: 0;  
+  padding-right: 0;
 }
 
 .stats-card .card-body .row [class^="col"] .numbers {
@@ -270,5 +282,4 @@ export default {
 .wallet-address > p-button {
   margin-bottom: 10em;
 }
-
 </style>

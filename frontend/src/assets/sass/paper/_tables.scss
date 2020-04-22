@@ -12,7 +12,7 @@
       border-top: 0.0625em solid;
       @include themed() {
         border-top-color: t('borderColor');
-        background-color: t('cardTableColor'); 
+        background-color: t('cardTransactionTableColor'); 
       }
     }
   }

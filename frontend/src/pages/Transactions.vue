@@ -75,7 +75,7 @@
     <div class="row">
       <div class="col">
         <card class="card" :title="table2.title" :subTitle="table2.subTitle">
-          <div class="table-full-width table-responsive">
+          <div class="table-full-width table-responsive" style="width: 100%;">
             <table class="table" :class="tableClass">
               <thead>
                 <slot txAddressValidation="columns">
@@ -371,13 +371,13 @@ td.columnC {
   width: 40%;
 }
 td.columnD {
-  width: 10%;
+  width: 5%;
 }
 td.columnE {
-  width: 15%;
+  width: 22%;
 }
 td.columnF {
-  width: 17%;
+  width: 15%;
 }
 
 txhash a {

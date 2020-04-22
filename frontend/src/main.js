@@ -18,6 +18,7 @@ import VueProgressBar from 'vue-progressbar'
 
 Vue.component('jw-pagination', JwPagination);
 
+
 Vue.use(VueProgressBar, {
   color: '#6DECBB',
   failedColor: 'red',

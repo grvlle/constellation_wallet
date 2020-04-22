@@ -29,4 +29,5 @@ func main() {
 
 	frontend.Bind(&WalletApplication{})
 	frontend.Run()
+
 }

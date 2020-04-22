@@ -426,7 +426,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 				Receiver: tx.Receiver,
 				Fee:      tx.Fee,
 				Hash:     tx.Hash,
-				TS:       time.Now().Format("Mon Jan _2 15:04:05 2006") + " (imported)",
+				TS:       time.Now().Format("Jan _2 15:04:05") + " (imported)",
 				Status:   "Complete",
 				Failed:   false,
 			}

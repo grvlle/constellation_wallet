@@ -361,6 +361,7 @@ td {
 }
 td.columnA {
   width: 3%;
+  padding-top: 0px;
   text-align: center;
 }
 td.columnB {

@@ -10,17 +10,60 @@ import (
 	"time"
 )
 
+// type Transaction struct {
+// 	Edge struct {
+// 		ObservationEdge struct {
+// 			Parents []struct {
+// 				Hash     string `json:"hashReference"`
+// 				HashType string `json:"hashType"`
+// 			} `json:"parents"`
+// 			Data struct {
+// 				Hash     string `json:"hashReference"`
+// 				HashType string `json:"hashType"`
+// 			} `json:"data"`
+// 		} `json:"observationEdge"`
+// 		SignedObservationEdge struct {
+// 			SignatureBatch struct {
+// 				Hash       string `json:"hashReference"`
+// 				Signatures []struct {
+// 					Signature string `json:"signature"`
+// 					ID        struct {
+// 						Hex string `json:"hex"`
+// 					} `json:"id"`
+// 				} `json:"signatures"`
+// 			} `json:"signatureBatch"`
+// 		} `json:"signedObservationEdge"`
+// 		Data struct {
+// 			Amount    int64 `json:"amount"`
+// 			LastTxRef struct {
+// 				Hash    string `json:"hashReference"`
+// 				Ordinal int    `json:"ordinal"`
+// 			} `json:"lastTxRef"`
+// 			Fee  int64 `json:"fee,omitempty"`
+// 			Salt int64 `json:"salt"`
+// 		} `json:"data"`
+// 	} `json:"edge"`
+// 	LastTxRef struct {
+// 		Hash    string `json:"hashReference"`
+// 		Ordinal int    `json:"ordinal"`
+// 	} `json:"lastTxRef"`
+// 	IsDummy bool `json:"isDummy"`
+// 	IsTest  bool `json:"isTest"`
+// }
+
 // Transaction contains all tx information
 type Transaction struct {
 	Edge struct {
 		ObservationEdge struct {
 			Parents []struct {
-				Hash     string `json:"hash"`
-				HashType string `json:"hashType"`
+				HashReference string `json:"hashReference"`
+				HashType      string `json:"hashType"`
+				BaseHash      string `json:"baseHash"`
 			} `json:"parents"`
 			Data struct {
-				Hash     string `json:"hash"`
-				HashType string `json:"hashType"`
+				HashReference string `json:"hashReference"`
+				HashType      string `json:"hashType"`
+				BaseHash      string `json:"baseHash"`
 			} `json:"data"`
 		} `json:"observationEdge"`
 		SignedObservationEdge struct {
@@ -37,16 +80,16 @@ type Transaction struct {
 		Data struct {
 			Amount    int64 `json:"amount"`
 			LastTxRef struct {
-				Hash    string `json:"hash"`
-				Ordinal int    `json:"ordinal"`
+				PrevHash string `json:"prevHash"`
+				Ordinal  int    `json:"ordinal"`
 			} `json:"lastTxRef"`
 			Fee  int64 `json:"fee,omitempty"`
 			Salt int64 `json:"salt"`
 		} `json:"data"`
 	} `json:"edge"`
 	LastTxRef struct {
-		Hash    string `json:"hash"`
-		Ordinal int    `json:"ordinal"`
+		PrevHash string `json:"prevHash"`
+		Ordinal  int    `json:"ordinal"`
 	} `json:"lastTxRef"`
 	IsDummy bool `json:"isDummy"`
 	IsTest  bool `json:"isTest"`
@@ -135,7 +178,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 		}
 
 		bodyString := string(bodyBytes[1:65])
-		a.log.Infoln(len(bodyBytes))
+		a.log.Infoln("The bytesize of the request body: ", len(bodyBytes))
 		if len(bodyBytes) == 66 {
 			a.log.Info("Transaction Hash: ", bodyString)
 			a.TxPending(bodyString)
@@ -178,7 +221,7 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 	if TXSuccessfullyPutOnNetwork {
 		txData := &TXHistory{
 			Amount:   tx.Edge.Data.Amount,
-			Receiver: tx.Edge.ObservationEdge.Parents[1].Hash,
+			Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 			Fee:      tx.Edge.Data.Fee,
 			Hash:     hash,
 			TS:       time.Now().Format("Mon Jan _2 15:04:05 2006"),
@@ -193,7 +236,7 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 	}
 	txData := &TXHistory{
 		Amount:   tx.Edge.Data.Amount,
-		Receiver: tx.Edge.ObservationEdge.Parents[1].Hash,
+		Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 		Fee:      tx.Edge.Data.Fee,
 		Hash:     hash,
 		TS:       time.Now().Format("Mon Jan _2 15:04:05 2006"),

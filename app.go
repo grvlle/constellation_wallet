@@ -94,7 +94,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.RT = runtime
 	a.killSignal = make(chan struct{}) // Used to kill go routines and hand back system resources
 	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download"
-	a.WalletCLI.Version = "2.1.0-rc"
+	a.WalletCLI.Version = "2.5.2"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {

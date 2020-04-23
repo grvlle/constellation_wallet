@@ -105,7 +105,6 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.detectJavaPath()
 	a.initMainnetConnection()
 	a.checkOS()
-	a.initDashboardWidgets()
 
 	return nil
 }

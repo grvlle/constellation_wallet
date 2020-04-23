@@ -400,7 +400,7 @@ func (a *WalletApplication) TxPending(TXHash string) {
 
 			}
 			a.log.Infof("Transaction %v has been successfully processed", TXHash)
-			a.sendSuccess("Transaction" + TXHash + "has been successfully processed")
+			a.sendSuccess("Transaction " + TXHash + " has been successfully processed")
 			if err := a.DB.Table("tx_histories").Where("hash = ?", TXHash).UpdateColumn("status", status.Complete).Error; err != nil {
 				a.log.Errorln("Unable to query database object for the imported wallet. Reason: ", err)
 				a.LoginError("Unable to query database object for the imported wallet.")

@@ -39,6 +39,9 @@
           <div class="numbers text-center text-overflow" slot="content">
             <p>Blocks</p>
             {{wallet2.blocks}}
+            <!-- {{this.$store.state.OS.windows}}
+            {{this.$store.state.OS.macOS}}
+            {{this.$store.state.OS.linux}} -->
           </div>
           <div class="stats" slot="footer">
             <i class="ti-reload"></i>
@@ -138,8 +141,8 @@
 </template>
 
 <script>
-import { StatsCard, ChartCard } from "@/components/index";
-// import Chartist from "chartist";
+import { StatsCard, ChartCard} from "@/components/index";
+import Chartist from 'chartist';
 import WalletCopiedNotification from "./Notifications/WalletCopied";
 import WalletCopiedFailedNotification from "./Notifications/WalletCopiedFailed";
 
@@ -194,9 +197,9 @@ export default {
     wallet2() {
       return this.$store.state.walletInfo;
     },
-    transactionChartData() {
-      return this.$store.state.chartData.transactions;
-    }
+    // transactionChartData() {
+    //   return this.$store.state.chartData.transactions;
+    // }
   },
   filters: {
     asCurrency: function(value, currency) {
@@ -232,7 +235,9 @@ export default {
           axisX: {
             showGrid: false
           },
-          lineSmooth: true,
+          lineSmooth: Chartist.Interpolation.simple({
+            divisor: 3	
+          }),
           showLine: true,
           showPoint: false
         },

@@ -16,7 +16,7 @@ const (
 	updateIntervalToken    = 30 // Seconds
 	updateIntervalUSD      = 50 // Seconds
 	updateIntervalBlocks   = 5  // Seconds
-	updateIntervalPieChart = 6  // Seconds
+	updateIntervalPieChart = 60 // Seconds
 )
 
 // ChartData contains all the datapoints for the Charts

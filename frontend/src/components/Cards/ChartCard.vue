@@ -1,17 +1,15 @@
 <template>
   <card>
-    <template slot="header">
+    <div slot="header">
       <h4 v-if="$slots.title || title" class="card-title">
         <slot name="title">{{title}}</slot>
       </h4>
       <p class="card-category">
         <slot name="subTitle">{{subTitle}}</slot>
       </p>
-  </card>
-  </template>
+  </div>
   
-<template>
-    <card>
+
       <div>
         <div :id="chartId" class="ct-chart"></div>
         <div class="footer">
@@ -25,7 +23,6 @@
           <div class="pull-right"></div>
         </div>
       </div>
-
   </card>
 </template>
 
@@ -74,20 +71,41 @@ export default {
       chartId: "no-id",
       chartSelected: "",
       chartUpdated: false,
-      count: 0
+      count: 0,
+      onWindows: false,
+      onMacOS: false,
+      onLinux: false,
     };
   },
   computed: {
     counter() {
       return this.$store.state.counters.nodesOnlineCounter;
+    },
+    UserRunningOnWindows() {
+      return this.$store.state.OS.windows;
+    },
+    UserRunningOnMacOS() {
+      return this.$store.state.OS.macOS;
+    },
+    UserRunningOnLinux() {
+      return this.$store.state.OS.linux;
     }
   },
   watch: {
     counter(val) {
       this.count = val;
-      if (this.count == 6) {
+      if (this.count == 1) {
         this.chartSelected.update();
       }
+    },
+    UserRunningOnWindows(val) {
+        this.onWindows = val;
+    },
+    UserRunningOnMacOS(val) {
+        this.onMacOS = val;
+    },
+    UserRunningOnLinux(val) {
+        this.onLinux = val;
     }
   },
 
@@ -104,17 +122,29 @@ export default {
         chartIdQuery,
         this.chartData,
         this.chartOptions,
-        this.chartTask
       );
 
-      var delays = 80;
-      var durations = 500;
+      /* eslint-disable no-console */
+      // console.log("asfg", Chartist.Svg.isSupported("http://www.w3.org/TR/SVG11/feature#SVG-animation"))
+
+      // if (this.onWindows == false && this.onLinux == true || this.onMacOS == true) {
+      // console.log("asfg", chart.Svg.isSupported("http://www.w3.org/TR/SVG11/feature#SVG-animation"))
+      // }
+
+
+
+      return chart;
+    },
+
+    includeAnimations(chart) {
+      var delays = 0;
+      var durations = 3000;
 
       chart.on("draw", function(data) {
         if (data.type === "line" || data.type === "area") {
           data.element.animate({
             d: {
-              begin: 2000 * data.index,
+              begin: 1000 * data.index,
               dur: 3000,
               from: data.path
                 .clone()
@@ -122,13 +152,13 @@ export default {
                 .translate(0, data.chartRect.height())
                 .stringify(),
               to: data.path.clone().stringify(),
-              easing: Chartist.Svg.Easing.easeOutQuart
+              easing: "easeOutQuart"
             }
           });
           data.element.animate({
             opacity: {
               // The delay when we like to start the animation
-              begin: delays + 1000,
+              begin: delays,
               // Duration of the animation
               dur: durations,
               // The value where the animation should start
@@ -138,6 +168,7 @@ export default {
             }
           });
         }
+        
         if (data.type === "point") {
           data.element.animate({
             x1: {
@@ -155,7 +186,7 @@ export default {
               easing: "easeOutQuart"
             },
             opacity: {
-              begin: delays,
+              begin: 4000,
               dur: durations,
               from: 0,
               to: 1,
@@ -164,8 +195,7 @@ export default {
           });
         }
       });
-
-      return chart;
+      
     },
     /***
      * Assigns a random id to the chart
@@ -186,6 +216,10 @@ export default {
       let ChartistLib = Chartist.default || Chartist;
       this.$nextTick(() => {
         this.chartSelected = this.initChart(ChartistLib);
+              // Animations are not yet supported on Windows
+      if (Chartist.Svg.isSupported("AnimationEventsAttribute")) {
+        this.includeAnimations(this.chartSelected)
+      }
       });
     });
   }

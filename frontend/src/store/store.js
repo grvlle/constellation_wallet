@@ -9,6 +9,11 @@ export const store = new Vuex.Store({
         successMessage: "",
         loginErrorMsg: "",
         displayLoginError: false,
+        OS: {
+            windows: false,
+            macOS: false,
+            linux: false,
+        },
         app: {
             toc: false,
             txFinished: true,
@@ -89,6 +94,15 @@ export const store = new Vuex.Store({
     getters: {
         getTxCounter (state) {
             return state.counters.nodesOnlineCounter
+        },
+        runningOnWindows (state) {
+            return state.OS.windows
+        },
+        runningOnLinux (state) {
+            return state.OS.linux
+        },
+        runningOnMacOS (state) {
+            return state.OS.macOS
         }
     }
     

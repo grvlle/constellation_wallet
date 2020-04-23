@@ -96,6 +96,7 @@ export default {
         horizontalAlign: horizontalAlign,
         verticalAlign: verticalAlign,
         type: this.type[color]
+        
       });
     }
   }

@@ -11,7 +11,8 @@
       {[`btn-${type}`]: type && !outline},
       {[`btn-outline-${type}`]: type && outline},
       {[`btn-${size}`]: size},
-      {'btn-link': simple}
+      {'btn-link': simple},
+      {[`${customClass}`]: customClass }
     ]">
     <slot name="loading">
       <i v-if="loading" class="fa fa-spinner fa-spin"></i>
@@ -26,6 +27,10 @@ export default {
     tag: {
       type: String,
       default: "button"
+    },
+    customClass: {
+      type: String,
+      default: ''
     },
     round: Boolean,
     icon: Boolean,

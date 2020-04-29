@@ -9,11 +9,6 @@ export const store = new Vuex.Store({
         successMessage: "",
         loginErrorMsg: "",
         displayLoginError: false,
-        OS: {
-            windows: false,
-            macOS: false,
-            linux: false,
-        },
         app: {
             toc: false,
             txFinished: true,

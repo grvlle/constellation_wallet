@@ -27,8 +27,6 @@ type WriteCounter struct {
 	a        *WalletApplication
 }
 
-=======
->>>>>>> 76c165575a161466d97e5d328dc4589289e80720
 func (a *WalletApplication) javaInstalled() bool {
 	var javaInstalled bool
 	if a.paths.Java[len(a.paths.Java)-9:] != "javaw.exe" {

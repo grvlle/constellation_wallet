@@ -380,7 +380,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 	resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
-		a.LoginError("Unable to collect previous TX's from blockexplorer. Please check your internet connection.")
+		a.LoginError("Unable to collect previous transactions from blockexplorer.")
 		return err
 	}
 	defer resp.Body.Close()
@@ -388,8 +388,8 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 	if resp.Body != nil {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			a.LoginError("Unable to collect previous TX's from blockexplorer. Please try again later.")
-			a.log.Errorln("Unable to collect previous TX's from blockexplorer. Reason: ", err)
+			a.LoginError("Unable to collect previous transactions from blockexplorer. Try again later.")
+			a.log.Errorln("Unable to collect previous transactions from blockexplorer. Reason: ", err)
 			return err
 		}
 		ok, error := a.verifyAPIResponse(bodyBytes)

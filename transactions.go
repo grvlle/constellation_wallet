@@ -10,47 +10,6 @@ import (
 	"time"
 )
 
-// type Transaction struct {
-// 	Edge struct {
-// 		ObservationEdge struct {
-// 			Parents []struct {
-// 				Hash     string `json:"hashReference"`
-// 				HashType string `json:"hashType"`
-// 			} `json:"parents"`
-// 			Data struct {
-// 				Hash     string `json:"hashReference"`
-// 				HashType string `json:"hashType"`
-// 			} `json:"data"`
-// 		} `json:"observationEdge"`
-// 		SignedObservationEdge struct {
-// 			SignatureBatch struct {
-// 				Hash       string `json:"hashReference"`
-// 				Signatures []struct {
-// 					Signature string `json:"signature"`
-// 					ID        struct {
-// 						Hex string `json:"hex"`
-// 					} `json:"id"`
-// 				} `json:"signatures"`
-// 			} `json:"signatureBatch"`
-// 		} `json:"signedObservationEdge"`
-// 		Data struct {
-// 			Amount    int64 `json:"amount"`
-// 			LastTxRef struct {
-// 				Hash    string `json:"hashReference"`
-// 				Ordinal int    `json:"ordinal"`
-// 			} `json:"lastTxRef"`
-// 			Fee  int64 `json:"fee,omitempty"`
-// 			Salt int64 `json:"salt"`
-// 		} `json:"data"`
-// 	} `json:"edge"`
-// 	LastTxRef struct {
-// 		Hash    string `json:"hashReference"`
-// 		Ordinal int    `json:"ordinal"`
-// 	} `json:"lastTxRef"`
-// 	IsDummy bool `json:"isDummy"`
-// 	IsTest  bool `json:"isTest"`
-// }
-
 // Transaction contains all tx information
 type Transaction struct {
 	Edge struct {

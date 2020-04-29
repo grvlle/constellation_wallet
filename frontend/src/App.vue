@@ -182,15 +182,15 @@ export default {
     });
 
     // Utility sockets
-    window.wails.Events.On("detect_os", os => {
-      if (os == "windows") {
-        this.$store.state.OS.windows = true;
-      } else if (os == "macos") {
-        this.$store.state.OS.macOS = true;
-      } else if (os == "linux") {
-        this.$store.state.OS.linux = true;
-      }
-    });
+    // window.wails.Events.On("detect_os", os => {
+    //   if (os == "windows") {
+    //     this.$store.state.OS.windows = true;
+    //   } else if (os == "macos") {
+    //     this.$store.state.OS.macOS = true;
+    //   } else if (os == "linux") {
+    //     this.$store.state.OS.linux = true;
+    //   }
+    // });
 
     // Settings.vue sockets
     window.wails.Events.On("wallet_keys", address => {

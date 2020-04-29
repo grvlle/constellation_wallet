@@ -28,6 +28,9 @@ func main() {
 	})
 
 	frontend.Bind(&WalletApplication{})
-	frontend.Run()
+	err := frontend.Run()
+	if err != nil {
+		panic(err)
+	}
 
 }

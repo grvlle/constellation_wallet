@@ -15,7 +15,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"time"
 
 	"github.com/dustin/go-humanize"
 )
@@ -28,35 +27,8 @@ type WriteCounter struct {
 	a        *WalletApplication
 }
 
-// checkOS will pass the OS version to the frontend to adapt elements based on MSHTML lib
-func (a *WalletApplication) checkOS() {
-	switch {
-	case runtime.GOOS == "windows":
-		go func() {
-			for i := 0; i < 20; i++ {
-				time.Sleep(1 * time.Second)
-				a.RT.Events.Emit("detect_os", "windows")
-			}
-		}()
-
-	case runtime.GOOS == "linux":
-		go func() {
-			for i := 0; i < 20; i++ {
-				time.Sleep(1 * time.Second)
-				a.RT.Events.Emit("detect_os", "linux")
-			}
-		}()
-
-	case runtime.GOOS == "macos":
-		go func() {
-			for i := 0; i < 20; i++ {
-				time.Sleep(1 * time.Second)
-				a.RT.Events.Emit("detect_os", "macos")
-			}
-		}()
-	}
-}
-
+=======
+>>>>>>> 76c165575a161466d97e5d328dc4589289e80720
 func (a *WalletApplication) javaInstalled() bool {
 	var javaInstalled bool
 	if a.paths.Java[len(a.paths.Java)-9:] != "javaw.exe" {

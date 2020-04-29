@@ -117,9 +117,9 @@
                 </tr>
               </tbody>
             </table>
-            <center>
+            <!-- <center>
               <jw-pagination :items="table2.data" @changePage="onChangePage"></jw-pagination>
-            </center>
+            </center> -->
           </div>
         </card>
       </div>

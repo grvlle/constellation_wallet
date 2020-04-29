@@ -15,7 +15,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"time"
 
 	"github.com/dustin/go-humanize"
 )
@@ -26,45 +25,6 @@ type WriteCounter struct {
 	LastEmit uint64
 	Filename string
 	a        *WalletApplication
-}
-
-type userOS struct {
-	OS string
-}
-
-// checkOS will pass the OS version to the frontend to adapt elements based on MSHTML lib
-func (a *WalletApplication) checkOS() {
-	switch {
-	case runtime.GOOS == "windows":
-		OS := &userOS{OS: "windows"}
-		go func() {
-			for i := 0; i < 20; i++ {
-				time.Sleep(1 * time.Second)
-				a.RT.Events.Emit("detect_os", "windows")
-				a.log.Warnln(OS)
-			}
-		}()
-
-	case runtime.GOOS == "linux":
-		OS := &userOS{OS: "linux"}
-		go func() {
-			for i := 0; i < 20; i++ {
-				time.Sleep(1 * time.Second)
-				a.RT.Events.Emit("detect_os", "linux")
-				a.log.Warnln(OS)
-			}
-		}()
-
-	case runtime.GOOS == "macos":
-		OS := &userOS{OS: "macos"}
-		go func() {
-			for i := 0; i < 20; i++ {
-				time.Sleep(1 * time.Second)
-				a.RT.Events.Emit("detect_os", "macos")
-				a.log.Warnln(OS)
-			}
-		}()
-	}
 }
 
 func (a *WalletApplication) javaInstalled() bool {

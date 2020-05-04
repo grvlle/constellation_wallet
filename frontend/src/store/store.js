@@ -8,6 +8,7 @@ export const store = new Vuex.Store({
         warningMessage: "",
         successMessage: "",
         loginErrorMsg: "",
+        network: "TESTNET",
         displayLoginError: false,
         app: {
             toc: false,

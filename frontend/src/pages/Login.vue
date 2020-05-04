@@ -262,17 +262,23 @@
                           </span>
                         </p-button>
                       </div>
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </form>
         </div>
+        
       </div>
+      
+    </div>
+    <div class="version">
+      <p class="version">Connected to: {{this.$store.state.network}}<br />
+      Molly Wallet version: {{this.$store.state.walletInfo.uiVersion}}</p>
     </div>
     <page-overlay text="Loading..." :isActive="overlay" />
   </div>
+  
 </template>
 
 <script>
@@ -682,6 +688,13 @@ html {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.version {
+  position: fixed;
+  display: flex;
+  align-items: bottom;
+  margin-right: 1.8em;
 }
 
 .vertical-center {

@@ -54,10 +54,6 @@ type Transaction struct {
 	IsTest  bool `json:"isTest"`
 }
 
-func (a *WalletApplication) networkHeartbeat() {
-	//TODO
-}
-
 /* Send a transaction */
 
 // TriggerTXFromFE will initate a new transaction triggered from the frontend.
@@ -324,7 +320,7 @@ func (a *WalletApplication) TxPending(TXHash string) {
 		return
 	default:
 		go func() bool {
-			for retryCounter := 50; retryCounter > 0; retryCounter-- {
+			for retryCounter := 30; retryCounter > 0; retryCounter-- {
 				processed := a.TxProcessed(TXHash)
 				if !processed {
 					a.log.Warnf("Transaction %v pending", TXHash)
@@ -353,8 +349,8 @@ func (a *WalletApplication) TxPending(TXHash string) {
 					a.log.Infof("TX status check has reached consensus %v/5", consensus)
 					time.Sleep(1 * time.Second)
 				}
-				if processed && consensus == 5 { // Need ten consecative confirmations that TX has been processed.
-					break
+				if processed && consensus == 5 { // Need five consecetive confirmations that TX has been processed.
+					return true
 				}
 
 			}

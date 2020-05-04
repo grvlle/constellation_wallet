@@ -7,6 +7,7 @@
       <img class="img-fluid" v-else
         src="~@/assets/img/Constellation-Logo-Black.png"
         style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem;" />
+        <p>{{this.$store.state.network}}</p> <!-- TODO: Remove -->
       <button
         class="navbar-toggler navbar-burger"
         type="button"

@@ -2,12 +2,10 @@ package main
 
 import (
 	"bytes"
-	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"math"
 	"math/rand"
 	"net/http"
 	"os"
@@ -74,13 +72,6 @@ func (a *WalletApplication) detectJavaPath() {
 		a.log.Debugln(cmd)
 		a.paths.Java = jwPath
 	}
-}
-
-// Float64frombytes converts byte slice to float64
-func Float64frombytes(bytes []byte) float64 {
-	bits := binary.LittleEndian.Uint64(bytes)
-	float := math.Float64frombits(bits)
-	return float
 }
 
 //normalizeAmounts takes amount/fee in int64 and normalizes it. Example: passing 821500000000 will return 8215

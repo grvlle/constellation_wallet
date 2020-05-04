@@ -350,7 +350,7 @@ func (a *WalletApplication) TxPending(TXHash string) {
 					time.Sleep(1 * time.Second)
 				}
 				if processed && consensus == 5 { // Need five consecetive confirmations that TX has been processed.
-					return true
+					break
 				}
 
 			}

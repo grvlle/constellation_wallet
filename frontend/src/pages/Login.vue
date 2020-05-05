@@ -450,6 +450,9 @@ export default {
           window.backend.WalletApplication.SetWalletTag().then(
             walletTag => (self.$store.state.walletInfo.email = walletTag)
           );
+          window.backend.WalletApplication.SetUserTheme().then(
+            darkMode => (self.$store.state.walletInfo.darkMode = darkMode)
+          )
           window.backend.WalletApplication.SetImagePath().then(
             imagePath => (self.$store.state.walletInfo.imgPath = imagePath)
           );

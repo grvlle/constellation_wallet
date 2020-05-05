@@ -21,6 +21,7 @@ type Wallet struct {
 	TXHistory            []TXHistory `gorm:"foreignkey:Alias"`
 	ProfilePicture       string
 	WalletTag            string
+	DarkMode             bool
 	Balance              float64 `json:"balance"`
 	AvailableBalance     float64 `json:"available_balance"`
 	Nonce                float64 `json:"nonce"`

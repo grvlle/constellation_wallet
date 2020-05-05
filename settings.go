@@ -90,6 +90,27 @@ func (a *WalletApplication) StoreWalletLabelInDB(walletTag string) {
 	}
 }
 
+// SetUserTheme is called from the Login.Vue
+func (a *WalletApplication) SetUserTheme() bool {
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Error; err != nil {
+		a.log.Errorln("Unable to query the DB record for the Image path. Reason: ", err)
+		a.sendError("Unable to query the DB record for the Image path. Reason: ", err)
+	}
+	if a.wallet.DarkMode {
+		a.log.Infoln("Dark mode enabled")
+	}
+
+	return a.wallet.DarkMode
+}
+
+// StoreDarkModeStateDB stores the darkmode state in the user DB
+func (a *WalletApplication) StoreDarkModeStateDB(darkMode bool) {
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("DarkMode", darkMode).Error; err != nil {
+		a.log.Errorln("Unable to store darkmode state. Reason: ", err)
+		a.sendError("Unable to store darkmode state persistently. Reason: ", err)
+	}
+}
+
 // CopyFile the src file to dst. Any existing file will be overwritten and will not
 // copy file attributes.
 func CopyFile(src, dst string) error {

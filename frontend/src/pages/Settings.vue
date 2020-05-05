@@ -285,8 +285,8 @@ export default {
         .toggleDashboard.showThroughput;
     },
     toggleDarkMode: function() {
-      this.$store.state.walletInfo.darkMode = !this.$store.state.walletInfo
-        .darkMode;
+      this.$store.state.walletInfo.darkMode = !this.$store.state.walletInfo.darkMode;
+      window.backend.WalletApplication.StoreDarkModeStateDB(this.$store.state.walletInfo.darkMode);
     },
     importKeys: function() {
       window.backend.WalletApplication.ImportKeys();

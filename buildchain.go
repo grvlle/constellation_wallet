@@ -102,11 +102,11 @@ func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *T
 
 	err := json.Unmarshal(rbytes, &ptxObj)
 	if err != nil {
-		a.log.Errorln(string(rbytes), err)
+		a.log.Errorln("Unable to parse TX Object: ", string(rbytes), err)
 	}
 	err = json.Unmarshal(lbytes, &ltxObj)
 	if err != nil {
-		a.log.Errorln(string(rbytes), err)
+		a.log.Errorln("Unable to parse TX Object: ", string(rbytes), err)
 	}
 	return &ptxObj, &ltxObj
 }

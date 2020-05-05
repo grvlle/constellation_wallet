@@ -439,6 +439,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 				if err != nil {
 					a.log.Errorln(err)
 					// If unable to import previous transactions, remove wallet from DB and logout.
+					//TODO: logout
 					if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
 						a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
 						return err

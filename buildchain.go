@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -103,11 +102,11 @@ func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *T
 
 	err := json.Unmarshal(rbytes, &ptxObj)
 	if err != nil {
-		fmt.Println(err)
+		a.log.Errorln(string(rbytes), err)
 	}
 	err = json.Unmarshal(lbytes, &ltxObj)
 	if err != nil {
-		fmt.Println(err)
+		a.log.Errorln(string(rbytes), err)
 	}
 	return &ptxObj, &ltxObj
 }
@@ -117,14 +116,14 @@ func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *T
 // TXReference is used to parse the previous tx of an imported wallet.
 type TXReference struct {
 	Hash               string `json:"hash"`
-	Amount             int    `json:"amount"`
+	Amount             int64  `json:"amount"`
 	Receiver           string `json:"receiver"`
 	Sender             string `json:"sender"`
 	Fee                int    `json:"fee"`
 	IsDummy            bool   `json:"isDummy"`
 	LastTransactionRef struct {
-		Hash    string `json:"hash"`
-		Ordinal int    `json:"ordinal"`
+		PrevHash string `json:"prevHash"`
+		Ordinal  int    `json:"ordinal"`
 	} `json:"lastTransactionRef"`
 	SnapshotHash        string `json:"snapshotHash"`
 	CheckpointBlock     string `json:"checkpointBlock"`
@@ -132,14 +131,14 @@ type TXReference struct {
 		Edge struct {
 			ObservationEdge struct {
 				Parents []struct {
-					Hash     string      `json:"hash"`
-					HashType string      `json:"hashType"`
-					BaseHash interface{} `json:"baseHash,omitempty"`
+					HashReference string `json:"hashReference"`
+					HashType      string `json:"hashType"`
+					BaseHash      string `json:"baseHash"`
 				} `json:"parents"`
 				Data struct {
-					Hash     string      `json:"hash"`
-					HashType string      `json:"hashType"`
-					BaseHash interface{} `json:"baseHash,omitempty"`
+					HashReference string `json:"hashReference"`
+					HashType      string `json:"hashType"`
+					BaseHash      string `json:"baseHash"`
 				} `json:"data"`
 			} `json:"observationEdge"`
 			SignedObservationEdge struct {
@@ -154,18 +153,18 @@ type TXReference struct {
 				} `json:"signatureBatch"`
 			} `json:"signedObservationEdge"`
 			Data struct {
-				Amount    int `json:"amount"`
+				Amount    int64 `json:"amount"`
 				LastTxRef struct {
-					Hash    string `json:"hash"`
-					Ordinal int    `json:"ordinal"`
+					PrevHash string `json:"prevHash"`
+					Ordinal  int    `json:"ordinal"`
 				} `json:"lastTxRef"`
-				Fee  interface{} `json:"fee,omitempty"`
+				Fee  interface{} `json:"fee"`
 				Salt int64       `json:"salt"`
 			} `json:"data"`
 		} `json:"edge"`
 		LastTxRef struct {
-			Hash    string `json:"hash"`
-			Ordinal int    `json:"ordinal"`
+			PrevHash string `json:"prevHash"`
+			Ordinal  int    `json:"ordinal"`
 		} `json:"lastTxRef"`
 		IsDummy bool `json:"isDummy"`
 		IsTest  bool `json:"isTest"`
@@ -200,6 +199,7 @@ func (a *WalletApplication) rebuildTxChainState(lastTXHash string) error {
 		if !ok && error != "Cannot find transaction" {
 			a.log.Errorln("API returned the following error", error)
 			// If unable to import last transaction, remove wallet from DB and logout.
+			// TODO: logout user from wallet
 			if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
 				a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
 				return err

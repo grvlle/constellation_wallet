@@ -57,9 +57,9 @@ type TXHistory struct {
 	Fee                int64  `json:"fee"`
 	Hash               string `json:"hash"`
 	LastTransactionRef struct {
-		Hash    string `json:"hash"`
+		Hash    string `json:"prevHash"`
 		Ordinal int    `json:"ordinal"`
-	} `json:"lastTransactionRef"`
+	} `json:"lastTxRef"`
 	TS     string `json:"date"`
 	Status string `json:"status"`
 	Failed bool

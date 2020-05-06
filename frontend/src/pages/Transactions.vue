@@ -45,11 +45,11 @@
                   @change="setName($event.target.value)"
                   placeholder="Enter Recipients Wallet Address..."
                 />
-                <div
-                  class="validate"
-                  v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength"
-                >
+                <div class="validate" v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength">
                   <p>Invalid wallet address. Please verify.</p>
+                </div>
+                <div class="validate" v-else-if="txAddressValidation == this.$store.state.walletInfo.address">
+                  <p>You can not send to your own wallet.</p>
                 </div>
                 <div class="validate" v-else></div>
               </div>
@@ -59,7 +59,7 @@
                   block
                   @click.native="tx"
                   style="max-width: 10rem; margin-left: auto;"
-                  :disabled="txInTransit"
+                  :disabled="txInTransit || txAddressValidation == this.$store.state.walletInfo.address"
                 >
                   <span>
                     <i class="fa fa-paper-plane"></i> SEND

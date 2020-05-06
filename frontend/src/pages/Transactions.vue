@@ -117,9 +117,6 @@
                 </tr>
               </tbody>
             </table>
-            <!-- <center>
-              <jw-pagination :items="table2.data" @changePage="onChangePage"></jw-pagination>
-            </center> -->
           </div>
         </card>
       </div>
@@ -157,10 +154,6 @@ export default {
     },
     isInteger: function(n) {
       return n === +n && n === (n | 0);
-    },
-    onChangePage(pageOfItems) {
-      // update page of items
-      this.$store.state.pageOfItems = pageOfItems;
     },
     sendAmount(value) {
       this.txAmountValidation = value;

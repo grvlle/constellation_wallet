@@ -61,7 +61,6 @@ export const store = new Vuex.Store({
             showTransactions: true,
             showThroughput: true,
         },
-        pageOfItems: [],
         chartData: {
             nodesOnline: {
                 labels: [], // ChartData.nodes_online.labels,

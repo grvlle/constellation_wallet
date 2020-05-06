@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"runtime"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -74,9 +73,9 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 				return false
 			}
 
-			a.paths.LastTXFile = a.TempFileName("tx-", "")
-			a.paths.PrevTXFile = a.TempFileName("tx-", "")
-			a.paths.EmptyTXFile = a.TempFileName("tx-", "")
+			a.paths.LastTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.PrevTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.EmptyTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
 
 			err = a.createTXFiles()
 			if err != nil {
@@ -209,9 +208,9 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		a.KeyStoreAccess = a.WalletKeystoreAccess()
 
 		if a.KeyStoreAccess {
-			a.paths.LastTXFile = a.TempFileName("tx-", "")
-			a.paths.PrevTXFile = a.TempFileName("tx-", "")
-			a.paths.EmptyTXFile = a.TempFileName("tx-", "")
+			a.paths.LastTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.PrevTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.EmptyTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
 
 			err := a.createTXFiles()
 			if err != nil {
@@ -365,13 +364,13 @@ func (a *WalletApplication) initTXFromDB() {
 }
 
 // txSorter sorts tx by ordinal.
-type txSorter []TXHistory
+// type txSorter []TXHistory
 
-func (a txSorter) Len() int      { return len(a) }
-func (a txSorter) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a txSorter) Less(i, j int) bool {
-	return a[i].LastTransactionRef.Ordinal < a[j].LastTransactionRef.Ordinal
-}
+// func (a txSorter) Len() int      { return len(a) }
+// func (a txSorter) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+// func (a txSorter) Less(i, j int) bool {
+// 	return a[i].LastTransactionRef.Ordinal < a[j].LastTransactionRef.Ordinal
+// }
 
 // initTXFromBlockExplorer is called when an existing wallet is imported.
 func (a *WalletApplication) initTXFromBlockExplorer() error {
@@ -392,6 +391,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 			a.log.Errorln("Unable to collect previous transactions from blockexplorer. Reason: ", err)
 			return err
 		}
+
 		ok, error := a.verifyAPIResponse(bodyBytes)
 		// Blockexplorer returns below string when no previous transactions are found
 		if !ok && error != "Cannot find transactions for sender" {
@@ -415,7 +415,13 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 			return err
 		}
 
-		sort.Sort(txSorter(allTX)) // Sort previous transactions based on ordinal
+		// sort.Sort(txSorter(allTX)) // Sort previous transactions based on ordinal
+
+		// Reverse order
+		for i := len(allTX)/2 - 1; i >= 0; i-- {
+			opp := len(allTX) - 1 - i
+			allTX[i], allTX[opp] = allTX[opp], allTX[i]
+		}
 
 		a.log.Infof("Successfully collected %d previous transactions. Updating local state...", len(allTX))
 

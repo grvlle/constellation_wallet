@@ -353,24 +353,12 @@ func (a *WalletApplication) initTXFromDB() {
 	for i, tx := range a.wallet.TXHistory {
 		allTX = append([]TXHistory{tx}, allTX...) // prepend to reverse list for FE
 
-		// if !a.wallet.TXHistory[i].Failed {
-		// 	a.RT.Events.Emit("new_transaction", &a.wallet.TXHistory[i]) // Pass the tx to the frontend as a new transaction.
-		// }
 		if a.wallet.TXHistory[i].Status == "Pending" {
 			a.TxPending(a.wallet.TXHistory[i].Hash)
 		}
 	}
 	a.RT.Events.Emit("update_tx_history", allTX) // Pass the tx to the frontend as a new transaction.
 }
-
-// txSorter sorts tx by ordinal.
-// type txSorter []TXHistory
-
-// func (a txSorter) Len() int      { return len(a) }
-// func (a txSorter) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-// func (a txSorter) Less(i, j int) bool {
-// 	return a[i].LastTransactionRef.Ordinal < a[j].LastTransactionRef.Ordinal
-// }
 
 // initTXFromBlockExplorer is called when an existing wallet is imported.
 func (a *WalletApplication) initTXFromBlockExplorer() error {
@@ -414,8 +402,6 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 			a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
 			return err
 		}
-
-		// sort.Sort(txSorter(allTX)) // Sort previous transactions based on ordinal
 
 		// Reverse order
 		for i := len(allTX)/2 - 1; i >= 0; i-- {
@@ -547,5 +533,6 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
 		return 0, err
 	}
+
 	return balance, nil
 }

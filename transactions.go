@@ -79,9 +79,14 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address 
 		a.TransactionFailed = true
 		return
 	}
-	if amount+fee > int64(balance)*1e8 {
+
+	a.log.Infoln(balance)
+	a.log.Infoln(balance * 1e8)
+	a.log.Infoln(int64(balance * 1e8))
+
+	if amount+fee > int64(balance*1e8) {
 		a.log.Warnf("Trying to send: %d", amount+fee)
-		a.log.Warnf("Insufficient Balance: %d", int64(balance)*1e8)
+		a.log.Warnf("Insufficient Balance: %d", int64(balance*1e8))
 		a.sendWarning("Insufficent Balance.")
 		a.TransactionFailed = true
 		return

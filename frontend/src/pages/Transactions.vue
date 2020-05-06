@@ -2,7 +2,7 @@
   <div id="app" class="container">
     <div class="row">
       <div class="col">
-        <card :title="table1.title" :subTitle="table1.subTitle">
+        <card title="Transactions" subTitle="Submit a $DAG Transaction">
           <p>Last Transaction State: {{this.$store.state.txInfo.txStatus}}</p>
           <form @submit.prevent class="container">
             <div class="form-row align-items-center">
@@ -127,7 +127,6 @@
 
 <script>
 const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"];
-let tableData = [];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
@@ -285,13 +284,6 @@ export default {
         topCenter: false
       },
       overlay: false,
-
-      table1: {
-        title: "Transactions",
-        subTitle: "Submit a $DAG Transaction",
-        columns: [...tableColumns],
-        data: [...tableData]
-      },
       table2: {
         title: "Transaction History",
         subTitle: "Table containing all previous transactions",

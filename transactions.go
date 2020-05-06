@@ -80,10 +80,6 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address 
 		return
 	}
 
-	a.log.Infoln(balance)
-	a.log.Infoln(balance * 1e8)
-	a.log.Infoln(int64(balance * 1e8))
-
 	if amount+fee > int64(balance*1e8) {
 		a.log.Warnf("Trying to send: %d", amount+fee)
 		a.log.Warnf("Insufficient Balance: %d", int64(balance*1e8))
@@ -360,7 +356,7 @@ func (a *WalletApplication) TxPending(TXHash string) {
 
 			}
 			a.log.Infof("Transaction %v has been successfully processed", TXHash)
-			a.sendSuccess("Transaction " + TXHash + " has been successfully processed")
+			a.sendSuccess("Transaction " + TXHash[:30] + "... has been successfully processed")
 			if err := a.DB.Table("tx_histories").Where("hash = ?", TXHash).UpdateColumn("status", status.Complete).Error; err != nil {
 				a.log.Errorln("Unable to query database object for the imported wallet. Reason: ", err)
 				a.LoginError("Unable to query database object for the imported wallet.")

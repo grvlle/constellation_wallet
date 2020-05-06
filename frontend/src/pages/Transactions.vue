@@ -118,14 +118,14 @@
               </tbody>
             </table>
             <ul v-if="this.transactionTable.data.length > 0" class="pagination justify-content-center">
-              <li class="page-item">
-                <a class="page-link" style="cursor: pointer;" :disabled="pageNumber == 0" @click="prevPage">Previous</a>
+              <li class="page-item" :class="pageNumber == 0 ? 'disabled' : ''">
+                <a class="page-link" style="cursor: pointer;" @click="prevPage">Previous</a>
               </li>
               <li class="page-item" :class="page == pageNumber + 1 ? 'active' : ''" v-for="page in pageCount" :key="page">
                 <a class="page-link" style="cursor: pointer;" @click="gotoPage(page)">{{page}}</a>
               </li>
-              <li class="page-item">
-                <a class="page-link" style="cursor: pointer;" :disabled="pageNumber >= pageCount - 1" @click="nextPage">Next</a>
+              <li class="page-item" :class="pageNumber >= pageCount - 1 ? 'disabled' : ''">
+                <a class="page-link" style="cursor: pointer;" @click="nextPage">Next</a>
                 </li>
             </ul>
           </div>

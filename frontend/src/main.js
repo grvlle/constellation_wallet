@@ -11,13 +11,9 @@ import "vue-notifyjs/themes/default.css";
 import VueNotify from 'vue-notifyjs'
 import VueSweetalert2 from 'vue-sweetalert2';
 import {store} from './store/store'
-import JwPagination from 'jw-vue-pagination';
 import Vuelidate from 'vuelidate'
 import ToggleButton from 'vue-js-toggle-button'
 import VueProgressBar from 'vue-progressbar'
-
-Vue.component('jw-pagination', JwPagination);
-
 
 Vue.use(VueProgressBar, {
   color: '#6DECBB',

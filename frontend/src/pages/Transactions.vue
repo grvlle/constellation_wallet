@@ -2,7 +2,7 @@
   <div id="app" class="container">
     <div class="row">
       <div class="col">
-        <card :title="table1.title" :subTitle="table1.subTitle">
+        <card title="Transactions" subTitle="Submit a $DAG Transaction">
           <p>Last Transaction State: {{this.$store.state.txInfo.txStatus}}</p>
           <form @submit.prevent class="container">
             <div class="form-row align-items-center">
@@ -74,16 +74,16 @@
     </div>
     <div class="row">
       <div class="col">
-        <card class="card" :title="table2.title" :subTitle="table2.subTitle">
+        <card class="card" :title="transactionTable.title" :subTitle="transactionTable.subTitle">
           <div class="table-full-width table-responsive" style="width: 100%;">
             <table class="table" :class="tableClass">
               <thead>
                 <slot txAddressValidation="columns">
-                  <th v-for="column in table2.columns" v-bind:key="column.id">{{column}}</th>
+                  <th v-for="column in transactionTable.columns" v-bind:key="column.id">{{column}}</th>
                 </slot>
               </thead>
               <tbody>
-                <tr v-for="tx in this.$store.state.txInfo.txHistory" v-bind:key="tx.ID">
+                <tr v-for="tx in paginatedData" v-bind:key="tx.ID">
                   <slot :row="item">
                     <td class="columnA">
                       <i
@@ -117,9 +117,17 @@
                 </tr>
               </tbody>
             </table>
-            <!-- <center>
-              <jw-pagination :items="table2.data" @changePage="onChangePage"></jw-pagination>
-            </center> -->
+            <ul v-if="this.transactionTable.data.length > 0" class="pagination justify-content-center">
+              <li class="page-item" :class="pageNumber == 0 ? 'disabled' : ''">
+                <a class="page-link" style="cursor: pointer;" @click="prevPage">Previous</a>
+              </li>
+              <li class="page-item" :class="page == pageNumber + 1 ? 'active' : ''" v-for="page in pageCount" :key="page">
+                <a class="page-link" style="cursor: pointer;" @click="gotoPage(page)">{{page}}</a>
+              </li>
+              <li class="page-item" :class="pageNumber >= pageCount - 1 ? 'disabled' : ''">
+                <a class="page-link" style="cursor: pointer;" @click="nextPage">Next</a>
+                </li>
+            </ul>
           </div>
         </card>
       </div>
@@ -129,8 +137,7 @@
 </template>
 
 <script>
-const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"];
-let tableData = [];
+const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"]; 
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
@@ -150,6 +157,16 @@ export default {
     txInTransit() {
       return this.$store.state.txInfo.txStatus == "Pending"
     },
+    pageCount(){
+      let l = this.transactionTable.data.length,
+        s = this.size;
+      return Math.ceil(l/s);
+    },
+    paginatedData(){
+        const start = this.pageNumber * this.size,
+              end = start + this.size;
+        return this.transactionTable.data.slice(start, end);
+    }
   },
   methods: {
     isFloat: function(n) {
@@ -157,10 +174,6 @@ export default {
     },
     isInteger: function(n) {
       return n === +n && n === (n | 0);
-    },
-    onChangePage(pageOfItems) {
-      // update page of items
-      this.$store.state.pageOfItems = pageOfItems;
     },
     sendAmount(value) {
       this.txAmountValidation = value;
@@ -278,6 +291,15 @@ export default {
     },
     setMaxDAGs() {
       this.txAmountValidation = this.$store.state.walletInfo.availableBalance;
+    },
+    nextPage() {
+        this.pageNumber++;
+    },
+    prevPage() {
+      this.pageNumber--;
+    },
+    gotoPage(page) {
+      this.pageNumber = page - 1;
     }
   },
   data() {
@@ -292,19 +314,14 @@ export default {
         topCenter: false
       },
       overlay: false,
-
-      table1: {
-        title: "Transactions",
-        subTitle: "Submit a $DAG Transaction",
-        columns: [...tableColumns],
-        data: [...tableData]
-      },
-      table2: {
+      transactionTable: {
         title: "Transaction History",
         subTitle: "Table containing all previous transactions",
         columns: [...tableColumns],
         data: this.$store.state.txInfo.txHistory
-      }
+      },
+      pageNumber: 0,
+      size: 5
     };
   },
   filters: {

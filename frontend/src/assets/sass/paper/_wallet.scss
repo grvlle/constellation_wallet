@@ -80,6 +80,28 @@
   }
 }
 
+.page-link {
+  @include themed() {
+    color: t('cardTextColor');
+    background-color: t('cardTableColor');
+    border-color: t('inputBorderColor');
+  }
+}
+
+.page-item.active .page-link {
+  @include themed() {
+    background-color: t('infoColor');
+    border-color: t('inputBorderColor');
+  }
+}
+
+.page-item.disabled .page-link {
+  @include themed() {
+    background-color: t('cardBackgroundColor');
+    border-color: t('inputBorderColor');
+  }
+}
+
 .swal2-popup.swal2-modal.swal2-show {
   @include themed() {
     background: t('popupBackgroundColor');

@@ -59,7 +59,7 @@
                   block
                   @click.native="tx"
                   style="max-width: 10rem; margin-left: auto;"
-                  :disabled="!this.$store.state.app.txFinished"
+                  :disabled="txInTransit"
                 >
                   <span>
                     <i class="fa fa-paper-plane"></i> SEND
@@ -146,7 +146,10 @@ export default {
   computed: {
     tableClass() {
       return `table-${this.type}`;
-    }
+    },
+    txInTransit() {
+      return this.$store.state.txInfo.txStatus == "Pending"
+    },
   },
   methods: {
     isFloat: function(n) {
@@ -326,7 +329,7 @@ export default {
       required,
       minLength: minLength(40),
       maxLength: maxLength(40),
-      verifyPrefix
+      verifyPrefix,
     },
     txAmountValidation: {
       required,

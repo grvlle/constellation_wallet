@@ -320,14 +320,14 @@ func (a *WalletApplication) TxPending(TXHash string) {
 		return
 	default:
 		go func() bool {
-			for retryCounter := 30; retryCounter > 0; retryCounter-- {
+			for retryCounter := 0; retryCounter < 30; retryCounter++ {
 				processed := a.TxProcessed(TXHash)
 				if !processed {
 					a.log.Warnf("Transaction %v pending", TXHash)
 					a.RT.Events.Emit("tx_pending", status.Pending)
 					time.Sleep(time.Duration(retryCounter) * time.Second) // Increase polling interval
 
-					if retryCounter == 1 {
+					if retryCounter == 29 {
 						// Register failed transaction
 						a.sendWarning("Unable to get verification of processed transaction from the network. Please try again later.")
 						a.log.Errorf("Unable to get status from the network on transaction: %s", TXHash)
@@ -344,12 +344,12 @@ func (a *WalletApplication) TxPending(TXHash string) {
 
 					consensus = 0 // Reset consensus
 				}
-				if processed && consensus != 5 {
+				if processed && consensus != 3 {
 					consensus++
-					a.log.Infof("TX status check has reached consensus %v/5", consensus)
+					a.log.Infof("TX status check has reached consensus %v/3", consensus)
 					time.Sleep(1 * time.Second)
 				}
-				if processed && consensus == 5 { // Need five consecetive confirmations that TX has been processed.
+				if processed && consensus == 3 { // Need five consecetive confirmations that TX has been processed.
 					break
 				}
 

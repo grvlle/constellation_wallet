@@ -45,10 +45,16 @@
                   @change="setName($event.target.value)"
                   placeholder="Enter Recipients Wallet Address..."
                 />
-                <div class="validate" v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength">
+                <div
+                  class="validate"
+                  v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength"
+                >
                   <p>Invalid wallet address. Please verify.</p>
                 </div>
-                <div class="validate" v-else-if="txAddressValidation == this.$store.state.walletInfo.address">
+                <div
+                  class="validate"
+                  v-else-if="txAddressValidation == this.$store.state.walletInfo.address"
+                >
                   <p>You can not send to your own wallet.</p>
                 </div>
                 <div class="validate" v-else></div>
@@ -91,7 +97,7 @@
                         v-if="tx.status === 'Complete'"
                         class="fa fa-check"
                       ></i>
-                      <i style="color: #E2EA6E;" v-if="tx.status === 'Pending'" class="ti-timer"></i>
+                      <center><rotate-square-2 size="15px" v-if="tx.status === 'Pending'"></rotate-square-2></center>
                       <i style="color: firebrick;" v-if="tx.status === 'Error'" class="fa fa-times"></i>
                     </td>
                     <td class="columnB">
@@ -117,16 +123,24 @@
                 </tr>
               </tbody>
             </table>
-            <ul v-if="this.transactionTable.data.length > 0" class="pagination justify-content-center">
+            <ul
+              v-if="this.transactionTable.data.length > 0"
+              class="pagination justify-content-center"
+            >
               <li class="page-item" :class="pageNumber == 0 ? 'disabled' : ''">
                 <a class="page-link" style="cursor: pointer;" @click="prevPage">Previous</a>
               </li>
-              <li class="page-item" :class="page == pageNumber + 1 ? 'active' : ''" v-for="page in pageCount" :key="page">
+              <li
+                class="page-item"
+                :class="page == pageNumber + 1 ? 'active' : ''"
+                v-for="page in pageCount"
+                :key="page"
+              >
                 <a class="page-link" style="cursor: pointer;" @click="gotoPage(page)">{{page}}</a>
               </li>
               <li class="page-item" :class="pageNumber >= pageCount - 1 ? 'disabled' : ''">
                 <a class="page-link" style="cursor: pointer;" @click="nextPage">Next</a>
-                </li>
+              </li>
             </ul>
           </div>
         </card>
@@ -137,10 +151,12 @@
 </template>
 
 <script>
-const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"]; 
+
+const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
+import { RotateSquare2 } from "vue-loading-spinner";
 import Swal from "sweetalert2";
 import {
   required,
@@ -150,22 +166,25 @@ import {
 } from "vuelidate/lib/validators";
 
 export default {
+  components: {
+    RotateSquare2
+  },
   computed: {
     tableClass() {
       return `table-${this.type}`;
     },
     txInTransit() {
-      return this.$store.state.txInfo.txStatus == "Pending"
+      return this.$store.state.txInfo.txStatus == "Pending";
     },
-    pageCount(){
+    pageCount() {
       let l = this.$store.state.txInfo.txHistory.length,
         s = this.size;
-      return Math.ceil(l/s);
+      return Math.ceil(l / s);
     },
-    paginatedData(){
-        const start = this.pageNumber * this.size,
-              end = start + this.size;
-        return this.$store.state.txInfo.txHistory.slice(start, end);
+    paginatedData() {
+      const start = this.pageNumber * this.size,
+        end = start + this.size;
+      return this.$store.state.txInfo.txHistory.slice(start, end);
     }
   },
   methods: {
@@ -250,12 +269,12 @@ export default {
               let address = self.txAddressValidation;
               let fee = result.value;
               const swalPopup = Swal.mixin({
-          customClass: {
-            container: this.$store.state.walletInfo.darkMode
-              ? "theme--dark"
-              : "theme--light"
-          }
-        });
+                customClass: {
+                  container: this.$store.state.walletInfo.darkMode
+                    ? "theme--dark"
+                    : "theme--light"
+                }
+              });
               window.backend.WalletApplication.TriggerTXFromFE(
                 parseFloat(amount),
                 parseFloat(fee[1]),
@@ -293,7 +312,7 @@ export default {
       this.txAmountValidation = this.$store.state.walletInfo.availableBalance;
     },
     nextPage() {
-        this.pageNumber++;
+      this.pageNumber++;
     },
     prevPage() {
       this.pageNumber--;
@@ -321,7 +340,7 @@ export default {
         data: this.$store.state.txInfo.txHistory
       },
       pageNumber: 0,
-      size: 10
+      size: 8
     };
   },
   filters: {
@@ -346,7 +365,7 @@ export default {
       required,
       minLength: minLength(40),
       maxLength: maxLength(40),
-      verifyPrefix,
+      verifyPrefix
     },
     txAmountValidation: {
       required,

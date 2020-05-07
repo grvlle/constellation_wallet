@@ -294,8 +294,8 @@ func (a *WalletApplication) TxProcessed(TXHash string) bool {
 		return true
 	}
 
-	// Empty response means it's snapshotted
-	return string(bodyBytes) == ""
+	// null response means it's snapshotted
+	return string(bodyBytes) == "null"
 
 }
 

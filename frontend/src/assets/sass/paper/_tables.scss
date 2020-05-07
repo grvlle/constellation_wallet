@@ -12,6 +12,7 @@
       border-top: 0.0625em solid;
       @include themed() {
         border-top-color: t('borderColor');
+        border-bottom-color: t('borderColor');
         background-color: t('cardTransactionTableColor'); 
       }
     }
@@ -20,11 +21,16 @@
     border-bottom: 0.0625em solid;
     @include themed() {
       border-bottom-color: t('borderColor');
+      border-top-color: t('borderColor');
     }
     border-top: 0;
   }
   > thead > tr > th {
     border-bottom-width: 0;
+    @include themed() {
+      border-bottom-color: t('borderColor');
+      border-top-color: t('borderColor');
+    }
     font-size: $font-size-h5;
     font-weight: $font-weight-light;
   }
@@ -79,9 +85,15 @@
 .table-striped {
   tbody > tr:nth-of-type(2n+1) {
     background-color: #fff;
+    @include themed() {
+      background-color: t('borderColor');
+    }
   }
   tbody > tr:nth-of-type(2n) {
     background-color: $pale-bg;
+    @include themed() {
+      background-color: t('borderColor');
+    }
   }
   > thead > tr > th,
   > tbody > tr > th,

@@ -158,14 +158,14 @@ export default {
       return this.$store.state.txInfo.txStatus == "Pending"
     },
     pageCount(){
-      let l = this.transactionTable.data.length,
+      let l = this.$store.state.txInfo.txHistory.length,
         s = this.size;
       return Math.ceil(l/s);
     },
     paginatedData(){
         const start = this.pageNumber * this.size,
               end = start + this.size;
-        return this.transactionTable.data.slice(start, end);
+        return this.$store.state.txInfo.txHistory.slice(start, end);
     }
   },
   methods: {
@@ -321,7 +321,7 @@ export default {
         data: this.$store.state.txInfo.txHistory
       },
       pageNumber: 0,
-      size: 5
+      size: 10
     };
   },
   filters: {

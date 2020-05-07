@@ -102,7 +102,7 @@
                     </td>
                     <td class="columnB">
                       <p class="description" style="font-size: 0.9375rem;">
-                        <b>{{tx.amount / 1e8}}</b> DAG
+                        <b>{{(tx.amount / 1e8).toFixed(8).replace(/\.?0+$/,"")}}</b> DAG
                       </p>
                     </td>
                     <td class="columnC">
@@ -276,8 +276,8 @@ export default {
                 }
               });
               window.backend.WalletApplication.TriggerTXFromFE(
-                parseFloat(amount),
-                parseFloat(fee[1]),
+                parseFloat(amount, 10),
+                parseFloat(fee[1], 10),
                 address
               ).then(txFailed => {
                 if (txFailed) {
@@ -340,7 +340,7 @@ export default {
         data: this.$store.state.txInfo.txHistory
       },
       pageNumber: 0,
-      size: 8
+      size: 6
     };
   },
   filters: {

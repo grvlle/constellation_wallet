@@ -97,7 +97,7 @@
                         v-if="tx.status === 'Complete'"
                         class="fa fa-check"
                       ></i>
-                      <center><rotate-square-2 size="15px" v-if="tx.status === 'Pending'"></rotate-square-2></center>
+                      <center><spinner :size="15" color="#F9EC31" v-if="tx.status === 'Pending'"></spinner></center>
                       <i style="color: firebrick;" v-if="tx.status === 'Error'" class="fa fa-times"></i>
                     </td>
                     <td class="columnB">
@@ -156,7 +156,7 @@ const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
-import { RotateSquare2 } from "vue-loading-spinner";
+import Spinner from 'vue-spinner-component/src/Spinner.vue';
 import Swal from "sweetalert2";
 import {
   required,
@@ -167,7 +167,7 @@ import {
 
 export default {
   components: {
-    RotateSquare2
+    Spinner
   },
   computed: {
     tableClass() {

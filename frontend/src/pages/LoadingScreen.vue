@@ -1,65 +1,93 @@
 <template>
-  <div class="bg vertical-center" id="app">
-    <div class="container">
-      <div class="row" v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn">
-        <div class="col-md-6 mx-auto text-center">
-          <img class="img-fluid" style="max-height: 5.8rem; margin-top: 16rem;" src="~@/assets/img/Constellation-Logo-Black.png" />
-          <p>
-            Getting your $DAG Wallet ready...
-          </p>
+  <div
+    class="bg vertical-center"
+    v-bind:style="{ backgroundImage: 'url(' + this.bgImg + ')' }"
+    id="app"
+  >
+
+      <div class="container">
+        <div class="row" v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn">
+          <div class="col-md-6 mx-auto text-center">
+            <img
+              class="img-fluid"
+              style="max-height: 5.8rem; margin-top: 16rem;"
+              v-if="this.bgImg === this.darkBG"
+              src="~@/assets/img/Constellation-Logo-White.png"
+            />
+            <img
+              class="img-fluid"
+              style="max-height: 5.8rem; margin-top: 16rem;"
+              v-else
+              src="~@/assets/img/Constellation-Logo-Black.png"
+            />
+            <p>Getting your $DAG Wallet ready...</p>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6 mx-auto text-center">
-          <div class="boxes mx-auto">
-            <div class="box">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-            <div class="box">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-            <div class="box">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-            <div class="box">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
+        <div class="row">
+          <div class="col-md-6 mx-auto text-center">
+            <div class="boxes mx-auto">
+              <div class="box">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              <div class="box">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              <div class="box">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              <div class="box">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
             </div>
           </div>
         </div>
+        <div class="row" style="height: 21rem;" />
       </div>
-      <div class="row" style="height: 21rem;"/>
     </div>
-  </div>
+
 </template>
 
+
 <script>
+import BrightBG from "../assets/img/nodes2.jpg";
+import DarkBG from "../assets/img/nodes2_dark.jpg";
 export default {
-  name: "loading-screen"
+  name: "loading-screen",
   // props: ["isLoading"]
+  data: () => ({
+    bgImg: BrightBG,
+    brightBG: BrightBG,
+    darkBG: DarkBG
+  }),
+  mounted() {
+    this.themeBG();
+  },
+  methods: {
+    themeBG: function() {
+      if (this.$store.state.walletInfo.darkMode) {
+        this.bgImg = DarkBG;
+      } else {
+        this.bgImg = BrightBG;
+      }
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
 .bg {
-  /* The image used */
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.2),
-      rgba(255, 255, 255, 0.2)
-    ),
-    url("~@/assets/img/nodes2.jpg");
-
   /* Full height */
   height: 100%;
   position: absolute;

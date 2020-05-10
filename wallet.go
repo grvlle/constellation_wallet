@@ -436,6 +436,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 						a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
 						return err
 					}
+					a.log.Panicln("Unable to import previous transactions")
 					a.LoginError("Unable to collect previous TX's from blockexplorer. Please try again later.")
 				}
 			}

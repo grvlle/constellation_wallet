@@ -102,11 +102,11 @@ func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *T
 
 	err := json.Unmarshal(rbytes, &ptxObj)
 	if err != nil {
-		a.log.Errorln("Unable to parse TX Object: ", string(rbytes), err)
+		a.log.Warnln("TX Object: ", string(rbytes), err)
 	}
 	err = json.Unmarshal(lbytes, &ltxObj)
 	if err != nil {
-		a.log.Errorln("Unable to parse TX Object: ", string(rbytes), err)
+		a.log.Warnln("TX Object: ", string(rbytes), err)
 	}
 	return &ptxObj, &ltxObj
 }
@@ -199,11 +199,11 @@ func (a *WalletApplication) rebuildTxChainState(lastTXHash string) error {
 		if !ok && error != "Cannot find transaction" {
 			a.log.Errorln("API returned the following error", error)
 			// If unable to import last transaction, remove wallet from DB and logout.
-			// TODO: logout user from wallet
 			if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
 				a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
 				return err
 			}
+			a.log.Panicln("Unable to import previous transactions") // TODO: logout user from wallet
 			a.LoginError("The wallet import failed. Please check your internet connection and try again.")
 			return err
 		}

@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col">
         <card title="Transactions" subTitle="Submit a $DAG Transaction">
-          <p>Last Transaction State: {{this.$store.state.txInfo.txStatus}}</p>
+          <!-- <p>Last Transaction State: {{this.$store.state.txInfo.txStatus}}</p> -->
           <form @submit.prevent class="container">
             <div class="form-row align-items-center">
               <div class="col-md-4">
@@ -340,7 +340,7 @@ export default {
         data: this.$store.state.txInfo.txHistory
       },
       pageNumber: 0,
-      size: 6
+      size: 10
     };
   },
   filters: {

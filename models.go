@@ -21,6 +21,7 @@ type Wallet struct {
 	TXHistory            []TXHistory `gorm:"foreignkey:Alias"`
 	ProfilePicture       string
 	WalletTag            string
+	DarkMode             bool
 	Balance              float64 `json:"balance"`
 	AvailableBalance     float64 `json:"available_balance"`
 	Nonce                float64 `json:"nonce"`
@@ -37,6 +38,7 @@ type Wallet struct {
 	} `json:"token_price"`
 }
 
+// Path carries the file paths
 type Path struct {
 	ID          uint   `json:"id"`
 	Alias       string `json:"alias"`
@@ -45,6 +47,7 @@ type Path struct {
 	EmptyTXFile string
 }
 
+// TXHistory stores inidividual transactions
 type TXHistory struct {
 	ID                 uint   `json:"id"`
 	Alias              string `json:"alias"`
@@ -54,7 +57,7 @@ type TXHistory struct {
 	Fee                int64  `json:"fee"`
 	Hash               string `json:"hash"`
 	LastTransactionRef struct {
-		Hash    string `json:"hash"`
+		Hash    string `json:"prevHash"`
 		Ordinal int    `json:"ordinal"`
 	} `json:"lastTransactionRef"`
 	TS     string `json:"date"`
@@ -62,4 +65,5 @@ type TXHistory struct {
 	Failed bool
 }
 
+// Address holds the DAG address
 type Address string

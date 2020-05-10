@@ -96,6 +96,7 @@ export default {
         horizontalAlign: horizontalAlign,
         verticalAlign: verticalAlign,
         type: this.type[color]
+        
       });
     }
   }
@@ -226,15 +227,5 @@ $color-discord: #7289da;
     border-color: transparent;
     transform: translate(-50%, 100%);
   }
-}
-
-.card {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.card-footer {
-  margin-top: auto;
 }
 </style>

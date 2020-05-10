@@ -94,7 +94,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.RT = runtime
 	a.killSignal = make(chan struct{}) // Used to kill go routines and hand back system resources
 	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download"
-	a.WalletCLI.Version = "2.1.0-rc"
+	a.WalletCLI.Version = "2.6.0"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {
@@ -151,20 +151,20 @@ func (a *WalletApplication) initDirectoryStructure() error {
 
 // initMainnetConnection populates the WalletApplication struct with mainnet data
 func (a *WalletApplication) initMainnetConnection() {
-	a.Network.URL = "http://cl-lb-alb-testnet-118182741.us-west-1.elb.amazonaws.com:9000" // Temp
+	a.Network.URL = "http://lb.constellationnetwork.io:9000" // Temp
 
 	a.Network.Handles.Send = "/send"
 	a.Network.Handles.Transaction = "/transaction"
-	a.Network.Handles.Balance = "/balance/"
+	a.Network.Handles.Balance = "/address/"
 
-	a.Network.BlockExplorer.URL = "https://3pii1fjixi.execute-api.us-west-1.amazonaws.com/cl-block-explorer-testnet"
+	a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
 	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"
 	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoints/"
 	a.Network.BlockExplorer.Handles.Snapshots = "/snapshots/"
 	a.Network.BlockExplorer.Handles.CollectTX = "/transactions?sender="
 }
 
-// Errors reported by the blockexplerer/loadbalancer are reported in the following format
+// APIError reported by the blockexplerer/loadbalancer are reported in the following format
 // {"error": "Cannot find transactions for sender"}
 type APIError struct {
 	Error string

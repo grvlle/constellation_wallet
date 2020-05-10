@@ -7,12 +7,12 @@
         <sidebar-link to="/submit-transaction" name="Transactions" icon="fa fa-paper-plane" />
         <sidebar-link to="/about" name="About" icon="fa fa-question-circle" />
         <p class="nav-item">
-          <a @click="notifyVue2('top', 'right')" class="nav-link">
+          <a @click="notifyVue2('top', 'right')" class="nav-link" style="cursor: pointer;">
             <i class="fa fa-trophy"></i>Team
           </a>
         </p>
         <p class="nav-item">
-          <a @click="notifyVue2('top', 'right')" class="nav-link">
+          <a @click="notifyVue2('top', 'right')" class="nav-link" style="cursor: pointer;">
             <i class="fa fa-gavel"></i>Governance
           </a>
         </p>

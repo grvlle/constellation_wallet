@@ -1,10 +1,12 @@
 <template>
-  <div class="bg vertical-center" id="app">
+
+  <div class="login-bg vertical-center" v-bind:style="{ backgroundImage: 'url(' + this.bgImg + ')' }" id="app">
     <div class="container">
       <div class="row">
-        <div class="col-md-6 mx-auto text-center header">
+        <div class="col mx-auto text-center header">
           <div v-if="isLogin">
-            <img class="img-fluid" style="max-height: 5.8rem;" src="~@/assets/img/Constellation-Logo-Black.png" />
+            <img class="img-fluid" v-if="this.$store.state.walletInfo.darkMode" src="~@/assets/img/Constellation-Logo-White.png" style="max-height: 5.8rem;" />
+            <img class="img-fluid" v-else src="~@/assets/img/Constellation-Logo-Black.png" style="max-height: 5.8rem;" />
             <p>Please enter your credentials below to access your Molly Wallet.</p>
           </div>
           <div class="page-error-box" v-if="this.$store.state.displayLoginError">
@@ -17,7 +19,7 @@
         <div class="col-12">
           <form ref="textareaform" @submit.prevent="form" class="container">
             <div class="row">
-              <div class="col-md-5 info-box" v-if="isRegister">
+              <div class="col mx-auto login-box" v-if="isRegister">
                 <div>
                   <b>Create a new wallet</b>
                   <br />This section will let you create a Molly Wallet to store your
@@ -54,7 +56,7 @@
                   <b>Important!</b> Please backup your Alias, Store Passwords, Key Password and KeyStore File (key.p12) as these will allow you to restore your wallet at any time.
                 </div>
               </div>
-              <div class="col-md-5 info-box" v-if="isImport">
+              <div class="col-md-6 mx-auto login-box" v-if="isImport">
                 <div>
                   <b>Import an existing wallet.</b>
                   <br />This section will let you import an existing KeyStore (key.p12). Simply browse to the location of the KeyStore file, enter the Store Password as well as the Key Password to access it.
@@ -83,7 +85,7 @@
                   </ul>If you're able to authenticate against the Key Store and Private Key, your Key Store will be unlocked and you'll be able to access your wallet.
                 </div>
               </div>
-              <div class="col-md-6 mx-auto login-box">
+              <div class="col mx-auto login-box">
                 <div class="input-box">
                   <div v-if="isLogin">
                     <label class="control-label">Select your private key (key.p12)</label>
@@ -112,18 +114,20 @@
                     />
                   </div>
                   <div>
-                    <fg-input style="margin-bottom: 0.125em"
+                    <fg-input
+                      style="margin-bottom: 0.125em"
                       type="text"
                       v-model="alias"
                       @input.native="checkAlias(alias)"
-                      :placeholder="this.$store.state.walletInfo.alias" 
-                      label="Key Alias"/>
-                    <div class="validate" v-if="!this.$store.state.app.login && !this.aliasValid" >
-                      <p v-if="!this.aliasContainsFiveCharacters" >
-                        Alias has to be atleast 5 characters long.
-                      </p>
+                      :placeholder="this.$store.state.walletInfo.alias"
+                      label="Key Alias"
+                    />
+                    <div class="validate" v-if="!this.$store.state.app.login && !this.aliasValid">
+                      <p
+                        v-if="!this.aliasContainsFiveCharacters"
+                      >Alias has to be atleast 5 characters long.</p>
                     </div>
-                    <div class="validate" v-else/> 
+                    <div class="validate" v-else />
                   </div>
                   <div>
                     <password-input
@@ -154,12 +158,14 @@
                   <div class="container">
                     <div class="row" v-if="isLogin">
                       <div class="col">
+                        <!-- :diabled="isValidNewWallet" is temporarily set without an exclamation mark infront -->
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="success"
                           block
                           @click.native="login()"
-                          :disabled="!isValidNewWallet" >
+                          :disabled="!isValidNewWallet"
+                        >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
@@ -174,7 +180,8 @@
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="info"
                           block
-                          @click.native="showImportView()" >
+                          @click.native="showImportView()"
+                        >
                           <span style="display: block;">
                             <i class="fas fa-file-import"></i> IMPORT
                           </span>
@@ -185,7 +192,8 @@
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="danger"
                           block
-                          @click.native="newLogin()" >
+                          @click.native="newLogin()"
+                        >
                           <span style="display: block;">
                             <i class="fa fa-key"></i> CREATE
                           </span>
@@ -198,7 +206,8 @@
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="default"
                           block
-                          @click.native="cancelEvent()" >
+                          @click.native="cancelEvent()"
+                        >
                           <span style="display: block;">
                             <i class="fa fa-close"></i>
                             CANCEL
@@ -211,7 +220,8 @@
                           type="warning"
                           block
                           :disabled="!this.isValidNewWallet"
-                          @click.native="createLogin()" >
+                          @click.native="createLogin()"
+                        >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
@@ -226,7 +236,8 @@
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="default"
                           block
-                          @click.native="cancelImportView()" >
+                          @click.native="cancelImportView()"
+                        >
                           <span style="display: block;">
                             <i class="fa fa-close"></i>
                             CANCEL
@@ -234,11 +245,14 @@
                         </p-button>
                       </div>
                       <div class="col-md-6 pl-md-2 mb-3">
+                        <!-- :diabled="isValidNewWallet" is temporarily set without an exclamation mark infront -->
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
                           type="info"
                           block
-                          @click.native="importWallet()">
+                          @click.native="importWallet()"
+                          :disabled="!isValidNewWallet"
+                        >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
@@ -246,21 +260,31 @@
                           </span>
                         </p-button>
                       </div>
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </form>
         </div>
+        
       </div>
+      
     </div>
-    <page-overlay text="Loading..." :isActive="overlay"/>
+    <div class="version">
+      <p class="version">Connected to: {{this.$store.state.network}}<br />
+      Molly Wallet version: {{this.$store.state.walletInfo.uiVersion}}</p>
+    </div>
+    
+    <page-overlay text="Loading..." :isActive="overlay" />
+  
   </div>
+
 </template>
 
 <script>
 import Swal from "sweetalert2";
+import BrightBG from '../assets/img/nodes2.jpg';
+import DarkBG from '../assets/img/nodes2_dark.jpg';
 
 export default {
   name: "login-screen",
@@ -276,9 +300,13 @@ export default {
     KeyPasswordValid: false,
     overlay: false,
     access: false,
+    bgImg: DarkBG,
     termsOfService:
       "This HTML scroll box has had color added. You can add color to the background of your scroll box. You can also add color to the scroll bars"
   }),
+  mounted() {
+    this.themeBG()
+  },
   computed: {
     isValidNewWallet: function() {
       if (
@@ -327,8 +355,9 @@ export default {
       } else {
         return false;
       }
-    }
-  },
+    },
+
+  }, 
   methods: {
     importWallet: function() {
       var self = this;
@@ -378,6 +407,13 @@ export default {
         this.aliasValid = false;
       }
     },
+    themeBG: function () {
+      if (this.$store.state.walletInfo.darkMode) {
+          this.bgImg = DarkBG;
+        } else {
+          this.bgImg = BrightBG;
+        }
+    },
     showImportView: function() {
       this.resetData();
       this.$store.state.app.import = !this.$store.state.app.import;
@@ -425,6 +461,9 @@ export default {
       ).then(result => {
         self.access = result;
         if (self.access) {
+          window.backend.WalletApplication.SetUserTheme().then(
+            darkMode => (self.$store.state.walletInfo.darkMode = darkMode)
+          )
           window.backend.WalletApplication.SetWalletTag().then(
             walletTag => (self.$store.state.walletInfo.email = walletTag)
           );
@@ -444,6 +483,13 @@ export default {
         }
       });
     },
+  wait: function(ms){
+   var start = new Date().getTime();
+   var end = start;
+   while(end < start + ms) {
+     end = new Date().getTime();
+  }
+},
     createLogin: function() {
       var self = this;
       self.$Progress.start();
@@ -648,13 +694,13 @@ html {
   height: 100%;
 }
 
-.bg {
-  /* The image used */
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.2),
-      rgba(255, 255, 255, 0.2)
-    ),
-    url("~@/assets/img/nodes2.jpg");
+.login-bg {
+        /* The image used */
+  // background-image: linear-gradient(
+  //   rgba(255, 255, 255, 0.2),
+  //   rgba(255, 255, 255, 0.2)
+  // ),
+  // url("~@/assets/img/nodes2.jpg");
 
   /* Full height */
   height: 100%;
@@ -668,6 +714,15 @@ html {
   background-size: cover;
 }
 
+
+
+.version {
+  position: fixed;
+  display: flex;
+  align-items: bottom;
+  margin-right: 1.8em;
+}
+
 .vertical-center {
   min-height: 100%; /* Fallback for browsers do NOT support vh unit */
   min-height: 100vh; /* These two lines are counted as one :-)       */
@@ -678,6 +733,8 @@ html {
 
 .login-box {
   max-width: 29rem;
+  min-width: 29rem;
+  padding-bottom: 2rem;
 }
 
 .input-box > div {
@@ -704,26 +761,5 @@ html {
   margin-right: 0em;
   padding-left: 0em;
   padding-right: 0em;
-}
-
-.page-error-box {
-  height: 1.875em;
-}
-
-.page-error-box p {
-  color: firebrick;
-  font-size: 0.75rem;
-}
-
-.validate {
-  height: 0.625em;
-  display: flex;
-}
-.validate > p {
-  /*flex: 1;*/
-  font-size: 0.625rem;
-  color: firebrick;
-  margin-top: 0em;
-  margin-right: 0.125em;
 }
 </style>

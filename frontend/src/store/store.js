@@ -8,12 +8,13 @@ export const store = new Vuex.Store({
         warningMessage: "",
         successMessage: "",
         loginErrorMsg: "",
+        network: "MAINNET",
         displayLoginError: false,
         app: {
             toc: false,
             txFinished: true,
             isLoading: false,
-            isLoggedIn: false,
+            isLoggedIn: false, // Change to false
             isDownloadingDependencies: true,
             import: false,
             register: false,
@@ -24,8 +25,8 @@ export const store = new Vuex.Store({
           size: ""
         },
         walletInfo: {
-            version: "v1.13",
-            uiVersion: "v0.1.8 Beta",
+            version: "v2.6.0",
+            uiVersion: "v1.1.9",
             email: "Molly Wallet",
             imgPath: 'faces/face-0.jpg',
             transactions: 0,
@@ -34,7 +35,7 @@ export const store = new Vuex.Store({
             availableBalance: 0,
             nonce: 0,
             currency: "USD",
-            totalValue: "NaN",
+            totalValue: "0",
             blocks: "NaN",
             address: "N/A",
             keystorePath: "",
@@ -42,7 +43,8 @@ export const store = new Vuex.Store({
             alias: "",
             privateKey: "NaN",
             publicKey: "NaN",
-            seed: "Mnemonic Seed will be introduced with a later software release"
+            seed: "Mnemonic Seed will be introduced with a later software release",
+            darkMode: false
         },
         txInfo: {
             txHistory: [],
@@ -59,7 +61,6 @@ export const store = new Vuex.Store({
             showTransactions: true,
             showThroughput: true,
         },
-        pageOfItems: [],
         chartData: {
             nodesOnline: {
                 labels: [], // ChartData.nodes_online.labels,
@@ -84,6 +85,22 @@ export const store = new Vuex.Store({
             state.txInfo.txHistory = txHistoryUpdated
             
         },
+    },
+    getters: {
+        getTxCounter (state) {
+            return state.counters.nodesOnlineCounter
+        },
+        runningOnWindows (state) {
+            return state.OS.windows
+        },
+        runningOnLinux (state) {
+            return state.OS.linux
+        },
+        runningOnMacOS (state) {
+            return state.OS.macOS
+        }
     }
+    
 
 })
+

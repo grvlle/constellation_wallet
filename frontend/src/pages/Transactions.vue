@@ -2,27 +2,29 @@
   <div id="app" class="container">
     <div class="row">
       <div class="col">
-        <card :title="table1.title" :subTitle="table1.subTitle">
-          <p>Last Transaction State: {{this.$store.state.txInfo.txStatus}}</p>
+        <card title="Transactions" subTitle="Submit a $DAG Transaction">
+          <!-- <p>Last Transaction State: {{this.$store.state.txInfo.txStatus}}</p> -->
           <form @submit.prevent class="container">
             <div class="form-row align-items-center">
               <div class="col-md-4">
                 <div class="input-group" style="margin-bottom: 0;">
                   <div class="input-group-prepend">
-                    <span class="input-group-text"><small>DAG</small></span>
+                    <span class="input-group-text">
+                      <small>DAG</small>
+                    </span>
                   </div>
-                  <input type="text" class="form-control" aria-label="Amount (in DAGs)"
+                  <input
+                    type="text"
+                    class="form-control"
+                    aria-label="Amount (in DAGs)"
                     v-model.number="txAmountValidation"
                     @change="sendAmount($event.target.value)"
                     pattern="[0-9]+([,\.][0-9]+)?"
                     step="0.01"
-                    placeholder="0"/>
+                    placeholder="0"
+                  />
                   <div class="input-group-append">
-                    <button type="button" @click="setMaxDAGs()" 
-                      class="btn btn-outline-light text-dark" 
-                      style="border: 1px solid #ced4da;">
-                      Max.
-                    </button>
+                    <button type="button" @click="setMaxDAGs()" class="btn">Max.</button>
                   </div>
                 </div>
                 <div class="validate" v-if="!$v.txAmountValidation.inBetween">
@@ -35,28 +37,42 @@
                 <div class="validate"></div>
               </div>
               <div class="col-md-5">
-                <input type="text" class="form-control" aria-label="Amount (in DAGs)"
+                <input
+                  type="text"
+                  class="form-control"
+                  aria-label="Amount (in DAGs)"
                   v-model.trim="txAddressValidation"
                   @change="setName($event.target.value)"
-                  placeholder="Enter Recipients Wallet Address"
-                  />
-                <div class="validate"
+                  placeholder="Enter Recipients Wallet Address..."
+                />
+                <div
+                  class="validate"
                   v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength"
                 >
                   <p>Invalid wallet address. Please verify.</p>
                 </div>
+                <div
+                  class="validate"
+                  v-else-if="txAddressValidation == this.$store.state.walletInfo.address"
+                >
+                  <p>You can not send to your own wallet.</p>
+                </div>
                 <div class="validate" v-else></div>
               </div>
               <div class="col-md-2">
-                <p-button type="info" block @click.native="tx" 
+                <p-button
+                  type="info"
+                  block
+                  @click.native="tx"
                   style="max-width: 10rem; margin-left: auto;"
-                  :disabled="!this.$store.state.app.txFinished">
+                  :disabled="txInTransit || txAddressValidation == this.$store.state.walletInfo.address"
+                >
                   <span>
                     <i class="fa fa-paper-plane"></i> SEND
                   </span>
                 </p-button>
                 <div class="validate"></div>
-              </div> 
+              </div>
             </div>
           </form>
         </card>
@@ -64,27 +80,29 @@
     </div>
     <div class="row">
       <div class="col">
-        <card class="card" :title="table2.title" :subTitle="table2.subTitle">
-          <div class="table-full-width table-responsive">
+        <card class="card" :title="transactionTable.title" :subTitle="transactionTable.subTitle">
+          <div class="table-full-width table-responsive" style="width: 100%;">
             <table class="table" :class="tableClass">
               <thead>
                 <slot txAddressValidation="columns">
-                  <th v-for="column in table2.columns" v-bind:key="column.id">{{column}}</th>
+                  <th v-for="column in transactionTable.columns" v-bind:key="column.id">{{column}}</th>
                 </slot>
               </thead>
               <tbody>
-                <tr v-for="tx in this.$store.state.txInfo.txHistory" v-bind:key="tx.ID">
+                <tr v-for="tx in paginatedData" v-bind:key="tx.ID">
                   <slot :row="item">
-                  <td class="columnA">
-                      
-                        <i style="color: #6DECBB;" v-if="tx.status === 'Complete'" class="fa fa-check"></i>
-                        <i style="color: #E2EA6E;" v-if="tx.status === 'Pending'" class="ti-timer"></i>
-                        <i style="color: firebrick;" v-if="tx.status === 'Error'" class="fa fa-times"></i>
-                      
+                    <td class="columnA">
+                      <i
+                        style="color: #6DECBB;"
+                        v-if="tx.status === 'Complete'"
+                        class="fa fa-check"
+                      ></i>
+                      <center><spinner :size="15" color="#F9EC31" v-if="tx.status === 'Pending'"></spinner></center>
+                      <i style="color: firebrick;" v-if="tx.status === 'Error'" class="fa fa-times"></i>
                     </td>
                     <td class="columnB">
                       <p class="description" style="font-size: 0.9375rem;">
-                        <b>{{tx.amount / 1e8}}</b> DAG
+                        <b>{{(tx.amount / 1e8).toFixed(8).replace(/\.?0+$/,"")}}</b> DAG
                       </p>
                     </td>
                     <td class="columnC">
@@ -105,23 +123,40 @@
                 </tr>
               </tbody>
             </table>
-            <center>
-              <jw-pagination :items="table2.data" @changePage="onChangePage"></jw-pagination>
-            </center>
+            <ul
+              v-if="this.transactionTable.data.length > 0"
+              class="pagination justify-content-center"
+            >
+              <li class="page-item" :class="pageNumber == 0 ? 'disabled' : ''">
+                <a class="page-link" style="cursor: pointer;" @click="prevPage">Previous</a>
+              </li>
+              <li
+                class="page-item"
+                :class="page == pageNumber + 1 ? 'active' : ''"
+                v-for="page in pageCount"
+                :key="page"
+              >
+                <a class="page-link" style="cursor: pointer;" @click="gotoPage(page)">{{page}}</a>
+              </li>
+              <li class="page-item" :class="pageNumber >= pageCount - 1 ? 'disabled' : ''">
+                <a class="page-link" style="cursor: pointer;" @click="nextPage">Next</a>
+              </li>
+            </ul>
           </div>
         </card>
       </div>
     </div>
-    <page-overlay text="Submitting Transaction..." :isActive="overlay"/>
+    <page-overlay text="Submitting Transaction..." :isActive="overlay" />
   </div>
 </template>
 
 <script>
+
 const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"];
-let tableData = [];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
+import Spinner from 'vue-spinner-component/src/Spinner.vue';
 import Swal from "sweetalert2";
 import {
   required,
@@ -131,9 +166,25 @@ import {
 } from "vuelidate/lib/validators";
 
 export default {
+  components: {
+    Spinner
+  },
   computed: {
     tableClass() {
       return `table-${this.type}`;
+    },
+    txInTransit() {
+      return this.$store.state.txInfo.txStatus == "Pending";
+    },
+    pageCount() {
+      let l = this.$store.state.txInfo.txHistory.length,
+        s = this.size;
+      return Math.ceil(l / s);
+    },
+    paginatedData() {
+      const start = this.pageNumber * this.size,
+        end = start + this.size;
+      return this.$store.state.txInfo.txHistory.slice(start, end);
     }
   },
   methods: {
@@ -142,10 +193,6 @@ export default {
     },
     isInteger: function(n) {
       return n === +n && n === (n | 0);
-    },
-    onChangePage(pageOfItems) {
-      // update page of items
-      this.$store.state.pageOfItems = pageOfItems;
     },
     sendAmount(value) {
       this.txAmountValidation = value;
@@ -171,7 +218,12 @@ export default {
 
       if (self.submitStatus === "OK") {
         Swal.mixin({
-          progressSteps: ["1", "2"]
+          progressSteps: ["1", "2"],
+          customClass: {
+            container: this.$store.state.walletInfo.darkMode
+              ? "theme--dark"
+              : "theme--light"
+          }
         })
           .queue([
             {
@@ -216,13 +268,20 @@ export default {
               let amount = self.txAmountValidation;
               let address = self.txAddressValidation;
               let fee = result.value;
+              const swalPopup = Swal.mixin({
+                customClass: {
+                  container: this.$store.state.walletInfo.darkMode
+                    ? "theme--dark"
+                    : "theme--light"
+                }
+              });
               window.backend.WalletApplication.TriggerTXFromFE(
-                parseFloat(amount),
-                parseFloat(fee[1]),
+                parseFloat(amount, 10),
+                parseFloat(fee[1], 10),
                 address
               ).then(txFailed => {
                 if (txFailed) {
-                  Swal.fire({
+                  swalPopup.fire({
                     title: "Transaction Failed!",
                     text: "Unable to send Transaction",
                     type: "error"
@@ -231,7 +290,7 @@ export default {
                   self.overlay = false;
                 }
                 if (!txFailed) {
-                  Swal.fire({
+                  swalPopup.fire({
                     title: "Success!",
                     text:
                       "You have sent " +
@@ -251,6 +310,15 @@ export default {
     },
     setMaxDAGs() {
       this.txAmountValidation = this.$store.state.walletInfo.availableBalance;
+    },
+    nextPage() {
+      this.pageNumber++;
+    },
+    prevPage() {
+      this.pageNumber--;
+    },
+    gotoPage(page) {
+      this.pageNumber = page - 1;
     }
   },
   data() {
@@ -265,19 +333,14 @@ export default {
         topCenter: false
       },
       overlay: false,
-
-      table1: {
-        title: "Transactions",
-        subTitle: "Submit a $DAG Transaction",
-        columns: [...tableColumns],
-        data: [...tableData]
-      },
-      table2: {
+      transactionTable: {
         title: "Transaction History",
         subTitle: "Table containing all previous transactions",
         columns: [...tableColumns],
         data: this.$store.state.txInfo.txHistory
-      }
+      },
+      pageNumber: 0,
+      size: 10
     };
   },
   filters: {
@@ -329,31 +392,31 @@ export default {
 </script>
 
 <style scoped>
-
 td {
-    max-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 td.columnA {
-    width: 3%;
-    text-align: center;
+  width: 3%;
+  padding-top: 0px;
+  text-align: center;
 }
 td.columnB {
-    width: 15%;
+  width: 15%;
 }
 td.columnC {
-    width: 40%;
+  width: 40%;
 }
 td.columnD {
-    width: 10%;
+  width: 5%;
 }
 td.columnE {
-    width: 15%;
+  width: 22%;
 }
 td.columnF {
-    width: 17%;
+  width: 15%;
 }
 
 txhash a {
@@ -370,19 +433,5 @@ txhash p {
 
 .validate {
   height: 1.25em;
-  display: flex;
-}
-.validate > p {
-  /*flex: 1;*/
-  font-size: 0.625rem;
-  color: firebrick;
-  margin-top: 0em;
-  margin-right: 0.125em;
-}
-
-.icon-point-right {
-  color: #6DECBB; 
-  font-size: 2.5rem; 
-  width:100%;
 }
 </style>

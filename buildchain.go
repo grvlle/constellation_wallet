@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -12,8 +11,8 @@ import (
 // and the method that pushes them to the network(HTTP POST).
 // To retain order, formTXChain will poll the last sent TX for it's Failed state.
 // if the last TX failed, it'll switch up the order to account for that not to break the chain.
-// This means that all failed attempts att creating a block is also stored in the DB with
-// a Failed state bool.
+// This means that all failed attempts at creating a block is also stored in the DB with
+// a Failed state.
 func (a *WalletApplication) formTXChain(amount int64, fee int64, address string, ptxObj *Transaction, ltxObj *Transaction) {
 
 	statusLastTX := TXHistory{}
@@ -35,20 +34,24 @@ func (a *WalletApplication) formTXChain(amount int64, fee int64, address string,
 		return
 	}
 
-	fmt.Println(numberOfTX, a.WalletImported)
+	a.log.Infoln("Number of previous TX's detected: ", numberOfTX)
 
 	// Manually control the second TX, to ensure the following order
 	if numberOfTX == 1 {
 
 		// If the first transaction failed, enforce the order.
 		if statusLastTX.Failed {
+			a.log.Warnln("Detected that the previous transaction failed.")
 			a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.EmptyTXFile)
 			a.sendTransaction(a.paths.LastTXFile)
 			return
 		}
 
-		// PrevTXFile has already been written and needs to be referenced.
-		if a.WalletImported {
+		// Check for edge case where PrevTXFile has already been written and needs to be referenced.
+		// This occurs when a wallet with 1 previous tx has been imported.
+		prevTXFileContents := a.loadTXFromFile(a.paths.PrevTXFile)
+		if a.WalletImported && prevTXFileContents != "" {
+			a.log.Warnln("One previous transaction has been imported. Using that as reference.")
 			a.produceTXObject(amount, fee, address, a.paths.LastTXFile, a.paths.PrevTXFile)
 			a.sendTransaction(a.paths.LastTXFile)
 			return
@@ -99,11 +102,11 @@ func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *T
 
 	err := json.Unmarshal(rbytes, &ptxObj)
 	if err != nil {
-		fmt.Println(err)
+		a.log.Warnln("TX Object: ", string(rbytes), err)
 	}
 	err = json.Unmarshal(lbytes, &ltxObj)
 	if err != nil {
-		fmt.Println(err)
+		a.log.Warnln("TX Object: ", string(rbytes), err)
 	}
 	return &ptxObj, &ltxObj
 }
@@ -113,14 +116,14 @@ func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *T
 // TXReference is used to parse the previous tx of an imported wallet.
 type TXReference struct {
 	Hash               string `json:"hash"`
-	Amount             int    `json:"amount"`
+	Amount             int64  `json:"amount"`
 	Receiver           string `json:"receiver"`
 	Sender             string `json:"sender"`
 	Fee                int    `json:"fee"`
 	IsDummy            bool   `json:"isDummy"`
 	LastTransactionRef struct {
-		Hash    string `json:"hash"`
-		Ordinal int    `json:"ordinal"`
+		PrevHash string `json:"prevHash"`
+		Ordinal  int    `json:"ordinal"`
 	} `json:"lastTransactionRef"`
 	SnapshotHash        string `json:"snapshotHash"`
 	CheckpointBlock     string `json:"checkpointBlock"`
@@ -128,14 +131,14 @@ type TXReference struct {
 		Edge struct {
 			ObservationEdge struct {
 				Parents []struct {
-					Hash     string      `json:"hash"`
-					HashType string      `json:"hashType"`
-					BaseHash interface{} `json:"baseHash,omitempty"`
+					HashReference string `json:"hashReference"`
+					HashType      string `json:"hashType"`
+					BaseHash      string `json:"baseHash"`
 				} `json:"parents"`
 				Data struct {
-					Hash     string      `json:"hash"`
-					HashType string      `json:"hashType"`
-					BaseHash interface{} `json:"baseHash,omitempty"`
+					HashReference string `json:"hashReference"`
+					HashType      string `json:"hashType"`
+					BaseHash      string `json:"baseHash"`
 				} `json:"data"`
 			} `json:"observationEdge"`
 			SignedObservationEdge struct {
@@ -150,18 +153,18 @@ type TXReference struct {
 				} `json:"signatureBatch"`
 			} `json:"signedObservationEdge"`
 			Data struct {
-				Amount    int `json:"amount"`
+				Amount    int64 `json:"amount"`
 				LastTxRef struct {
-					Hash    string `json:"hash"`
-					Ordinal int    `json:"ordinal"`
+					PrevHash string `json:"prevHash"`
+					Ordinal  int    `json:"ordinal"`
 				} `json:"lastTxRef"`
-				Fee  interface{} `json:"fee,omitempty"`
+				Fee  interface{} `json:"fee"`
 				Salt int64       `json:"salt"`
 			} `json:"data"`
 		} `json:"edge"`
 		LastTxRef struct {
-			Hash    string `json:"hash"`
-			Ordinal int    `json:"ordinal"`
+			PrevHash string `json:"prevHash"`
+			Ordinal  int    `json:"ordinal"`
 		} `json:"lastTxRef"`
 		IsDummy bool `json:"isDummy"`
 		IsTest  bool `json:"isTest"`
@@ -200,6 +203,7 @@ func (a *WalletApplication) rebuildTxChainState(lastTXHash string) error {
 				a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
 				return err
 			}
+			a.log.Panicln("Unable to import previous transactions") // TODO: logout user from wallet
 			a.LoginError("The wallet import failed. Please check your internet connection and try again.")
 			return err
 		}

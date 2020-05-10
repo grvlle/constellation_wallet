@@ -65,7 +65,6 @@
 @mixin ct-chart-grid($ct-grid-color: $ct-grid-color, $ct-grid-width: $ct-grid-width, $ct-grid-dasharray: $ct-grid-dasharray) {
   stroke: $ct-grid-color;
   stroke-width: $ct-grid-width;
-
   @if ($ct-grid-dasharray) {
     stroke-dasharray: $ct-grid-dasharray;
   }

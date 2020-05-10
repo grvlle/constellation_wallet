@@ -64,6 +64,7 @@ func (a *WalletApplication) SetImagePath() string {
 	return a.wallet.ProfilePicture
 }
 
+// StoreImagePathInDB stores the path to where the profile picture is located in the database
 func (a *WalletApplication) StoreImagePathInDB(path string) {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("ProfilePicture", path).Error; err != nil {
 		a.log.Errorln("Unable to update the DB record with the Image path. Reason: ", err)
@@ -81,10 +82,32 @@ func (a *WalletApplication) SetWalletTag() string {
 	return a.wallet.WalletTag
 }
 
+// StoreWalletLabelInDB takes a wallet label string entered by a user and stores it in the database
 func (a *WalletApplication) StoreWalletLabelInDB(walletTag string) {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("WalletTag", walletTag).Error; err != nil {
 		a.log.Errorln("Unable to update the DB record with the wallet tag. Reason: ", err)
 		a.sendError("Unable to update the DB record with the wallet tag. Reason: ", err)
+	}
+}
+
+// SetUserTheme is called from the Login.Vue
+func (a *WalletApplication) SetUserTheme() bool {
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Error; err != nil {
+		a.log.Errorln("Unable to query the DB record for the Image path. Reason: ", err)
+		a.sendError("Unable to query the DB record for the Image path. Reason: ", err)
+	}
+	if a.wallet.DarkMode {
+		a.log.Infoln("Dark mode enabled")
+	}
+
+	return a.wallet.DarkMode
+}
+
+// StoreDarkModeStateDB stores the darkmode state in the user DB
+func (a *WalletApplication) StoreDarkModeStateDB(darkMode bool) {
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("DarkMode", darkMode).Error; err != nil {
+		a.log.Errorln("Unable to store darkmode state. Reason: ", err)
+		a.sendError("Unable to store darkmode state persistently. Reason: ", err)
 	}
 }
 

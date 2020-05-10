@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="this.$store.state.walletInfo.darkMode ? 'theme--dark' : 'theme--light'">
     <vue-progress-bar></vue-progress-bar>
     <downloading-screen
       v-if="this.$store.state.app.isDownloadingDependencies"
@@ -34,7 +34,6 @@ import LoadingScreen from "./pages/LoadingScreen";
 import DownloadingScreen from "./pages/DownloadingScreen";
 import LoginScreen from "./pages/Login";
 
-
 export default {
   components: {
     LoadingScreen,
@@ -49,6 +48,7 @@ export default {
     // Backend Errors
     window.wails.Events.On("error_handling", (m, err) => {
       this.$store.state.errorMessage = m + err;
+      this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
       }, 60000);
@@ -67,6 +67,7 @@ export default {
 
     window.wails.Events.On("warning", m => {
       this.$store.state.warningMessage = m;
+      this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
       }, 60000);
@@ -85,6 +86,7 @@ export default {
 
     window.wails.Events.On("success", m => {
       this.$store.state.successMessage = m;
+      this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
       }, 60000);
@@ -123,12 +125,13 @@ export default {
       this.$store.state.txInfo.txStatus = txStatus;
     });
 
-    
-
     // Downloading.vue sockets
-    window.wails.Events.On("downloading_dependencies", isDownloadingDependencies => {
-      this.$store.state.app.isDownloadingDependencies = isDownloadingDependencies;
-    });
+    window.wails.Events.On(
+      "downloading_dependencies",
+      isDownloadingDependencies => {
+        this.$store.state.app.isDownloadingDependencies = isDownloadingDependencies;
+      }
+    );
 
     window.wails.Events.On("downloading", (filename, size) => {
       if (this.$store.state.downloading.filename !== filename) {
@@ -178,6 +181,17 @@ export default {
       this.$store.state.chartData.throughput.labels = labels;
     });
 
+    // Utility sockets
+    // window.wails.Events.On("detect_os", os => {
+    //   if (os == "windows") {
+    //     this.$store.state.OS.windows = true;
+    //   } else if (os == "macos") {
+    //     this.$store.state.OS.macOS = true;
+    //   } else if (os == "linux") {
+    //     this.$store.state.OS.linux = true;
+    //   }
+    // });
+
     // Settings.vue sockets
     window.wails.Events.On("wallet_keys", address => {
       // this.$store.state.walletInfo.keystorePath = keystorePath;
@@ -205,7 +219,7 @@ export default {
   }
   .list-item {
     display: inline-block;
-    margin-right: 0.625em ;
+    margin-right: 0.625em;
   }
   .list-enter-active {
     transition: transform 0.2s ease-in, opacity 0.4s ease-in;

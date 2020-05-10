@@ -15,12 +15,14 @@ type Transaction struct {
 	Edge struct {
 		ObservationEdge struct {
 			Parents []struct {
-				Hash     string `json:"hash"`
-				HashType string `json:"hashType"`
+				HashReference string `json:"hashReference"`
+				HashType      string `json:"hashType"`
+				BaseHash      string `json:"baseHash"`
 			} `json:"parents"`
 			Data struct {
-				Hash     string `json:"hash"`
-				HashType string `json:"hashType"`
+				HashReference string `json:"hashReference"`
+				HashType      string `json:"hashType"`
+				BaseHash      string `json:"baseHash"`
 			} `json:"data"`
 		} `json:"observationEdge"`
 		SignedObservationEdge struct {
@@ -37,27 +39,24 @@ type Transaction struct {
 		Data struct {
 			Amount    int64 `json:"amount"`
 			LastTxRef struct {
-				Hash    string `json:"hash"`
-				Ordinal int    `json:"ordinal"`
+				PrevHash string `json:"prevHash"`
+				Ordinal  int    `json:"ordinal"`
 			} `json:"lastTxRef"`
 			Fee  int64 `json:"fee,omitempty"`
 			Salt int64 `json:"salt"`
 		} `json:"data"`
 	} `json:"edge"`
 	LastTxRef struct {
-		Hash    string `json:"hash"`
-		Ordinal int    `json:"ordinal"`
+		PrevHash string `json:"prevHash"`
+		Ordinal  int    `json:"ordinal"`
 	} `json:"lastTxRef"`
 	IsDummy bool `json:"isDummy"`
 	IsTest  bool `json:"isTest"`
 }
 
-func (a *WalletApplication) networkHeartbeat() {
-	//TODO
-}
-
 /* Send a transaction */
 
+// TriggerTXFromFE will initate a new transaction triggered from the frontend.
 func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address string) bool {
 	amountConverted := int64(amount * 1e8)
 	feeConverted := int64(fee * 1e8)
@@ -73,9 +72,17 @@ func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address
 // methods called are defined in buildchain.go
 func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address string) {
 
-	// TODO: Temp comments. Re-add once wallet goes live.
-	if amount+fee > int64(a.wallet.AvailableBalance)*1e8 {
-		a.log.Warnln("Insufficient Balance")
+	balance, err := a.GetTokenBalance()
+	if err != nil {
+		a.log.Errorln("Error when querying wallet balance. Reason: ", err)
+		a.sendWarning("Unable to poll balance for wallet. Please try again later.")
+		a.TransactionFailed = true
+		return
+	}
+
+	if amount+fee > int64(balance*1e8) {
+		a.log.Warnf("Trying to send: %d", amount+fee)
+		a.log.Warnf("Insufficient Balance: %d", int64(balance*1e8))
 		a.sendWarning("Insufficent Balance.")
 		a.TransactionFailed = true
 		return
@@ -84,7 +91,7 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address 
 	if a.TransactionFinished {
 		a.TransactionFinished = false
 
-		// Asynchronously inform FE of TX state
+		// Asynchronously inform FE of TX state in wallet.
 		go func() {
 			for !a.TransactionFinished {
 				a.RT.Events.Emit("tx_in_transit", a.TransactionFinished)
@@ -125,8 +132,10 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 			a.log.Errorln(string(bodyBytes))
 			a.log.Errorln("Failed to read the response body. Reason: ", err)
 		}
-		bodyString := string(bodyBytes)
-		if len(bodyBytes) == 64 {
+
+		bodyString := string(bodyBytes[1:65])
+		a.log.Infoln("The bytesize of the request body: ", len(bodyBytes))
+		if len(bodyBytes) == 66 {
 			a.log.Info("Transaction Hash: ", bodyString)
 			a.TxPending(bodyString)
 			a.log.Infoln("Transaction has been successfully sent to the network.")
@@ -146,7 +155,6 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 	a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
 	a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
 
-	time.Sleep(3 * time.Second)
 	return false, ""
 }
 
@@ -169,10 +177,10 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 	if TXSuccessfullyPutOnNetwork {
 		txData := &TXHistory{
 			Amount:   tx.Edge.Data.Amount,
-			Receiver: tx.Edge.ObservationEdge.Parents[1].Hash,
+			Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 			Fee:      tx.Edge.Data.Fee,
 			Hash:     hash,
-			TS:       time.Now().Format("Mon Jan _2 15:04:05 2006"),
+			TS:       time.Now().Format("Jan _2 15:04:05"),
 			Status:   "Pending",
 			Failed:   false,
 		}
@@ -184,10 +192,10 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 	}
 	txData := &TXHistory{
 		Amount:   tx.Edge.Data.Amount,
-		Receiver: tx.Edge.ObservationEdge.Parents[1].Hash,
+		Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 		Fee:      tx.Edge.Data.Fee,
 		Hash:     hash,
-		TS:       time.Now().Format("Mon Jan _2 15:04:05 2006"),
+		TS:       time.Now().Format("Jan _2 15:04:05"),
 		Status:   "Error",
 		Failed:   true,
 	}
@@ -210,7 +218,7 @@ func (a *WalletApplication) storeTX(txData *TXHistory) {
 	a.log.Infoln("Successfully stored tx in DB")
 }
 
-// loadTXFromFile takes a file, scan it and returns it in an object
+// loadTXFromFile takes a file, scans it and returns it in an object
 func (a *WalletApplication) loadTXFromFile(txFile string) string {
 	var txObjects string
 
@@ -272,14 +280,26 @@ func (a *WalletApplication) TxProcessed(TXHash string) bool {
 		return false
 	}
 
-	a.log.Infoln(string(bodyBytes))
+	// Declared an empty interface
+	var result map[string]interface{}
 
-	// if transaction doesn’t exists -> either unprocessed or already in snapshot
-	return string(bodyBytes) == ""
+	// Unmarshal or Decode the JSON to the interface.
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		return false
+	}
+
+	if result["cbBaseHash"] != nil {
+		a.log.Infoln("CheckPoint Hash :", result["cbBaseHash"])
+		return true
+	}
+
+	// null response means it's snapshotted
+	return string(bodyBytes) == "null"
 
 }
 
-type TxStatus struct {
+type txStatus struct {
 	Complete string
 	Pending  string
 	Error    string
@@ -288,7 +308,7 @@ type TxStatus struct {
 // TxPending takes a TX Hash and updates the frontend with the current status (Pending/Error/Complete)
 func (a *WalletApplication) TxPending(TXHash string) {
 
-	status := &TxStatus{
+	status := &txStatus{
 		Complete: "Complete",
 		Pending:  "Pending",
 		Error:    "Error",
@@ -301,34 +321,42 @@ func (a *WalletApplication) TxPending(TXHash string) {
 		return
 	default:
 		go func() bool {
-			for retryCounter := 100; retryCounter > 0; retryCounter-- {
+			for retryCounter := 0; retryCounter < 30; retryCounter++ {
 				processed := a.TxProcessed(TXHash)
-
 				if !processed {
 					a.log.Warnf("Transaction %v pending", TXHash)
 					a.RT.Events.Emit("tx_pending", status.Pending)
 					time.Sleep(time.Duration(retryCounter) * time.Second) // Increase polling interval
 
-					if retryCounter == 99 {
-						a.sendWarning("Unable to get verification of processed transaction from the network. Please reach out to the team.")
+					if retryCounter == 29 {
+						// Register failed transaction
+						a.sendWarning("Unable to get verification of processed transaction from the network. Please try again later.")
 						a.log.Errorf("Unable to get status from the network on transaction: %s", TXHash)
 						a.RT.Events.Emit("tx_pending", status.Error)
+						if err := a.DB.Table("tx_histories").Where("hash = ?", TXHash).Updates(map[string]interface{}{"status": status.Error, "failed": true}).Error; err != nil {
+							a.log.Errorln("Unable to query database object for the imported wallet. Reason: ", err)
+							a.LoginError("Unable to query database object for the imported wallet.")
+							return false
+						}
+						a.RT.Events.Emit("update_tx_history", []TXHistory{}) // Clear TX history
+						a.initTXFromDB()
+						return false
 					}
 
 					consensus = 0 // Reset consensus
 				}
-				if processed && consensus != 10 {
+				if processed && consensus != 3 {
 					consensus++
-					a.log.Infof("TX status check has reached consensus %v/10", consensus)
+					a.log.Infof("TX status check has reached consensus %v/3", consensus)
 					time.Sleep(1 * time.Second)
 				}
-				if processed && consensus == 10 { // Need ten consecative confirmations that TX has been processed.
+				if processed && consensus == 3 { // Need five consecetive confirmations that TX has been processed.
 					break
 				}
 
 			}
 			a.log.Infof("Transaction %v has been successfully processed", TXHash)
-			a.sendSuccess("Transaction" + TXHash + "has been successfully processed")
+			a.sendSuccess("Transaction " + TXHash[:30] + "... has been successfully processed")
 			if err := a.DB.Table("tx_histories").Where("hash = ?", TXHash).UpdateColumn("status", status.Complete).Error; err != nil {
 				a.log.Errorln("Unable to query database object for the imported wallet. Reason: ", err)
 				a.LoginError("Unable to query database object for the imported wallet.")

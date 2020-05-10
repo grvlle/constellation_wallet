@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/wailsapp/wails"
@@ -17,7 +16,7 @@ const (
 	updateIntervalToken    = 30 // Seconds
 	updateIntervalUSD      = 50 // Seconds
 	updateIntervalBlocks   = 5  // Seconds
-	updateIntervalPieChart = 6  // Seconds
+	updateIntervalPieChart = 60 // Seconds
 )
 
 // ChartData contains all the datapoints for the Charts
@@ -178,7 +177,7 @@ func (a *WalletApplication) blockAmount() {
 
 func (a *WalletApplication) pollTokenBalance() {
 	go func() {
-		var retryCounter int
+		retryCounter := 1
 		for {
 			select {
 			case <-a.killSignal:
@@ -187,48 +186,12 @@ func (a *WalletApplication) pollTokenBalance() {
 				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
 				for retryCounter <= 20 && a.wallet.Address != "" {
 
-					a.log.Debug("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
-
-					resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
-					if err != nil {
-						a.log.Errorln("Failed to send HTTP request. Reason: ", err)
-						retryCounter++
-						break
-					}
-					if resp == nil {
-						retryCounter++
-						a.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
-						a.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
-						break
-					}
-					defer resp.Body.Close()
-
-					bodyBytes, err := ioutil.ReadAll(resp.Body)
+					balance, err := a.GetTokenBalance()
 					if err != nil {
 						retryCounter++
-						a.log.Error("Unable to update token balance. Reason: ", err)
 						break
 					}
-					s := string(bodyBytes)
-					if s == "" {
-						s = "0" // Empty means zero
-					}
-					i, err := strconv.ParseInt(s, 10, 64)
-					if err != nil {
-						retryCounter++
-						a.log.Warnln("Unable to parse balance. Reason:", err)
-						break
-					}
-					f := fmt.Sprintf("%.2f", float64(i)/1e8) // Reverse normalized float
-
-					balance, err := strconv.ParseFloat(f, 64)
-					if err != nil {
-						retryCounter++
-						a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
-						break
-					}
-
-					a.log.Debugln("Current Balance: ", f)
+					a.log.Debugln("Current Balance: ", balance)
 					a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balance, balance, balance
 					a.RT.Events.Emit("token", a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance)
 					UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
@@ -239,7 +202,7 @@ func (a *WalletApplication) pollTokenBalance() {
 	}()
 }
 
-// PricePoller polls the min-api.cryptocompare REST API for DAG token value.
+// pricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token
 // balance evaluation against USD.
 func (a *WalletApplication) pricePoller() {
@@ -251,7 +214,7 @@ func (a *WalletApplication) pricePoller() {
 	)
 
 	go func() {
-		var retryCounter int
+		retryCounter := 1
 		time.Sleep(3 * time.Second) // Give some space to pollTokenBalance
 
 		for {
@@ -310,6 +273,9 @@ func (a *WalletApplication) pricePoller() {
 					time.Sleep(updateIntervalUSD * time.Second)
 
 				}
+				// If loop is broken we reset the values
+				a.RT.Events.Emit("totalValue", "USD", 0)
+				UpdateCounter(updateIntervalUSD, "value_counter", 0, a.RT)
 			}
 		}
 	}()

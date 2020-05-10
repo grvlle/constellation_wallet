@@ -2,23 +2,27 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"runtime"
-	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
 
 /* Database Model is located in models.go */
 
+// ImportWallet is triggered from the FE when a user imports a wallet
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+		return false
 	}
 
 	if !a.TransactionFinished {
@@ -69,9 +73,9 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 				return false
 			}
 
-			a.paths.LastTXFile = a.TempFileName("tx-", "")
-			a.paths.PrevTXFile = a.TempFileName("tx-", "")
-			a.paths.EmptyTXFile = a.TempFileName("tx-", "")
+			a.paths.LastTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.PrevTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.EmptyTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
 
 			err = a.createTXFiles()
 			if err != nil {
@@ -95,7 +99,12 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 			a.WalletImported = true
 			err = a.initWallet(keystorePath)
 			if err != nil {
-				a.log.Errorln("Faled to initialize wallet. Reason: ", err)
+				a.log.Errorln("Failed to initialize wallet. Reason: ", err)
+				// If unable to import previous transactions, remove wallet from DB and logout.
+				if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
+					a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
+					return false
+				}
 				return false
 			}
 
@@ -119,13 +128,14 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 	return false
 }
 
-// CreateUser is called when creating a new wallet in frontend component Login.vue
+// CreateWallet is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+		return false
 	}
 
 	if !a.TransactionFinished {
@@ -198,9 +208,9 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		a.KeyStoreAccess = a.WalletKeystoreAccess()
 
 		if a.KeyStoreAccess {
-			a.paths.LastTXFile = a.TempFileName("tx-", "")
-			a.paths.PrevTXFile = a.TempFileName("tx-", "")
-			a.paths.EmptyTXFile = a.TempFileName("tx-", "")
+			a.paths.LastTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.PrevTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.EmptyTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
 
 			err := a.createTXFiles()
 			if err != nil {
@@ -332,28 +342,22 @@ func (a *WalletApplication) initTXFilePath() {
 }
 
 func (a *WalletApplication) initTXFromDB() {
-	transactions := &a.wallet.TXHistory
-	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory").Find(&transactions).Error; err != nil {
+	if err := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory").Find(&a.wallet.TXHistory).Error; err != nil {
 		a.log.Error("Unable to initialize historic transactions from DB. Reason: ", err)
 		a.sendError("Unable to initialize historic transactions from DB. Reason: ", err)
 		return
 	}
 
-	for i := range a.wallet.TXHistory {
-		if !a.wallet.TXHistory[i].Failed {
-			a.RT.Events.Emit("new_transaction", &a.wallet.TXHistory[i]) // Pass the tx to the frontend as a new transaction.
+	allTX := []TXHistory{}
+
+	for i, tx := range a.wallet.TXHistory {
+		allTX = append([]TXHistory{tx}, allTX...) // prepend to reverse list for FE
+
+		if a.wallet.TXHistory[i].Status == "Pending" {
+			a.TxPending(a.wallet.TXHistory[i].Hash)
 		}
 	}
-
-}
-
-// txSorter sorts tx by ordinal.
-type txSorter []TXHistory
-
-func (a txSorter) Len() int      { return len(a) }
-func (a txSorter) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a txSorter) Less(i, j int) bool {
-	return a[i].LastTransactionRef.Ordinal < a[j].LastTransactionRef.Ordinal
+	a.RT.Events.Emit("update_tx_history", allTX) // Pass the tx to the frontend as a new transaction.
 }
 
 // initTXFromBlockExplorer is called when an existing wallet is imported.
@@ -363,11 +367,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 	resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
-		if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
-			a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
-			return err
-		}
-		a.LoginError("Unable to collect previous TX's from blockexplorer. Please check your internet connection.")
+		a.LoginError("Unable to collect previous transactions from blockexplorer.")
 		return err
 	}
 	defer resp.Body.Close()
@@ -375,20 +375,17 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 	if resp.Body != nil {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			a.LoginError("Unable to collect previous TX's from blockexplorer. Please try again later.")
-			a.log.Errorln("Unable to collect previous TX's from blockexplorer. Reason: ", err)
+			a.LoginError("Unable to collect previous transactions from blockexplorer. Try again later.")
+			a.log.Errorln("Unable to collect previous transactions from blockexplorer. Reason: ", err)
+			return err
 		}
+
 		ok, error := a.verifyAPIResponse(bodyBytes)
 		// Blockexplorer returns below string when no previous transactions are found
 		if !ok && error != "Cannot find transactions for sender" {
 			a.log.Errorln("API returned the following error", error)
-			// If unable to import previous transactions, remove wallet from DB and logout.
-			if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
-				a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
-				return err
-			}
 			a.LoginError("The wallet import failed. Please check your internet connection and try again.")
-			return err
+			return errors.New(error)
 		}
 
 		// If no previous transactions for imported wallet - proceed
@@ -406,9 +403,13 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 			return err
 		}
 
-		sort.Sort(txSorter(allTX)) // Sort previous transactions based on ordinal
+		// Reverse order
+		for i := len(allTX)/2 - 1; i >= 0; i-- {
+			opp := len(allTX) - 1 - i
+			allTX[i], allTX[opp] = allTX[opp], allTX[i]
+		}
 
-		a.log.Infoln("Successfully collected" + string(len(allTX)) + "previous transactions. Updating local state...")
+		a.log.Infof("Successfully collected %d previous transactions. Updating local state...", len(allTX))
 
 		for i, tx := range allTX {
 
@@ -417,7 +418,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 				Receiver: tx.Receiver,
 				Fee:      tx.Fee,
 				Hash:     tx.Hash,
-				TS:       "Imported at: " + time.Now().Format("Mon Jan _2 15:04:05 2006"),
+				TS:       time.Now().Format("Jan _2 15:04:05") + " (imported)",
 				Status:   "Complete",
 				Failed:   false,
 			}
@@ -430,10 +431,12 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 				if err != nil {
 					a.log.Errorln(err)
 					// If unable to import previous transactions, remove wallet from DB and logout.
+					//TODO: logout
 					if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
 						a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
 						return err
 					}
+					a.log.Panicln("Unable to import previous transactions")
 					a.LoginError("Unable to collect previous TX's from blockexplorer. Please try again later.")
 				}
 			}
@@ -478,4 +481,59 @@ func (a *WalletApplication) passwordsProvided(keystorePassword, keyPassword, ali
 		return false
 	}
 	return true
+}
+
+// GetTokenBalance polls and parses the token balance of a wallet and returns it as a float64.
+func (a *WalletApplication) GetTokenBalance() (float64, error) {
+	a.log.Debug("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
+
+	resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
+	if err != nil {
+		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+		return 0, err
+	}
+	if resp == nil {
+		a.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
+		a.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
+		return 0, err
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		a.log.Warn("Unable to update token balance. Reason: ", err)
+		return 0, err
+	}
+
+	// Declared an empty interface
+	var result map[string]interface{}
+
+	// Unmarshal or Decode the JSON to the interface.
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		return 0, err
+	}
+
+	s := result["balance"]
+	if s == "" {
+		s = "0" // Empty means zero
+	}
+
+	b, ok := s.(float64)
+	if !ok {
+		if err != nil {
+			a.log.Warnln("Unable to parse balance. Reason:", err)
+		}
+		return 0, err
+	}
+
+	f := fmt.Sprintf("%.2f", b/1e8) // Reverse normalized float
+
+	balance, err := strconv.ParseFloat(f, 64)
+	if err != nil {
+		a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
+		return 0, err
+	}
+
+	return balance, nil
 }

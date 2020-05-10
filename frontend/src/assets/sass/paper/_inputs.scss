@@ -1,3 +1,5 @@
+@import "themes";
+
 .form-control::-moz-placeholder {
   @include placeholder($medium-dark-gray, 1);
 }
@@ -15,18 +17,23 @@
 }
 
 .form-control {
-  background-color: $gray-input-bg;
   border-radius: $border-radius-base;
-  color: $font-color;
   font-size: $font-size-base*1.2;
   transition: background-color 0.3s ease 0s;
   @include input-size($padding-base-vertical, $padding-base-horizontal, $height-base);
   @include box-shadow(none);
+  @include themed() {
+    background-color: t('inputBackgroundColor');
+    border-color: t('inputBorderColor');
+    color: t('inputTextColor');
+  }
 
   &:focus {
-    background-color: $gray-input-bg;
     @include box-shadow(none);
     outline: 0 !important;
+    @include themed() {
+      background-color: t('inputBackgroundColor');
+    }
   }
 
   .has-success &,
@@ -67,7 +74,10 @@
     vertical-align: middle;
   }
   &.border-input {
-    border: 0.0625em solid $table-line-color;
+    border: 0.0625em solid;
+    @include themed() {
+      border-color: t('inputBorderColor');
+    }
   }
   .open & {
     border-bottom-color: transparent;
@@ -113,7 +123,10 @@
 
 .border-input {
   .input-group-addon {
-    border: solid 0.0625em $table-line-color;
+    border: solid 0.0625em;
+    @include themed() {
+      border-color: t('inputBorderColor');
+    }
   }
 }
 
@@ -123,7 +136,10 @@
 
 .input-group[disabled] {
   .input-group-addon {
-    background-color: $light-gray;
+    @include themed() {
+      background-color: t('inputDisabledBackgroundColor');
+      color: t('inputDisabledTextColor');
+    }
   }
 }
 
@@ -142,25 +158,35 @@
 }
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
-  background-color: $light-gray;
+  @include themed() {
+    background-color: t('inputDisabledBackgroundColor');
+    color: t('inputDisabledTextColor');
+  }
   cursor: not-allowed;
-  @include placeholder($medium-dark-gray, 1);
 }
 
 .form-control[disabled]::-moz-placeholder {
-  @include placeholder($medium-dark-gray, 1);
+  @include themed() {
+    color: t('inputPlaceholderColor');
+  }
 }
 
 .form-control[disabled]:-moz-placeholder {
-  @include placeholder($medium-dark-gray, 1);
+  @include themed() {
+    color: t('inputPlaceholderColor');
+  }
 }
 
 .form-control[disabled]::-webkit-input-placeholder {
-  @include placeholder($medium-dark-gray, 1);
+  @include themed() {
+    color: t('inputPlaceholderColor');
+  }
 }
 
 .form-control[disabled]:-ms-input-placeholder {
-  @include placeholder($medium-gray, 1);
+  @include themed() {
+    color: t('inputPlaceholderColor');
+  }
 }
 
 .input-group-btn .btn {
@@ -170,7 +196,9 @@
 }
 
 .input-group-btn .btn-default:not(.btn-fill) {
-  border-color: $medium-gray;
+  @include themed() {
+    border-color: t('inputBorderColor');
+  }
 }
 
 .input-group-btn:last-child > .btn {

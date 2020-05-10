@@ -1,4 +1,4 @@
-$font-color: #66615b !default;
+$font-color: #555E65 !default;
 $fill-font-color: rgba(255, 255, 255, 0.7);
 
 $none: 0 !default;
@@ -15,13 +15,14 @@ $medium-pale-bg: #F1EAE0 !default;
 $table-line-color: #CCC5B9 !default;
 $muted-color: #a49e93 !default;
 
-$black-bg: rgba(30, 30, 30, .97) !default;
+$black-bg: #121212 !default;
 
-$black-color: #333333 !default;
+$black-color: #212528 !default;
 $black-hr: #444444 !default;
 
+// remove from the navbar, re-use other variables
 $white-background-color: #FFFFFF !default;
-$black-background-color: #212529 !default;
+$black-background-color: $black-bg !default;
 $darkblue-background-color: #35495E !default; // this is the dark blue color from Vue.js branding
 
 $light-gray: #E3E3E3 !default;
@@ -38,17 +39,33 @@ $default-color: #66615B !default;
 $default-bg: #66615B !default;
 $default-states-color: #403D39 !default;
 
-$primary-color: #7A9E9F !default;
-$primary-bg: #7A9E9F !default;
-$primary-states-color: #427C89 !default;
+$primary-color: #0F41BA !default;
+$primary-bg: #0F41BA !default;
+$primary-states-color: #2654c0 !default;
+$primary-color-dark: #0d3aa7 !default;
+$primary-bg-dark: #0d3aa7 !default;
+$primary-states-color-dark: #3b65c6 !default;
+
+$secondary-color: #6625AC !default;
+$secondary-bg: #6625AC !default;
+$secondary-states-color: #753ab4 !default;
+$secondary-color-dark: #5b219a !default;
+$secondary-bg-dark: #5b219a !default;
+$secondary-states-color-dark: #6b37a4 !default;
 
 $success-color: #6DECBB !default;   // this is the green color from Vue.js branding
 $success-bg: #6DECBB !default;
-$success-states-color: #229863 !default;
+$success-states-color: #7bedc1 !default;
+$success-color-dark: #62d4a8 !default; 
+$success-bg-dark: #62d4a8 !default;
+$success-states-color-dark: #6ed5ad !default;
 
 $info-color: #5fd1fa !default;
 $info-bg: #68B3C8 !default;
 $info-states-color: #3091B2 !default;
+$info-color-dark: #55bce1!default;
+$info-bg-dark: #68b3c8 !default;
+$info-states-color-dark: #2b82a0 !default;
 
 $warning-color: #e2ea6e !default;
 $warning-bg: #F3BB45 !default;
@@ -188,10 +205,11 @@ $green-navbar: rgba(#4CD964, .98);
 $orange-navbar: rgba(#FF9500, .98);
 $red-navbar: rgba(#FF4C40, .98);
 
+// dropdown & alert; combine with others
 $bg-nude: #f2f2f2 !default;
 $bg-primary: #8ECFD5 !default;
-$bg-info: #7CE4FE !default;
-$bg-success: #8EF3C5 !default;
+$bg-info: #0BD4FF !default;
+$bg-success: #00F1B7 !default;
 $bg-warning: #FFE28C !default;
 $bg-danger: #FF8F5E !default;
 
@@ -221,10 +239,6 @@ $padding-zero: 0em !default;
 
 $sidebar-width: calc(100% - 16.25em) !default;
 $medium-dark-gray: #AAAAAA !default;
-
-//variables used in cards
-$card-black-color: #212529 !default;
-$card-muted-color: #ccc5b9 !default;
 
 //variables used for sidebar
 $sidebar-background-dark-blue: #506367;

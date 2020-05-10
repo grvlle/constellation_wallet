@@ -151,13 +151,13 @@ func (a *WalletApplication) initDirectoryStructure() error {
 
 // initMainnetConnection populates the WalletApplication struct with mainnet data
 func (a *WalletApplication) initMainnetConnection() {
-	a.Network.URL = "http://cl-lb-alb-testnet-1216020584.us-west-1.elb.amazonaws.com:9000" // Temp
+	a.Network.URL = "http://lb.constellationnetwork.io:9000" // Temp
 
 	a.Network.Handles.Send = "/send"
 	a.Network.Handles.Transaction = "/transaction"
 	a.Network.Handles.Balance = "/address/"
 
-	a.Network.BlockExplorer.URL = "https://8akak07rv8.execute-api.us-west-1.amazonaws.com/cl-block-explorer-testnet"
+	a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
 	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"
 	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoints/"
 	a.Network.BlockExplorer.Handles.Snapshots = "/snapshots/"

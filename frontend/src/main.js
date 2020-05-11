@@ -14,6 +14,8 @@ import {store} from './store/store'
 import Vuelidate from 'vuelidate'
 import ToggleButton from 'vue-js-toggle-button'
 import VueProgressBar from 'vue-progressbar'
+import VueSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css'
 
 Vue.use(VueProgressBar, {
   color: '#6DECBB',
@@ -26,6 +28,7 @@ Vue.use(Vuelidate)
 Vue.use(VueNotify);
 Vue.use(PaperDashboard);
 Vue.use(VueSweetalert2);
+Vue.use(VueSelect);
 
 Wails.Init(() => {
   new Vue({

@@ -35,7 +35,7 @@ export const store = new Vuex.Store({
             availableBalance: 0,
             nonce: 0,
             currency: "USD",
-            totalValue: "0",
+            totalValue: 0.0,
             blocks: "NaN",
             address: "N/A",
             keystorePath: "",

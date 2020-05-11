@@ -174,3 +174,11 @@
     stroke: t('chartGridColor');
   }
 }
+
+.container .row.settings {
+  margin: 10px 0 10px 0;
+  padding-top: 10px;
+  @include themed() {
+    background-color: t('cardTableColor');
+  }
+}

@@ -22,6 +22,7 @@ type Wallet struct {
 	ProfilePicture       string
 	WalletTag            string
 	DarkMode             bool
+	Currency             string
 	Balance              float64 `json:"balance"`
 	AvailableBalance     float64 `json:"available_balance"`
 	Nonce                float64 `json:"nonce"`

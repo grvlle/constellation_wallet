@@ -111,6 +111,24 @@ func (a *WalletApplication) StoreDarkModeStateDB(darkMode bool) {
 	}
 }
 
+// StoreCurrencyStateDB stores the currency state in the user DB
+func (a *WalletApplication) StoreCurrencyStateDB(currency string) {
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("Currency", currency).Error; err != nil {
+		a.log.Errorln("Unable to store currency state. Reason: ", err)
+		a.sendError("Unable to store currency state persistently. Reason: ", err)
+	} else {
+		totalCurrencyBalance := 0.0
+		if a.wallet.Currency == "USD" {
+			totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD
+		} else if a.wallet.Currency == "EUR" {
+			totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.EUR
+		} else if a.wallet.Currency == "BTC" {
+			totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.BTC
+		}
+		a.RT.Events.Emit("totalValue", a.wallet.Currency, totalCurrencyBalance)
+	}
+}
+
 // CopyFile the src file to dst. Any existing file will be overwritten and will not
 // copy file attributes.
 func CopyFile(src, dst string) error {

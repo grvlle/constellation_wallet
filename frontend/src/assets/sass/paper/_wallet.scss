@@ -19,7 +19,7 @@
   display: block;
   overflow: hidden;
   white-space: nowrap;
-  border-radius: 5px;
+  border-radius: 0.313rem;
   text-overflow: ellipsis;
   padding-top: 0em;
   margin-bottom: 0em;
@@ -31,7 +31,7 @@
 
 .page-error-box {
   height: 1.875em;
-  padding-bottom: 10px;
+  padding-bottom: 0.625rem;
 }
 
 .page-error-box p {
@@ -176,8 +176,8 @@
 }
 
 .container .row.settings {
-  margin: 10px 0 10px 0;
-  padding-top: 10px;
+  margin: 0.625rem 0 0.625rem 0;
+  padding-top: 0.625rem;
   @include themed() {
     background-color: t('cardTableColor');
   }

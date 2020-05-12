@@ -203,10 +203,10 @@
         >
           <div class="container">
             <div class="row settings">
-              <div class="col-6">
+              <div class="col-7">
                 <p>Dark Mode [BETA]</p>
               </div>
-              <div class="col-6" align="right">
+              <div class="col-5" align="right">
                 <toggle-button
                   @change="toggleDarkMode"
                   :value="this.$store.state.walletInfo.darkMode"
@@ -217,11 +217,11 @@
               </div>
             </div>
             <div class="row settings">
-              <div class="col-6">
+              <div class="col-7">
                 <p>Currency</p>
               </div>
-              <div class="col-6" align="right">
-                <vue-select 
+              <div class="col-5" align="right">
+                <vue-select class="select"
                   @input="setCurrency"
                   :value="this.$store.state.walletInfo.currency"
                   :options="['BTC', 'EUR', 'USD']">

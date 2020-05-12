@@ -1,12 +1,25 @@
 <template>
-
-  <div class="login-bg vertical-center" v-bind:style="{ backgroundImage: 'url(' + this.bgImg + ')' }" id="app">
+  <div
+    class="login-bg vertical-center"
+    v-bind:style="{ backgroundImage: 'url(' + this.bgImg + ')' }"
+    id="app"
+  >
     <div class="container">
       <div class="row">
         <div class="col mx-auto text-center header">
           <div v-if="isLogin">
-            <img class="img-fluid" v-if="this.$store.state.walletInfo.darkMode" src="~@/assets/img/Constellation-Logo-White.png" style="max-height: 5.8rem;" />
-            <img class="img-fluid" v-else src="~@/assets/img/Constellation-Logo-Black.png" style="max-height: 5.8rem;" />
+            <img
+              class="img-fluid"
+              v-if="this.$store.state.walletInfo.darkMode"
+              src="~@/assets/img/Constellation-Logo-White.png"
+              style="max-height: 5.8rem;"
+            />
+            <img
+              class="img-fluid"
+              v-else
+              src="~@/assets/img/Constellation-Logo-Black.png"
+              style="max-height: 5.8rem;"
+            />
             <p>Please enter your credentials below to access your Molly Wallet.</p>
           </div>
           <div class="page-error-box" v-if="this.$store.state.displayLoginError">
@@ -260,31 +273,32 @@
                           </span>
                         </p-button>
                       </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </form>
         </div>
-        
       </div>
-      
     </div>
-    <div class="version">
-      <p class="version">Connected to: {{this.$store.state.network}}<br />
-      Molly Wallet version: {{this.$store.state.walletInfo.uiVersion}}</p>
-    </div>
-    
-    <page-overlay text="Loading..." :isActive="overlay" />
-  
-  </div>
 
+    <div class="version">
+      <p class="version">
+        Connected to: {{this.$store.state.network}}
+        <br />
+        Molly Wallet version: {{this.$store.state.walletInfo.uiVersion}}
+      </p>
+    </div>
+
+    <page-overlay text="Loading..." :isActive="overlay" />
+  </div>
 </template>
 
 <script>
 import Swal from "sweetalert2";
-import BrightBG from '../assets/img/nodes2.jpg';
-import DarkBG from '../assets/img/nodes2_dark.jpg';
+import BrightBG from "../assets/img/nodes2.jpg";
+import DarkBG from "../assets/img/nodes2_dark.jpg";
 
 export default {
   name: "login-screen",
@@ -305,7 +319,7 @@ export default {
       "This HTML scroll box has had color added. You can add color to the background of your scroll box. You can also add color to the scroll bars"
   }),
   mounted() {
-    this.themeBG()
+    this.themeBG();
   },
   computed: {
     isValidNewWallet: function() {
@@ -355,9 +369,8 @@ export default {
       } else {
         return false;
       }
-    },
-
-  }, 
+    }
+  },
   methods: {
     importWallet: function() {
       var self = this;
@@ -407,12 +420,12 @@ export default {
         this.aliasValid = false;
       }
     },
-    themeBG: function () {
+    themeBG: function() {
       if (this.$store.state.walletInfo.darkMode) {
-          this.bgImg = DarkBG;
-        } else {
-          this.bgImg = BrightBG;
-        }
+        this.bgImg = DarkBG;
+      } else {
+        this.bgImg = BrightBG;
+      }
     },
     showImportView: function() {
       this.resetData();
@@ -463,7 +476,7 @@ export default {
         if (self.access) {
           window.backend.WalletApplication.SetUserTheme().then(
             darkMode => (self.$store.state.walletInfo.darkMode = darkMode)
-          )
+          );
           window.backend.WalletApplication.SetWalletTag().then(
             walletTag => (self.$store.state.walletInfo.email = walletTag)
           );
@@ -483,13 +496,13 @@ export default {
         }
       });
     },
-  wait: function(ms){
-   var start = new Date().getTime();
-   var end = start;
-   while(end < start + ms) {
-     end = new Date().getTime();
-  }
-},
+    wait: function(ms) {
+      var start = new Date().getTime();
+      var end = start;
+      while (end < start + ms) {
+        end = new Date().getTime();
+      }
+    },
     createLogin: function() {
       var self = this;
       self.$Progress.start();
@@ -695,7 +708,7 @@ html {
 }
 
 .login-bg {
-        /* The image used */
+  /* The image used */
   // background-image: linear-gradient(
   //   rgba(255, 255, 255, 0.2),
   //   rgba(255, 255, 255, 0.2)
@@ -713,8 +726,6 @@ html {
   background-repeat: no-repeat;
   background-size: cover;
 }
-
-
 
 .version {
   position: fixed;

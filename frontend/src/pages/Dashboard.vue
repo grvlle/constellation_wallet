@@ -8,7 +8,7 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>DAG</p>
-            {{this.$store.state.walletInfo.tokenAmount | asDAGs}}
+            {{this.$store.state.walletInfo.tokenAmount | asCurrency('DAG')}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
@@ -203,16 +203,28 @@ export default {
   },
   filters: {
     asCurrency: function(value, currency) {
-      var formatter = new Intl.NumberFormat(navigator.language, {
-        style: "currency",
-        currency: currency,
-        minimumFractionDigits: 0
-      });
-      return formatter.format(value);
-    },
-    asDAGs: function(value) {
-      var formatter = new Intl.NumberFormat(navigator.language);
-      return formatter.format(value);
+
+      if (currency == "") return "";
+
+      var formatter
+      if (currency == "DAG") {
+        formatter = new Intl.NumberFormat(navigator.language);
+      } else if (currency == "BTC") {
+        formatter = new Intl.NumberFormat(navigator.language, {
+          style: "currency",
+          currency: "XBT",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 8
+        });
+      } else {
+        formatter = new Intl.NumberFormat(navigator.language, {
+          style: "currency",
+          currency: currency,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+      return formatter.format(value).replace(/XBT/,'₿');
     }
   },
 

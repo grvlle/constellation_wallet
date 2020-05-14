@@ -46,7 +46,8 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 	a.wallet = Wallet{
 		KeyStorePath: keystorePath,
-		WalletAlias:  alias}
+		WalletAlias:  alias,
+		Currency:     "USD"}
 
 	a.wallet.Address = a.GenerateDAGAddress()
 	a.KeyStoreAccess = a.WalletKeystoreAccess()

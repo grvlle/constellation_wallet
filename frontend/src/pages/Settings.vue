@@ -198,26 +198,36 @@
       </div> -->
       <div class="col-md-6 d-flex">
         <card
-          title="General settings"
-          sub-title="Settings affecting your overall Molly Wallet user experience"
+          title="Display settings"
+          sub-title="Customize your Molly Wallet display settings"
         >
           <div class="container">
-            <table class="table-noheader">
-              <tr>
-                <td>
-                  <p>Dark Mode [BETA]</p>
-                </td>
-                <td align="right">
-                  <toggle-button
-                    @change="toggleDarkMode"
-                    :value="this.$store.state.walletInfo.darkMode"
-                    color="#5fd1fa"
-                    :sync="true"
-                    :labels="true"
-                  />
-                </td>
-              </tr>
-            </table>
+            <div class="row settings">
+              <div class="col-7">
+                <p>Dark Mode [BETA]</p>
+              </div>
+              <div class="col-5" align="right">
+                <toggle-button
+                  @change="toggleDarkMode"
+                  :value="this.$store.state.walletInfo.darkMode"
+                  color="#5fd1fa"
+                  :sync="true"
+                  :labels="true"
+                />
+              </div>
+            </div>
+            <div class="row settings">
+              <div class="col-7">
+                <p>Currency</p>
+              </div>
+              <div class="col-5" align="right">
+                <vue-select class="select"
+                  @input="setCurrency"
+                  :value="this.$store.state.walletInfo.currency"
+                  :options="['BTC', 'EUR', 'USD']">
+                </vue-select>
+              </div>
+            </div>
           </div>
         </card>
       </div>
@@ -228,7 +238,12 @@
 <script>
 import ImgUploaded from "./Notifications/ImageUploaded";
 import Swal from "sweetalert2";
+import VueSelect from 'vue-select';
+
 export default {
+  components: {
+    VueSelect
+  },
   methods: {
     submitLabel: function() {
       const swalPopup = Swal.mixin({
@@ -287,6 +302,9 @@ export default {
     toggleDarkMode: function() {
       this.$store.state.walletInfo.darkMode = !this.$store.state.walletInfo.darkMode;
       window.backend.WalletApplication.StoreDarkModeStateDB(this.$store.state.walletInfo.darkMode);
+    },
+    setCurrency: function(value) {
+      window.backend.WalletApplication.StoreCurrencyStateDB(value);
     },
     importKeys: function() {
       window.backend.WalletApplication.ImportKeys();
@@ -382,4 +400,7 @@ export default {
 </script>
 
 <style lang="scss">
+.vs__clear {
+  display: none;
+}
 </style>

@@ -6,6 +6,9 @@ The Molly Wallet is still in the early phases of development with the first stab
 
 ## General Questions
 
+#### Q: Where can I download the Molly Wallet?
+https://github.com/grvlle/constellation_wallet/releases
+
 #### Q: Why can't I login to my wallet?
 You can always reset the Molly Wallet, simply by closing the application, removing your `.dag` folder, starting the application and re-importing your key. See the below sections under your OS of choice for how to locate the `.dag` folder.
 

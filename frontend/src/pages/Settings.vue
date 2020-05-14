@@ -304,8 +304,7 @@ export default {
       window.backend.WalletApplication.StoreDarkModeStateDB(this.$store.state.walletInfo.darkMode);
     },
     setCurrency: function(value) {
-      this.$store.state.walletInfo.currency = value;
-      window.backend.WalletApplication.StoreCurrencyStateDB(this.$store.state.walletInfo.currency);
+      window.backend.WalletApplication.StoreCurrencyStateDB(value);
     },
     importKeys: function() {
       window.backend.WalletApplication.ImportKeys();

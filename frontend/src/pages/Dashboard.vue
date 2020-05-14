@@ -203,6 +203,9 @@ export default {
   },
   filters: {
     asCurrency: function(value, currency) {
+
+      if (currency == "") return "";
+
       var formatter
       if (currency == "DAG") {
         formatter = new Intl.NumberFormat(navigator.language);

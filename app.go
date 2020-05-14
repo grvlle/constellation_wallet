@@ -93,6 +93,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.TransactionFinished = true
 	a.RT = runtime
 	a.killSignal = make(chan struct{}) // Used to kill go routines and hand back system resources
+	a.wallet.Currency = "USD"          // Set default currency
 	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download"
 	a.WalletCLI.Version = "2.5.7"
 

@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"bufio"
@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/grvlle/constellation_wallet/backend/models"
 )
 
 // Transaction contains all tx information
@@ -158,7 +160,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 	return false, ""
 }
 
-func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
+func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
 
 	txObject := a.loadTXFromFile(txFile)
 
@@ -175,7 +177,7 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 	// Put TX object on network
 	TXSuccessfullyPutOnNetwork, hash := a.putTXOnNetwork(tx)
 	if TXSuccessfullyPutOnNetwork {
-		txData := &TXHistory{
+		txData := &models.TXHistory{
 			Amount:   tx.Edge.Data.Amount,
 			Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 			Fee:      tx.Edge.Data.Fee,
@@ -190,7 +192,7 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 		a.TransactionFailed = false
 		return txData
 	}
-	txData := &TXHistory{
+	txData := &models.TXHistory{
 		Amount:   tx.Edge.Data.Amount,
 		Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 		Fee:      tx.Edge.Data.Fee,
@@ -206,7 +208,7 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 	return txData
 }
 
-func (a *WalletApplication) storeTX(txData *TXHistory) {
+func (a *WalletApplication) storeTX(txData *models.TXHistory) {
 
 	if txData == nil {
 		return
@@ -338,7 +340,7 @@ func (a *WalletApplication) TxPending(TXHash string) {
 							a.LoginError("Unable to query database object for the imported wallet.")
 							return false
 						}
-						a.RT.Events.Emit("update_tx_history", []TXHistory{}) // Clear TX history
+						a.RT.Events.Emit("update_tx_history", []models.TXHistory{}) // Clear TX history
 						a.initTXFromDB()
 						return false
 					}
@@ -363,7 +365,7 @@ func (a *WalletApplication) TxPending(TXHash string) {
 				return false
 			}
 			a.RT.Events.Emit("tx_pending", status.Complete)
-			a.RT.Events.Emit("update_tx_history", []TXHistory{}) // Clear TX history
+			a.RT.Events.Emit("update_tx_history", []models.TXHistory{}) // Clear TX history
 			a.initTXFromDB()
 			return true
 

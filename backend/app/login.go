@@ -1,10 +1,11 @@
-package main
+package app
 
 import (
 	"os"
 	"runtime"
 	"strings"
 
+	"github.com/grvlle/constellation_wallet/backend/pkg/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -92,7 +93,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 func (a *WalletApplication) LogOut() bool {
 	if a.TransactionFinished {
 		a.UserLoggedIn = false
-		a.wallet = Wallet{}
+		a.wallet = models.Wallet{}
 		return true
 	}
 	a.sendWarning("Cannot log out while transaction is processing. Please try again.")

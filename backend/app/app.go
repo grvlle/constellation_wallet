@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/user"
 
+	"github.com/grvlle/constellation_wallet/backend/pkg/models"
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
@@ -17,7 +18,7 @@ import (
 type WalletApplication struct {
 	RT         *wails.Runtime
 	log        *logrus.Logger
-	wallet     Wallet
+	wallet     models.Wallet
 	DB         *gorm.DB
 	killSignal chan struct{}
 	Network    struct {
@@ -71,7 +72,7 @@ type WalletApplication struct {
 
 // WailsShutdown is called when the application is closed
 func (a *WalletApplication) WailsShutdown() {
-	a.wallet = Wallet{}
+	a.wallet = models.Wallet{}
 	close(a.killSignal) // Kills the Go Routines
 	a.DB.Close()
 }
@@ -93,18 +94,18 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.TransactionFinished = true
 	a.RT = runtime
 	a.killSignal = make(chan struct{}) // Used to kill go routines and hand back system resources
+	a.wallet.Currency = "USD"          // Set default currency
 	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download"
-	a.WalletCLI.Version = "2.5.2"
+	a.WalletCLI.Version = "2.6.0"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {
 		a.log.Panicln("failed to connect database", err)
 	}
 	// Migrate the schema
-	a.DB.AutoMigrate(&Wallet{}, &TXHistory{}, &Path{})
+	a.DB.AutoMigrate(&models.Wallet{}, &models.TXHistory{}, &models.Path{})
 	a.detectJavaPath()
 	a.initMainnetConnection()
-	a.checkOS()
 
 	return nil
 }
@@ -152,13 +153,13 @@ func (a *WalletApplication) initDirectoryStructure() error {
 
 // initMainnetConnection populates the WalletApplication struct with mainnet data
 func (a *WalletApplication) initMainnetConnection() {
-	a.Network.URL = "http://cl-lb-alb-testnet-118182741.us-west-1.elb.amazonaws.com:9000" // Temp
+	a.Network.URL = "http://cl-lb-alb-testnet-1216020584.us-west-1.elb.amazonaws.com:9000" // Temp
 
 	a.Network.Handles.Send = "/send"
 	a.Network.Handles.Transaction = "/transaction"
 	a.Network.Handles.Balance = "/address/"
 
-	a.Network.BlockExplorer.URL = "https://3pii1fjixi.execute-api.us-west-1.amazonaws.com/cl-block-explorer-testnet"
+	a.Network.BlockExplorer.URL = "https://8akak07rv8.execute-api.us-west-1.amazonaws.com/cl-block-explorer-testnet"
 	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"
 	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoints/"
 	a.Network.BlockExplorer.Handles.Snapshots = "/snapshots/"

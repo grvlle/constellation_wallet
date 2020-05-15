@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -14,7 +14,7 @@ import (
 const (
 	dummyValue             = 1000
 	updateIntervalToken    = 30 // Seconds
-	updateIntervalUSD      = 50 // Seconds
+	updateIntervalCurrency = 50 // Seconds
 	updateIntervalBlocks   = 5  // Seconds
 	updateIntervalPieChart = 60 // Seconds
 )
@@ -223,6 +223,8 @@ func (a *WalletApplication) pricePoller() {
 				return
 			default:
 				a.wallet.TokenPrice.DAG.USD = 0
+				a.wallet.TokenPrice.DAG.EUR = 0
+				a.wallet.TokenPrice.DAG.BTC = 0
 				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
 				for retryCounter <= 20 && a.wallet.Balance != 0 {
 					a.log.Debug("Contacting token evaluation API on: " + url + ticker)
@@ -266,13 +268,25 @@ func (a *WalletApplication) pricePoller() {
 					}
 
 					a.log.Debugf("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
+					a.log.Debugf("Collected token price in EUR: %v", a.wallet.TokenPrice.DAG.EUR)
+					a.log.Debugf("Collected token price in BTC: %v", a.wallet.TokenPrice.DAG.BTC)
 
-					tokenUSD := int(float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD)
-					a.RT.Events.Emit("totalValue", "USD", tokenUSD)
-					UpdateCounter(updateIntervalUSD, "value_counter", time.Second, a.RT)
-					time.Sleep(updateIntervalUSD * time.Second)
+					totalCurrencyBalance := 0.0
+					if a.wallet.Currency == "USD" {
+						totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD
+					} else if a.wallet.Currency == "EUR" {
+						totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.EUR
+					} else if a.wallet.Currency == "BTC" {
+						totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.BTC
+					}
+					a.RT.Events.Emit("totalValue", a.wallet.Currency, totalCurrencyBalance)
 
+					UpdateCounter(updateIntervalCurrency, "value_counter", time.Second, a.RT)
+					time.Sleep(updateIntervalCurrency * time.Second)
 				}
+				// If loop is broken we reset the values
+				a.RT.Events.Emit("totalValue", "USD", 0)
+				UpdateCounter(updateIntervalCurrency, "value_counter", 0, a.RT)
 			}
 		}
 	}()

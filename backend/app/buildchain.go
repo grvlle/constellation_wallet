@@ -1,10 +1,11 @@
-package main
+package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/grvlle/constellation_wallet/backend/pkg/models"
 )
 
 // formTXChain retains the order of the blockchain across all accounts.
@@ -16,7 +17,7 @@ import (
 // a Failed state.
 func (a *WalletApplication) formTXChain(amount int64, fee int64, address string, ptxObj *Transaction, ltxObj *Transaction) {
 
-	statusLastTX := TXHistory{}
+	statusLastTX := models.TXHistory{}
 	if err := a.DB.Last(&statusLastTX).Error; err != nil {
 		a.log.Warnln("No previous TX detected for this wallet. Reason: ", err)
 	}
@@ -103,11 +104,11 @@ func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *T
 
 	err := json.Unmarshal(rbytes, &ptxObj)
 	if err != nil {
-		fmt.Println(err)
+		a.log.Warnln("TX Object: ", string(rbytes), err)
 	}
 	err = json.Unmarshal(lbytes, &ltxObj)
 	if err != nil {
-		fmt.Println(err)
+		a.log.Warnln("TX Object: ", string(rbytes), err)
 	}
 	return &ptxObj, &ltxObj
 }
@@ -117,14 +118,14 @@ func (a *WalletApplication) convertToTXObject(ptx, ltx string) (*Transaction, *T
 // TXReference is used to parse the previous tx of an imported wallet.
 type TXReference struct {
 	Hash               string `json:"hash"`
-	Amount             int    `json:"amount"`
+	Amount             int64  `json:"amount"`
 	Receiver           string `json:"receiver"`
 	Sender             string `json:"sender"`
 	Fee                int    `json:"fee"`
 	IsDummy            bool   `json:"isDummy"`
 	LastTransactionRef struct {
-		Hash    string `json:"hash"`
-		Ordinal int    `json:"ordinal"`
+		PrevHash string `json:"prevHash"`
+		Ordinal  int    `json:"ordinal"`
 	} `json:"lastTransactionRef"`
 	SnapshotHash        string `json:"snapshotHash"`
 	CheckpointBlock     string `json:"checkpointBlock"`
@@ -132,14 +133,14 @@ type TXReference struct {
 		Edge struct {
 			ObservationEdge struct {
 				Parents []struct {
-					Hash     string      `json:"hash"`
-					HashType string      `json:"hashType"`
-					BaseHash interface{} `json:"baseHash,omitempty"`
+					HashReference string `json:"hashReference"`
+					HashType      string `json:"hashType"`
+					BaseHash      string `json:"baseHash"`
 				} `json:"parents"`
 				Data struct {
-					Hash     string      `json:"hash"`
-					HashType string      `json:"hashType"`
-					BaseHash interface{} `json:"baseHash,omitempty"`
+					HashReference string `json:"hashReference"`
+					HashType      string `json:"hashType"`
+					BaseHash      string `json:"baseHash"`
 				} `json:"data"`
 			} `json:"observationEdge"`
 			SignedObservationEdge struct {
@@ -154,18 +155,18 @@ type TXReference struct {
 				} `json:"signatureBatch"`
 			} `json:"signedObservationEdge"`
 			Data struct {
-				Amount    int `json:"amount"`
+				Amount    int64 `json:"amount"`
 				LastTxRef struct {
-					Hash    string `json:"hash"`
-					Ordinal int    `json:"ordinal"`
+					PrevHash string `json:"prevHash"`
+					Ordinal  int    `json:"ordinal"`
 				} `json:"lastTxRef"`
-				Fee  interface{} `json:"fee,omitempty"`
+				Fee  interface{} `json:"fee"`
 				Salt int64       `json:"salt"`
 			} `json:"data"`
 		} `json:"edge"`
 		LastTxRef struct {
-			Hash    string `json:"hash"`
-			Ordinal int    `json:"ordinal"`
+			PrevHash string `json:"prevHash"`
+			Ordinal  int    `json:"ordinal"`
 		} `json:"lastTxRef"`
 		IsDummy bool `json:"isDummy"`
 		IsTest  bool `json:"isTest"`
@@ -204,6 +205,7 @@ func (a *WalletApplication) rebuildTxChainState(lastTXHash string) error {
 				a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
 				return err
 			}
+			a.log.Panicln("Unable to import previous transactions") // TODO: logout user from wallet
 			a.LoginError("The wallet import failed. Please check your internet connection and try again.")
 			return err
 		}

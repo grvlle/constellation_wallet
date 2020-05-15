@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"bufio"
@@ -8,48 +8,9 @@ import (
 	"net/http"
 	"os"
 	"time"
-)
 
-// type Transaction struct {
-// 	Edge struct {
-// 		ObservationEdge struct {
-// 			Parents []struct {
-// 				Hash     string `json:"hashReference"`
-// 				HashType string `json:"hashType"`
-// 			} `json:"parents"`
-// 			Data struct {
-// 				Hash     string `json:"hashReference"`
-// 				HashType string `json:"hashType"`
-// 			} `json:"data"`
-// 		} `json:"observationEdge"`
-// 		SignedObservationEdge struct {
-// 			SignatureBatch struct {
-// 				Hash       string `json:"hashReference"`
-// 				Signatures []struct {
-// 					Signature string `json:"signature"`
-// 					ID        struct {
-// 						Hex string `json:"hex"`
-// 					} `json:"id"`
-// 				} `json:"signatures"`
-// 			} `json:"signatureBatch"`
-// 		} `json:"signedObservationEdge"`
-// 		Data struct {
-// 			Amount    int64 `json:"amount"`
-// 			LastTxRef struct {
-// 				Hash    string `json:"hashReference"`
-// 				Ordinal int    `json:"ordinal"`
-// 			} `json:"lastTxRef"`
-// 			Fee  int64 `json:"fee,omitempty"`
-// 			Salt int64 `json:"salt"`
-// 		} `json:"data"`
-// 	} `json:"edge"`
-// 	LastTxRef struct {
-// 		Hash    string `json:"hashReference"`
-// 		Ordinal int    `json:"ordinal"`
-// 	} `json:"lastTxRef"`
-// 	IsDummy bool `json:"isDummy"`
-// 	IsTest  bool `json:"isTest"`
-// }
+	"github.com/grvlle/constellation_wallet/backend/pkg/models"
+)
 
 // Transaction contains all tx information
 type Transaction struct {
@@ -95,10 +56,6 @@ type Transaction struct {
 	IsTest  bool `json:"isTest"`
 }
 
-func (a *WalletApplication) networkHeartbeat() {
-	//TODO
-}
-
 /* Send a transaction */
 
 // TriggerTXFromFE will initate a new transaction triggered from the frontend.
@@ -124,9 +81,10 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address 
 		a.TransactionFailed = true
 		return
 	}
-	if amount+fee > int64(balance)*1e8 {
+
+	if amount+fee > int64(balance*1e8) {
 		a.log.Warnf("Trying to send: %d", amount+fee)
-		a.log.Warnf("Insufficient Balance: %d", int64(balance)*1e8)
+		a.log.Warnf("Insufficient Balance: %d", int64(balance*1e8))
 		a.sendWarning("Insufficent Balance.")
 		a.TransactionFailed = true
 		return
@@ -202,7 +160,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 	return false, ""
 }
 
-func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
+func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
 
 	txObject := a.loadTXFromFile(txFile)
 
@@ -219,7 +177,7 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 	// Put TX object on network
 	TXSuccessfullyPutOnNetwork, hash := a.putTXOnNetwork(tx)
 	if TXSuccessfullyPutOnNetwork {
-		txData := &TXHistory{
+		txData := &models.TXHistory{
 			Amount:   tx.Edge.Data.Amount,
 			Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 			Fee:      tx.Edge.Data.Fee,
@@ -234,7 +192,7 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 		a.TransactionFailed = false
 		return txData
 	}
-	txData := &TXHistory{
+	txData := &models.TXHistory{
 		Amount:   tx.Edge.Data.Amount,
 		Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 		Fee:      tx.Edge.Data.Fee,
@@ -250,7 +208,7 @@ func (a *WalletApplication) sendTransaction(txFile string) *TXHistory {
 	return txData
 }
 
-func (a *WalletApplication) storeTX(txData *TXHistory) {
+func (a *WalletApplication) storeTX(txData *models.TXHistory) {
 
 	if txData == nil {
 		return
@@ -338,8 +296,8 @@ func (a *WalletApplication) TxProcessed(TXHash string) bool {
 		return true
 	}
 
-	// Empty response means it's snapshotted
-	return string(bodyBytes) == ""
+	// null response means it's snapshotted
+	return string(bodyBytes) == "null"
 
 }
 
@@ -365,14 +323,14 @@ func (a *WalletApplication) TxPending(TXHash string) {
 		return
 	default:
 		go func() bool {
-			for retryCounter := 50; retryCounter > 0; retryCounter-- {
+			for retryCounter := 0; retryCounter < 30; retryCounter++ {
 				processed := a.TxProcessed(TXHash)
 				if !processed {
 					a.log.Warnf("Transaction %v pending", TXHash)
 					a.RT.Events.Emit("tx_pending", status.Pending)
 					time.Sleep(time.Duration(retryCounter) * time.Second) // Increase polling interval
 
-					if retryCounter == 1 {
+					if retryCounter == 29 {
 						// Register failed transaction
 						a.sendWarning("Unable to get verification of processed transaction from the network. Please try again later.")
 						a.log.Errorf("Unable to get status from the network on transaction: %s", TXHash)
@@ -382,32 +340,32 @@ func (a *WalletApplication) TxPending(TXHash string) {
 							a.LoginError("Unable to query database object for the imported wallet.")
 							return false
 						}
-						a.RT.Events.Emit("update_tx_history", []TXHistory{}) // Clear TX history
+						a.RT.Events.Emit("update_tx_history", []models.TXHistory{}) // Clear TX history
 						a.initTXFromDB()
 						return false
 					}
 
 					consensus = 0 // Reset consensus
 				}
-				if processed && consensus != 5 {
+				if processed && consensus != 3 {
 					consensus++
-					a.log.Infof("TX status check has reached consensus %v/5", consensus)
+					a.log.Infof("TX status check has reached consensus %v/3", consensus)
 					time.Sleep(1 * time.Second)
 				}
-				if processed && consensus == 5 { // Need ten consecative confirmations that TX has been processed.
+				if processed && consensus == 3 { // Need five consecetive confirmations that TX has been processed.
 					break
 				}
 
 			}
 			a.log.Infof("Transaction %v has been successfully processed", TXHash)
-			a.sendSuccess("Transaction" + TXHash + "has been successfully processed")
+			a.sendSuccess("Transaction " + TXHash[:30] + "... has been successfully processed")
 			if err := a.DB.Table("tx_histories").Where("hash = ?", TXHash).UpdateColumn("status", status.Complete).Error; err != nil {
 				a.log.Errorln("Unable to query database object for the imported wallet. Reason: ", err)
 				a.LoginError("Unable to query database object for the imported wallet.")
 				return false
 			}
 			a.RT.Events.Emit("tx_pending", status.Complete)
-			a.RT.Events.Emit("update_tx_history", []TXHistory{}) // Clear TX history
+			a.RT.Events.Emit("update_tx_history", []models.TXHistory{}) // Clear TX history
 			a.initTXFromDB()
 			return true
 

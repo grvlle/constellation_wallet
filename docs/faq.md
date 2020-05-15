@@ -7,20 +7,20 @@ The Molly Wallet is still in the early phases of development with the first stab
 ## General Questions
 
 #### Q: Where can I download the Molly Wallet?
-https://github.com/grvlle/constellation_wallet/releases
+**A:** https://github.com/grvlle/constellation_wallet/releases
 
 #### Q: Why can't I login to my wallet?
-You can always reset the Molly Wallet, simply by closing the application, removing your `.dag` folder, starting the application and re-importing your key. See the below sections under your OS of choice for how to locate the `.dag` folder.
+**A:** You can always reset the Molly Wallet, simply by closing the application, removing your `.dag` folder, starting the application and re-importing your key. See the below sections under your OS of choice for how to locate the `.dag` folder.
 
 #### Q: What does the IMPORT feature do on the login screen?
 
-The Import feature exists to make it possible to access your wallet key from different computers. This only has to be done once on any computer, and it'll sync your transactions with the mainnet, and update the wallet with your previous transactions. 
+**A:** The Import feature exists to make it possible to access your wallet key from different computers. This only has to be done once on any computer, and it'll sync your transactions with the mainnet, and update the wallet with your previous transactions. 
 
 Once imported, you will access your funds by simply login into the wallet.
 
 #### Q: How do I create a new wallet?
 
-Select the create wallet button on the login screen and it'll let you browse to a location in which you wish to store your keyfile.p12. Remember to give it a name, and select save.
+**A:** Select the create wallet button on the login screen and it'll let you browse to a location in which you wish to store your keyfile.p12. Remember to give it a name, and select save.
 
 After that you need to provide the keyfile with authentication, populate the remaining fields and click create. Then the keyfile.p12 will be saved to the location you specified, and you can use that to access your funds through Molly Wallet.
 
@@ -44,6 +44,10 @@ Search for enviornment variables in windows search and select *Edit the system e
 paths like in the below image.  
   
 [![env](https://i.ibb.co/Br1M31s/envvars.png)](https://constellationnetwork.io/technology/molly-wallet/) 
+
+#### Q: How to open a ``.rar`` file?
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/dr0g_Ux7_8M/0.jpg)](https://www.youtube.com/watch?v=dr0g_Ux7_8M)
 
 #### Q: I am running Windows 7 (or earlier) - can I run Molly Wallet?
 

@@ -284,9 +284,7 @@ func (a *WalletApplication) pricePoller() {
 					UpdateCounter(updateIntervalCurrency, "value_counter", time.Second, a.RT)
 					time.Sleep(updateIntervalCurrency * time.Second)
 				}
-				// If loop is broken we reset the values
-				a.RT.Events.Emit("totalValue", "USD", 0)
-				UpdateCounter(updateIntervalCurrency, "value_counter", 0, a.RT)
+
 			}
 		}
 	}()

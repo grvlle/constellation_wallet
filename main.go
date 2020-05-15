@@ -21,7 +21,7 @@ func main() {
 		Width:     1280,
 		Height:    780,
 		Resizable: true,
-		Title:     "Molly - Constellation Desktop Wallet [Beta]",
+		Title:     "Molly - Constellation Desktop Wallet",
 		JS:        js,
 		CSS:       css,
 		Colour:    "#131313",

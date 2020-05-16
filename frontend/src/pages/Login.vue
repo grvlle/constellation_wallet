@@ -126,13 +126,8 @@
                           type="primary"
                           block
                           @click.native="login()"
-                          :disabled="!isValidNewWallet"
                         >
-                          <span style="display: block;">
-                            <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
-                            <i v-else class="fa fa-unlock"></i>
-                            LOGIN
-                          </span>
+                          <span style="display: block;"> LOGIN</span>
                         </p-button>
                       </div>
                     </div>

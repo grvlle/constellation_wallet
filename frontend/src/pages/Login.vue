@@ -56,47 +56,10 @@
                   <b>Important!</b> Please backup your Alias, Store Passwords, Key Password and KeyStore File (key.p12) as these will allow you to restore your wallet at any time.
                 </div>
               </div>
-              <div class="col-md-6 mx-auto login-box" v-if="isImport">
-                <div>
-                  <b>Import an existing wallet.</b>
-                  <br />This section will let you import an existing KeyStore (key.p12). Simply browse to the location of the KeyStore file, enter the Store Password as well as the Key Password to access it.
-                  <br />
-                  <br />
-                  <ul>
-                    <li>
-                      <b>Keystore File</b>
-                      <i>
-                        - Select where your
-                        <b>existing</b> private key is stored and unlock using the passwords previously set up.
-                      </i>
-                    </li>
-                    <li>
-                      <b>Key Alias</b>
-                      <i>- The unique name which is used in the keystore to identify this key entry.</i>
-                    </li>
-                    <li>
-                      <b>Keystore Password</b>
-                      <i>- This password unlocks the keystore file.</i>
-                    </li>
-                    <li>
-                      <b>Key Password</b>
-                      <i>- Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i>
-                    </li>
-                  </ul>If you're able to authenticate against the Key Store and Private Key, your Key Store will be unlocked and you'll be able to access your wallet.
-                </div>
-              </div>
               <div class="col mx-auto login-box">
                 <div class="input-box">
                   <div v-if="isLogin">
                     <label class="control-label">Select your private key (key.p12)</label>
-                    <file-selector
-                      v-model="this.$store.state.walletInfo.keystorePath"
-                      :placeholder="this.$store.state.walletInfo.keystorePath"
-                      action="SelectFile"
-                    />
-                  </div>
-                  <div v-if="isImport">
-                    <label class="control-label">Select the private key you wish to import.</label>
                     <file-selector
                       v-model="this.$store.state.walletInfo.keystorePath"
                       :placeholder="this.$store.state.walletInfo.keystorePath"
@@ -158,46 +121,19 @@
                   <div class="container">
                     <div class="row" v-if="isLogin">
                       <div class="col">
-                        <!-- :diabled="isValidNewWallet" is temporarily set without an exclamation mark infront -->
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
-                          type="success"
+                          type="primary"
                           block
                           @click.native="login()"
-                          :disabled="!isValidNewWallet"
                         >
-                          <span style="display: block;">
-                            <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
-                            <i v-else class="fa fa-unlock"></i>
-                            LOGIN
-                          </span>
+                          <span style="display: block;"> LOGIN</span>
                         </p-button>
                       </div>
                     </div>
                     <div class="row" v-if="isLogin">
-                      <div class="col-md-6 pr-md-2 mb-3">
-                        <p-button
-                          v-if="!this.$store.state.app.isLoggedIn"
-                          type="info"
-                          block
-                          @click.native="showImportView()"
-                        >
-                          <span style="display: block;">
-                            <i class="fas fa-file-import"></i> IMPORT
-                          </span>
-                        </p-button>
-                      </div>
-                      <div class="col-md-6 pl-md-2 mb-3">
-                        <p-button
-                          v-if="!this.$store.state.app.isLoggedIn"
-                          type="danger"
-                          block
-                          @click.native="newLogin()"
-                        >
-                          <span style="display: block;">
-                            <i class="fa fa-key"></i> CREATE
-                          </span>
-                        </p-button>
+                      <div class="col">
+                        <p class="text-right">Don't have a wallet yet? Create one <a href="javascript:void(0)" @click="newWallet()">here!</a></p>
                       </div>
                     </div>
                     <div class="row" v-if="isRegister">
@@ -220,43 +156,12 @@
                           type="warning"
                           block
                           :disabled="!this.isValidNewWallet"
-                          @click.native="createLogin()"
+                          @click.native="createWallet()"
                         >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
                             <i v-else class="fa fa-unlock"></i>
                             CREATE
-                          </span>
-                        </p-button>
-                      </div>
-                    </div>
-                    <div class="row" v-if="isImport">
-                      <div class="col-md-6 pr-md-2 mb-3">
-                        <p-button
-                          v-if="!this.$store.state.app.isLoggedIn"
-                          type="default"
-                          block
-                          @click.native="cancelImportView()"
-                        >
-                          <span style="display: block;">
-                            <i class="fa fa-close"></i>
-                            CANCEL
-                          </span>
-                        </p-button>
-                      </div>
-                      <div class="col-md-6 pl-md-2 mb-3">
-                        <!-- :diabled="isValidNewWallet" is temporarily set without an exclamation mark infront -->
-                        <p-button
-                          v-if="!this.$store.state.app.isLoggedIn"
-                          type="info"
-                          block
-                          @click.native="importWallet()"
-                          :disabled="!isValidNewWallet"
-                        >
-                          <span style="display: block;">
-                            <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
-                            <i v-else class="fa fa-unlock"></i>
-                            IMPORT
                           </span>
                         </p-button>
                       </div>
@@ -326,20 +231,7 @@ export default {
     },
     isRegister: function() {
       if (
-        this.$store.state.app.register &&
-        !this.$store.state.app.import &&
-        !this.$store.state.app.login
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    isImport: function() {
-      if (
-        !this.$store.state.app.register &&
-        this.$store.state.app.import &&
-        !this.$store.state.app.login
+        this.$store.state.app.register && !this.$store.state.app.login
       ) {
         return true;
       } else {
@@ -349,8 +241,7 @@ export default {
     isLogin: function() {
       if (
         this.$store.state.app.login &&
-        !this.$store.state.app.register &&
-        !this.$store.state.app.import
+        !this.$store.state.app.register
       ) {
         return true;
       } else {
@@ -360,43 +251,6 @@ export default {
 
   }, 
   methods: {
-    importWallet: function() {
-      var self = this;
-      self.$Progress.start();
-      self.overlay = true;
-      window.backend.WalletApplication.ImportWallet(
-        self.$store.state.walletInfo.keystorePath,
-        self.keystorePassword,
-        self.KeyPassword,
-        self.alias
-      ).then(walletImported => {
-        if (walletImported) {
-          window.backend.WalletApplication.Login(
-            self.$store.state.walletInfo.keystorePath,
-            self.keystorePassword,
-            self.KeyPassword,
-            self.alias
-          ).then(loggedIn => {
-            self.access = loggedIn;
-            if (self.access) {
-              self.overlay = false;
-              self.$store.state.app.isLoading = self.access;
-              self.$store.state.app.isLoggedIn = self.access;
-              self.$Progress.finish();
-              setTimeout(() => {
-                self.$store.state.app.isLoading = false;
-              }, 8000);
-            } else {
-              self.overlay = false;
-              self.$Progress.fail();
-            }
-          });
-        } else {
-          self.overlay = false;
-          self.$Progress.fail();
-        }
-      });
-    },
     checkAlias: function() {
       this.aliasLength = this.alias.length;
 
@@ -415,17 +269,7 @@ export default {
           this.bgImg = BrightBG;
         }
     },
-    showImportView: function() {
-      this.resetData();
-      this.$store.state.app.import = !this.$store.state.app.import;
-      this.$store.state.app.login = !this.$store.state.app.login;
-    },
-    cancelImportView: function() {
-      this.resetData();
-      this.$store.state.app.import = !this.$store.state.app.import;
-      this.$store.state.app.login = !this.$store.state.app.login;
-    },
-    newLogin: function() {
+    newWallet: function() {
       this.resetData();
       this.$store.state.app.register = !this.$store.state.app.register;
       this.$store.state.app.login = !this.$store.state.app.login;
@@ -484,14 +328,7 @@ export default {
         }
       });
     },
-  wait: function(ms){
-   var start = new Date().getTime();
-   var end = start;
-   while(end < start + ms) {
-     end = new Date().getTime();
-  }
-},
-    createLogin: function() {
+    createWallet: function() {
       var self = this;
       self.$Progress.start();
       self.overlay = true;
@@ -630,7 +467,6 @@ export default {
                     self.$store.state.app.isLoading = false;
                     self.$store.state.app.isLoggedIn = false;
                     self.$store.state.app.register = false;
-                    self.$store.state.app.import = false;
                     self.$store.state.app.login = true;
                   }
                   // self.$Progress.finish();

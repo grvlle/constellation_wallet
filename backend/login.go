@@ -21,6 +21,7 @@ func (a *WalletApplication) LoginError(errMsg string) {
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
+	a.wallet.WalletAlias = alias
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
@@ -46,12 +47,9 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	os.Setenv("CL_STOREPASS", keystorePassword)
 	os.Setenv("CL_KEYPASS", keyPassword)
 
-	a.wallet.WalletAlias = alias
-
 	if err := a.DB.First(&a.wallet, "wallet_alias = ?", alias).Error; err != nil {
 		a.log.Errorln("Unable to query database object for existing wallet. Reason: ", err)
-		a.LoginError("Access Denied. Alias not found.")
-		return false
+		return a.ImportWallet(keystorePath, keystorePassword, keyPassword, alias)
 	}
 
 	if !a.WalletKeystoreAccess() {

@@ -133,7 +133,7 @@
                     </div>
                     <div class="row" v-if="isLogin">
                       <div class="col">
-                        <p class="text-right">Don't have a wallet yet? Create one <a href="#" @click="newLogin()">here!</a></p>
+                        <p class="text-right">Don't have a wallet yet? Create one <a href="javascript:void(0)" @click="newWallet()">here!</a></p>
                       </div>
                     </div>
                     <div class="row" v-if="isRegister">
@@ -156,7 +156,7 @@
                           type="warning"
                           block
                           :disabled="!this.isValidNewWallet"
-                          @click.native="createLogin()"
+                          @click.native="createWallet()"
                         >
                           <span style="display: block;">
                             <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
@@ -269,7 +269,7 @@ export default {
           this.bgImg = BrightBG;
         }
     },
-    newLogin: function() {
+    newWallet: function() {
       this.resetData();
       this.$store.state.app.register = !this.$store.state.app.register;
       this.$store.state.app.login = !this.$store.state.app.login;
@@ -328,7 +328,7 @@ export default {
         }
       });
     },
-    createLogin: function() {
+    createWallet: function() {
       var self = this;
       self.$Progress.start();
       self.overlay = true;

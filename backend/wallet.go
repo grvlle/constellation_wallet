@@ -15,8 +15,6 @@ import (
 	"github.com/grvlle/constellation_wallet/backend/models"
 )
 
-/* Database Model is located in models.go */
-
 // ImportWallet is triggered from the FE when a user imports a wallet
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
@@ -508,7 +506,6 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		return 0, err
 	}
 
-	// Declared an empty interface
 	var result map[string]interface{}
 
 	// Unmarshal or Decode the JSON to the interface.
@@ -522,6 +519,8 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		s = "0" // Empty means zero
 	}
 
+	a.log.Infoln("Parsed the following balance: ", s)
+
 	b, ok := s.(float64)
 	if !ok {
 		if err != nil {
@@ -532,11 +531,15 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 
 	f := fmt.Sprintf("%.2f", b/1e8) // Reverse normalized float
 
+	a.log.Infoln("Normalized the following balance: ", f)
+
 	balance, err := strconv.ParseFloat(f, 64)
 	if err != nil {
 		a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
 		return 0, err
 	}
+
+	a.log.Infoln("Returning the following balance: ", balance)
 
 	return balance, nil
 }

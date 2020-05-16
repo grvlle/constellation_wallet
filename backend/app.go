@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -10,6 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/wailsapp/wails"
+
+	"github.com/grvlle/constellation_wallet/backend/models"
 )
 
 // WalletApplication holds all application specific objects
@@ -17,7 +19,7 @@ import (
 type WalletApplication struct {
 	RT         *wails.Runtime
 	log        *logrus.Logger
-	wallet     Wallet
+	wallet     models.Wallet
 	DB         *gorm.DB
 	killSignal chan struct{}
 	Network    struct {
@@ -71,7 +73,7 @@ type WalletApplication struct {
 
 // WailsShutdown is called when the application is closed
 func (a *WalletApplication) WailsShutdown() {
-	a.wallet = Wallet{}
+	a.wallet = models.Wallet{}
 	close(a.killSignal) // Kills the Go Routines
 	a.DB.Close()
 }
@@ -102,7 +104,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 		a.log.Panicln("failed to connect database", err)
 	}
 	// Migrate the schema
-	a.DB.AutoMigrate(&Wallet{}, &TXHistory{}, &Path{})
+	a.DB.AutoMigrate(&models.Wallet{}, &models.TXHistory{}, &models.Path{})
 	a.detectJavaPath()
 	a.initMainnetConnection()
 

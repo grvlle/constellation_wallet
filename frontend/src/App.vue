@@ -181,17 +181,6 @@ export default {
       this.$store.state.chartData.throughput.labels = labels;
     });
 
-    // Utility sockets
-    // window.wails.Events.On("detect_os", os => {
-    //   if (os == "windows") {
-    //     this.$store.state.OS.windows = true;
-    //   } else if (os == "macos") {
-    //     this.$store.state.OS.macOS = true;
-    //   } else if (os == "linux") {
-    //     this.$store.state.OS.linux = true;
-    //   }
-    // });
-
     // Settings.vue sockets
     window.wails.Events.On("wallet_keys", address => {
       // this.$store.state.walletInfo.keystorePath = keystorePath;

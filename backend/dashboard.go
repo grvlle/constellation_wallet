@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/wailsapp/wails"
@@ -191,7 +192,7 @@ func (a *WalletApplication) pollTokenBalance() {
 						retryCounter++
 						break
 					}
-					a.log.Debugln("Current Balance: ", balance)
+					a.log.Infoln("Current Balance: ", balance)
 					a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balance, balance, balance
 					a.RT.Events.Emit("token", a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance)
 					UpdateCounter(updateIntervalToken, "token_counter", time.Second, a.RT)
@@ -227,7 +228,7 @@ func (a *WalletApplication) pricePoller() {
 				a.wallet.TokenPrice.DAG.BTC = 0
 				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
 				for retryCounter <= 20 && a.wallet.Balance != 0 {
-					a.log.Debug("Contacting token evaluation API on: " + url + ticker)
+					a.log.Infoln("Contacting token evaluation API on: " + url + ticker)
 
 					resp, err := http.Get(url)
 					if err != nil {
@@ -259,17 +260,24 @@ func (a *WalletApplication) pricePoller() {
 					}
 
 					if a.wallet.Balance != 0 && a.wallet.TokenPrice.DAG.USD == 0 {
-						if retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
-							warn := fmt.Sprintf("No data recieved from Token Price API. Will try again in %v seconds.", retryCounter)
-							a.sendWarning(warn)
+
+						a.log.Infoln("Contacting alternate token evaluation API")
+						a.wallet.TokenPrice.DAG.USD, a.wallet.TokenPrice.DAG.BTC, err = getTokenPriceAlternateRoute()
+
+						if err != nil {
+							a.log.Errorln("Failed to fetch token metrics using alternate endpoint. Reason: ", err)
+							if retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
+								warn := fmt.Sprintf("No data recieved from Token Price API. Will try again in %v seconds.", retryCounter)
+								a.sendWarning(warn)
+							}
+							retryCounter++
+							break
 						}
-						retryCounter++
-						break
 					}
 
-					a.log.Debugf("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
-					a.log.Debugf("Collected token price in EUR: %v", a.wallet.TokenPrice.DAG.EUR)
-					a.log.Debugf("Collected token price in BTC: %v", a.wallet.TokenPrice.DAG.BTC)
+					a.log.Infoln("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
+					a.log.Infoln("Collected token price in EUR: %v", a.wallet.TokenPrice.DAG.EUR)
+					a.log.Infoln("Collected token price in BTC: %v", a.wallet.TokenPrice.DAG.BTC)
 
 					totalCurrencyBalance := 0.0
 					if a.wallet.Currency == "USD" {
@@ -284,12 +292,84 @@ func (a *WalletApplication) pricePoller() {
 					UpdateCounter(updateIntervalCurrency, "value_counter", time.Second, a.RT)
 					time.Sleep(updateIntervalCurrency * time.Second)
 				}
-				// If loop is broken we reset the values
-				a.RT.Events.Emit("totalValue", "USD", 0)
-				UpdateCounter(updateIntervalCurrency, "value_counter", 0, a.RT)
+
 			}
 		}
 	}()
+}
+
+type tokenPriceAlt struct {
+	Code string `json:"code"`
+	Data struct {
+		Sequence    string `json:"sequence"`
+		BestAsk     string `json:"bestAsk"`
+		Size        string `json:"size"`
+		Price       string `json:"price"`
+		BestBidSize string `json:"bestBidSize"`
+		Time        int64  `json:"time"`
+		BestBid     string `json:"bestBid"`
+		BestAskSize string `json:"bestAskSize"`
+	} `json:"data"`
+}
+
+// getTokenPriceAlternateRoute will kick in in case the main token poller API will return
+// broken payload.
+func getTokenPriceAlternateRoute() (float64, float64, error) {
+
+	var tokenpriceUSD, tokenpriceBTC float64
+	var err error
+
+	tpa := new(tokenPriceAlt)
+
+	const (
+		url       = "https://api.kucoin.com/api/v1/market/orderbook/level1?symbol="
+		usdTicker = "DAG-USDT"
+		btcTicker = "DAG-BTC"
+	)
+
+	tickers := []string{usdTicker, btcTicker}
+
+	for _, tick := range tickers {
+		resp, err := http.Get(url + tick)
+		if err != nil {
+			return 0, 0, err
+		}
+
+		// Example resp: {"code":"200000","data":
+		// {"sequence":"1583079038860","bestAsk":"0.01058",
+		// "size":"73908.9903","price":"0.01058",
+		// "bestBidSize":"403.157","time":1589605888009,
+		// "bestBid":"0.010539","bestAskSize":"79091.0097"}}
+
+		if resp == nil {
+			return 0, 0, err
+		}
+		defer resp.Body.Close()
+
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return 0, 0, err
+		}
+
+		err = json.Unmarshal(bodyBytes, &tpa)
+		if err != nil {
+			return 0, 0, err
+		}
+
+		s := tpa.Data.Price
+		balance, err := strconv.ParseFloat(s, 64)
+		if err != nil {
+			return 0, 0, err
+		}
+		switch {
+		case tick == usdTicker:
+			tokenpriceUSD = balance
+		case tick == btcTicker:
+			tokenpriceBTC = balance
+		}
+	}
+
+	return tokenpriceUSD, tokenpriceBTC, err
 }
 
 // UpdateCounter will count up from the last time a card was updated.

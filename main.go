@@ -7,6 +7,8 @@ import (
 
 	"github.com/leaanthony/mewn"
 	"github.com/wailsapp/wails"
+
+	app "github.com/grvlle/constellation_wallet/backend"
 )
 
 func main() {
@@ -27,7 +29,7 @@ func main() {
 		Colour:    "#131313",
 	})
 
-	frontend.Bind(&WalletApplication{})
+	frontend.Bind(&app.WalletApplication{})
 	err := frontend.Run()
 	if err != nil {
 		panic(err)

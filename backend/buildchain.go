@@ -1,9 +1,11 @@
-package main
+package app
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/grvlle/constellation_wallet/backend/models"
 )
 
 // formTXChain retains the order of the blockchain across all accounts.
@@ -15,7 +17,7 @@ import (
 // a Failed state.
 func (a *WalletApplication) formTXChain(amount int64, fee int64, address string, ptxObj *Transaction, ltxObj *Transaction) {
 
-	statusLastTX := TXHistory{}
+	statusLastTX := models.TXHistory{}
 	if err := a.DB.Last(&statusLastTX).Error; err != nil {
 		a.log.Warnln("No previous TX detected for this wallet. Reason: ", err)
 	}

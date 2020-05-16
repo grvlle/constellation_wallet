@@ -123,7 +123,7 @@
                       <div class="col">
                         <p-button
                           v-if="!this.$store.state.app.isLoggedIn"
-                          type="success"
+                          type="primary"
                           block
                           @click.native="login()"
                           :disabled="!isValidNewWallet"
@@ -138,16 +138,7 @@
                     </div>
                     <div class="row" v-if="isLogin">
                       <div class="col">
-                        <p-button
-                          v-if="!this.$store.state.app.isLoggedIn"
-                          type="danger"
-                          block
-                          @click.native="newLogin()"
-                        >
-                          <span style="display: block;">
-                            <i class="fa fa-key"></i> CREATE
-                          </span>
-                        </p-button>
+                        <p class="text-right">Don't have a wallet yet? Create one <a href="#" @click="newLogin()">here!</a></p>
                       </div>
                     </div>
                     <div class="row" v-if="isRegister">

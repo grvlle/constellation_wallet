@@ -15,7 +15,7 @@ import (
 
 /* Database Model is located in models.go */
 
-// ImportWallet is triggered from the FE when a user imports a wallet
+// ImportWallet is triggered when a user logs into a new Molly wallet for the first time
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)

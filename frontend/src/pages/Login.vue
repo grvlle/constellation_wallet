@@ -265,43 +265,6 @@ export default {
 
   }, 
   methods: {
-    importWallet: function() {
-      var self = this;
-      self.$Progress.start();
-      self.overlay = true;
-      window.backend.WalletApplication.ImportWallet(
-        self.$store.state.walletInfo.keystorePath,
-        self.keystorePassword,
-        self.KeyPassword,
-        self.alias
-      ).then(walletImported => {
-        if (walletImported) {
-          window.backend.WalletApplication.Login(
-            self.$store.state.walletInfo.keystorePath,
-            self.keystorePassword,
-            self.KeyPassword,
-            self.alias
-          ).then(loggedIn => {
-            self.access = loggedIn;
-            if (self.access) {
-              self.overlay = false;
-              self.$store.state.app.isLoading = self.access;
-              self.$store.state.app.isLoggedIn = self.access;
-              self.$Progress.finish();
-              setTimeout(() => {
-                self.$store.state.app.isLoading = false;
-              }, 8000);
-            } else {
-              self.overlay = false;
-              self.$Progress.fail();
-            }
-          });
-        } else {
-          self.overlay = false;
-          self.$Progress.fail();
-        }
-      });
-    },
     checkAlias: function() {
       this.aliasLength = this.alias.length;
 
@@ -379,13 +342,6 @@ export default {
         }
       });
     },
-  wait: function(ms){
-   var start = new Date().getTime();
-   var end = start;
-   while(end < start + ms) {
-     end = new Date().getTime();
-  }
-},
     createLogin: function() {
       var self = this;
       self.$Progress.start();

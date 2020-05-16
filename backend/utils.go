@@ -81,10 +81,10 @@ func normalizeAmounts(i int64) (string, error) {
 }
 
 // TempFileName creates temporary file names for the transaction files
-func (a *WalletApplication) TempFileName(prefix, suffix string) string {
+func (a *WalletApplication) TempFileName(prefix string) string {
 	randBytes := make([]byte, 16)
 	rand.Read(randBytes)
-	return filepath.Join(a.paths.TMPDir, prefix+hex.EncodeToString(randBytes)+suffix)
+	return filepath.Join(a.paths.TMPDir, prefix+hex.EncodeToString(randBytes))
 }
 
 // Write emits the download progress of the CL binaries to the frontend

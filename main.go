@@ -1,7 +1,9 @@
 package main
 
 import (
+	"math/rand"
 	"os"
+	"time"
 
 	"runtime"
 
@@ -10,6 +12,10 @@ import (
 
 	app "github.com/grvlle/constellation_wallet/backend"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 func main() {
 	if runtime.GOOS != "windows" {

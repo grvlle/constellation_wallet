@@ -74,9 +74,9 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 				return false
 			}
 
-			a.paths.LastTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
-			a.paths.PrevTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
-			a.paths.EmptyTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.LastTXFile = a.TempFileName("tx-")
+			a.paths.PrevTXFile = a.TempFileName("tx-")
+			a.paths.EmptyTXFile = a.TempFileName("tx-")
 
 			err = a.createTXFiles()
 			if err != nil {
@@ -209,9 +209,9 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		a.KeyStoreAccess = a.WalletKeystoreAccess()
 
 		if a.KeyStoreAccess {
-			a.paths.LastTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
-			a.paths.PrevTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
-			a.paths.EmptyTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.LastTXFile = a.TempFileName("tx-")
+			a.paths.PrevTXFile = a.TempFileName("tx-")
+			a.paths.EmptyTXFile = a.TempFileName("tx-")
 
 			err := a.createTXFiles()
 			if err != nil {

@@ -258,11 +258,12 @@ func (a *WalletApplication) pricePoller() {
 						a.log.Warnln("Unable to display token price. Reason:", err)
 						break
 					}
-					a.log.Infoln(a.wallet.TokenPrice.DAG.USD, a.wallet.TokenPrice.DAG.BTC) // TEMP
+
 					if a.wallet.Balance != 0 && a.wallet.TokenPrice.DAG.USD == 0 {
+
 						a.log.Infoln("Contacting alternate token evaluation API")
 						a.wallet.TokenPrice.DAG.USD, a.wallet.TokenPrice.DAG.BTC, err = getTokenPriceAlternateRoute()
-						a.log.Infoln(a.wallet.TokenPrice.DAG.USD, a.wallet.TokenPrice.DAG.BTC) // TEMP
+
 						if err != nil {
 							a.log.Errorln("Failed to fetch token metrics using alternate endpoint. Reason: ", err)
 							if retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {

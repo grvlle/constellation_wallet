@@ -29,8 +29,7 @@ l be powered by DAG.
   
 ### Publications  
   
-* [Constellation’s Molly a Landmark Moment for the $DAG Ecosystem](https://thedailychain.com/constellations-molly-a-land  
-mark-moment-for-the-dag-ecosystem/) - An article written on The Daily Chain by Anna Larsen.  
+* [Constellation’s Molly a Landmark Moment for the $DAG Ecosystem](https://thedailychain.com/constellations-molly-a-landmark-moment-for-the-dag-ecosystem/) - An article written on The Daily Chain by Anna Larsen.  
   
 ### Technologies  
   

@@ -6,6 +6,7 @@ import WalletInformation from "@/pages/WalletInformation.vue";
 import About from "@/pages/About.vue";
 import Settings from "@/pages/Settings.vue";
 import Transactions from "@/pages/Transactions.vue";
+import Network from "@/pages/Network.vue";
 
 const routes = [
 
@@ -38,6 +39,11 @@ const routes = [
         path: "settings",
         name: "settings",
         component: Settings
+      },
+      {
+        path: "network",
+        name: "network",
+        component: Network
       },
     ]
   },

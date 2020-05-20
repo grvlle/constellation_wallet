@@ -69,7 +69,7 @@
 .input-group-append .btn {
   border: 1px solid;
   @include themed() {
-    border-color: t('inputBorderColor');
+    border-color: t('inputAppendBorderColor');
   }
 }
 

@@ -1,15 +1,15 @@
 <template>
-  <div class="d-flex">
+  <div class="input-group">
     <input type="text"
       class="form-control"
       :disabled="true"
       aria-describedby="basic-addon2"
-      :value=value>
-
-    <span class="input-group-btn">
+      :value=value />
+    <span class="input-group-append">
       <p-button v-if="action == 'SelectFile'"
         tabIndex="-1" 
         @click.native="importKey" 
+        class="btn"
         type="default">
         <span style="display: block;">
           BROWSE
@@ -18,6 +18,7 @@
       <p-button v-if="action == 'SelectSaveFile'"
         tabIndex="-1" 
         @click.native="SelectDirToStoreKey" 
+        class="btn"
         type="default">
         <span style="display: block;">
           BROWSE

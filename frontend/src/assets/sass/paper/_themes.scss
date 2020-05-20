@@ -21,6 +21,7 @@ $themes: (
 
     inputBackgroundColor:$gray-input-bg,
     inputBorderColor: $medium-gray,
+    inputAppendBorderColor: $medium-dark-gray,
     inputPlaceholderColor: $light-gray,
     inputTextColor: $font-color,
     inputDisabledBackgroundColor: $light-gray,
@@ -78,6 +79,7 @@ $themes: (
 
     inputBackgroundColor:#272727,
     inputBorderColor: $dark-gray,
+    inputAppendBorderColor: $dark-gray,
     inputPlaceholderColor: $medium-gray,
     inputTextColor: #F2F2F2,
     inputDisabledBackgroundColor: #2E2E2E,

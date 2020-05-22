@@ -1,11 +1,11 @@
 <template>
-  <div class="wrapper">
+  <div id="app" class="wrapper">
     <side-bar>
       <template slot="links">
-        <sidebar-link to="/dashboard" name="Dashboard" icon="fa fa-columns" />
-        <sidebar-link to="/wallet-info" name="Wallet Info" icon="fa fa-wallet" />
-        <sidebar-link to="/submit-transaction" name="Transactions" icon="fa fa-paper-plane" />
-        <sidebar-link to="/about" name="About" icon="fa fa-question-circle" />
+        <sidebar-link to="dashboard" name="Dashboard" icon="fa fa-columns" />
+        <sidebar-link to="wallet-info" name="Wallet Info" icon="fa fa-wallet" />
+        <sidebar-link to="submit-transaction" name="Transactions" icon="fa fa-paper-plane" />
+        <sidebar-link to="about" name="About" icon="fa fa-question-circle" />
         <p class="nav-item">
           <a @click="notifyVue2('top', 'right')" class="nav-link" style="cursor: pointer;">
             <i class="fa fa-trophy"></i>Team
@@ -64,11 +64,11 @@ export default {
           this.$store.state.walletInfo.keystorePassword = "";
           this.$store.state.walletInfo.KeyPassword = "";
           this.$store.state.walletInfo.email = "";
-          this.$store.state.app.isLoading = false;
           this.$store.state.app.isLoggedIn = false;
           this.$store.state.app.register = false;
           this.$store.state.app.login = true;
           this.$store.state.walletInfo.currency = "";
+          this.$router.push({name: 'login'});
           return;
         }
       }),

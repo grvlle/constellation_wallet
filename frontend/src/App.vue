@@ -1,27 +1,9 @@
 <template>
   <div :class="this.$store.state.walletInfo.darkMode ? 'theme--dark' : 'theme--light'">
     <vue-progress-bar></vue-progress-bar>
-    <downloading-screen
-      v-if="this.$store.state.app.isDownloadingDependencies"
-      :isDownloading="this.$store.state.app.isDownloadingDependencies"
-      :fadeout="!this.$store.state.app.isDownloadingDependencies"
-    />
-    <login-screen
-      v-if="!this.$store.state.app.isDownloadingDependencies && !this.$store.state.app.isLoggedIn"
-      :isLoggedIn="!this.$store.state.app.isLoggedIn"
-    />
-    <loading-screen
-      v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-      :isLoading="this.$store.state.app.isLoading"
-      :fadeout="!this.$store.state.app.isLoading"
-    />
-
-    <div
-      v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-      :class="{'nav-open': $sidebar.showSidebar}"
-    >
-      <notifications v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"></notifications>
-      <router-view v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"></router-view>
+    <div :class="{'nav-open': $sidebar.showSidebar}">
+      <notifications></notifications>
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -30,15 +12,9 @@
 import ErrorNotification from "./pages/Notifications/ErrorMessage";
 import WarningNotification from "./pages/Notifications/Warning";
 import SuccessNotification from "./pages/Notifications/Success";
-import LoadingScreen from "./pages/LoadingScreen";
-import DownloadingScreen from "./pages/DownloadingScreen";
-import LoginScreen from "./pages/Login";
 
 export default {
   components: {
-    LoadingScreen,
-    LoginScreen,
-    DownloadingScreen
   },
   data() {
     return {};

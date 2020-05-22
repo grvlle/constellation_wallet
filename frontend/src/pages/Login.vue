@@ -1,180 +1,159 @@
 <template>
-
-  <div class="login-bg vertical-center" v-bind:style="{ backgroundImage: 'url(' + this.bgImg + ')' }" id="app">
-    <div class="container">
-      <div class="row">
-        <div class="col mx-auto text-center header">
-          <div v-if="isLogin">
-            <img class="img-fluid" v-if="this.$store.state.walletInfo.darkMode" src="~@/assets/img/Constellation-Logo-White.png" style="max-height: 5.8rem;" />
-            <img class="img-fluid" v-else src="~@/assets/img/Constellation-Logo-Black.png" style="max-height: 5.8rem;" />
-            <p>Please enter your credentials below to access your Molly Wallet.</p>
-          </div>
-          <div class="page-error-box" v-if="this.$store.state.displayLoginError">
-            <p>{{this.$store.state.loginErrorMsg}}</p>
-          </div>
-          <div class="page-error-box" v-else></div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <form ref="textareaform" @submit.prevent="form" class="container">
-            <div class="row">
-              <div class="col mx-auto login-box" v-if="isRegister">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <form ref="textareaform" @submit.prevent="form" class="container">
+          <div class="row">
+            <div class="col mx-auto login-box" v-if="isRegister">
+              <div>
+                <b>Create a new wallet</b>
+                <br />This section will let you create a Molly Wallet to store your
+                <b>$DAG</b> tokens in. You simply browse to a path where you wish to save your KeyStore file, give it a name and select 'save'.
+                <br />
+                <br />Once the path is selected, you get to set up a password to protect the key store.
+                <br />
+                <br />
+                <ul>
+                  <li>
+                    <b>KeyStore File</b>
+                    <i>- Select where to save your KeyStore File.</i>
+                  </li>
+                  <li>
+                    <b>Key Alias</b>
+                    <i>- The unique name which is used in the keystore to identify this key entry.</i>
+                  </li>
+                  <li>
+                    <b>Keystore Password</b>
+                    <i>- This password unlocks the keystore file.</i>
+                  </li>
+                  <li>
+                    <b>Key Password</b>
+                    <i>- Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i>
+                  </li>
+                  <li>
+                    <b>Wallet Label</b>
+                    <i>
+                      - This will set the label of your wallet. This is
+                      <b>optional</b> and strictly for cosmetic purposes.
+                    </i>
+                  </li>
+                </ul>
+                <b>Important!</b> Please backup your Alias, Store Passwords, Key Password and KeyStore File (key.p12) as these will allow you to restore your wallet at any time.
+              </div>
+            </div>
+            <div class="col mx-auto login-box">
+              <div class="input-box">
+                <div v-if="isLogin">
+                  <label class="control-label">Select your private key (key.p12)</label>
+                  <file-selector
+                    v-model="this.$store.state.walletInfo.keystorePath"
+                    :placeholder="this.$store.state.walletInfo.keystorePath"
+                    action="SelectFile"
+                  />
+                </div>
+                <div v-if="isRegister">
+                  <label
+                    class="control-label"
+                  >Select a directory to store your private key (key.p12) in</label>
+                  <file-selector
+                    v-model="this.$store.state.walletInfo.saveKeystorePath"
+                    :placeholder="this.$store.state.walletInfo.saveKeystorePath"
+                    action="SelectSaveFile"
+                  />
+                </div>
                 <div>
-                  <b>Create a new wallet</b>
-                  <br />This section will let you create a Molly Wallet to store your
-                  <b>$DAG</b> tokens in. You simply browse to a path where you wish to save your KeyStore file, give it a name and select 'save'.
-                  <br />
-                  <br />Once the path is selected, you get to set up a password to protect the key store.
-                  <br />
-                  <br />
-                  <ul>
-                    <li>
-                      <b>KeyStore File</b>
-                      <i>- Select where to save your KeyStore File.</i>
-                    </li>
-                    <li>
-                      <b>Key Alias</b>
-                      <i>- The unique name which is used in the keystore to identify this key entry.</i>
-                    </li>
-                    <li>
-                      <b>Keystore Password</b>
-                      <i>- This password unlocks the keystore file.</i>
-                    </li>
-                    <li>
-                      <b>Key Password</b>
-                      <i>- Extra layer of security. Both passwords will be needed when accessing/restoring a wallet.</i>
-                    </li>
-                    <li>
-                      <b>Wallet Label</b>
-                      <i>
-                        - This will set the label of your wallet. This is
-                        <b>optional</b> and strictly for cosmetic purposes.
-                      </i>
-                    </li>
-                  </ul>
-                  <b>Important!</b> Please backup your Alias, Store Passwords, Key Password and KeyStore File (key.p12) as these will allow you to restore your wallet at any time.
+                  <fg-input
+                    style="margin-bottom: 0.125em"
+                    type="text"
+                    v-model="alias"
+                    @input.native="checkAlias(alias)"
+                    :placeholder="this.$store.state.walletInfo.alias"
+                    label="Key Alias"
+                  />
+                  <div class="validate" v-if="!this.$store.state.app.login && !this.aliasValid">
+                    <p
+                      v-if="!this.aliasContainsFiveCharacters"
+                    >Alias has to be atleast 5 characters long.</p>
+                  </div>
+                  <div class="validate" v-else />
+                </div>
+                <div>
+                  <password-input
+                    v-model="keystorePassword"
+                    label="Keystore Password"
+                    v-on:valid="KeystorePasswordValid = true"
+                    v-on:invalid="KeystorePasswordValid = false"
+                  />
+                </div>
+                <div>
+                  <password-input
+                    v-model="KeyPassword"
+                    label="Key Password"
+                    v-on:valid="KeyPasswordValid = true"
+                    v-on:invalid="KeyPasswordValid = false"
+                  />
+                </div>
+                <div v-if="isRegister">
+                  <fg-input
+                    type="text"
+                    v-model="newWalletLabel"
+                    :placeholder="this.$store.state.walletInfo.email"
+                    label="Wallet Label (optional)"
+                  ></fg-input>
                 </div>
               </div>
-              <div class="col mx-auto login-box">
-                <div class="input-box">
-                  <div v-if="isLogin">
-                    <label class="control-label">Select your private key (key.p12)</label>
-                    <file-selector
-                      v-model="this.$store.state.walletInfo.keystorePath"
-                      :placeholder="this.$store.state.walletInfo.keystorePath"
-                      action="SelectFile"
-                    />
-                  </div>
-                  <div v-if="isRegister">
-                    <label
-                      class="control-label"
-                    >Select a directory to store your private key (key.p12) in</label>
-                    <file-selector
-                      v-model="this.$store.state.walletInfo.saveKeystorePath"
-                      :placeholder="this.$store.state.walletInfo.saveKeystorePath"
-                      action="SelectSaveFile"
-                    />
-                  </div>
-                  <div>
-                    <fg-input
-                      style="margin-bottom: 0.125em"
-                      type="text"
-                      v-model="alias"
-                      @input.native="checkAlias(alias)"
-                      :placeholder="this.$store.state.walletInfo.alias"
-                      label="Key Alias"
-                    />
-                    <div class="validate" v-if="!this.$store.state.app.login && !this.aliasValid">
-                      <p
-                        v-if="!this.aliasContainsFiveCharacters"
-                      >Alias has to be atleast 5 characters long.</p>
+              <div class="button-box">
+                <div class="container">
+                  <div class="row" v-if="isLogin">
+                    <div class="col">
+                      <p-button
+                        type="primary"
+                        block
+                        @click.native="login()"
+                      >
+                        <span style="display: block;"> LOGIN</span>
+                      </p-button>
                     </div>
-                    <div class="validate" v-else />
                   </div>
-                  <div>
-                    <password-input
-                      v-model="keystorePassword"
-                      label="Keystore Password"
-                      v-on:valid="KeystorePasswordValid = true"
-                      v-on:invalid="KeystorePasswordValid = false"
-                    />
-                  </div>
-                  <div>
-                    <password-input
-                      v-model="KeyPassword"
-                      label="Key Password"
-                      v-on:valid="KeyPasswordValid = true"
-                      v-on:invalid="KeyPasswordValid = false"
-                    />
-                  </div>
-                  <div v-if="isRegister">
-                    <fg-input
-                      type="text"
-                      v-model="newWalletLabel"
-                      :placeholder="this.$store.state.walletInfo.email"
-                      label="Wallet Label (optional)"
-                    ></fg-input>
-                  </div>
-                </div>
-                <div class="button-box">
-                  <div class="container">
-                    <div class="row" v-if="isLogin">
-                      <div class="col">
-                        <p-button
-                          v-if="!this.$store.state.app.isLoggedIn"
-                          type="primary"
-                          block
-                          @click.native="login()"
-                        >
-                          <span style="display: block;"> LOGIN</span>
-                        </p-button>
-                      </div>
+                  <div class="row" v-if="isLogin">
+                    <div class="col">
+                      <p class="text-right">Don't have a wallet yet? Create one <a href="javascript:void(0)" @click="newWallet()">here!</a></p>
                     </div>
-                    <div class="row" v-if="isLogin">
-                      <div class="col">
-                        <p class="text-right">Don't have a wallet yet? Create one <a href="javascript:void(0)" @click="newWallet()">here!</a></p>
-                      </div>
+                  </div>
+                  <div class="row" v-if="isRegister">
+                    <div class="col-md-6 pr-md-2 mb-3">
+                      <p-button
+                        type="default"
+                        block
+                        @click.native="cancelEvent()"
+                      >
+                        <span style="display: block;">
+                          <i class="fa fa-close"></i>
+                          CANCEL
+                        </span>
+                      </p-button>
                     </div>
-                    <div class="row" v-if="isRegister">
-                      <div class="col-md-6 pr-md-2 mb-3">
-                        <p-button
-                          v-if="!this.$store.state.app.isLoggedIn"
-                          type="default"
-                          block
-                          @click.native="cancelEvent()"
-                        >
-                          <span style="display: block;">
-                            <i class="fa fa-close"></i>
-                            CANCEL
-                          </span>
-                        </p-button>
-                      </div>
-                      <div class="col-md-6 pl-md-2 mb-3">
-                        <p-button
-                          v-if="!this.$store.state.app.isLoggedIn"
-                          type="warning"
-                          block
-                          :disabled="!this.isValidNewWallet"
-                          @click.native="createWallet()"
-                        >
-                          <span style="display: block;">
-                            <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
-                            <i v-else class="fa fa-unlock"></i>
-                            CREATE
-                          </span>
-                        </p-button>
-                      </div>
+                    <div class="col-md-6 pl-md-2 mb-3">
+                      <p-button
+                        type="warning"
+                        block
+                        :disabled="!this.isValidNewWallet"
+                        @click.native="createWallet()"
+                      >
+                        <span style="display: block;">
+                          <i v-if="!this.isValidNewWallet" class="fa fa-lock"></i>
+                          <i v-else class="fa fa-unlock"></i>
+                          CREATE
+                        </span>
+                      </p-button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </form>
-        </div>
-        
+          </div>
+        </form>
       </div>
-      
     </div>
     <div class="version">
       <p class="version">Connected to: {{this.$store.state.network}}<br />
@@ -189,9 +168,6 @@
 
 <script>
 import Swal from "sweetalert2";
-import BrightBG from '../assets/img/nodes2.jpg';
-import DarkBG from '../assets/img/nodes2_dark.jpg';
-
 export default {
   name: "login-screen",
   data: () => ({
@@ -206,13 +182,9 @@ export default {
     KeyPasswordValid: false,
     overlay: false,
     access: false,
-    bgImg: DarkBG,
     termsOfService:
       "This HTML scroll box has had color added. You can add color to the background of your scroll box. You can also add color to the scroll bars"
   }),
-  mounted() {
-    this.themeBG()
-  },
   computed: {
     isValidNewWallet: function() {
       if (
@@ -262,13 +234,6 @@ export default {
         this.aliasValid = false;
       }
     },
-    themeBG: function () {
-      if (this.$store.state.walletInfo.darkMode) {
-          this.bgImg = DarkBG;
-        } else {
-          this.bgImg = BrightBG;
-        }
-    },
     newWallet: function() {
       this.resetData();
       this.$store.state.app.register = !this.$store.state.app.register;
@@ -306,6 +271,7 @@ export default {
       ).then(result => {
         self.access = result;
         if (self.access) {
+          
           window.backend.WalletApplication.SetUserTheme().then(
             darkMode => (self.$store.state.walletInfo.darkMode = darkMode)
           )
@@ -315,13 +281,14 @@ export default {
           window.backend.WalletApplication.SetImagePath().then(
             imagePath => (self.$store.state.walletInfo.imgPath = imagePath)
           );
+
           self.overlay = false;
-          self.$store.state.app.isLoading = self.access;
-          self.$store.state.app.isLoggedIn = self.access;
           self.$Progress.finish();
-          setTimeout(() => {
-            self.$store.state.app.isLoading = false;
-          }, 8000);
+          self.$store.state.app.isLoggedIn = true;
+          self.$router.push({
+            name: 'loading', 
+            params: {message: "Getting your $DAG Wallet ready..."}
+          });
         } else {
           self.overlay = false;
           self.$Progress.fail();
@@ -354,11 +321,8 @@ export default {
             self.access = loggedIn;
             if (self.access) {
               self.overlay = false;
-              self.$store.state.app.isLoading = self.access;
               self.$store.state.app.isLoggedIn = self.access;
               setTimeout(function() {
-                self.$store.state.app.isLoading = false;
-
                 Swal.fire({
                   html:
                     '<div style="overflow: scroll; padding: 1.25em; width: 53em; height: 31.25em;">' +
@@ -464,10 +428,10 @@ export default {
                       type: "error"
                     });
                     // LogOut
-                    self.$store.state.app.isLoading = false;
                     self.$store.state.app.isLoggedIn = false;
                     self.$store.state.app.register = false;
                     self.$store.state.app.login = true;
+                    this.$router.push({name: 'login'});
                   }
                   // self.$Progress.finish();
                 });
@@ -531,41 +495,11 @@ html {
   height: 100%;
 }
 
-.login-bg {
-        /* The image used */
-  // background-image: linear-gradient(
-  //   rgba(255, 255, 255, 0.2),
-  //   rgba(255, 255, 255, 0.2)
-  // ),
-  // url("~@/assets/img/nodes2.jpg");
-
-  /* Full height */
-  height: 100%;
-  position: absolute;
-  width: 100%;
-  overflow: hidden;
-
-  /* Center and scale the image nicely */
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-
-
 .version {
   position: fixed;
   display: flex;
   align-items: bottom;
   margin-right: 1.8em;
-}
-
-.vertical-center {
-  min-height: 100%; /* Fallback for browsers do NOT support vh unit */
-  min-height: 100vh; /* These two lines are counted as one :-)       */
-
-  display: flex;
-  align-items: center;
 }
 
 .login-box {

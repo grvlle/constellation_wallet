@@ -1,49 +1,36 @@
 <template>
-  <div class="bg vertical-center" id="app">
-    <div class="container">
-      <div class="row" v-if="this.$store.state.app.isDownloadingDependencies">
-        <div class="col-md-6 mx-auto text-center" style="margin-top: 4rem;">
-          <img class="img-fluid" style="max-height: 5.8rem; margin-top: 16rem;" src="~@/assets/img/Constellation-Logo-Black.png"/>
-          <p style="color: #c4c4c4; margin-top: 0.3125em;">
-            Downloading $DAG wallet dependencies...
-          </p>
-          <p v-if="this.$store.state.downloading.filename !== ''">
-            {{this.$store.state.downloading.filename}}: {{this.$store.state.downloading.size}}
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6 mx-auto text-center">
-          <div class="boxes mx-auto">
-            <div class="box">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-            <div class="box">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-            <div class="box">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-            <div class="box">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 mx-auto text-center">
+        <div class="boxes mx-auto">
+          <div class="box">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="box">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="box">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="box">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
           </div>
         </div>
       </div>
-      <div class="row" style="height: 21rem;"/>
     </div>
+    <div class="row" style="height: 21rem;"/>
   </div>
 </template>
 
@@ -58,34 +45,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.bg {
-  /* The image used */
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.2),
-      rgba(255, 255, 255, 0.2)
-    ),
-    url("~@/assets/img/nodes2.jpg");
-
-  /* Full height */
-  height: 100%;
-  position: absolute;
-  width: 100%;
-  overflow: hidden;
-
-  /* Center and scale the image nicely */
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-.vertical-center {
-  min-height: 100%; /* Fallback for browsers do NOT support vh unit */
-  min-height: 100vh; /* These two lines are counted as one :-)       */
-
-  display: flex;
-  align-items: center;
-}
-
 .loader {
   background: #f2f2f2;
   background-repeat: no-repeat;

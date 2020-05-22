@@ -20,7 +20,7 @@
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <router-link class="nav-link" to="/settings">
+            <router-link class="nav-link" to="settings">
               <i class="ti-settings"></i>
               <p class="nav-item">SETTINGS</p>
             </router-link>
@@ -63,11 +63,11 @@ export default {
           this.$store.state.walletInfo.email = "";
           this.$store.state.walletInfo.totalValue = 0;
           this.$store.state.walletInfo.tokenAmount = 0;
-          this.$store.state.app.isLoading = false;
           this.$store.state.app.isLoggedIn = false;
           this.$store.state.app.register = false;
           this.$store.state.app.login = true;
           this.$store.state.walletInfo.currency = "";
+          this.$router.push({name: 'login'});
           return;
         }
       }),

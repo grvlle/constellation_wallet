@@ -16,17 +16,17 @@ const routes = [
   {
     path: "/",
     component: LoginLayout,
-    redirect: "/login",
+    redirect: "/download",
     children: [
-      {
-        path: "login",
-        name: "login",
-        component: Login
-      },
       {
         path: "download",
         name: "download",
         component: Download
+      },
+      {
+        path: "login",
+        name: "login",
+        component: Login
       },
       {
         path: "loading",

@@ -101,14 +101,6 @@ export default {
       this.$store.state.txInfo.txStatus = txStatus;
     });
 
-    // Downloading.vue sockets
-    window.wails.Events.On(
-      "downloading_dependencies",
-      isDownloadingDependencies => {
-        this.$store.state.app.isDownloadingDependencies = isDownloadingDependencies;
-      }
-    );
-
     window.wails.Events.On("downloading", (filename, size) => {
       if (this.$store.state.downloading.filename !== filename) {
         this.$store.state.downloading.filename = filename;

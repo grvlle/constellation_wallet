@@ -2,6 +2,13 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6 mx-auto text-center">
+        <p v-if="this.$store.state.downloading.filename !== ''">
+          {{this.$store.state.downloading.filename}}: {{this.$store.state.downloading.size}}
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mx-auto text-center">
         <div class="boxes mx-auto">
           <div class="box">
             <div></div>
@@ -38,9 +45,16 @@
 export default {
   name: "downloading-screen",
   created: function() {
-    window.backend.WalletApplication.CheckAndFetchWalletCLI();
+    var self = this;
+    window.backend.WalletApplication.CheckAndFetchWalletCLI().then(exists => {
+      if (exists) {
+        self.$router.push({
+          name: 'login', 
+          params: {message: "Please enter your credentials below to access your Molly Wallet."}
+        });
+      }
+    });
   }
-  // props: ["isDownloading"]
 };
 </script>
 

@@ -7,7 +7,7 @@
             <img class="img-fluid" v-if="this.$store.state.walletInfo.darkMode" src="~@/assets/img/Constellation-Logo-White.png" style="max-height: 5.8rem;" />
             <img class="img-fluid" v-else src="~@/assets/img/Constellation-Logo-Black.png" style="max-height: 5.8rem;" />
             <p v-if="this.$route.params.message">{{this.$route.params.message}}</p>
-            <p v-else>Please enter your credentials below to access your Molly Wallet.</p>
+            <p v-else>Downloading $DAG wallet dependencies...</p>
           </div>
           <div class="page-error-box" v-if="this.$store.state.displayLoginError">
             <p>{{this.$store.state.loginErrorMsg}}</p>

@@ -14,7 +14,6 @@ export const store = new Vuex.Store({
             toc: false,
             txFinished: true,
             isLoggedIn: false,
-            isDownloadingDependencies: true,
             import: false,
             register: false,
             login: true

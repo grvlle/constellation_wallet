@@ -21,6 +21,10 @@
         </transition>
       </div>
     </div>
+    <div class="version">
+      <p class="version">Connected to: {{this.$store.state.network}}<br />
+      Molly Wallet version: {{this.$store.state.walletInfo.uiVersion}}</p>
+    </div>
   </div>
 </template>
 
@@ -91,5 +95,13 @@ export default {
 .fade-enter,
 .fade-leave-active {
   opacity: 0
+}
+
+.version {
+  width: 8rem;
+  position: fixed;
+  display: flex;
+  align-items: bottom;
+  margin-right: 1.8em;
 }
 </style>

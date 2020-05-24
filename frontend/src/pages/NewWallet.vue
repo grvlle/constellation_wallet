@@ -133,10 +133,6 @@
         </form>
       </div>
     </div>
-    <div class="version">
-      <p class="version">Connected to: {{this.$store.state.network}}<br />
-      Molly Wallet version: {{this.$store.state.walletInfo.uiVersion}}</p>
-    </div>
     <page-overlay text="Loading..." :isActive="overlay" />
   </div>
 </template>
@@ -366,13 +362,6 @@ export default {
 body,
 html {
   height: 100%;
-}
-
-.version {
-  position: fixed;
-  display: flex;
-  align-items: bottom;
-  margin-right: 1.8em;
 }
 
 .login-box {

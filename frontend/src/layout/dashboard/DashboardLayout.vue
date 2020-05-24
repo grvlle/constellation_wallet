@@ -65,8 +65,6 @@ export default {
           this.$store.state.walletInfo.KeyPassword = "";
           this.$store.state.walletInfo.email = "";
           this.$store.state.app.isLoggedIn = false;
-          this.$store.state.app.register = false;
-          this.$store.state.app.login = true;
           this.$store.state.walletInfo.currency = "";
           this.$router.push({
             name: 'login', 

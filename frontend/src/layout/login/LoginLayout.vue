@@ -36,8 +36,12 @@ export default {
     this.themeBG()
   },
   watch: {
-    '$route' (to) {
-      if (to.name == "login") {
+    '$route' (from, to) {
+      if (
+        to.name == "download" ||
+        to.name == "new wallet" ||
+        from.name == "new wallet"
+      ) {
         this.transitionName = ""
       } else {
         this.transitionName = "fade"

@@ -1,5 +1,6 @@
 import LoginLayout from "@/layout/login/LoginLayout.vue";
 import Download from "@/pages/DownloadingScreen";
+import NewWallet from "@/pages/NewWallet";
 import Login from "@/pages/Login";
 import Loading from "@/pages/LoadingScreen";
 
@@ -22,6 +23,11 @@ const routes = [
         path: "download",
         name: "download",
         component: Download
+      },
+      {
+        path: "new-wallet",
+        name: "new wallet",
+        component: NewWallet
       },
       {
         path: "login",

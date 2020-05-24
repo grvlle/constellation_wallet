@@ -64,8 +64,6 @@ export default {
           this.$store.state.walletInfo.totalValue = 0;
           this.$store.state.walletInfo.tokenAmount = 0;
           this.$store.state.app.isLoggedIn = false;
-          this.$store.state.app.register = false;
-          this.$store.state.app.login = true;
           this.$store.state.walletInfo.currency = "";
           this.$router.push({
             name: 'login', 

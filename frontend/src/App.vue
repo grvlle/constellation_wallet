@@ -193,15 +193,4 @@ export default {
     transform: scale(1.2, 0.7);
   }
 }
-
-.fadeout {
-  animation: fadeout 2s backwards;
-}
-
-@keyframes fadeout {
-  to {
-    opacity: 0;
-    visibility: hidden;
-  }
-}
 </style>

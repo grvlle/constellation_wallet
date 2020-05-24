@@ -15,7 +15,11 @@
           <div class="page-error-box" v-else></div>
         </div>
       </div>
-      <router-view></router-view>
+      <div class="row" style="min-height: 40rem;">
+        <transition :name="transitionName" mode="out-in">
+          <router-view></router-view>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
@@ -25,10 +29,20 @@ import BrightBG from '../../assets/img/nodes2.jpg';
 import DarkBG from '../../assets/img/nodes2_dark.jpg';
 export default {
   data: () => ({
-    bgImg: DarkBG
+    bgImg: DarkBG,
+    transitionName: ""
   }),
   mounted() {
     this.themeBG()
+  },
+  watch: {
+    '$route' (to) {
+      if (to.name == "login") {
+        this.transitionName = ""
+      } else {
+        this.transitionName = "fade"
+      }
+    }
   },
   methods: {
     themeBG: function () {
@@ -61,5 +75,17 @@ export default {
   min-height: 100vh; /* These two lines are counted as one :-)       */
   display: flex;
   align-items: center;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition-duration: 1s;
+  transition-property: opacity;
+  transition-timing-function: ease;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0
 }
 </style>

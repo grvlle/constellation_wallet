@@ -187,15 +187,4 @@ html {
     box-sizing: border-box;
   }
 }
-
-.fadeout {
-  animation: fadeout 2s forwards;
-}
-
-@keyframes fadeout {
-  to {
-    opacity: 0;
-    visibility: hidden;
-  }
-}
 </style>

@@ -68,7 +68,10 @@ export default {
           this.$store.state.app.register = false;
           this.$store.state.app.login = true;
           this.$store.state.walletInfo.currency = "";
-          this.$router.push({name: 'login'});
+          this.$router.push({
+            name: 'login', 
+            params: {message: "Please enter your credentials below to access your Molly Wallet."}
+          });
           return;
         }
       }),

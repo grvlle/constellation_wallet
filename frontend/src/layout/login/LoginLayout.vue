@@ -15,7 +15,7 @@
           <div class="page-error-box" v-else></div>
         </div>
       </div>
-      <div class="row" style="min-height: 40rem;">
+      <div class="row" style="min-height: 32rem;">
         <transition :name="transitionName" mode="out-in">
           <router-view></router-view>
         </transition>
@@ -44,7 +44,7 @@ export default {
       if (
         to.name == "download" ||
         to.name == "new wallet" ||
-        from.name == "new wallet"
+        from.name == "new wallet" && to.name == "login"
       ) {
         this.transitionName = ""
       } else {

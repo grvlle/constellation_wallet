@@ -4,9 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/rpc"
 	"os"
+	"os/exec"
 	"runtime"
 
 	"github.com/artdarek/go-unzip"
@@ -28,13 +30,13 @@ func init() {
 }
 
 type Update struct {
-	clientRPC       *rpc.Client
-	downloadURL     string
-	dagFolderPath   *string
-	mollyBinaryPath *string
-	currentVersion  *string
-	newVersion      *string
-	triggerUpdate   *bool
+	clientRPC          *rpc.Client
+	downloadURL        string
+	dagFolderPath      *string
+	oldMollyBinaryPath *string
+	currentVersion     *string
+	newVersion         *string
+	triggerUpdate      *bool
 }
 
 // Signal is used for IPC with MollyWallet
@@ -43,16 +45,20 @@ type Signal struct {
 	Msg    string
 }
 
+type unzippedContents struct {
+	newMollyBinaryPath string
+	updateBinaryPath   string
+}
+
 func main() {
 	var update Update
 
 	update.downloadURL = "https://github.com/grvlle/constellation_wallet/releases/download"
 
 	// MollyWallet provides the below data when an update is triggered
-	update.dagFolderPath = flag.String("init_dag_path", getDefaultDagFolderPath(), "Enter path to dag folder")
-	update.mollyBinaryPath = flag.String("init_molly_path", "", "Enter path to dag folder")
+	update.dagFolderPath = flag.String("init_dag_path", getDefaultDagFolderPath(), "Enter the directory path to dag folder")
+	update.oldMollyBinaryPath = flag.String("init_molly_path", "", "Enter the directory path where the molly binary is located")
 	update.newVersion = flag.String("new_version", "", "Enter the new semantic version. E.g 1.2.3")
-	update.currentVersion = flag.String("current_version", "", "Enter the current semantic version. E.g 1.2.3")
 	update.triggerUpdate = flag.Bool("upgrade", false, "Upgrade molly wallet binary")
 	flag.Parse()
 
@@ -60,11 +66,17 @@ func main() {
 	// if errors trigger RestoreBackup
 	update.Run()
 
-	fmt.Printf("Dag Folder: %s, Current Version: %s, Molly Path: %s, New Version: %s, Update: %v\n", *update.dagFolderPath, *update.currentVersion, *update.mollyBinaryPath, *update.newVersion, *update.triggerUpdate)
+	fmt.Printf("Dag Folder: %s, Current Version: %s, Molly Path: %s, New Version: %s, Update: %v\n", *update.dagFolderPath, *update.currentVersion, *update.oldMollyBinaryPath, *update.newVersion, *update.triggerUpdate)
 }
 
 func (u *Update) Run() {
 	var err error
+
+	// Clean up old update artifacts
+	err = u.CleanUp()
+	if err != nil {
+		log.Fatalf("Unable to clear previous local state: %v", err)
+	}
 
 	// Create a TCP connection to localhost on port 36866
 	u.clientRPC, err = rpc.DialHTTP("tcp", "localhost:36866")
@@ -72,24 +84,49 @@ func (u *Update) Run() {
 		log.Fatal("Connection error: ", err)
 	}
 	log.Infof("Successfully established RPC connection with Molly Wallet")
+	defer u.clientRPC.Close()
 
 	zippedArchive, err := u.DownloadAppBinary()
 	if err != nil {
-		log.Errorf("Unable to download v%s of Molly Wallet: %v", *u.newVersion, err)
+		log.Fatalf("Unable to download v%s of Molly Wallet: %v", *u.newVersion, err)
 	}
 
-	unzipArchive(zippedArchive, *u.dagFolderPath)
+	// TODO: checksum verification
+
+	contents, err := unzipArchive(zippedArchive, *u.dagFolderPath)
+	if err != nil {
+		log.Fatalf("Unable to unzip contents: %v", err)
+	}
+
+	err = u.BackupApp()
+	if err != nil {
+		log.Fatalf("Unable to Backup Molly Wallet: %v", err)
+	}
 
 	err = u.TerminateAppService()
 	if err != nil {
-		log.Errorf("Unable to terminate Molly Wallet: %v", err)
+		log.Fatalf("Unable to terminate Molly Wallet: %v", err)
+	}
+
+	err = u.ReplaceAppBinary(contents)
+	if err != nil {
+		log.Fatalf("Unable to overwrite old installation: %v", err)
+	}
+
+	err = u.LaunchAppBinary()
+	if err != nil {
+		log.Fatalf("Unable to start up Molly after update: %v", err)
+	}
+
+	err = u.CleanUp()
+	if err != nil {
+		log.Fatalf("Unable to clear previous local state: %v", err)
 	}
 
 }
 
+// DownloadAppBinary downloads the latest Molly Wallet zip from github releases and returns the path to it
 func (u *Update) DownloadAppBinary() (string, error) {
-
-	fmt.Println("DOWNLOAD")
 
 	filename := "mollywallet.zip"
 	osBuild, _ := getUserOS() // returns linux, windows, darwin or unsupported as well as the file extension (e.g ".exe")
@@ -128,6 +165,7 @@ func (u *Update) DownloadAppBinary() (string, error) {
 	return *u.dagFolderPath + "/" + filename, nil
 }
 
+// TerminateAppService will send an RPC to mollywallet to terminate the application
 func (u *Update) TerminateAppService() error {
 	sig := Signal{"OK", "Terminate Molly Wallet. Begining Update..."}
 	var response Signal
@@ -143,16 +181,65 @@ func (u *Update) TerminateAppService() error {
 	return nil
 }
 
-func backupApp() {
+func (u *Update) BackupApp() error {
+	_, fileExt := getUserOS()
 
+	// Create backup folder in ~/.dag
+	err := os.Mkdir(*u.dagFolderPath+"/backup", 0755)
+	if err != nil {
+		return fmt.Errorf("Unable to create backup folder. Reason: %v", err)
+	}
+
+	// Copy the old Molly Wallet binary into ~/.dag/backup/
+	err = copy(*u.oldMollyBinaryPath+"/mollywallet"+fileExt, *u.dagFolderPath+"/backup/mollywallet"+fileExt)
+	if err != nil {
+		return fmt.Errorf("Unable to backup old Molly installation. Reason: %v", err)
+	}
+
+	return nil
 }
 
-func replaceAppBinary() {
-
+func (u *Update) ReplaceAppBinary(contents *unzippedContents) error {
+	// Copy the old Molly Wallet binary into ~/.dag/backup/
+	_, fileExt := getUserOS()
+	err := copy(contents.newMollyBinaryPath, *u.oldMollyBinaryPath+"/mollywallet"+fileExt)
+	if err != nil {
+		return fmt.Errorf("Unable to overwrite old molly binary. Reason: %v", err)
+	}
+	return nil
 }
 
-func launchAppBinary() {
+func (u *Update) LaunchAppBinary() error {
+	_, fileExt := getUserOS()
+	cmd := exec.Command(*u.oldMollyBinaryPath + "/mollywallet" + fileExt)
+	err := cmd.Start()
+	if err != nil {
+		return fmt.Errorf("Unable to execute run command for Molly Wallet: %v", err)
+	}
+	return nil
+}
 
+func (u *Update) CleanUp() error {
+
+	if fileExists(*u.dagFolderPath + "/mollywallet.zip") {
+		err := os.Remove(*u.dagFolderPath + "/mollywallet.zip")
+		if err != nil {
+			return err
+		}
+	}
+
+	err := os.RemoveAll(*u.dagFolderPath + "/backup")
+	if err != nil {
+		return err
+	}
+
+	if fileExists(*u.dagFolderPath + "/new_build") {
+		err := os.RemoveAll(*u.dagFolderPath + "/new_build")
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (u *Update) RestoreBackup() {
@@ -168,20 +255,48 @@ func getDefaultDagFolderPath() string {
 	return userDir + "/.dag"
 }
 
+func fileExists(path string) bool {
+	info, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
+func copy(src string, dst string) error {
+	// Read all content of src to data
+	data, err := ioutil.ReadFile(src)
+	if err != nil {
+		return err
+	}
+
+	// Write data to dst
+	err = ioutil.WriteFile(dst, data, 0755)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Unzips archive to dstPath, returns path to wallet binary
-func unzipArchive(zippedArchive, dstPath string) (string, error) {
+func unzipArchive(zippedArchive, dstPath string) (*unzippedContents, error) {
+
 	uz := unzip.New(zippedArchive, dstPath+"/"+"new_build/")
 	err := uz.Extract()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-
 	_, fileExt := getUserOS()
 
-	return dstPath + "/" + "new_build/mollywallet" + fileExt, err
+	contents := &unzippedContents{
+		newMollyBinaryPath: dstPath + "/" + "new_build/mollywallet" + fileExt,
+		updateBinaryPath:   dstPath + "/" + "new_build/update" + fileExt,
+	}
+
+	return contents, err
 }
 
-// returns the users OS as well as the file extension
+// getUserOS returns the users OS as well as the file extension of executables for said OS
 func getUserOS() (string, string) {
 	var osBuild string
 	var fileExt string

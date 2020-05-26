@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"net/rpc"
+	"os"
 )
 
 type Task int
@@ -38,8 +39,9 @@ func initRPCServer() error {
 	return nil
 }
 
-func (t *Task) ShutDown(signal Signal, response *Signal) error {
-	fmt.Println(signal)
-	*response = Signal{"OK", "Shutting down application"}
+func (t *Task) ShutDown(sig Signal, response *Signal) error {
+	fmt.Println(sig.Msg)
+	// *response = Signal{"OK", "Shutting down application"}
+	os.Exit(0)
 	return nil
 }

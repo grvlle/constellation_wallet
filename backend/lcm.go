@@ -11,7 +11,7 @@ type Task int
 
 type Signal struct {
 	Status string
-	Action string
+	Msg    string
 }
 
 // initRPCServer initialized the RPC server that listens to incoming LCM tasks
@@ -25,8 +25,8 @@ func initRPCServer() error {
 	}
 	// Register a HTTP handler
 	rpc.HandleHTTP()
-	// Listen to TPC connections on port 1234
-	listener, err := net.Listen("tcp", ":1234")
+	// Listen to TPC connections on port 36866
+	listener, err := net.Listen("tcp", ":36866")
 	if err != nil {
 		return fmt.Errorf("Listen error: %v", err)
 	}
@@ -40,5 +40,6 @@ func initRPCServer() error {
 
 func (t *Task) ShutDown(signal Signal, response *Signal) error {
 	fmt.Println(signal)
+	*response = Signal{"OK", "Shutting down application"}
 	return nil
 }

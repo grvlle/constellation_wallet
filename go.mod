@@ -1,6 +1,7 @@
 module github.com/grvlle/constellation_wallet
 
 require (
+	github.com/artdarek/go-unzip v1.0.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/jinzhu/gorm v1.9.12
 	github.com/leaanthony/mewn v0.10.7

@@ -275,9 +275,9 @@ func (a *WalletApplication) pricePoller() {
 						}
 					}
 
-					a.log.Infoln("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
-					a.log.Infoln("Collected token price in EUR: %v", a.wallet.TokenPrice.DAG.EUR)
-					a.log.Infoln("Collected token price in BTC: %v", a.wallet.TokenPrice.DAG.BTC)
+					a.log.Infof("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
+					a.log.Infof("Collected token price in EUR: %v", a.wallet.TokenPrice.DAG.EUR)
+					a.log.Infof("Collected token price in BTC: %v", a.wallet.TokenPrice.DAG.BTC)
 
 					totalCurrencyBalance := 0.0
 					if a.wallet.Currency == "USD" {

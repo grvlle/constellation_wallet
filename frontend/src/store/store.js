@@ -13,12 +13,7 @@ export const store = new Vuex.Store({
         app: {
             toc: false,
             txFinished: true,
-            isLoading: false,
-            isLoggedIn: false, // Change to false
-            isDownloadingDependencies: true,
-            import: false,
-            register: false,
-            login: true
+            isLoggedIn: false
         },
         downloading: {
           filename: "",

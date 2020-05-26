@@ -124,7 +124,7 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 
 // CheckAndFetchWalletCLI will download the cl-wallet dependencies from
 // the official Constellation Repo
-func (a *WalletApplication) CheckAndFetchWalletCLI() {
+func (a *WalletApplication) CheckAndFetchWalletCLI() bool {
 	keytoolPath := a.paths.DAGDir + "/cl-keytool.jar"
 	walletPath := a.paths.DAGDir + "/cl-wallet.jar"
 
@@ -132,9 +132,7 @@ func (a *WalletApplication) CheckAndFetchWalletCLI() {
 	walletExists := a.fileExists(walletPath)
 
 	if keytoolExists && walletExists {
-		a.RT.Events.Emit("downloading_dependencies", false)
-	} else {
-		a.RT.Events.Emit("downloading_dependencies", true)
+		return true
 	}
 
 	if keytoolExists {
@@ -142,6 +140,7 @@ func (a *WalletApplication) CheckAndFetchWalletCLI() {
 	} else {
 		if err := a.fetchWalletJar("cl-keytool.jar", keytoolPath); err != nil {
 			a.log.Errorln("Unable to fetch or store cl-keytool.jar", err)
+			return false
 		}
 	}
 
@@ -150,13 +149,15 @@ func (a *WalletApplication) CheckAndFetchWalletCLI() {
 	} else {
 		if err := a.fetchWalletJar("cl-wallet.jar", walletPath); err != nil {
 			a.log.Errorln("Unable to fetch or store cl-wallet.jar", err)
+			return false
 		}
 	}
 
 	if a.fileExists(keytoolPath) && a.fileExists(walletPath) {
-		a.RT.Events.Emit("downloading_dependencies", false)
+		return true
+	} else {
+		return false
 	}
-
 }
 
 // produceTXObject will put an actual transaction on the network. This is called from the

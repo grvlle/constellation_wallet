@@ -1,27 +1,9 @@
 <template>
   <div :class="this.$store.state.walletInfo.darkMode ? 'theme--dark' : 'theme--light'">
     <vue-progress-bar></vue-progress-bar>
-    <downloading-screen
-      v-if="this.$store.state.app.isDownloadingDependencies"
-      :isDownloading="this.$store.state.app.isDownloadingDependencies"
-      :fadeout="!this.$store.state.app.isDownloadingDependencies"
-    />
-    <login-screen
-      v-if="!this.$store.state.app.isDownloadingDependencies && !this.$store.state.app.isLoggedIn"
-      :isLoggedIn="!this.$store.state.app.isLoggedIn"
-    />
-    <loading-screen
-      v-if="this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-      :isLoading="this.$store.state.app.isLoading"
-      :fadeout="!this.$store.state.app.isLoading"
-    />
-
-    <div
-      v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"
-      :class="{'nav-open': $sidebar.showSidebar}"
-    >
-      <notifications v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"></notifications>
-      <router-view v-if="!this.$store.state.app.isLoading && this.$store.state.app.isLoggedIn"></router-view>
+    <div :class="{'nav-open': $sidebar.showSidebar}">
+      <notifications></notifications>
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -30,15 +12,9 @@
 import ErrorNotification from "./pages/Notifications/ErrorMessage";
 import WarningNotification from "./pages/Notifications/Warning";
 import SuccessNotification from "./pages/Notifications/Success";
-import LoadingScreen from "./pages/LoadingScreen";
-import DownloadingScreen from "./pages/DownloadingScreen";
-import LoginScreen from "./pages/Login";
 
 export default {
   components: {
-    LoadingScreen,
-    LoginScreen,
-    DownloadingScreen
   },
   data() {
     return {};
@@ -124,14 +100,6 @@ export default {
     window.wails.Events.On("tx_pending", txStatus => {
       this.$store.state.txInfo.txStatus = txStatus;
     });
-
-    // Downloading.vue sockets
-    window.wails.Events.On(
-      "downloading_dependencies",
-      isDownloadingDependencies => {
-        this.$store.state.app.isDownloadingDependencies = isDownloadingDependencies;
-      }
-    );
 
     window.wails.Events.On("downloading", (filename, size) => {
       if (this.$store.state.downloading.filename !== filename) {
@@ -223,17 +191,6 @@ export default {
   .list-leave-to {
     opacity: 0;
     transform: scale(1.2, 0.7);
-  }
-}
-
-.fadeout {
-  animation: fadeout 2s backwards;
-}
-
-@keyframes fadeout {
-  to {
-    opacity: 0;
-    visibility: hidden;
   }
 }
 </style>

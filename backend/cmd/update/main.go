@@ -34,7 +34,6 @@ type Update struct {
 	downloadURL        string
 	dagFolderPath      *string
 	oldMollyBinaryPath *string
-	currentVersion     *string
 	newVersion         *string
 	triggerUpdate      *bool
 }
@@ -64,6 +63,8 @@ func main() {
 
 	// if trigger update, update molly
 	// if errors trigger RestoreBackup
+
+	fmt.Println(*update.dagFolderPath, *update.triggerUpdate, *update.newVersion, *update.oldMollyBinaryPath)
 	update.Run()
 
 	//fmt.Printf("Dag Folder: %s, Current Version: %s, Molly Path: %s, New Version: %s, Update: %v\n", *update.dagFolderPath, *update.currentVersion, *update.oldMollyBinaryPath, *update.newVersion, *update.triggerUpdate)
@@ -106,16 +107,28 @@ func (u *Update) Run() {
 	err = u.TerminateAppService()
 	if err != nil {
 		log.Fatalf("Unable to terminate Molly Wallet: %v", err)
+		err = u.RestoreBackup()
+		if err != nil {
+			log.Fatal("Unable to restore backup.")
+		}
 	}
 
 	err = u.ReplaceAppBinary(contents)
 	if err != nil {
 		log.Fatalf("Unable to overwrite old installation: %v", err)
+		err = u.RestoreBackup()
+		if err != nil {
+			log.Fatal("Unable to restore backup.")
+		}
 	}
 
 	err = u.LaunchAppBinary()
 	if err != nil {
 		log.Fatalf("Unable to start up Molly after update: %v", err)
+		err = u.RestoreBackup()
+		if err != nil {
+			log.Fatal("Unable to restore backup.")
+		}
 	}
 
 	err = u.CleanUp()
@@ -170,7 +183,7 @@ func (u *Update) TerminateAppService() error {
 	sig := Signal{"OK", "Terminate Molly Wallet. Begining Update..."}
 	var response Signal
 
-	err := u.clientRPC.Call("Task.ShutDown", sig, &response)
+	err := u.clientRPC.Call("RPCEndpoints.ShutDown", sig, &response)
 	if err != nil {
 		// TODO: Capture and handle this error. It's retorning EOF when the RPC server goes down
 		// this is expected behavior, but we need handle all errors.
@@ -193,7 +206,7 @@ func (u *Update) BackupApp() error {
 	}
 
 	// Copy the old Molly Wallet binary into ~/.dag/backup/
-	err = copy(*u.oldMollyBinaryPath+"/mollywallet"+fileExt, *u.dagFolderPath+"/backup/mollywallet"+fileExt)
+	err = copy(*u.oldMollyBinaryPath+fileExt, *u.dagFolderPath+"/backup/mollywallet"+fileExt)
 	if err != nil {
 		return fmt.Errorf("Unable to backup old Molly installation. Reason: %v", err)
 	}
@@ -204,7 +217,7 @@ func (u *Update) BackupApp() error {
 func (u *Update) ReplaceAppBinary(contents *unzippedContents) error {
 	// Copy the old Molly Wallet binary into ~/.dag/backup/
 	_, fileExt := getUserOS()
-	err := copy(contents.newMollyBinaryPath, *u.oldMollyBinaryPath+"/mollywallet"+fileExt)
+	err := copy(contents.newMollyBinaryPath, *u.oldMollyBinaryPath+fileExt)
 	if err != nil {
 		return fmt.Errorf("Unable to overwrite old molly binary. Reason: %v", err)
 	}
@@ -219,12 +232,37 @@ func (u *Update) ReplaceAppBinary(contents *unzippedContents) error {
 
 func (u *Update) LaunchAppBinary() error {
 	_, fileExt := getUserOS()
-	cmd := exec.Command(*u.oldMollyBinaryPath + "/mollywallet" + fileExt)
+	cmd := exec.Command(*u.oldMollyBinaryPath + fileExt)
 	err := cmd.Start()
 	if err != nil {
 		return fmt.Errorf("Unable to execute run command for Molly Wallet: %v", err)
 	}
 	return nil
+}
+
+func (u *Update) RestoreBackup() error {
+
+	log.Infoln("Restoring Backup...")
+
+	// Copy the old Molly Wallet binary from ~/.dag/backup/ to the old path
+	_, fileExt := getUserOS()
+	err := copy(*u.dagFolderPath+"/backup/mollywallet"+fileExt, *u.oldMollyBinaryPath+fileExt)
+	if err != nil {
+		return fmt.Errorf("Unable to overwrite old molly binary. Reason: %v", err)
+	}
+
+	// Copy update binary from ~/.dag/backup/update -> ~/.dag/update
+	if fileExists(*u.dagFolderPath + "/backup/update" + fileExt) {
+		err = copy(*u.dagFolderPath+"/backup/update"+fileExt, *u.dagFolderPath+"/update"+fileExt)
+		if err != nil {
+			return fmt.Errorf("Unable to copy update binary to .dag folder. Reason: %v", err)
+		}
+	}
+
+	log.Infoln("Backup successfully restored.")
+
+	return nil
+
 }
 
 func (u *Update) CleanUp() error {
@@ -235,7 +273,7 @@ func (u *Update) CleanUp() error {
 			return err
 		}
 	}
-	if fileExists(*u.dagFolderPath + "/new_build") {
+	if fileExists(*u.dagFolderPath + "/backup") {
 		err := os.RemoveAll(*u.dagFolderPath + "/backup")
 		if err != nil {
 			return err
@@ -249,10 +287,6 @@ func (u *Update) CleanUp() error {
 		}
 	}
 	return nil
-}
-
-func (u *Update) RestoreBackup() {
-
 }
 
 func getDefaultDagFolderPath() string {
@@ -327,21 +361,3 @@ func getUserOS() (string, string) {
 
 	return osBuild, fileExt
 }
-
-// Molly wallet binary queries server for updates
-
-// If new version, binary run update-module, passing in new version.
-
-// Update-module downloads the new version to tmp
-
-// Molly wallet binary shuts down when download is complete.
-
-// Update-module waits for binary to stop (check OS running processes).
-
-// Update-module backs up old binary and other files.
-
-// Replaces binary and any other necessary files.
-
-// Update-module relaunches app.
-
-// If update-module ever encountered an error, restore old files and launch old app

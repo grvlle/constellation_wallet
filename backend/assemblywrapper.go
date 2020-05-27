@@ -41,6 +41,7 @@ func (a *WalletApplication) runWalletCMD(tool string, scalaFunc string, scalaArg
 		return errors.New(errFormatted)
 	}
 	fmt.Println(out.String())
+
 	a.log.Debugln(cmd)
 
 	return nil

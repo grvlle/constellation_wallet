@@ -11,12 +11,14 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/wailsapp/wails"
 
+	"github.com/grvlle/constellation_wallet/backend/api"
 	"github.com/grvlle/constellation_wallet/backend/models"
 )
 
 // WalletApplication holds all application specific objects
 // such as the Client/Server event bus and logger
 type WalletApplication struct {
+	Version    string
 	RT         *wails.Runtime
 	log        *logrus.Logger
 	wallet     models.Wallet
@@ -90,11 +92,10 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 
 	a.initLogger()
 
-	err = initRPCServer()
+	err = api.InitRPCServer()
 	if err != nil {
 		a.log.Panicf("Unable to initialize RPC Server. Reason: %v", err)
 	}
-
 	a.log.Infoln("RPC Server initialized.")
 
 	a.UserLoggedIn = false
@@ -105,6 +106,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.wallet.Currency = "USD"          // Set default currency
 	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download"
 	a.WalletCLI.Version = "2.6.0"
+	a.Version = "1.1.9"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {

@@ -89,12 +89,11 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	}
 
 	a.initLogger()
-	go func() {
-		err = initRPCServer()
-		if err != nil {
-			a.log.Panicf("Unable to initialize RPC Server. Reason: %v", err)
-		}
-	}()
+
+	err = initRPCServer()
+	if err != nil {
+		a.log.Panicf("Unable to initialize RPC Server. Reason: %v", err)
+	}
 
 	a.log.Infoln("RPC Server initialized.")
 

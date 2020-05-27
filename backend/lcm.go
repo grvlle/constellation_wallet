@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/rpc"
 	"os"
+	"time"
 )
 
 type Task int
@@ -31,17 +32,35 @@ func initRPCServer() error {
 	if err != nil {
 		return fmt.Errorf("Listen error: %v", err)
 	}
+
+	errs := make(chan error)
+
 	// Start accept incoming HTTP connections
-	err = http.Serve(listener, nil)
-	if err != nil {
-		return fmt.Errorf("Error serving: %v", err)
+	go func() {
+		err = http.Serve(listener, nil)
+		if err != nil {
+			errs <- fmt.Errorf("Error serving: %v", err)
+			return
+		}
+	}()
+
+	select {
+	case err := <-errs:
+		if err != nil {
+			return err
+		}
+	default:
+		return nil
 	}
+
 	return nil
 }
 
 func (t *Task) ShutDown(sig Signal, response *Signal) error {
 	fmt.Println(sig.Msg)
-	// *response = Signal{"OK", "Shutting down application"}
+	*response = Signal{"OK", "Shutting down application"}
+	time.Sleep(time.Second * 10)
+	// TODO: A more graceful shutdown (WailsShutdown)
 	os.Exit(0)
 	return nil
 }

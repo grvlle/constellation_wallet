@@ -172,7 +172,7 @@ func (u *Update) TerminateAppService() error {
 
 	err := u.clientRPC.Call("Task.ShutDown", sig, &response)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	if response.Status != "OK" {
@@ -227,10 +227,11 @@ func (u *Update) CleanUp() error {
 			return err
 		}
 	}
-
-	err := os.RemoveAll(*u.dagFolderPath + "/backup")
-	if err != nil {
-		return err
+	if fileExists(*u.dagFolderPath + "/new_build") {
+		err := os.RemoveAll(*u.dagFolderPath + "/backup")
+		if err != nil {
+			return err
+		}
 	}
 
 	if fileExists(*u.dagFolderPath + "/new_build") {
@@ -256,11 +257,11 @@ func getDefaultDagFolderPath() string {
 }
 
 func fileExists(path string) bool {
-	info, err := os.Stat(path)
+	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		return false
 	}
-	return !info.IsDir()
+	return !os.IsNotExist(err)
 }
 
 func copy(src string, dst string) error {

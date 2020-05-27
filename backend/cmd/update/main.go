@@ -66,7 +66,7 @@ func main() {
 	// if errors trigger RestoreBackup
 	update.Run()
 
-	fmt.Printf("Dag Folder: %s, Current Version: %s, Molly Path: %s, New Version: %s, Update: %v\n", *update.dagFolderPath, *update.currentVersion, *update.oldMollyBinaryPath, *update.newVersion, *update.triggerUpdate)
+	//fmt.Printf("Dag Folder: %s, Current Version: %s, Molly Path: %s, New Version: %s, Update: %v\n", *update.dagFolderPath, *update.currentVersion, *update.oldMollyBinaryPath, *update.newVersion, *update.triggerUpdate)
 }
 
 func (u *Update) Run() {
@@ -172,6 +172,8 @@ func (u *Update) TerminateAppService() error {
 
 	err := u.clientRPC.Call("Task.ShutDown", sig, &response)
 	if err != nil {
+		// TODO: Capture and handle this error. It's retorning EOF when the RPC server goes down
+		// this is expected behavior, but we need handle all errors.
 		return nil
 	}
 
@@ -205,6 +207,12 @@ func (u *Update) ReplaceAppBinary(contents *unzippedContents) error {
 	err := copy(contents.newMollyBinaryPath, *u.oldMollyBinaryPath+"/mollywallet"+fileExt)
 	if err != nil {
 		return fmt.Errorf("Unable to overwrite old molly binary. Reason: %v", err)
+	}
+	if fileExists(contents.updateBinaryPath) {
+		err = copy(contents.updateBinaryPath, *u.dagFolderPath+"/update"+fileExt)
+		if err != nil {
+			return fmt.Errorf("Unable to copy update binary to .dag folder. Reason: %v", err)
+		}
 	}
 	return nil
 }

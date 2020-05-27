@@ -30,6 +30,7 @@
 import ErrorNotification from "./pages/Notifications/ErrorMessage";
 import WarningNotification from "./pages/Notifications/Warning";
 import SuccessNotification from "./pages/Notifications/Success";
+import NewRelease from "./pages/Notifications/NewRelease";
 import LoadingScreen from "./pages/LoadingScreen";
 import DownloadingScreen from "./pages/DownloadingScreen";
 import LoginScreen from "./pages/Login";
@@ -98,6 +99,23 @@ export default {
         verticalAlign: "top",
         type: "success",
         onClick: () => {
+          this.$notifications.clear();
+        }
+      });
+    });
+
+        window.wails.Events.On("new_release", m => {
+      this.$store.state.newRelease = m;
+      this.$notifications.clear();
+      this.$notify({
+        component: NewRelease,
+        timeout: 500000,
+        icon: "fa fa-info",
+        horizontalAlign: "right",
+        verticalAlign: "top",
+        type: "info",
+        onClick: () => {
+          window.backend.WalletApplication.UpdateMolly()
           this.$notifications.clear();
         }
       });

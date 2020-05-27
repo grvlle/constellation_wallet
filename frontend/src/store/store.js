@@ -8,6 +8,7 @@ export const store = new Vuex.Store({
         warningMessage: "",
         successMessage: "",
         loginErrorMsg: "",
+        newRelease: "",
         network: "MAINNET",
         displayLoginError: false,
         app: {
@@ -26,7 +27,7 @@ export const store = new Vuex.Store({
         },
         walletInfo: {
             version: "v2.6.0",
-            uiVersion: "v1.1.9",
+            uiVersion: "v1.2.0",
             email: "Molly Wallet",
             imgPath: 'faces/face-0.jpg',
             transactions: 0,

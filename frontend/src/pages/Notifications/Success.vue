@@ -4,6 +4,6 @@
 
 <script>
   export default {
-    name: 'tx-sent'
+    name: 'success'
   }
 </script>

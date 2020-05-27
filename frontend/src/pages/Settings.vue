@@ -161,7 +161,7 @@
           </div>
         </card>
       </div>
-      <div class="col-md-6 d-flex">
+      <!-- <div class="col-md-6 d-flex">
         <card
           title="Update Molly Wallet"
           sub-title="Update Molly Wallet to the latest stable build"
@@ -175,17 +175,17 @@
                   </span>
                 </p-button>
               </div>
-              <!-- <div class="col-md-6 pl-md-2 mb-3">
+              <div class="col-md-6 pl-md-2 mb-3">
                 <p-button @click.native="exportKeys()" type="info" block :disabled="true">
                   <span style="display: block;">
                     <i class="fa fa-file-export"></i> EXPORT
                   </span>
                 </p-button>
-              </div> -->
+              </div>
             </div>
           </div>
         </card>
-      </div>
+      </div> -->
       <div class="col-md-6 d-flex">
         <card
           title="Display settings"
@@ -235,9 +235,6 @@ export default {
     VueSelect
   },
   methods: {
-    updateWallet: function() {
-      window.backend.WalletApplication.UpdateMolly()
-    },
     submitLabel: function() {
       const swalPopup = Swal.mixin({
         customClass: {

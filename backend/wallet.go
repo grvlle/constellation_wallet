@@ -294,6 +294,7 @@ func (a *WalletApplication) initDashboardWidgets() {
 	a.networkStats(chartData)
 	a.blockAmount()
 	a.pricePoller()
+	a.newReleaseAvailable()
 
 	a.WidgetRunning.DashboardWidgets = true
 }

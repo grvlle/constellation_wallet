@@ -7,7 +7,7 @@ require (
 	github.com/leaanthony/mewn v0.10.7
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/sirupsen/logrus v1.4.1
-	github.com/wailsapp/wails v1.6.0-pre2
+	github.com/wailsapp/wails v1.5.0
 	golang.org/x/crypto v0.0.0-20200115085410-6d4e4cb37c7d
 	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297 // indirect
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58

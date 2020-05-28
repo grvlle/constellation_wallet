@@ -107,29 +107,31 @@ func (u *Update) Run() {
 
 	err = u.TerminateAppService()
 	if err != nil {
+		log.Errorf("Unable to terminate Molly Wallet: %v", err)
 		err = u.RestoreBackup()
 		if err != nil {
-			log.Fatal("Unable to restore backup.")
+			log.Fatal("Unable to restore backup: %v", err)
 		}
-		log.Fatalf("Unable to terminate Molly Wallet: %v", err)
 	}
+
+	// time.Sleep(20 * time.Second)
 
 	err = u.ReplaceAppBinary(contents)
 	if err != nil {
+		log.Errorf("Unable to overwrite old installation: %v", err)
 		err = u.RestoreBackup()
 		if err != nil {
-			log.Fatal("Unable to restore backup.")
+			log.Fatalf("Unable to restore backup: %v", err)
 		}
-		log.Fatalf("Unable to overwrite old installation: %v", err)
 	}
 
 	err = u.LaunchAppBinary()
 	if err != nil {
+		log.Errorf("Unable to start up Molly after update: %v", err)
 		err = u.RestoreBackup()
 		if err != nil {
-			log.Fatal("Unable to restore backup.")
+			log.Fatalf("Unable to restore backup: %v", err)
 		}
-		log.Fatalf("Unable to start up Molly after update: %v", err)
 	}
 
 	err = u.CleanUp()
@@ -159,7 +161,6 @@ func (u *Update) DownloadAppBinary() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer out.Close()
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -170,6 +171,8 @@ func (u *Update) DownloadAppBinary() (string, error) {
 	if _, err = io.Copy(out, resp.Body); err != nil {
 		return "", err
 	}
+
+	out.Close()
 
 	if err = os.Rename(tmpFilePath, filePath); err != nil {
 		return "", err
@@ -206,7 +209,7 @@ func (u *Update) BackupApp() error {
 	}
 
 	// Copy the old Molly Wallet binary into ~/.dag/backup/
-	err = copy(*u.oldMollyBinaryPath+fileExt, *u.dagFolderPath+"/backup/mollywallet"+fileExt)
+	err = copy(*u.oldMollyBinaryPath, *u.dagFolderPath+"/backup/mollywallet"+fileExt)
 	if err != nil {
 		return fmt.Errorf("Unable to backup old Molly installation. Reason: %v", err)
 	}
@@ -217,7 +220,7 @@ func (u *Update) BackupApp() error {
 func (u *Update) ReplaceAppBinary(contents *unzippedContents) error {
 	// Copy the old Molly Wallet binary into ~/.dag/backup/
 	_, fileExt := getUserOS()
-	err := copy(contents.newMollyBinaryPath, *u.oldMollyBinaryPath+fileExt)
+	err := copy(contents.newMollyBinaryPath, *u.oldMollyBinaryPath)
 	if err != nil {
 		return fmt.Errorf("Unable to overwrite old molly binary. Reason: %v", err)
 	}
@@ -231,8 +234,7 @@ func (u *Update) ReplaceAppBinary(contents *unzippedContents) error {
 }
 
 func (u *Update) LaunchAppBinary() error {
-	_, fileExt := getUserOS()
-	cmd := exec.Command(*u.oldMollyBinaryPath + fileExt)
+	cmd := exec.Command(*u.oldMollyBinaryPath)
 	err := cmd.Start()
 	if err != nil {
 		return fmt.Errorf("Unable to execute run command for Molly Wallet: %v", err)
@@ -246,7 +248,7 @@ func (u *Update) RestoreBackup() error {
 
 	// Copy the old Molly Wallet binary from ~/.dag/backup/ to the old path
 	_, fileExt := getUserOS()
-	err := copy(*u.dagFolderPath+"/backup/mollywallet"+fileExt, *u.oldMollyBinaryPath+fileExt)
+	err := copy(*u.dagFolderPath+"/backup/mollywallet"+fileExt, *u.oldMollyBinaryPath)
 	if err != nil {
 		return fmt.Errorf("Unable to overwrite old molly binary. Reason: %v", err)
 	}

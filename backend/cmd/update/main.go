@@ -163,7 +163,6 @@ func (u *Update) DownloadAppBinary() (string, error) {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		out.Close()
 		return "", err
 	}
 	defer resp.Body.Close()

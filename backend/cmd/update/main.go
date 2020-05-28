@@ -171,7 +171,6 @@ func (u *Update) DownloadAppBinary() (string, error) {
 		return "", err
 	}
 
-	out.Close()
 
 	if err = os.Rename(*u.dagFolderPath+"/"+filename+".tmp", *u.dagFolderPath+"/"+filename); err != nil {
 		return "", err

@@ -176,7 +176,7 @@ func (u *Update) DownloadAppBinary() (string, error) {
 		return "", err
 	}
 
-	return *u.dagFolderPath + "/" + filename, nil
+	return filePath, nil
 }
 
 // TerminateAppService will send an RPC to mollywallet to terminate the application

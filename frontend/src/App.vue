@@ -5,6 +5,7 @@
       <notifications></notifications>
       <router-view></router-view>
     </div>
+    <page-overlay text="Updating your Molly wallet..." :isActive="overlay" />
   </div>
 </template>
 
@@ -13,12 +14,15 @@ import ErrorNotification from "./pages/Notifications/ErrorMessage";
 import WarningNotification from "./pages/Notifications/Warning";
 import SuccessNotification from "./pages/Notifications/Success";
 import NewRelease from "./pages/Notifications/NewRelease";
+import Swal from "sweetalert2";
 
 export default {
   components: {
   },
   data() {
-    return {};
+    return {
+      overlay: false
+    };
   },
 
   mounted() {
@@ -80,8 +84,9 @@ export default {
       });
     });
 
-        window.wails.Events.On("new_release", m => {
+    window.wails.Events.On("new_release", m => {
       this.$store.state.newRelease = m;
+      var self = this;
       this.$notifications.clear();
       this.$notify({
         component: NewRelease,
@@ -91,8 +96,33 @@ export default {
         verticalAlign: "top",
         type: "info",
         onClick: () => {
-          window.backend.WalletApplication.UpdateMolly()
-          this.$notifications.clear();
+          const swalPopup = Swal.mixin({
+            customClass: {
+              container: this.$store.state.walletInfo.darkMode
+                ? "theme--dark"
+                : "theme--light"
+            }
+          });
+          swalPopup.fire({
+            title: "Update Molly",
+            text: "This will update your Molly wallet to the latest version. ",
+            showCloseButton: true,
+            showCancelButton: true,
+            focusConfirm: false,
+            confirmButtonText:
+              '<i class="fa fa-thumbs-up"></i> Update',
+            confirmButtonAriaLabel: "Text",
+            cancelButtonText:
+              '<i class="fa fa-thumbs-down"></i> Cancel',
+            cancelButtonAriaLabel: "Cancel"
+          }).then(result => {
+            if (result.value) {
+              self.$Progress.start();
+              self.overlay = true;
+              window.backend.WalletApplication.UpdateMolly()
+              self.$notifications.clear();
+            }
+          });      
         }
       });
     });

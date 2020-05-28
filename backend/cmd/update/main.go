@@ -3,13 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-        "path"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/rpc"
 	"os"
 	"os/exec"
+	"path"
 	"runtime"
 
 	"github.com/artdarek/go-unzip"
@@ -107,29 +107,29 @@ func (u *Update) Run() {
 
 	err = u.TerminateAppService()
 	if err != nil {
-		log.Fatalf("Unable to terminate Molly Wallet: %v", err)
 		err = u.RestoreBackup()
 		if err != nil {
 			log.Fatal("Unable to restore backup.")
 		}
+		log.Fatalf("Unable to terminate Molly Wallet: %v", err)
 	}
 
 	err = u.ReplaceAppBinary(contents)
 	if err != nil {
-		log.Fatalf("Unable to overwrite old installation: %v", err)
 		err = u.RestoreBackup()
 		if err != nil {
 			log.Fatal("Unable to restore backup.")
 		}
+		log.Fatalf("Unable to overwrite old installation: %v", err)
 	}
 
 	err = u.LaunchAppBinary()
 	if err != nil {
-		log.Fatalf("Unable to start up Molly after update: %v", err)
 		err = u.RestoreBackup()
 		if err != nil {
 			log.Fatal("Unable to restore backup.")
 		}
+		log.Fatalf("Unable to start up Molly after update: %v", err)
 	}
 
 	err = u.CleanUp()
@@ -155,7 +155,7 @@ func (u *Update) DownloadAppBinary() (string, error) {
 
 	filePath := path.Join(*u.dagFolderPath, filename)
 	tmpFilePath := filePath + ".tmp"
-	out, err := os.Create(tmpFilepath)
+	out, err := os.Create(tmpFilePath)
 	if err != nil {
 		return "", err
 	}
@@ -170,7 +170,6 @@ func (u *Update) DownloadAppBinary() (string, error) {
 	if _, err = io.Copy(out, resp.Body); err != nil {
 		return "", err
 	}
-
 
 	if err = os.Rename(tmpFilePath, filePath); err != nil {
 		return "", err

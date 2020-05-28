@@ -168,7 +168,6 @@ func (u *Update) DownloadAppBinary() (string, error) {
 	defer resp.Body.Close()
 
 	if _, err = io.Copy(out, resp.Body); err != nil {
-		out.Close()
 		return "", err
 	}
 

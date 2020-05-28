@@ -153,10 +153,13 @@ func (u *Update) DownloadAppBinary() (string, error) {
 	// e.g https://github.com/grvlle/constellation_wallet/releases/download/v1.1.9-linux/mollywallet.zip
 	log.Infof("Constructed the following URL: %s", url)
 
-	out, err := os.Create(*u.dagFolderPath + "/" + filename + ".tmp")
+	filePath := path.Join(*u.dagFolderPath, filename)
+	tmpFilePath := filePath + ".tmp"
+	out, err := os.Create(tmpFilepath)
 	if err != nil {
 		return "", err
 	}
+	defer out.Close()
 
 	resp, err := http.Get(url)
 	if err != nil {

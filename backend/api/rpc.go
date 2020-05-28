@@ -16,7 +16,7 @@ type Signal struct {
 	Msg    string
 }
 
-// initRPCServer initialized the RPC server that listens to incoming LCM tasks
+// initRPCServer initializes the RPC server that listens to incoming LCM tasks
 // by the RPC clients
 func InitRPCServer() error {
 	endpoints := new(RPCEndpoints)

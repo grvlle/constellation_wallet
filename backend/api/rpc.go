@@ -23,7 +23,7 @@ func InitRPCServer() error {
 	// Publish the receivers methods
 	err := rpc.Register(endpoints)
 	if err != nil {
-		return fmt.Errorf("Format of service Task isn't correct. Reason: %v", err)
+		return fmt.Errorf("format of service Task isn't correct. Reason: %v", err)
 	}
 	// Register a HTTP handler
 	rpc.HandleHTTP()

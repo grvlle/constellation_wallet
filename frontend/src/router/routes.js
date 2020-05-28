@@ -1,18 +1,51 @@
+import LoginLayout from "@/layout/login/LoginLayout.vue";
+import Download from "@/pages/DownloadingScreen";
+import NewWallet from "@/pages/NewWallet";
+import Login from "@/pages/Login";
+import Loading from "@/pages/LoadingScreen";
+
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
-// GeneralViews
-import NotFound from "@/pages/NotFoundPage.vue";
 import Dashboard from "@/pages/Dashboard.vue";
 import WalletInformation from "@/pages/WalletInformation.vue";
 import About from "@/pages/About.vue";
 import Settings from "@/pages/Settings.vue";
 import Transactions from "@/pages/Transactions.vue";
 
-const routes = [
+import NotFound from "@/pages/NotFoundPage.vue";
 
+const routes = [
   {
     path: "/",
+    component: LoginLayout,
+    redirect: "/download",
+    children: [
+      {
+        path: "download",
+        name: "download",
+        component: Download
+      },
+      {
+        path: "new-wallet",
+        name: "new wallet",
+        component: NewWallet
+      },
+      {
+        path: "login",
+        name: "login",
+        component: Login
+      },
+      {
+        path: "loading",
+        name: "loading",
+        component: Loading
+      }
+    ]
+  },
+  {
+    path: "/home",
+    name: "home",
     component: DashboardLayout,
-    redirect: "/dashboard",
+    redirect: "/home/dashboard",
     children: [
       {
         path: "dashboard",

@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path"
 	"runtime"
+	"time"
 
 	"github.com/artdarek/go-unzip"
 	log "github.com/sirupsen/logrus"
@@ -114,7 +115,7 @@ func (u *Update) Run() {
 		}
 	}
 
-	// time.Sleep(20 * time.Second)
+	time.Sleep(10 * time.Second)
 
 	err = u.ReplaceAppBinary(contents)
 	if err != nil {

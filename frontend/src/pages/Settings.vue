@@ -163,25 +163,15 @@
       </div>
       <!-- <div class="col-md-6 d-flex">
         <card
-          title="Import / Export Keys"
-          sub-title="Restore your Wallet from a previously exported file or create a new export"
+          title="Update Molly Wallet"
+          sub-title="Update Molly Wallet to the latest stable build"
         >
           <div class="container" style="margin-top: auto;">
             <div class="row">
-              <div class="col">
-                <p>This feature is currently disabled since the team wallet does not support it for now.</p>
-                <p class="small">
-                  Select Import if you wish to restore your wallet from a previously exported file.
-                  Select Export to export your keys into an encrypted .pem file on your filesystem.
-                  Store this file in cold storage for optimal security.
-                </p>
-              </div>
-            </div>
-            <div class="row">
               <div class="col-md-6 pr-md-2 mb-3">
-                <p-button @click.native="importKeys()" type="info" block :disabled="true">
+                <p-button @click.native="updateWallet()" type="info" block :disabled="false">
                   <span style="display: block;">
-                    <i class="fa fa-file-import"></i> IMPORT
+                    <i class="fa fa-file-import"></i> UPDATE
                   </span>
                 </p-button>
               </div>

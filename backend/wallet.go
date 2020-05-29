@@ -279,8 +279,8 @@ func (a *WalletApplication) initWallet(keystorePath string) error {
 	}
 
 	a.log.Infoln("User has logged into the wallet")
-	return nil
 
+	return nil
 }
 
 func (a *WalletApplication) initDashboardWidgets() {

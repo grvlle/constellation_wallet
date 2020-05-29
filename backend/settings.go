@@ -129,6 +129,12 @@ func (a *WalletApplication) StoreCurrencyStateDB(currency string) {
 	}
 }
 
+func (a *WalletApplication) UpdateMolly() {
+	update := new(UpdateWallet)
+	update.app = a
+	update.Run()
+}
+
 // CopyFile the src file to dst. Any existing file will be overwritten and will not
 // copy file attributes.
 func CopyFile(src, dst string) error {

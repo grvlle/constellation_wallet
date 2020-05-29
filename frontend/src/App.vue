@@ -5,7 +5,7 @@
       <notifications></notifications>
       <router-view></router-view>
     </div>
-    <page-overlay text="Updating your Molly wallet..." :isActive="overlay" />
+    <page-overlay text="Applying Update. Please wait..." :isActive="overlay" />
   </div>
 </template>
 
@@ -93,7 +93,7 @@ export default {
         timeout: 500000,
         icon: "fa fa-info",
         horizontalAlign: "right",
-        verticalAlign: "top",
+        verticalAlign: "bottom",
         type: "info",
         onClick: () => {
           const swalPopup = Swal.mixin({
@@ -102,10 +102,12 @@ export default {
                 ? "theme--dark"
                 : "theme--light"
             }
+            
           });
+          
           swalPopup.fire({
-            title: "Update Molly",
-            text: "This will update your Molly wallet to the latest version. ",
+            title: "Update Molly Wallet",
+            html: "Do you want to update your Molly Wallet? Selecting update will download the latest build and apply the update. <br><br> <b>The application will restart once update is complete. </b>",
             showCloseButton: true,
             showCancelButton: true,
             focusConfirm: false,
@@ -113,7 +115,7 @@ export default {
               '<i class="fa fa-thumbs-up"></i> Update',
             confirmButtonAriaLabel: "Text",
             cancelButtonText:
-              '<i class="fa fa-thumbs-down"></i> Cancel',
+              'Cancel',
             cancelButtonAriaLabel: "Cancel"
           }).then(result => {
             if (result.value) {

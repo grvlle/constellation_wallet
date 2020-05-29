@@ -116,6 +116,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.DB.AutoMigrate(&models.Wallet{}, &models.TXHistory{}, &models.Path{})
 	a.detectJavaPath()
 	a.initMainnetConnection()
+	a.newReleaseAvailable()
 
 	return nil
 }

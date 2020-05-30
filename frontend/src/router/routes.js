@@ -14,6 +14,8 @@ import Transactions from "@/pages/Transactions.vue";
 import TermsOfService from "@/pages/TermsOfService.vue";
 import NotFound from "@/pages/NotFoundPage.vue";
 
+import store from "../store/store"
+
 const routes = [
   {
     path: "/",
@@ -38,7 +40,14 @@ const routes = [
       {
         path: "accept-terms-of-service",
         name: "accept terms of service",
-        component: TermsOfService
+        component: TermsOfService,
+        beforeEnter(to, from, next) {
+          if (!store.state.app.termsOfService) {
+            next();
+          } else {
+            next({name: 'loading', params: {message: "Getting your $DAG Wallet ready..."}});
+          }
+        }
       },
       {
         path: "loading",

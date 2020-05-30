@@ -16,6 +16,7 @@
             <i class="fa fa-gavel"></i>Governance
           </a>
         </p>
+        <sidebar-link to="terms-of-service" name="Terms of Service" icon="fa fa-file-alt" />
       </template>
       <mobile-menu>
         <li class="nav-item">
@@ -36,7 +37,6 @@
     <div class="main-panel">
       <top-navbar></top-navbar>
       <dashboard-content @click.native="toggleSidebar"></dashboard-content>
-      <terms-of-service></terms-of-service>
     </div>
   </div>
 </template>
@@ -49,14 +49,12 @@ import TopNavbar from "./TopNavbar.vue";
 import DashboardContent from "./Content.vue";
 import MobileMenu from "./MobileMenu";
 import PathBlockedNotification from "../../pages/Notifications/PathBlocked.vue";
-import TermsOfService from "../../pages/TermsOfService.vue";
 
 export default {
   components: {
     TopNavbar,
     DashboardContent,
-    MobileMenu,
-    TermsOfService
+    MobileMenu
   },
   methods: {
     logout() {

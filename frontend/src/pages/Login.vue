@@ -118,8 +118,8 @@ export default {
           self.$Progress.finish();
           self.$store.state.app.isLoggedIn = true;
           self.$router.push({
-            name: 'loading', 
-            params: {message: "Getting your $DAG Wallet ready..."}
+            name: 'accept terms of service',
+            params: {message: "Terms of Service"}
           });
         } else {
           self.overlay = false;
@@ -132,11 +132,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-body,
-html {
-  height: 100%;
-}
-
 .login-box {
   max-width: 29rem;
   min-width: 29rem;

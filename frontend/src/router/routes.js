@@ -11,6 +11,7 @@ import About from "@/pages/About.vue";
 import Settings from "@/pages/Settings.vue";
 import Transactions from "@/pages/Transactions.vue";
 
+import TermsOfService from "@/pages/TermsOfService.vue";
 import NotFound from "@/pages/NotFoundPage.vue";
 
 const routes = [
@@ -33,6 +34,11 @@ const routes = [
         path: "login",
         name: "login",
         component: Login
+      },
+      {
+        path: "accept-terms-of-service",
+        name: "accept terms of service",
+        component: TermsOfService
       },
       {
         path: "loading",
@@ -71,6 +77,11 @@ const routes = [
         path: "settings",
         name: "settings",
         component: Settings
+      },
+      {
+        path: "terms-of-service",
+        name: "terms of service",
+        component: TermsOfService
       },
     ]
   },

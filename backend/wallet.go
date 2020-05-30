@@ -271,6 +271,8 @@ func (a *WalletApplication) initWallet(keystorePath string) error {
 		a.initTXFilePath() // Update paths from DB.
 	}
 
+	a.RT.Events.Emit("wallet_init", a.wallet.TermsOfService, a.wallet.Currency)
+
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
 	}

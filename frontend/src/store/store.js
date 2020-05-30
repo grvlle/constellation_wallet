@@ -12,7 +12,7 @@ export const store = new Vuex.Store({
         network: "MAINNET",
         displayLoginError: false,
         app: {
-            toc: false,
+            termsOfService: false,
             txFinished: true,
             isLoggedIn: false
         },

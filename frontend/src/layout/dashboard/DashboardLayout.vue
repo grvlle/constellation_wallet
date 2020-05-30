@@ -36,6 +36,7 @@
     <div class="main-panel">
       <top-navbar></top-navbar>
       <dashboard-content @click.native="toggleSidebar"></dashboard-content>
+      <terms-of-service></terms-of-service>
     </div>
   </div>
 </template>
@@ -48,11 +49,14 @@ import TopNavbar from "./TopNavbar.vue";
 import DashboardContent from "./Content.vue";
 import MobileMenu from "./MobileMenu";
 import PathBlockedNotification from "../../pages/Notifications/PathBlocked.vue";
+import TermsOfService from "../../pages/TermsOfService.vue";
+
 export default {
   components: {
     TopNavbar,
     DashboardContent,
-    MobileMenu
+    MobileMenu,
+    TermsOfService
   },
   methods: {
     logout() {

@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-9 mx-auto">
         <card>
-          <div v-html="termsOfServiceHTML" />
+          <div v-html="termsOfServiceHTML" style="margin: 3rem;"/>
         </card>
       </div>
     </div>

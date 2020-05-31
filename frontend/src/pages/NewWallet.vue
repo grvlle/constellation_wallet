@@ -227,8 +227,8 @@ export default {
               self.overlay = false;
               self.$store.state.app.isLoggedIn = true;
               self.$router.push({
-                name: 'loading', 
-                params: {message: "Getting your $DAG Wallet ready..."}
+                name: 'accept terms of service',
+                params: {message: "Terms of Service"}
               });
             } else {
               self.overlay = false;

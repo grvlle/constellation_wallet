@@ -132,8 +132,6 @@
   }
 
   .logo {
-    border-bottom: 0.0625em solid rgba($font-color, .3);
-
     p {
       @include themed() {
         color: t('sidebarTextColor');

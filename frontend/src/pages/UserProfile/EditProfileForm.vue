@@ -71,6 +71,18 @@
           </div>
         </div>
 
+        <div class="row">
+          <div class="col-md-12">
+            <fg-input
+              type="text"
+              label="Terms of Service"
+              :disabled="true"
+              placeholder="0"
+              v-model="this.$store.state.app.termsOfService"
+            ></fg-input>
+          </div>
+        </div>
+        
         <div class="clearfix"></div>
       </form>
     </div>

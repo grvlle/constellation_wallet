@@ -17,6 +17,16 @@
           </a>
         </p>
       </template>
+      <ul class="nav text-center" style="width: 100%; bottom: 0;position: absolute;">
+        <hr class="divider"/>
+        <li class="nav-item">
+          <p class="nav-item" style="font-size: 0.6rem;">
+            <a href="javascript:void(0)" @click="toTermsofService" class="nav-link" style="cursor: pointer;">
+              Terms of Service
+            </a>
+          </p>
+        </li>
+      </ul>
       <mobile-menu>
         <li class="nav-item">
           <a class="nav-link" @click="logout" style="cursor: pointer;">
@@ -48,6 +58,7 @@ import TopNavbar from "./TopNavbar.vue";
 import DashboardContent from "./Content.vue";
 import MobileMenu from "./MobileMenu";
 import PathBlockedNotification from "../../pages/Notifications/PathBlocked.vue";
+
 export default {
   components: {
     TopNavbar,
@@ -95,6 +106,11 @@ export default {
       if (this.$sidebar.showSidebar) {
         this.$sidebar.displaySidebar(false);
       }
+    },
+    toTermsofService() {
+      this.$router.push({
+        name: 'terms of service'
+      });
     }
   }
 };

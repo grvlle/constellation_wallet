@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 Vue.use(Vuex);
+
 export const store = new Vuex.Store({
     state: {
         errorMessage: "",
@@ -12,7 +13,7 @@ export const store = new Vuex.Store({
         network: "MAINNET",
         displayLoginError: false,
         app: {
-            toc: false,
+            termsOfService: false,
             txFinished: true,
             isLoggedIn: false
         },
@@ -96,7 +97,7 @@ export const store = new Vuex.Store({
             return state.OS.macOS
         }
     }
-    
-
 })
+
+export default store;
 

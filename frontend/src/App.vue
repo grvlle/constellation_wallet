@@ -136,6 +136,12 @@ export default {
         this.$store.state.displayLoginError = false;
       }, 10000);
     });
+
+    window.wails.Events.On("wallet_init", (termsOfService, currency) => {
+      this.$store.state.app.termsOfService = termsOfService;
+      this.$store.state.walletInfo.currency = currency;
+    });
+
     // Transactions.vue sockets
     window.wails.Events.On("update_tx_history", txHistoryFull => {
       this.$store.state.txInfo.txHistory = txHistoryFull;

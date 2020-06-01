@@ -157,7 +157,6 @@ const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
 import Spinner from 'vue-spinner-component/src/Spinner.vue';
-import Swal from "sweetalert2";
 import {
   required,
   minLength,
@@ -217,7 +216,7 @@ export default {
       }
 
       if (self.submitStatus === "OK") {
-        Swal.mixin({
+        self.$swal.mixin({
           progressSteps: ["1", "2"],
           customClass: {
             container: this.$store.state.walletInfo.darkMode
@@ -268,7 +267,7 @@ export default {
               let amount = self.txAmountValidation;
               let address = self.txAddressValidation;
               let fee = result.value;
-              const swalPopup = Swal.mixin({
+              const swalPopup = self.$swal.mixin({
                 customClass: {
                   container: this.$store.state.walletInfo.darkMode
                     ? "theme--dark"

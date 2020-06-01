@@ -14,7 +14,6 @@ import ErrorNotification from "./pages/Notifications/ErrorMessage";
 import WarningNotification from "./pages/Notifications/Warning";
 import SuccessNotification from "./pages/Notifications/Success";
 import NewRelease from "./pages/Notifications/NewRelease";
-import Swal from "sweetalert2";
 
 export default {
   components: {
@@ -96,7 +95,7 @@ export default {
         verticalAlign: "bottom",
         type: "info",
         onClick: () => {
-          const swalPopup = Swal.mixin({
+          const swalPopup = this.$swal.mixin({
             customClass: {
               container: this.$store.state.walletInfo.darkMode
                 ? "theme--dark"

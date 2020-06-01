@@ -11,14 +11,13 @@
 </template>
 
 <script>
-import Swal from "sweetalert2";
 export default {
   name: "terms-of-service",
   created() {
     var self = this;
     if (!this.$store.state.app.termsOfService) {
       setTimeout(() => {
-        Swal.fire({
+        self.$swal.fire({
           html:
             '<div style="overflow: scroll; padding: 1.25em; width: 53em; height: 31.25em;">' +
               self.termsOfServiceHTML +
@@ -44,7 +43,7 @@ export default {
               params: {message: "Getting your $DAG Wallet ready..."}
             });
           } else {
-            Swal.fire({
+            self.$swal.fire({
               title: "Terms of Service Rejected!",
               text:
                 "You need to accept the Terms of Service to use this product.",

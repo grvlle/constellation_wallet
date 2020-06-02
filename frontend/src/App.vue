@@ -14,7 +14,7 @@ import ErrorNotification from "./pages/Notifications/ErrorMessage";
 import WarningNotification from "./pages/Notifications/Warning";
 import SuccessNotification from "./pages/Notifications/Success";
 import NewRelease from "./pages/Notifications/NewRelease";
-import Swal from "sweetalert2";
+import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
   components: {

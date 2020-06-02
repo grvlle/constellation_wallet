@@ -227,8 +227,8 @@
 
 <script>
 import ImgUploaded from "./Notifications/ImageUploaded";
-import Swal from "sweetalert2";
 import VueSelect from 'vue-select';
+import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
   components: {

@@ -157,13 +157,13 @@ const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
 import Spinner from 'vue-spinner-component/src/Spinner.vue';
-import Swal from "sweetalert2";
 import {
   required,
   minLength,
   maxLength,
   between
 } from "vuelidate/lib/validators";
+import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
   components: {
@@ -217,7 +217,7 @@ export default {
       }
 
       if (self.submitStatus === "OK") {
-        Swal.mixin({
+        self.$swal.mixin({
           progressSteps: ["1", "2"],
           customClass: {
             container: this.$store.state.walletInfo.darkMode

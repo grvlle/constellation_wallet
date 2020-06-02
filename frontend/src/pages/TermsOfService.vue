@@ -19,7 +19,7 @@ export default {
       setTimeout(() => {
         self.$swal.fire({
           html:
-            '<div style="overflow: scroll; padding: 1.25em; width: 53em; height: 31.25em;">' +
+            '<div style="overflow-y: scroll; padding: 1.25em; height: 34rem; margin-top: 1.2rem;">' +
               self.termsOfServiceHTML +
             "</div>",
           showCloseButton: true,

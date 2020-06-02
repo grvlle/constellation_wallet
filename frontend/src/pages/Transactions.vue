@@ -217,7 +217,7 @@ export default {
       }
 
       if (self.submitStatus === "OK") {
-        self.$swal.mixin({
+        Swal.mixin({
           progressSteps: ["1", "2"],
           customClass: {
             container: this.$store.state.walletInfo.darkMode

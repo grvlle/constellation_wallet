@@ -9,7 +9,6 @@ import * as Wails from '@wailsapp/runtime';
 import PaperDashboard from "./plugins/paperDashboard";
 import "vue-notifyjs/themes/default.css";
 import VueNotify from 'vue-notifyjs'
-import VueSweetalert2 from 'vue-sweetalert2';
 import {store} from './store/store'
 import Vuelidate from 'vuelidate'
 import ToggleButton from 'vue-js-toggle-button'
@@ -27,7 +26,6 @@ Vue.use(ToggleButton)
 Vue.use(Vuelidate)
 Vue.use(VueNotify);
 Vue.use(PaperDashboard);
-Vue.use(VueSweetalert2);
 Vue.use(VueSelect);
 
 Wails.Init(() => {

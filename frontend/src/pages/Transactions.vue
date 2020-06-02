@@ -163,6 +163,7 @@ import {
   maxLength,
   between
 } from "vuelidate/lib/validators";
+import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
   components: {
@@ -267,7 +268,7 @@ export default {
               let amount = self.txAmountValidation;
               let address = self.txAddressValidation;
               let fee = result.value;
-              const swalPopup = self.$swal.mixin({
+              const swalPopup = Swal.mixin({
                 customClass: {
                   container: this.$store.state.walletInfo.darkMode
                     ? "theme--dark"

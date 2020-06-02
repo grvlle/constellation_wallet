@@ -228,6 +228,7 @@
 <script>
 import ImgUploaded from "./Notifications/ImageUploaded";
 import VueSelect from 'vue-select';
+import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
   components: {
@@ -235,7 +236,7 @@ export default {
   },
   methods: {
     submitLabel: function() {
-      const swalPopup = this.$swal.mixin({
+      const swalPopup = Swal.mixin({
         customClass: {
           container: this.$store.state.walletInfo.darkMode
             ? "theme--dark"
@@ -303,7 +304,7 @@ export default {
     },
     uploadImage: function() {
       window.backend.WalletApplication.UploadImage().then(path => {
-        const swalPopup = this.$swal.mixin({
+        const swalPopup = Swal.mixin({
           customClass: {
             container: this.$store.state.walletInfo.darkMode
               ? "theme--dark"

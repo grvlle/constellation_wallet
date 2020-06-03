@@ -24,7 +24,63 @@ export default {
       overlay: false
     };
   },
-
+  onIdle() {
+    let timerInterval, closeInSeconds = 10
+    const swalPopup = Swal.mixin({
+      customClass: {
+        container: this.$store.state.walletInfo.darkMode
+          ? "theme--dark"
+          : "theme--light"
+      }
+    });
+    if (this.$store.state.app.isLoggedIn) {
+      swalPopup.fire({
+        title: "You have been idle for 5 minutes.",
+        html: "To keep your Molly wallet safe from unauthorised access it will automatically logout in <b>10</b> seconds",
+        showConfirmButton: false,
+        showCancelButton: false,
+        timer: closeInSeconds * 1000,
+        timerProgressBar: true,
+        onBeforeOpen: () => {
+          Swal.showLoading();
+          timerInterval = setInterval(() => {
+            closeInSeconds--;
+            const content = Swal.getContent();
+            if (content) {
+              const b = content.querySelector('b');
+              if (b) {
+                b.textContent = closeInSeconds;
+              }
+            }
+          }, 1000)
+        },
+        onClose: () => {
+          clearInterval(timerInterval)
+        }
+      }).then(() => {
+        if (this.$store.state.idleVue.isIdle) {
+          window.backend.WalletApplication.LogOut().then(txFinishedState => {
+            if (txFinishedState) {
+              this.$store.state.txInfo.txHistory = [];
+              this.$store.state.walletInfo.keystorePath = "";
+              this.$store.state.walletInfo.alias = "";
+              this.$store.state.walletInfo.keystorePassword = "";
+              this.$store.state.walletInfo.KeyPassword = "";
+              this.$store.state.walletInfo.email = "";
+              this.$store.state.walletInfo.totalValue = 0;
+              this.$store.state.walletInfo.tokenAmount = 0;
+              this.$store.state.app.isLoggedIn = false;
+              this.$store.state.walletInfo.currency = "";
+              this.$router.push({
+                name: 'login', 
+                params: {message: "Please enter your credentials below to access your Molly Wallet."}
+              });
+            }
+          }), (this.random = "1");
+        }
+      });
+    }
+  },
   mounted() {
     // Backend Errors
     window.wails.Events.On("error_handling", (m, err) => {

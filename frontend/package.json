@@ -31,6 +31,7 @@
     "vue-select": "^3.10.3",
     "vue-spinner": "^1.0.3",
     "vue-spinner-component": "^1.0.5",
+    "idle-vue": "^2.0.5",
     "sweetalert2": "^9.10.12",
     "@sweetalert2/theme-bootstrap-4": "^3.1.4",
     "vuelidate": "^0.7.5",

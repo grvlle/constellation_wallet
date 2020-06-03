@@ -16,6 +16,11 @@ $swal2-confirm-button-background-color: $primary-color;
   }
 }
 
+.swal2-actions.swal2-loading .swal2-styled.swal2-confirm {
+  min-width: 1rem;
+  min-height: 1rem;
+}
+
 button.swal2-styled {
   min-width: 6rem;
   min-height: 2.3rem;

@@ -8,14 +8,22 @@ Vue.config.devtools = true;
 import * as Wails from '@wailsapp/runtime';
 import PaperDashboard from "./plugins/paperDashboard";
 import "vue-notifyjs/themes/default.css";
-import VueNotify from 'vue-notifyjs'
-import {store} from './store/store'
-import Vuelidate from 'vuelidate'
-import ToggleButton from 'vue-js-toggle-button'
-import VueProgressBar from 'vue-progressbar'
-import VueSelect from 'vue-select'
-import 'vue-select/dist/vue-select.css'
+import VueNotify from 'vue-notifyjs';
+import {store} from './store/store';
+import Vuelidate from 'vuelidate';
+import ToggleButton from 'vue-js-toggle-button';
+import VueProgressBar from 'vue-progressbar';
+import VueSelect from 'vue-select';
+import 'vue-select/dist/vue-select.css';
+import IdleVue from 'idle-vue'
 
+const eventsHub = new Vue();
+Vue.use(IdleVue, {
+  eventEmitter: eventsHub,
+  store,
+  idleTime: 300000,
+  startAtIdle: false
+})
 Vue.use(VueProgressBar, {
   color: '#6DECBB',
   failedColor: 'red',

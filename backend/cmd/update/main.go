@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"io"
@@ -11,6 +13,7 @@ import (
 	"os/exec"
 	"path"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/artdarek/go-unzip"
@@ -18,7 +21,6 @@ import (
 )
 
 func init() {
-
 	// initialize update.log file and set log output to file
 	file, err := os.OpenFile(path.Join(getDefaultDagFolderPath(), "update.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err == nil {
@@ -31,6 +33,7 @@ func init() {
 	log.SetLevel(log.InfoLevel)
 }
 
+// Update type contains the update processes mandatory data
 type Update struct {
 	clientRPC          *rpc.Client
 	downloadURL        string
@@ -63,15 +66,11 @@ func main() {
 	update.triggerUpdate = flag.Bool("upgrade", false, "Upgrade molly wallet binary")
 	flag.Parse()
 
-	// if trigger update, update molly
-	// if errors trigger RestoreBackup
-
-	fmt.Println(*update.dagFolderPath, *update.triggerUpdate, *update.newVersion, *update.oldMollyBinaryPath)
 	update.Run()
 
-	//fmt.Printf("Dag Folder: %s, Current Version: %s, Molly Path: %s, New Version: %s, Update: %v\n", *update.dagFolderPath, *update.currentVersion, *update.oldMollyBinaryPath, *update.newVersion, *update.triggerUpdate)
 }
 
+// Run is the main method that runs the full update.
 func (u *Update) Run() {
 	var err error
 
@@ -94,7 +93,10 @@ func (u *Update) Run() {
 		log.Fatalf("Unable to download v%s of Molly Wallet: %v", *u.newVersion, err)
 	}
 
-	// TODO: checksum verification
+	ok, err := u.VerifyChecksum(zippedArchive)
+	if err != nil || !ok {
+		log.Fatalf("Checksum missmatch. Corrupted download: %v", err)
+	}
 
 	contents, err := unzipArchive(zippedArchive, *u.dagFolderPath)
 	if err != nil {
@@ -149,7 +151,7 @@ func (u *Update) DownloadAppBinary() (string, error) {
 	osBuild, _ := getUserOS() // returns linux, windows, darwin or unsupported as well as the file extension (e.g ".exe")
 
 	if osBuild == "unsupported" {
-		return "", fmt.Errorf("The OS is not supported.")
+		return "", fmt.Errorf("the OS is not supported")
 	}
 
 	url := u.downloadURL + "/v" + *u.newVersion + "-" + osBuild + "/" + filename
@@ -157,29 +159,59 @@ func (u *Update) DownloadAppBinary() (string, error) {
 	log.Infof("Constructed the following URL: %s", url)
 
 	filePath := path.Join(*u.dagFolderPath, filename)
-	tmpFilePath := filePath + ".tmp"
-	out, err := os.Create(tmpFilePath)
+	err := downloadFile(url, filePath)
 	if err != nil {
-		return "", err
-	}
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	if _, err = io.Copy(out, resp.Body); err != nil {
-		return "", err
-	}
-
-	out.Close()
-
-	if err = os.Rename(tmpFilePath, filePath); err != nil {
-		return "", err
+		return "", fmt.Errorf("unable to download remote checksum: %v", err)
 	}
 
 	return filePath, nil
+}
+
+// VerifyChecksum takes a file path and will check the file sha256 checksum against the checksum included
+// in the downlaod returns false if there's a missmatch
+func (u *Update) VerifyChecksum(filePathZip string) (bool, error) {
+	// Download checksum
+	filename := "checksum.sha256"
+	osBuild, _ := getUserOS() // returns linux, windows, darwin or unsupported as well as the file extension (e.g ".exe")
+
+	if osBuild == "unsupported" {
+		return false, fmt.Errorf("the OS is not supported")
+	}
+
+	url := u.downloadURL + "/v" + *u.newVersion + "-" + osBuild + "/" + filename
+	// e.g https://github.com/grvlle/constellation_wallet/releases/download/v1.1.9-linux/checksum.sha256
+	log.Infof("Constructed the following URL: %s", url)
+
+	filePath := path.Join(*u.dagFolderPath, filename)
+	err := downloadFile(url, filePath)
+	if err != nil {
+		return false, fmt.Errorf("unable to download remote checksum: %v", err)
+	}
+
+	// Read the contents of the downloaded file (remoteChecksum)
+	content, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return false, err
+	}
+	lines := strings.Split(string(content), "\n")
+	remoteChecksum := lines[0]
+	log.Infof("Remote file checksum: %v", remoteChecksum)
+
+	// Collect the checksum of the downloaded zip (localChecksum)
+	f, err := os.Open(filePathZip)
+	if err != nil {
+		return false, err
+	}
+	defer f.Close()
+
+	hasher := sha256.New()
+	if _, err := io.Copy(hasher, f); err != nil {
+		return false, err
+	}
+	localChecksum := hex.EncodeToString(hasher.Sum(nil))
+	log.Infof("Local file checksum: %v", localChecksum)
+
+	return remoteChecksum == localChecksum, nil
 }
 
 // TerminateAppService will send an RPC to mollywallet to terminate the application
@@ -200,49 +232,54 @@ func (u *Update) TerminateAppService() error {
 	return nil
 }
 
+// BackupApp backs up the old binary in case of a failed update.
 func (u *Update) BackupApp() error {
 	_, fileExt := getUserOS()
 
 	// Create backup folder in ~/.dag
 	err := os.Mkdir(*u.dagFolderPath+"/backup", 0755)
 	if err != nil {
-		return fmt.Errorf("Unable to create backup folder. Reason: %v", err)
+		return fmt.Errorf("unable to create backup folder: %v", err)
 	}
 
 	// Copy the old Molly Wallet binary into ~/.dag/backup/
 	err = copy(*u.oldMollyBinaryPath, *u.dagFolderPath+"/backup/mollywallet"+fileExt)
 	if err != nil {
-		return fmt.Errorf("Unable to backup old Molly installation. Reason: %v", err)
+		return fmt.Errorf("unable to backup old Molly installation: %v", err)
 	}
 
 	return nil
 }
 
+// ReplaceAppBinary replaces the old update module and molly binary with the newly downloaded ones.
 func (u *Update) ReplaceAppBinary(contents *unzippedContents) error {
-	// Copy the old Molly Wallet binary into ~/.dag/backup/
+	// Replace old molly binary with the new one
 	_, fileExt := getUserOS()
 	err := copy(contents.newMollyBinaryPath, *u.oldMollyBinaryPath)
 	if err != nil {
-		return fmt.Errorf("Unable to overwrite old molly binary. Reason: %v", err)
+		return fmt.Errorf("unable to overwrite old molly binary: %v", err)
 	}
+	// Replace old update binary with the new one
 	if fileExists(contents.updateBinaryPath) {
 		err = copy(contents.updateBinaryPath, *u.dagFolderPath+"/update"+fileExt)
 		if err != nil {
-			return fmt.Errorf("Unable to copy update binary to .dag folder. Reason: %v", err)
+			return fmt.Errorf("unable to copy update binary to .dag folder: %v", err)
 		}
 	}
 	return nil
 }
 
+// LaunchAppBinary executes the new molly binary
 func (u *Update) LaunchAppBinary() error {
 	cmd := exec.Command(*u.oldMollyBinaryPath)
 	err := cmd.Start()
 	if err != nil {
-		return fmt.Errorf("Unable to execute run command for Molly Wallet: %v", err)
+		return fmt.Errorf("unable to execute run command for Molly Wallet: %v", err)
 	}
 	return nil
 }
 
+// RestoreBackup restores the backed up files
 func (u *Update) RestoreBackup() error {
 
 	log.Infoln("Restoring Backup...")
@@ -251,14 +288,14 @@ func (u *Update) RestoreBackup() error {
 	_, fileExt := getUserOS()
 	err := copy(*u.dagFolderPath+"/backup/mollywallet"+fileExt, *u.oldMollyBinaryPath)
 	if err != nil {
-		return fmt.Errorf("Unable to overwrite old molly binary. Reason: %v", err)
+		return fmt.Errorf("unable to overwrite old molly binary: %v", err)
 	}
 
 	// Copy update binary from ~/.dag/backup/update -> ~/.dag/update
 	if fileExists(*u.dagFolderPath + "/backup/update" + fileExt) {
 		err = copy(*u.dagFolderPath+"/backup/update"+fileExt, *u.dagFolderPath+"/update"+fileExt)
 		if err != nil {
-			return fmt.Errorf("Unable to copy update binary to .dag folder. Reason: %v", err)
+			return fmt.Errorf("unable to copy update binary to .dag folder: %v", err)
 		}
 	}
 
@@ -268,6 +305,7 @@ func (u *Update) RestoreBackup() error {
 
 }
 
+// CleanUp removes uneccesary artifacts from the update process
 func (u *Update) CleanUp() error {
 
 	if fileExists(*u.dagFolderPath + "/mollywallet.zip") {
@@ -288,6 +326,32 @@ func (u *Update) CleanUp() error {
 		if err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func downloadFile(url, filePath string) error {
+
+	tmpFilePath := filePath + ".tmp"
+	out, err := os.Create(tmpFilePath)
+	if err != nil {
+		return err
+	}
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if _, err = io.Copy(out, resp.Body); err != nil {
+		return err
+	}
+
+	out.Close() // Close file to rename
+
+	if err = os.Rename(tmpFilePath, filePath); err != nil {
+		return err
 	}
 	return nil
 }

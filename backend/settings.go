@@ -129,6 +129,7 @@ func (a *WalletApplication) StoreCurrencyStateDB(currency string) {
 	}
 }
 
+// UpdateMolly is called from the frontend and triggers the application update
 func (a *WalletApplication) UpdateMolly() {
 	update := new(UpdateWallet)
 	update.app = a

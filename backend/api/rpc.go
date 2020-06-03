@@ -6,17 +6,16 @@ import (
 	"net/http"
 	"net/rpc"
 	"os"
-	"time"
 )
 
 type RPCEndpoints int
 
 type Signal struct {
-	Status string
-	Msg    string
+	PID int
+	Msg string
 }
 
-// initRPCServer initializes the RPC server that listens to incoming LCM tasks
+// InitRPCServer initializes the RPC server that listens to incoming LCM tasks
 // by the RPC clients
 func InitRPCServer() error {
 	endpoints := new(RPCEndpoints)
@@ -57,10 +56,10 @@ func InitRPCServer() error {
 }
 
 func (rpc *RPCEndpoints) ShutDown(sig Signal, response *Signal) error {
-	fmt.Println(sig.Msg)
-	*response = Signal{"OK", "Shutting down application"}
-	time.Sleep(time.Second * 10)
-	// TODO: A more graceful shutdown (WailsShutdown)
-	os.Exit(0)
+
+	pid := os.Getpid()
+	*response = Signal{pid, "Shutting down application"}
+
+	// time.Sleep(3 * time.Second)
 	return nil
 }

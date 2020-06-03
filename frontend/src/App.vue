@@ -168,14 +168,14 @@ export default {
             showCancelButton: true,
             focusConfirm: false,
             confirmButtonText:
-              '<i class="fa fa-thumbs-up"></i> Update',
+              '<i class="fa fa-thumbs-up"></i> <b>Update</b>',
             confirmButtonAriaLabel: "Text",
             cancelButtonText:
               'Cancel',
             cancelButtonAriaLabel: "Cancel"
           }).then(result => {
             if (result.value) {
-              self.$Progress.start();
+              self.$Progress.start(2000);
               self.overlay = true;
               window.backend.WalletApplication.UpdateMolly()
               self.$notifications.clear();

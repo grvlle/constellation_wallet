@@ -45,8 +45,8 @@ type Update struct {
 
 // Signal is used for IPC with MollyWallet
 type Signal struct {
-	Status string
-	Msg    string
+	PID int
+	Msg string
 }
 
 type unzippedContents struct {
@@ -116,8 +116,6 @@ func (u *Update) Run() {
 			log.Fatal("Unable to restore backup: %v", err)
 		}
 	}
-
-	time.Sleep(10 * time.Second)
 
 	err = u.ReplaceAppBinary(contents)
 	if err != nil {
@@ -216,19 +214,24 @@ func (u *Update) VerifyChecksum(filePathZip string) (bool, error) {
 
 // TerminateAppService will send an RPC to mollywallet to terminate the application
 func (u *Update) TerminateAppService() error {
-	sig := Signal{"OK", "Terminate Molly Wallet. Begining Update..."}
+	sig := Signal{0, "Terminate Molly Wallet. Begining Update..."}
 	var response Signal
 
 	err := u.clientRPC.Call("RPCEndpoints.ShutDown", sig, &response)
 	if err != nil {
-		// TODO: Capture and handle this error. It's retorning EOF when the RPC server goes down
-		// this is expected behavior, but we need handle all errors.
-		return nil
+		return err
 	}
 
-	if response.Status != "OK" {
-		return fmt.Errorf(response.Msg)
+	proc, err := os.FindProcess(response.PID)
+	if err != nil {
+		log.Panicf("%v", err)
 	}
+
+	err = proc.Kill()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -257,7 +260,15 @@ func (u *Update) ReplaceAppBinary(contents *unzippedContents) error {
 	_, fileExt := getUserOS()
 	err := copy(contents.newMollyBinaryPath, *u.oldMollyBinaryPath)
 	if err != nil {
-		return fmt.Errorf("unable to overwrite old molly binary: %v", err)
+		for i := 5; i > 0; i-- {
+			time.Sleep(time.Duration(i) * time.Second)
+			err = copy(contents.newMollyBinaryPath, *u.oldMollyBinaryPath)
+			if err == nil {
+				break
+			} else if err != nil && i == 0 {
+				return fmt.Errorf("unable to overwrite old molly binary: %v", err)
+			}
+		}
 	}
 	// Replace old update binary with the new one
 	if fileExists(contents.updateBinaryPath) {

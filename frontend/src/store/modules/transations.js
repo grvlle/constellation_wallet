@@ -14,7 +14,7 @@ const getters = {
 }
 
 const actions = {
-    resetTxInfoState({ commit }) {
+    resetTransactionsState({ commit }) {
         commit('resetState')
     }
 }

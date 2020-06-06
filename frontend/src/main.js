@@ -1,10 +1,9 @@
-import Vue from "vue";
-import App from "./App.vue";
-import router from "./router/index";
-
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 
+import Vue from "vue";
+import App from "./App.vue";
+import router from "./router/index";
 import * as Wails from '@wailsapp/runtime';
 import PaperDashboard from "./plugins/paperDashboard";
 import "vue-notifyjs/themes/default.css";
@@ -16,6 +15,7 @@ import VueProgressBar from 'vue-progressbar';
 import VueSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
 import IdleVue from 'idle-vue'
+import './plugins/globalMethods';
 
 const eventsHub = new Vue();
 Vue.use(IdleVue, {

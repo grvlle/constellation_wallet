@@ -1,9 +1,17 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import Wallet from './modules/wallet';
+import App from './modules/app';
+import Transactions from './modules/transations';
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
+    modules: {
+        app: App,
+        walletInfo: Wallet,
+        txInfo: Transactions
+    },
     state: {
         errorMessage: "",
         warningMessage: "",
@@ -12,40 +20,9 @@ export const store = new Vuex.Store({
         newRelease: "",
         network: "MAINNET",
         displayLoginError: false,
-        app: {
-            termsOfService: false,
-            txFinished: true,
-            isLoggedIn: false
-        },
         downloading: {
           filename: "",
           size: ""
-        },
-        walletInfo: {
-            version: "v2.6.0",
-            uiVersion: "v1.2.0",
-            email: "Molly Wallet",
-            imgPath: 'faces/face-0.jpg',
-            transactions: 0,
-            tokenAmount: 0, 
-            totalBalance: 0,
-            availableBalance: 0,
-            nonce: 0,
-            currency: "USD",
-            totalValue: 0.0,
-            blocks: "NaN",
-            address: "N/A",
-            keystorePath: "",
-            saveKeystorePath: "",
-            alias: "",
-            privateKey: "NaN",
-            publicKey: "NaN",
-            seed: "Mnemonic Seed will be introduced with a later software release",
-            darkMode: false
-        },
-        txInfo: {
-            txHistory: [],
-            txStatus: "Complete"
         },
         counters: {
             blockCounter: 5,
@@ -73,20 +50,7 @@ export const store = new Vuex.Store({
             }
         }
     },
-    mutations: {
-        updateTxHistory(state, tx) {
-            state.txInfo.txHistory.unshift(tx)
-        },
-        updateFullTxHistory(state, txHistoryUpdated) {
-            
-            state.txInfo.txHistory = txHistoryUpdated
-            
-        },
-    },
     getters: {
-        getTxCounter (state) {
-            return state.counters.nodesOnlineCounter
-        },
         runningOnWindows (state) {
             return state.OS.windows
         },

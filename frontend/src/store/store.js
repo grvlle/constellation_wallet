@@ -13,17 +13,6 @@ export const store = new Vuex.Store({
         txInfo: Transactions
     },
     state: {
-        errorMessage: "",
-        warningMessage: "",
-        successMessage: "",
-        loginErrorMsg: "",
-        newRelease: "",
-        network: "MAINNET",
-        displayLoginError: false,
-        downloading: {
-          filename: "",
-          size: ""
-        },
         counters: {
             blockCounter: 5,
             tokenCounter: 30,

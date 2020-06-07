@@ -71,7 +71,7 @@ export default {
   mounted() {
     // Backend Errors
     window.wails.Events.On("error_handling", (m, err) => {
-      this.$store.state.errorMessage = m + err;
+      this.$store.commit('setErrorMessage', m + err);
       this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
@@ -90,7 +90,7 @@ export default {
     });
 
     window.wails.Events.On("warning", m => {
-      this.$store.state.warningMessage = m;
+      this.$store.commit('setWarningMessage', m);
       this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
@@ -109,7 +109,7 @@ export default {
     });
 
     window.wails.Events.On("success", m => {
-      this.$store.state.successMessage = m;
+      this.$store.commit('setSuccessMessage', m);
       this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
@@ -128,7 +128,7 @@ export default {
     });
 
     window.wails.Events.On("new_release", m => {
-      this.$store.state.newRelease = m;
+      this.$store.commit('setNewRelease', m);
       var self = this;
       this.$notifications.clear();
       this.$notify({
@@ -173,10 +173,10 @@ export default {
     });
 
     window.wails.Events.On("login_error", (m, err) => {
-      this.$store.state.loginErrorMsg = m;
-      this.$store.state.displayLoginError = err;
+      this.$store.commit('setLoginErrorMessage', m);
+      this.$store.commit('setDisplayLoginError', err);
       setTimeout(() => {
-        this.$store.state.displayLoginError = false;
+        this.$store.commit('setDisplayLoginError', false);
       }, 10000);
     });
 
@@ -200,10 +200,10 @@ export default {
     });
 
     window.wails.Events.On("downloading", (filename, size) => {
-      if (this.$store.state.downloading.filename !== filename) {
-        this.$store.state.downloading.filename = filename;
+      if (this.$store.state.app.downloading.filename !== filename) {
+        this.$store.commit('setDownloadFileName', filename);
       }
-      this.$store.state.downloading.size = size;
+      this.$store.commit('setDownloadFileSize', size);
     });
 
     // Login.vue sockets

@@ -2,7 +2,18 @@ const getDefaultState = () => {
     return {
         termsOfService: false,
         txFinished: true,
-        isLoggedIn: false
+        isLoggedIn: false,
+        errorMessage: "",
+        warningMessage: "",
+        successMessage: "",
+        loginErrorMsg: "",
+        newRelease: "",
+        network: "MAINNET",
+        displayLoginError: false,
+        downloading: {
+          filename: "",
+          size: ""
+        }
     }
 }
 
@@ -18,13 +29,37 @@ const mutations = {
         Object.assign(state, getDefaultState())
     },
     setTermsOfService(state, termsOfService) {
-        this.termsOfService = termsOfService;
+        state.termsOfService = termsOfService;
     },
     setTxFinished(state, setTxFinished) {
-        this.termsOfService = setTxFinished;
+        state.termsOfService = setTxFinished;
     },
     setIsLoggedIn(state, isLoggedIn) {
-        this.termsOfService = isLoggedIn;
+        state.termsOfService = isLoggedIn;
+    },
+    setErrorMessage(state, message) {
+        state.errorMessage = message;
+    },
+    setWarningMessage(state, message) {
+        state.warningMessage = message;
+    },
+    setSuccessMessage(state, message) {
+        state.successMessage = message;
+    },
+    setLoginErrorMessage(state, message) {
+        state.loginErrorMsg = message;
+    },
+    setDisplayLoginError(state, val) {
+        state.displayLoginError = val;
+    },
+    setNewRelease(state, val) {
+        state.newRelease = val;
+    },
+    setDownloadFileName(state, name) {
+        state.downloading.filename = name;
+    },
+    setDownloadFileSize(state, size) {
+        state.downloading.size = size;
     }
 }
 

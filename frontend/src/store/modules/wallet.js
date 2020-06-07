@@ -35,40 +35,40 @@ const mutations = {
     Object.assign(state, getDefaultState())
   },
   setCurrency(state, currency) {
-    this.currency = currency;
+    state.currency = currency;
   },
   setTokenAmount(state, amount) {
-    this.tokenAmount = amount;
+    state.tokenAmount = amount;
   },
   setAvailableBalance(state, available) {
-    this.setAvailableBalance = available;
+    state.setAvailableBalance = available;
   },
   setTotalBalance(state, total) {
-    this.setTotalBalance = total;
+    state.setTotalBalance = total;
   },
   setBlocks(state, blocks) {
-    this.blocks = blocks;
+    state.blocks = blocks;
   },
   setTotalValue(state, value) {
-    this.setTotalValue = value;
+    state.setTotalValue = value;
   },
   setAddress(state, address) {
-    this.address = address;
+    state.address = address;
   },
   setKeystorePath(state, path) {
-    this.setKeystorePath = path;
+    state.setKeystorePath = path;
   },
   setSaveKeystorePath(state, path) {
-    this.setSaveKeystorePath = path;
+    state.setSaveKeystorePath = path;
   },
   setEmail(state, email) {
-    this.email = email;
+    state.email = email;
   },
   setDarkMode(state, darkMode) {
-    this.darkMode = darkMode;
+    state.darkMode = darkMode;
   },
   setImgPath(state, path) {
-    this.imgPath = path;
+    state.imgPath = path;
   }
 }
 

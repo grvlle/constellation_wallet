@@ -1,5 +1,5 @@
 <template>
-  <span>{{ this.$store.state.successMessage }}</span>
+  <span>{{ this.$store.state.app.successMessage }}</span>
 </template>
 
 <script>

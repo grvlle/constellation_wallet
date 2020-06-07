@@ -9,8 +9,8 @@
             <p v-if="this.$route.params.message">{{this.$route.params.message}}</p>
             <p v-else>Downloading $DAG wallet dependencies...</p>
           </div>
-          <div class="page-error-box" v-if="this.$store.state.displayLoginError">
-            <p>{{this.$store.state.loginErrorMsg}}</p>
+          <div class="page-error-box" v-if="this.$store.state.app.displayLoginError">
+            <p>{{this.$store.state.app.loginErrorMsg}}</p>
           </div>
           <div class="page-error-box" v-else></div>
         </div>
@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="version">
-      <p class="version">Connected to: {{this.$store.state.network}}<br />
+      <p class="version">Connected to: {{this.$store.state.app.network}}<br />
       Molly Wallet version: {{this.$store.state.walletInfo.uiVersion}}</p>
     </div>
   </div>

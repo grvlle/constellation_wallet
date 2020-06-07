@@ -264,7 +264,7 @@ export default {
           })
           .then(result => {
             if (result.value) {
-              this.$store.state.walletInfo.email = this.newLabel;
+              self.$store.commit('setEmail', this.newLabel);
               window.backend.WalletApplication.StoreWalletLabelInDB(
                 this.newLabel
               );
@@ -290,7 +290,7 @@ export default {
         .toggleDashboard.showThroughput;
     },
     toggleDarkMode: function() {
-      this.$store.state.walletInfo.darkMode = !this.$store.state.walletInfo.darkMode;
+      this.$store.commit('setDarkMode', !this.$store.state.walletInfo.darkMode);
       window.backend.WalletApplication.StoreDarkModeStateDB(this.$store.state.walletInfo.darkMode);
     },
     setCurrency: function(value) {
@@ -333,7 +333,7 @@ export default {
             })
             .then(result => {
               if (result.value) {
-                this.$store.state.walletInfo.imgPath = path;
+                this.$store.commit('setImgPath', path);
                 swalPopup.fire({
                   title: "Success!",
                   text: "You have uploaded a new wallet picture",

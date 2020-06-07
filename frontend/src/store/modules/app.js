@@ -16,6 +16,15 @@ const actions = {
 const mutations = {
     resetState(state) {
         Object.assign(state, getDefaultState())
+    },
+    setTermsOfService(state, termsOfService) {
+        this.termsOfService = termsOfService;
+    },
+    setTxFinished(state, setTxFinished) {
+        this.termsOfService = setTxFinished;
+    },
+    setIsLoggedIn(state, isLoggedIn) {
+        this.termsOfService = isLoggedIn;
     }
 }
 

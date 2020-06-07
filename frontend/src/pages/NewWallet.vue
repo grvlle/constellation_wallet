@@ -205,7 +205,7 @@ export default {
       self.$Progress.start();
       self.overlay = true;
       if (self.newWalletLabel !== "") {
-        self.$store.state.walletInfo.email = self.newWalletLabel;
+        self.$store.commit('setEmail', self.newWalletLabel);
         window.backend.WalletApplication.StoreWalletLabelInDB(
           self.newWalletLabel
         );
@@ -225,7 +225,7 @@ export default {
           ).then(loggedIn => {
             if (loggedIn) {
               self.overlay = false;
-              self.$store.state.app.isLoggedIn = true;
+              self.$store.commit('setIsLoggedIn', loggedIn);
               self.$router.push({
                 name: 'accept terms of service',
                 params: {message: "Terms of Service"}

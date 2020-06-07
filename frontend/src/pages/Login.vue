@@ -116,7 +116,7 @@ export default {
           );
           self.overlay = false;
           self.$Progress.finish();
-          self.$store.state.app.isLoggedIn = true;
+          self.$store.commit('setIsLoggedIn', true);
           self.$router.push({
             name: 'accept terms of service',
             params: {message: "Terms of Service"}

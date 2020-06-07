@@ -33,6 +33,42 @@ const actions = {
 const mutations = {
   resetState(state) {
     Object.assign(state, getDefaultState())
+  },
+  setCurrency(state, currency) {
+    this.currency = currency;
+  },
+  setTokenAmount(state, amount) {
+    this.tokenAmount = amount;
+  },
+  setAvailableBalance(state, available) {
+    this.setAvailableBalance = available;
+  },
+  setTotalBalance(state, total) {
+    this.setTotalBalance = total;
+  },
+  setBlocks(state, blocks) {
+    this.blocks = blocks;
+  },
+  setTotalValue(state, value) {
+    this.setTotalValue = value;
+  },
+  setAddress(state, address) {
+    this.address = address;
+  },
+  setKeystorePath(state, path) {
+    this.setKeystorePath = path;
+  },
+  setSaveKeystorePath(state, path) {
+    this.setSaveKeystorePath = path;
+  },
+  setEmail(state, email) {
+    this.email = email;
+  },
+  setDarkMode(state, darkMode) {
+    this.darkMode = darkMode;
+  },
+  setImgPath(state, path) {
+    this.imgPath = path;
   }
 }
 

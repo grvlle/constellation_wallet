@@ -181,17 +181,16 @@ export default {
     });
 
     window.wails.Events.On("wallet_init", (termsOfService, currency) => {
-      this.$store.state.app.termsOfService = termsOfService;
-      this.$store.state.walletInfo.currency = currency;
+      this.$store.commit('setTermsOfService', termsOfService);
+      this.$store.commit('setCurrency', currency);
     });
 
     // Transactions.vue sockets
     window.wails.Events.On("update_tx_history", txHistoryFull => {
-      this.$store.state.txInfo.txHistory = txHistoryFull;
-      //this.$store.commit('updateFullTxHistory', txHistoryFull)
+      this.$store.commit('updateFullTxHistory', txHistoryFull);
     });
     window.wails.Events.On("tx_in_transit", txFinished => {
-      this.$store.state.app.txFinished = txFinished;
+      this.$store.commit('setTxFinished', txFinished);
     });
     window.wails.Events.On("new_transaction", txObject => {
       this.$store.commit("updateTxHistory", txObject);
@@ -212,16 +211,16 @@ export default {
 
     // Dashboard.vue sockets
     window.wails.Events.On("token", (amount, available, total) => {
-      this.$store.state.walletInfo.tokenAmount = amount;
-      this.$store.state.walletInfo.availableBalance = available;
-      this.$store.state.walletInfo.totalBalance = total;
+      this.$store.commit('setTokenAmount', amount);
+      this.$store.commit('setAvailableBalance', available);
+      this.$store.commit('setTotalBalance', total);
     });
     window.wails.Events.On("blocks", number => {
-      this.$store.state.walletInfo.blocks = number;
+      this.$store.commit('setBlocks', number);
     });
     window.wails.Events.On("totalValue", (currency, value) => {
-      this.$store.state.walletInfo.currency = currency;
-      this.$store.state.walletInfo.totalValue = value;
+      this.$store.commit('setCurrency', currency);
+      this.$store.commit('setTotalValue', value);
     });
     window.wails.Events.On("token_counter", count => {
       this.$store.state.counters.tokenCounter = count;
@@ -250,8 +249,7 @@ export default {
 
     // Settings.vue sockets
     window.wails.Events.On("wallet_keys", address => {
-      // this.$store.state.walletInfo.keystorePath = keystorePath;
-      this.$store.state.walletInfo.address = address;
+      this.$store.commit('setAddress', address);
     });
   }
 };

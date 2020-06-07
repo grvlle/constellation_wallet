@@ -121,10 +121,18 @@ export default {
           self.overlay = false;
           self.$Progress.finish();
           self.$store.commit('setIsLoggedIn', true);
-          self.$router.push({
-            name: 'accept terms of service',
-            params: {message: "Terms of Service"}
-          });
+
+          if (self.$store.state.app.termsOfService) {
+            self.$router.push({
+              name: 'loading', 
+              params: {message: "Getting your $DAG Wallet ready..."}
+            });
+          } else {
+            self.$router.push({
+              name: 'accept terms of service',
+              params: {message: "Terms of Service"}
+            });
+          }
         } else {
           self.overlay = false;
           self.$Progress.fail();

@@ -35,7 +35,7 @@ export default {
           cancelButtonAriaLabel: "Close Application"
         }).then(result => {
           if (result.value) {
-            self.$store.state.app.termsOfService = true;
+            self.$store.commit('setTermsOfService', true);
             window.backend.WalletApplication.StoreTermsOfServiceStateDB(
               self.$store.state.app.termsOfService
             );

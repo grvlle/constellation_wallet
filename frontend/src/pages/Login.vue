@@ -76,23 +76,15 @@ export default {
     KeyPassword: "",
     overlay: false
   }),
+
   methods: {
     newWallet: function() {
-      this.resetData();
+      this.$store.dispatch('resetWalletState');
+      this.$store.dispatch('resetAppState');
       this.$router.push({
         name: 'new wallet', 
         params: {message: "Create a new Molly wallet. Please ensure that you backup all information provided below in a safe place."}
       });
-    },
-    resetData: function() {
-      this.alias = "";
-      this.KeyPassword = "";
-      this.keystorePassword = "";
-      this.$store.state.walletInfo.keystorePath = "";
-      this.$store.state.walletInfo.alias = "";
-      this.$store.state.walletInfo.keystorePassword = "";
-      this.$store.state.walletInfo.KeyPassword = "";
-      this.$store.state.displayLoginError = false;
     },
     login: function() {
       var self = this;

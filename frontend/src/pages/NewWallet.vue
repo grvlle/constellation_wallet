@@ -182,23 +182,9 @@ export default {
       }
     },
     cancel: function() {
-      this.resetData();
+      this.$store.dispatch('resetWalletState');
+      this.$store.dispatch('resetAppState');
       this.$router.go(-1);
-    },
-    resetData: function() {
-      this.alias = "";
-      this.aliasLength = 0;
-      this.aliasContainsFiveCharacters = false;
-      this.aliasValid = false;
-      this.KeyPassword = "";
-      this.KeyPasswordValid = false;
-      this.keystorePassword = "";
-      this.KeystorePasswordValid = false;
-      this.$store.state.walletInfo.keystorePath = "";
-      this.$store.state.walletInfo.alias = "";
-      this.$store.state.walletInfo.keystorePassword = "";
-      this.$store.state.walletInfo.KeyPassword = "";
-      this.$store.state.displayLoginError = false;
     },
     createWallet: function() {
       var self = this;

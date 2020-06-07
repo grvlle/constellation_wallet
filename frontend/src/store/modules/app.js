@@ -32,10 +32,10 @@ const mutations = {
         state.termsOfService = termsOfService;
     },
     setTxFinished(state, setTxFinished) {
-        state.termsOfService = setTxFinished;
+        state.txFinished = setTxFinished;
     },
     setIsLoggedIn(state, isLoggedIn) {
-        state.termsOfService = isLoggedIn;
+        state.isLoggedIn = isLoggedIn;
     },
     setErrorMessage(state, message) {
         state.errorMessage = message;

@@ -41,25 +41,28 @@ const mutations = {
     state.tokenAmount = amount;
   },
   setAvailableBalance(state, available) {
-    state.setAvailableBalance = available;
+    state.availableBalance = available;
   },
   setTotalBalance(state, total) {
-    state.setTotalBalance = total;
+    state.totalBalance = total;
   },
   setBlocks(state, blocks) {
     state.blocks = blocks;
   },
   setTotalValue(state, value) {
-    state.setTotalValue = value;
+    state.totalValue = value;
   },
   setAddress(state, address) {
     state.address = address;
   },
+  setAlias(state, alias) {
+    state.alias = alias;
+  },
   setKeystorePath(state, path) {
-    state.setKeystorePath = path;
+    state.keystorePath = path;
   },
   setSaveKeystorePath(state, path) {
-    state.setSaveKeystorePath = path;
+    state.saveKeystorePath = path;
   },
   setEmail(state, email) {
     state.email = email;

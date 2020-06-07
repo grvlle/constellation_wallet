@@ -12,7 +12,7 @@
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.counters.tokenCounter}} seconds
+            Updates in {{this.$store.state.dashboard.counters.tokenCounter}} seconds
           </div>
         </stats-card>
       </div>
@@ -27,7 +27,7 @@
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.counters.valueCounter}} seconds
+            Updates in {{this.$store.state.dashboard.counters.valueCounter}} seconds
           </div>
         </stats-card>
       </div>
@@ -45,7 +45,7 @@
           </div>
           <div class="stats" slot="footer">
             <i class="ti-reload"></i>
-            Updates in {{this.$store.state.counters.blockCounter}} seconds
+            Updates in {{this.$store.state.dashboard.counters.blockCounter}} seconds
           </div>
         </stats-card>
       </div>
@@ -80,11 +80,11 @@
       </div>
     </div>
     <div class="row">
-      <div v-if="this.$store.state.toggleDashboard.showNodesOnline" class="col-md-6 col-12 d-flex">
+      <div v-if="this.$store.state.dashboard.toggleDashboard.showNodesOnline" class="col-md-6 col-12 d-flex">
         <chart-card
           title="Nodes Online"
           sub-title="Since last 24 hours"
-          :chart-data="this.$store.state.chartData.nodesOnline"
+          :chart-data="this.$store.state.dashboard.chartData.nodesOnline"
           chart-type="Pie"
         >
           <div slot="legend">
@@ -94,16 +94,16 @@
           </div>
           <span slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds
+            Updates in {{this.$store.state.dashboard.counters.nodesOnlineCounter}} seconds
           </span>
         </chart-card>
       </div>
 
-      <div v-if="this.$store.state.toggleDashboard.showTransactions" class="col-md-6 col-12 d-flex">
+      <div v-if="this.$store.state.dashboard.toggleDashboard.showTransactions" class="col-md-6 col-12 d-flex">
         <chart-card
           title="Transactions"
           sub-title="Sent vs. received over the last year"
-          :chart-data="this.$store.state.chartData.transactions"
+          :chart-data="this.$store.state.dashboard.chartData.transactions"
           :chart-options="transactionChart.options"
           chart-type="Line"
         >
@@ -113,22 +113,22 @@
           </div>
           <span style="padding-top: 0.625em;" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds
+            Updates in {{this.$store.state.dashboard.counters.nodesOnlineCounter}} seconds
           </span>
         </chart-card>
       </div>
 
-      <div v-if="this.$store.state.toggleDashboard.showThroughput" class="col-md-6 col-12 d-flex">
+      <div v-if="this.$store.state.dashboard.toggleDashboard.showThroughput" class="col-md-6 col-12 d-flex">
         <chart-card
           title="Network Throughput (tps)"
           sub-title="24 Hours performance"
-          :chart-data="this.$store.state.chartData.throughput"
+          :chart-data="this.$store.state.dashboard.chartData.throughput"
           :chart-options="this.throughputChart.options"
           chart-type="Line"
         >
           <span slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.counters.nodesOnlineCounter}} seconds
+            Updates in {{this.$store.state.dashboard.counters.nodesOnlineCounter}} seconds
           </span>
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> $DAG Tokens

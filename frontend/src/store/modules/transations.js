@@ -7,12 +7,6 @@ const getDefaultState = () => {
 
 const state = getDefaultState()
 
-const getters = {
-    getTxCounter (state) {
-        return state.counters.nodesOnlineCounter
-    }
-}
-
 const actions = {
     resetTransactionsState({ commit }) {
         commit('resetState')
@@ -32,7 +26,7 @@ const mutations = {
 
 export default {
     state,
-    getters,
+    getters: {},
     actions,
     mutations
 }

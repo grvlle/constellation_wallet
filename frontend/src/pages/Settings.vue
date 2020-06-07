@@ -24,7 +24,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleNodesOnline"
-                    :value="this.$store.state.toggleDashboard.showNodesOnline"
+                    :value="this.$store.state.dashboard.toggleDashboard.showNodesOnline"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -38,7 +38,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleTransactions"
-                    :value="this.$store.state.toggleDashboard.showTransactions"
+                    :value="this.$store.state.dashboard.toggleDashboard.showTransactions"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -52,7 +52,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleThroughput"
-                    :value="this.$store.state.toggleDashboard.showThroughput"
+                    :value="this.$store.state.dashboard.toggleDashboard.showThroughput"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -278,15 +278,15 @@ export default {
       }
     },
     toggleNodesOnline: function() {
-      this.$store.state.toggleDashboard.showNodesOnline = !this.$store.state
+      this.$store.state.dashboard.toggleDashboard.showNodesOnline = !this.$store.state.dashboard
         .toggleDashboard.showNodesOnline;
     },
     toggleTransactions: function() {
-      this.$store.state.toggleDashboard.showTransactions = !this.$store.state
+      this.$store.state.dashboard.toggleDashboard.showTransactions = !this.$store.state.dashboard
         .toggleDashboard.showTransactions;
     },
     toggleThroughput: function() {
-      this.$store.state.toggleDashboard.showThroughput = !this.$store.state
+      this.$store.state.dashboard.toggleDashboard.showThroughput = !this.$store.state.dashboard
         .toggleDashboard.showThroughput;
     },
     toggleDarkMode: function() {

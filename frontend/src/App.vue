@@ -223,28 +223,28 @@ export default {
       this.$store.commit('setTotalValue', value);
     });
     window.wails.Events.On("token_counter", count => {
-      this.$store.state.counters.tokenCounter = count;
+      this.$store.state.dashboard.counters.tokenCounter = count;
     });
     window.wails.Events.On("value_counter", valueCount => {
-      this.$store.state.counters.valueCounter = valueCount;
+      this.$store.state.dashboard.counters.valueCounter = valueCount;
     });
     window.wails.Events.On("block_counter", blockCount => {
-      this.$store.state.counters.blockCounter = blockCount;
+      this.$store.state.dashboard.counters.blockCounter = blockCount;
     });
     window.wails.Events.On("chart_counter", pieChartCount => {
-      this.$store.state.counters.nodesOnlineCounter = pieChartCount;
+      this.$store.state.dashboard.counters.nodesOnlineCounter = pieChartCount;
     });
     window.wails.Events.On("node_stats", (series, labels) => {
-      this.$store.state.chartData.nodesOnline.series = series;
-      this.$store.state.chartData.nodesOnline.labels = labels;
+      this.$store.state.dashboard.chartData.nodesOnline.series = series;
+      this.$store.state.dashboard.chartData.nodesOnline.labels = labels;
     });
     window.wails.Events.On("tx_stats", (seriesOne, seriesTwo, labels) => {
-      this.$store.state.chartData.transactions.series = [seriesOne, seriesTwo];
-      this.$store.state.chartData.transactions.labels = labels;
+      this.$store.state.dashboard.chartData.transactions.series = [seriesOne, seriesTwo];
+      this.$store.state.dashboard.chartData.transactions.labels = labels;
     });
     window.wails.Events.On("network_stats", (seriesOne, seriesTwo, labels) => {
-      this.$store.state.chartData.throughput.series = [seriesOne, seriesTwo];
-      this.$store.state.chartData.throughput.labels = labels;
+      this.$store.state.dashboard.chartData.throughput.series = [seriesOne, seriesTwo];
+      this.$store.state.dashboard.chartData.throughput.labels = labels;
     });
 
     // Settings.vue sockets

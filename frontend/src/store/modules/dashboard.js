@@ -39,6 +39,39 @@ const mutations = {
     resetState(state) {
         Object.assign(state, getDefaultState())
     },
+    setTokenCounter(state, counter) {
+        state.counters.tokenCounter = counter
+    },
+    setValueCounter(state, counter) {
+        state.counters.valueCounter = counter
+    },
+    setBlockCounter(state, counter) {
+        state.counters.blockCounter = counter
+    },
+    setNodesOnlineCounter(state, counter) {
+        state.counters.nodesOnlineCounter = counter
+    },
+    setShowNodesOnline(state, val) {
+        state.toggleDashboard.showNodesOnline = val;
+    },
+    setShowTransactions(state, val) {
+        state.toggleDashboard.showTransactions = val;
+    },
+    setShowThroughput(state, val) {
+        state.toggleDashboard.showThroughput = val;
+    },
+    setNodeOnlineChart(state, obj) {
+        state.chartData.nodesOnline.series = obj.series;
+        state.chartData.nodesOnline.labels = obj.labels;
+    },
+    setTransactionStatsChart(state, obj) {
+        state.chartData.transactions.series = [obj.seriesOne, obj.seriesTwo];
+        state.chartData.transactions.labels = obj.labels;
+    },
+    setNetworkStatsChart(state, obj) {
+        state.chartData.throughput.series = [obj.seriesOne, obj.seriesTwo];
+        state.chartData.throughput.labels = obj.labels;
+    }
 }
 
 export default {

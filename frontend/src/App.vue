@@ -223,28 +223,25 @@ export default {
       this.$store.commit('setTotalValue', value);
     });
     window.wails.Events.On("token_counter", count => {
-      this.$store.state.dashboard.counters.tokenCounter = count;
+      this.$store.commit('setTokenCounter', count);
     });
     window.wails.Events.On("value_counter", valueCount => {
-      this.$store.state.dashboard.counters.valueCounter = valueCount;
+      this.$store.commit('setValueCounter', valueCount);
     });
     window.wails.Events.On("block_counter", blockCount => {
-      this.$store.state.dashboard.counters.blockCounter = blockCount;
+      this.$store.commit('setBlockCounter', blockCount);
     });
     window.wails.Events.On("chart_counter", pieChartCount => {
-      this.$store.state.dashboard.counters.nodesOnlineCounter = pieChartCount;
+      this.$store.commit('setNodesOnlineCounter', pieChartCount);
     });
     window.wails.Events.On("node_stats", (series, labels) => {
-      this.$store.state.dashboard.chartData.nodesOnline.series = series;
-      this.$store.state.dashboard.chartData.nodesOnline.labels = labels;
+      this.$store.commit({type: 'setNodeOnlineChart', series, labels});
     });
     window.wails.Events.On("tx_stats", (seriesOne, seriesTwo, labels) => {
-      this.$store.state.dashboard.chartData.transactions.series = [seriesOne, seriesTwo];
-      this.$store.state.dashboard.chartData.transactions.labels = labels;
+      this.$store.commit({type: 'setTransactionStatsChart', seriesOne, seriesTwo, labels});
     });
     window.wails.Events.On("network_stats", (seriesOne, seriesTwo, labels) => {
-      this.$store.state.dashboard.chartData.throughput.series = [seriesOne, seriesTwo];
-      this.$store.state.dashboard.chartData.throughput.labels = labels;
+      this.$store.commit({type: 'setNetworkStatsChart', seriesOne, seriesTwo, labels});
     });
 
     // Settings.vue sockets

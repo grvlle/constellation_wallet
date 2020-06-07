@@ -278,16 +278,13 @@ export default {
       }
     },
     toggleNodesOnline: function() {
-      this.$store.state.dashboard.toggleDashboard.showNodesOnline = !this.$store.state.dashboard
-        .toggleDashboard.showNodesOnline;
+      this.$store.commit('setShowNodesOnline', !this.$store.state.dashboard.toggleDashboard.showNodesOnline);
     },
     toggleTransactions: function() {
-      this.$store.state.dashboard.toggleDashboard.showTransactions = !this.$store.state.dashboard
-        .toggleDashboard.showTransactions;
+      this.$store.commit('setShowTransactions', !this.$store.state.dashboard.toggleDashboard.showTransactions);
     },
     toggleThroughput: function() {
-      this.$store.state.dashboard.toggleDashboard.showThroughput = !this.$store.state.dashboard
-        .toggleDashboard.showThroughput;
+      this.$store.commit('setShowThroughput', !this.$store.state.dashboard.toggleDashboard.showThroughput);
     },
     toggleDarkMode: function() {
       this.$store.commit('setDarkMode', !this.$store.state.walletInfo.darkMode);

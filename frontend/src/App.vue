@@ -180,11 +180,6 @@ export default {
       }, 10000);
     });
 
-    window.wails.Events.On("wallet_init", (termsOfService, currency) => {
-      this.$store.commit('setTermsOfService', termsOfService);
-      this.$store.commit('setCurrency', currency);
-    });
-
     // Transactions.vue sockets
     window.wails.Events.On("update_tx_history", txHistoryFull => {
       if (Object.entries(txHistoryFull).length != 0) {

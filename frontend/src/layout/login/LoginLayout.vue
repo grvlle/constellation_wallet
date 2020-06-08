@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="login-bg vertical-center" v-bind:style="{ backgroundImage: 'url(' + this.bgImg + ')' }" >
+  <div id="app" class="login-bg vertical-center" v-bind:style="{ backgroundImage: 'url(' + themeBG + ')' }" >
     <div class="container">
       <div class="row">
         <div class="col mx-auto text-center header">
@@ -33,12 +33,8 @@ import BrightBG from '../../assets/img/nodes2.jpg';
 import DarkBG from '../../assets/img/nodes2_dark.jpg';
 export default {
   data: () => ({
-    bgImg: DarkBG,
     transitionName: ""
   }),
-  mounted() {
-    this.themeBG()
-  },
   watch: {
     '$route' (from, to) {
       if (
@@ -52,12 +48,12 @@ export default {
       }
     }
   },
-  methods: {
+  computed: {
     themeBG: function () {
       if (this.$store.state.walletInfo.darkMode) {
-          this.bgImg = DarkBG;
+          return DarkBG;
         } else {
-          this.bgImg = BrightBG;
+          return BrightBG;
         }
     },
   }

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import Wallet from './modules/wallet';
 import App from './modules/app';
-import Transactions from './modules/transations';
+import Transaction from './modules/transaction';
 import Dashboard from './modules/dashboard';
 
 Vue.use(Vuex);
@@ -11,7 +11,7 @@ export const store = new Vuex.Store({
     modules: {
         app: App,
         walletInfo: Wallet,
-        txInfo: Transactions,
+        txInfo: Transaction,
         dashboard: Dashboard
     },
     getters: {

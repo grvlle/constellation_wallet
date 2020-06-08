@@ -19,9 +19,12 @@ const mutations = {
     updateTxHistory(state, tx) {
         state.txInfo.txHistory.unshift(tx)
     },
-    updateFullTxHistory(state, txHistoryUpdated) {
-        state.txInfo.txHistory = txHistoryUpdated
+    updateFullTxHistory(state, obj) {
+        state.txInfo.txHistory = obj.txHistoryFull
     },
+    updateTxStatus(state, status) {
+        state.txInfo.txStatus = status
+    }
 }
 
 export default {

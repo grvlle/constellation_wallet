@@ -187,7 +187,7 @@ export default {
 
     // Transactions.vue sockets
     window.wails.Events.On("update_tx_history", txHistoryFull => {
-      this.$store.commit('updateFullTxHistory', txHistoryFull);
+      this.$store.commit({type: 'updateFullTxHistory', txHistoryFull});
     });
     window.wails.Events.On("tx_in_transit", txFinished => {
       this.$store.commit('setTxFinished', txFinished);
@@ -196,7 +196,7 @@ export default {
       this.$store.commit("updateTxHistory", txObject);
     });
     window.wails.Events.On("tx_pending", txStatus => {
-      this.$store.state.txInfo.txStatus = txStatus;
+      this.$store.commit("updateTxStatus", txStatus);
     });
 
     window.wails.Events.On("downloading", (filename, size) => {

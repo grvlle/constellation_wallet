@@ -187,7 +187,9 @@ export default {
 
     // Transactions.vue sockets
     window.wails.Events.On("update_tx_history", txHistoryFull => {
-      this.$store.commit({type: 'updateFullTxHistory', txHistoryFull});
+      if (Object.entries(txHistoryFull).length != 0) {
+        this.$store.commit({type: 'updateFullTxHistory', txHistoryFull});
+      }
     });
     window.wails.Events.On("tx_in_transit", txFinished => {
       this.$store.commit('setTxFinished', txFinished);
@@ -235,13 +237,24 @@ export default {
       this.$store.commit('setNodesOnlineCounter', pieChartCount);
     });
     window.wails.Events.On("node_stats", (series, labels) => {
-      this.$store.commit({type: 'setNodeOnlineChart', series, labels});
+      if (Object.entries(series).length != 0 && 
+          Object.entries(labels).length != 0) {
+        this.$store.commit({type: 'setNodeOnlineChart', series, labels});
+      }
     });
     window.wails.Events.On("tx_stats", (seriesOne, seriesTwo, labels) => {
-      this.$store.commit({type: 'setTransactionStatsChart', seriesOne, seriesTwo, labels});
+      if (Object.entries(seriesOne).length != 0 && 
+          Object.entries(seriesTwo).length != 0 && 
+          Object.entries(labels).length != 0) {
+        this.$store.commit({type: 'setTransactionStatsChart', seriesOne, seriesTwo, labels});
+      }
     });
     window.wails.Events.On("network_stats", (seriesOne, seriesTwo, labels) => {
-      this.$store.commit({type: 'setNetworkStatsChart', seriesOne, seriesTwo, labels});
+      if (Object.entries(seriesOne).length != 0 && 
+          Object.entries(seriesTwo).length != 0 && 
+          Object.entries(labels).length != 0) {
+        this.$store.commit({type: 'setNetworkStatsChart', seriesOne, seriesTwo, labels});
+      }
     });
 
     // Settings.vue sockets

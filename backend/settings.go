@@ -104,29 +104,32 @@ func (a *WalletApplication) SetUserTheme() bool {
 }
 
 // StoreDarkModeStateDB stores the darkmode state in the user DB
-func (a *WalletApplication) StoreDarkModeStateDB(darkMode bool) {
+func (a *WalletApplication) StoreDarkModeStateDB(darkMode bool) bool {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("DarkMode", darkMode).Error; err != nil {
 		a.log.Errorln("Unable to store darkmode state. Reason: ", err)
 		a.sendError("Unable to store darkmode state persistently. Reason: ", err)
+		return false
 	}
+	return true
 }
 
 // StoreCurrencyStateDB stores the currency state in the user DB
-func (a *WalletApplication) StoreCurrencyStateDB(currency string) {
+func (a *WalletApplication) StoreCurrencyStateDB(currency string) bool {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("Currency", currency).Error; err != nil {
 		a.log.Errorln("Unable to store currency state. Reason: ", err)
 		a.sendError("Unable to store currency state persistently. Reason: ", err)
-	} else {
-		totalCurrencyBalance := 0.0
-		if a.wallet.Currency == "USD" {
-			totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD
-		} else if a.wallet.Currency == "EUR" {
-			totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.EUR
-		} else if a.wallet.Currency == "BTC" {
-			totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.BTC
-		}
-		a.RT.Events.Emit("totalValue", a.wallet.Currency, totalCurrencyBalance)
+		return false
 	}
+	totalCurrencyBalance := 0.0
+	if a.wallet.Currency == "USD" {
+		totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD
+	} else if a.wallet.Currency == "EUR" {
+		totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.EUR
+	} else if a.wallet.Currency == "BTC" {
+		totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.BTC
+	}
+	a.RT.Events.Emit("totalValue", a.wallet.Currency, totalCurrencyBalance)
+	return true
 }
 
 // UpdateMolly is called from the frontend and triggers the application update

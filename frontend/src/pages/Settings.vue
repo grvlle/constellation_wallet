@@ -287,11 +287,20 @@ export default {
       this.$store.commit('setShowThroughput', !this.$store.state.dashboard.toggleDashboard.showThroughput);
     },
     toggleDarkMode: function() {
-      this.$store.commit('setDarkMode', !this.$store.state.walletInfo.darkMode);
-      window.backend.WalletApplication.StoreDarkModeStateDB(this.$store.state.walletInfo.darkMode);
+      window.backend.WalletApplication.StoreDarkModeStateDB(!this.$store.state.walletInfo.darkMode)
+      .then(result => {
+        if (result) {
+          this.$store.commit('setDarkMode', !this.$store.state.walletInfo.darkMode);
+        }
+      });
     },
     setCurrency: function(value) {
-      window.backend.WalletApplication.StoreCurrencyStateDB(value);
+      window.backend.WalletApplication.StoreCurrencyStateDB(value)
+      .then(result => {
+        if (result) {
+          this.$store.commit('setCurrency', value);
+        }
+      });
     },
     importKeys: function() {
       window.backend.WalletApplication.ImportKeys();

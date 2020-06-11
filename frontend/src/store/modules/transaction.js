@@ -17,13 +17,13 @@ const mutations = {
         Object.assign(state, getDefaultState())
     },
     updateTxHistory(state, tx) {
-        state.txInfo.txHistory.unshift(tx)
+        state.txHistory.unshift(tx)
     },
     updateFullTxHistory(state, obj) {
-        state.txInfo.txHistory = obj.txHistoryFull
+      state.txHistory = obj.txHistoryFull
     },
     updateTxStatus(state, status) {
-        state.txInfo.txStatus = status
+        state.txStatus = status
     }
 }
 

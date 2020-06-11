@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col mx-auto text-center header">
           <div>
-            <img class="img-fluid" v-if="this.$store.state.walletInfo.darkMode" src="~@/assets/img/Constellation-Logo-White.png" style="max-height: 5.8rem;" />
+            <img class="img-fluid" v-if="darkMode" src="~@/assets/img/Constellation-Logo-White.png" style="max-height: 5.8rem;" />
             <img class="img-fluid" v-else src="~@/assets/img/Constellation-Logo-Black.png" style="max-height: 5.8rem;" />
             <p v-if="this.$route.params.message">{{this.$route.params.message}}</p>
             <p v-else>Downloading $DAG wallet dependencies...</p>
@@ -50,12 +50,19 @@ export default {
   },
   computed: {
     themeBG: function () {
-      if (this.$store.state.walletInfo.darkMode) {
+      if (this.$store.state.walletInfo.darkMode || this.$route.params.darkMode) {
           return DarkBG;
         } else {
           return BrightBG;
         }
     },
+    darkMode: function () {
+      if (this.$store.state.walletInfo.darkMode || this.$route.params.darkMode) {
+        return true
+      } else {
+        return false
+      }
+    }
   }
 };
 </script>

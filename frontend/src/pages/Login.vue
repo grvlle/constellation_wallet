@@ -95,7 +95,9 @@ export default {
       this.$store.dispatch('resetAppState');
       this.$router.push({
         name: 'new wallet', 
-        params: {message: "Create a new Molly wallet. Please ensure that you backup all information provided below in a safe place."}
+        params: {
+          message: "Create a new Molly wallet. Please ensure that you backup all information provided below in a safe place.",
+          darkMode: this.$route.params.darkMode}
       });
     },
     login: function() {

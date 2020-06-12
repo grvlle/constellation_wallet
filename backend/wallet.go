@@ -19,6 +19,10 @@ import (
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
+	a.wallet = models.Wallet{
+		KeyStorePath: keystorePath,
+		WalletAlias:  alias,
+		Currency:     "USD"}
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
@@ -43,11 +47,6 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 	os.Setenv("CL_STOREPASS", keystorePassword)
 	os.Setenv("CL_KEYPASS", keyPassword)
-
-	a.wallet = models.Wallet{
-		KeyStorePath: keystorePath,
-		WalletAlias:  alias,
-		Currency:     "USD"}
 
 	a.wallet.Address = a.GenerateDAGAddress()
 	a.KeyStoreAccess = a.WalletKeystoreAccess()
@@ -228,7 +227,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 			a.FirstTX = true
 			a.NewUser = true
 
-			a.initNewWallet()
+			a.initNewWallet(a.wallet.KeyStorePath)
 
 			return true
 		}
@@ -241,7 +240,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 
 // initWallet initializes a new wallet. This is called from login.vue
 // only when a new wallet is created.
-func (a *WalletApplication) initNewWallet() {
+func (a *WalletApplication) initNewWallet(keystorePath string) {
 
 	a.StoreImagePathInDB("faces/face-0.jpg")
 
@@ -257,8 +256,6 @@ func (a *WalletApplication) initNewWallet() {
 // initExistingWallet queries the database for the user wallet and pushes
 // the information to the front end components.
 func (a *WalletApplication) initWallet(keystorePath string) error {
-
-	a.paths.EncPrivKeyFile = keystorePath
 
 	if a.NewUser {
 		err := a.initTXFromBlockExplorer()
@@ -456,7 +453,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 // PassKeysToFrontend emits the keys to the settings.Vue component on a
 // 5 second interval
 func (a *WalletApplication) passKeysToFrontend() {
-	if a.paths.EncPrivKeyFile != "" && a.wallet.Address != "" {
+	if a.wallet.KeyStorePath != "" && a.wallet.Address != "" {
 		go func() {
 			for {
 				a.RT.Events.Emit("wallet_keys", a.wallet.Address)
@@ -470,10 +467,7 @@ func (a *WalletApplication) passKeysToFrontend() {
 }
 
 func (a *WalletApplication) passwordsProvided(keystorePassword, keyPassword, alias string) bool {
-	if a.paths.EncPrivKeyFile == "" {
-		a.LoginError("Please provide a valid path to your KeyStore file.")
-		return false
-	} else if keystorePassword == "" {
+	if keystorePassword == "" {
 		a.LoginError("Please provide a Key Store password.")
 		return false
 	} else if keyPassword == "" {

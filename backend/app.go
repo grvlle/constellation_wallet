@@ -43,17 +43,16 @@ type WalletApplication struct {
 		}
 	}
 	paths struct {
-		HomeDir        string
-		DAGDir         string
-		TMPDir         string
-		EncryptedDir   string
-		EncPrivKeyFile string
-		EmptyTXFile    string
-		PrevTXFile     string
-		LastTXFile     string
-		AddressFile    string
-		ImageDir       string
-		Java           string
+		HomeDir      string
+		DAGDir       string
+		TMPDir       string
+		EncryptedDir string
+		EmptyTXFile  string
+		PrevTXFile   string
+		LastTXFile   string
+		AddressFile  string
+		ImageDir     string
+		Java         string
 	}
 	KeyStoreAccess      bool
 	TransactionFinished bool
@@ -146,7 +145,6 @@ func (a *WalletApplication) initDirectoryStructure() error {
 	a.paths.HomeDir = user.HomeDir             // Home directory of the user
 	a.paths.DAGDir = a.paths.HomeDir + "/.dag" // DAG directory for configuration files and wallet specific data
 	a.paths.TMPDir = a.paths.DAGDir + "/tmp"
-	a.paths.EncPrivKeyFile = a.paths.EncryptedDir
 	a.paths.LastTXFile = a.paths.TMPDir + "/last_tx"
 	a.paths.PrevTXFile = a.paths.TMPDir + "/prev_tx"
 	a.paths.EmptyTXFile = a.paths.TMPDir + "/genesis_tx"

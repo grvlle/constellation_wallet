@@ -24,7 +24,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleNodesOnline"
-                    :value="this.$store.state.toggleDashboard.showNodesOnline"
+                    :value="this.$store.state.dashboard.toggleDashboard.showNodesOnline"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -38,7 +38,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleTransactions"
-                    :value="this.$store.state.toggleDashboard.showTransactions"
+                    :value="this.$store.state.dashboard.toggleDashboard.showTransactions"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -52,7 +52,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleThroughput"
-                    :value="this.$store.state.toggleDashboard.showThroughput"
+                    :value="this.$store.state.dashboard.toggleDashboard.showThroughput"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -264,7 +264,7 @@ export default {
           })
           .then(result => {
             if (result.value) {
-              this.$store.state.walletInfo.email = this.newLabel;
+              self.$store.commit('setEmail', this.newLabel);
               window.backend.WalletApplication.StoreWalletLabelInDB(
                 this.newLabel
               );
@@ -278,23 +278,29 @@ export default {
       }
     },
     toggleNodesOnline: function() {
-      this.$store.state.toggleDashboard.showNodesOnline = !this.$store.state
-        .toggleDashboard.showNodesOnline;
+      this.$store.commit('setShowNodesOnline', !this.$store.state.dashboard.toggleDashboard.showNodesOnline);
     },
     toggleTransactions: function() {
-      this.$store.state.toggleDashboard.showTransactions = !this.$store.state
-        .toggleDashboard.showTransactions;
+      this.$store.commit('setShowTransactions', !this.$store.state.dashboard.toggleDashboard.showTransactions);
     },
     toggleThroughput: function() {
-      this.$store.state.toggleDashboard.showThroughput = !this.$store.state
-        .toggleDashboard.showThroughput;
+      this.$store.commit('setShowThroughput', !this.$store.state.dashboard.toggleDashboard.showThroughput);
     },
     toggleDarkMode: function() {
-      this.$store.state.walletInfo.darkMode = !this.$store.state.walletInfo.darkMode;
-      window.backend.WalletApplication.StoreDarkModeStateDB(this.$store.state.walletInfo.darkMode);
+      window.backend.WalletApplication.StoreDarkModeStateDB(!this.$store.state.walletInfo.darkMode)
+      .then(result => {
+        if (result) {
+          this.$store.commit('setDarkMode', !this.$store.state.walletInfo.darkMode);
+        }
+      });
     },
     setCurrency: function(value) {
-      window.backend.WalletApplication.StoreCurrencyStateDB(value);
+      window.backend.WalletApplication.StoreCurrencyStateDB(value)
+      .then(result => {
+        if (result) {
+          this.$store.commit('setCurrency', value);
+        }
+      });
     },
     importKeys: function() {
       window.backend.WalletApplication.ImportKeys();
@@ -333,7 +339,7 @@ export default {
             })
             .then(result => {
               if (result.value) {
-                this.$store.state.walletInfo.imgPath = path;
+                this.$store.commit('setImgPath', path);
                 swalPopup.fire({
                   title: "Success!",
                   text: "You have uploaded a new wallet picture",

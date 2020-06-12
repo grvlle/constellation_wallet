@@ -8,19 +8,19 @@
               <div class="input-box">
                 <div>
                   <label class="control-label">Select your private key (key.p12)</label>
-                  <file-selector
-                    v-model="this.$store.state.walletInfo.keystorePath"
-                    :placeholder="this.$store.state.walletInfo.keystorePath"
-                    action="SelectFile"
+                  <file-selector 
+                    v-model="keystorePath" 
+                    :placeholder="keystorePath" 
+                    action="SelectFile" 
                   />
                 </div>
                 <div>
-                  <fg-input
-                    style="margin-bottom: 0.125em"
-                    type="text"
-                    v-model="alias"
-                    :placeholder="this.$store.state.walletInfo.alias"
+                  <fg-input 
+                    style="margin-bottom: 0.125em" 
+                    type="text" 
                     label="Key Alias"
+                    v-model="alias" 
+                    :placeholder="alias"
                   />
                 </div>
                 <div>
@@ -42,11 +42,7 @@
                 <div class="container">
                   <div class="row">
                     <div class="col">
-                      <p-button
-                        type="primary"
-                        block
-                        @click.native="login()"
-                      >
+                      <p-button type="primary" block @click.native="login()">
                         <span style="display: block;"> LOGIN</span>
                       </p-button>
                     </div>
@@ -71,28 +67,38 @@
 export default {
   name: "login-screen",
   data: () => ({
-    alias: "",
     keystorePassword: "",
     KeyPassword: "",
     overlay: false
   }),
+  computed: {
+    keystorePath: {
+      get () {
+        return this.$store.state.walletInfo.keystorePath
+      },
+      set (value) {
+        this.$store.commit('setKeystorePath', value)
+      }
+    },
+    alias: {
+      get () {
+        return this.$store.state.walletInfo.alias
+      },
+      set (value) {
+        this.$store.commit('setAlias', value)
+      }
+    }
+  },
   methods: {
     newWallet: function() {
-      this.resetData();
+      this.$store.dispatch('resetWalletState');
+      this.$store.dispatch('resetAppState');
       this.$router.push({
         name: 'new wallet', 
-        params: {message: "Create a new Molly wallet. Please ensure that you backup all information provided below in a safe place."}
+        params: {
+          message: "Create a new Molly wallet. Please ensure that you backup all information provided below in a safe place.",
+          darkMode: this.$route.params.darkMode}
       });
-    },
-    resetData: function() {
-      this.alias = "";
-      this.KeyPassword = "";
-      this.keystorePassword = "";
-      this.$store.state.walletInfo.keystorePath = "";
-      this.$store.state.walletInfo.alias = "";
-      this.$store.state.walletInfo.keystorePassword = "";
-      this.$store.state.walletInfo.KeyPassword = "";
-      this.$store.state.displayLoginError = false;
     },
     login: function() {
       var self = this;
@@ -106,21 +112,33 @@ export default {
       ).then(result => {
         if (result) {
           window.backend.WalletApplication.SetUserTheme().then(
-            darkMode => (self.$store.state.walletInfo.darkMode = darkMode)
+            darkMode => (self.$store.commit('setDarkMode', darkMode))
           )
           window.backend.WalletApplication.SetWalletTag().then(
-            walletTag => (self.$store.state.walletInfo.email = walletTag)
+            walletTag => (self.$store.commit('setEmail', walletTag))
           );
           window.backend.WalletApplication.SetImagePath().then(
-            imagePath => (self.$store.state.walletInfo.imgPath = imagePath)
+            imagePath => (self.$store.commit('setImgPath', imagePath))
           );
           self.overlay = false;
           self.$Progress.finish();
-          self.$store.state.app.isLoggedIn = true;
-          self.$router.push({
-            name: 'accept terms of service',
-            params: {message: "Terms of Service"}
-          });
+          self.$store.commit('setIsLoggedIn', true);
+
+          window.backend.WalletApplication.CheckTermsOfService()
+          .then (result => {
+            self.$store.commit('setTermsOfService', result)
+            if (result) {
+              self.$router.push({
+                name: 'loading', 
+                params: {message: "Getting your $DAG Wallet ready..."}
+              });
+            } else {
+              self.$router.push({
+                name: 'accept terms of service',
+                params: {message: "Terms of Service"}
+              });
+            }
+          })
         } else {
           self.overlay = false;
           self.$Progress.fail();

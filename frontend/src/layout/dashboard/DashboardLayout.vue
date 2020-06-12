@@ -66,27 +66,6 @@ export default {
     MobileMenu
   },
   methods: {
-    logout() {
-      window.backend.WalletApplication.LogOut().then(txFinishedState => {
-        if (txFinishedState) {
-          this.$store.state.txInfo.txHistory = [];
-          this.$store.state.walletInfo.keystorePath = "";
-          this.$store.state.walletInfo.alias = "";
-          this.$store.state.walletInfo.keystorePassword = "";
-          this.$store.state.walletInfo.KeyPassword = "";
-          this.$store.state.walletInfo.email = "";
-          this.$store.state.app.isLoggedIn = false;
-          this.$store.state.walletInfo.currency = "";
-          this.$router.push({
-            name: 'login', 
-            params: {message: "Please enter your credentials below to access your Molly Wallet."}
-          });
-          return;
-        }
-      }),
-        (this.random = "1");
-      return;
-    },
     notifyVue2(verticalAlign, horizontalAlign) {
       setTimeout(() => {
         this.$notifications.clear();

@@ -79,7 +79,7 @@ export default {
   },
   computed: {
     counter() {
-      return this.$store.state.counters.nodesOnlineCounter;
+      return this.$store.state.dashboard.counters.nodesOnlineCounter;
     },
     UserRunningOnWindows() {
       return this.$store.state.OS.windows;

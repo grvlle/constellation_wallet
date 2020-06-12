@@ -299,11 +299,13 @@ func (a *WalletApplication) pricePoller() {
 }
 
 // StoreTermsOfServiceStateDB stores the Terms of Service state in the user DB
-func (a *WalletApplication) StoreTermsOfServiceStateDB(termsOfService bool) {
+func (a *WalletApplication) StoreTermsOfServiceStateDB(termsOfService bool) bool {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("TermsOfService", termsOfService).Error; err != nil {
 		a.log.Errorln("Unable to store termsOfService state. Reason: ", err)
 		a.sendError("Unable to store termsOfService state persistently. Reason: ", err)
+		return false
 	}
+	return true
 }
 
 type tokenPriceAlt struct {

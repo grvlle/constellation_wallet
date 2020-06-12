@@ -44,28 +44,27 @@
             <div class="col mx-auto login-box">
               <div class="input-box">
                 <div>
-                  <label
-                    class="control-label"
-                  >Select a directory to store your private key (key.p12) in</label>
-                  <file-selector
-                    v-model="this.$store.state.walletInfo.saveKeystorePath"
-                    :placeholder="this.$store.state.walletInfo.saveKeystorePath"
+                  <label class="control-label">
+                    Select a directory to store your private key (key.p12) in
+                  </label>
+                  <file-selector 
+                    v-model="saveKeystorePath" 
+                    :placeholder="saveKeystorePath" 
                     action="SelectSaveFile"
                   />
                 </div>
                 <div>
-                  <fg-input
-                    style="margin-bottom: 0.125em"
-                    type="text"
-                    v-model="alias"
-                    @input.native="checkAlias(alias)"
-                    :placeholder="this.$store.state.walletInfo.alias"
+                  <fg-input 
+                    style="margin-bottom: 0.125em" 
+                    type="text" 
                     label="Key Alias"
+                    v-model="alias" 
+                    :placeholder="alias"
                   />
                   <div class="validate" v-if="!this.aliasValid">
-                    <p
-                      v-if="!this.aliasContainsFiveCharacters"
-                    >Alias has to be atleast 5 characters long.</p>
+                    <p v-if="!this.aliasContainsFiveCharacters">
+                      Alias has to be atleast 5 characters long.
+                    </p>
                   </div>
                   <div class="validate" v-else />
                 </div>
@@ -142,7 +141,6 @@ export default {
   name: "new-wallet-screen",
   data: () => ({
     newWalletLabel: "",
-    alias: "",
     aliasValid: false,
     aliasLength: 0,
     aliasContainsFiveCharacters: false,
@@ -158,7 +156,6 @@ export default {
         this.aliasValid &&
         this.KeyPasswordValid &&
         this.KeystorePasswordValid &&
-        this.alias !== "" &&
         this.keystorePassword !== "" &&
         this.KeyPassword !== "" &&
         !this.overlay
@@ -167,45 +164,43 @@ export default {
       } else {
         return false;
       }
+    },
+    saveKeystorePath: {
+      get () {
+        return this.$store.state.walletInfo.saveKeystorePath
+      },
+      set (value) {
+        this.$store.commit('setSaveKeystorePath', value)
+      }
+    },
+    alias: {
+      get () {
+        return this.$store.state.walletInfo.alias
+      },
+      set (value) {
+        if (value.length >= 5) {
+          this.aliasContainsFiveCharacters = true;
+          this.aliasValid = true;
+        } else {
+          this.aliasContainsFiveCharacters = false;
+          this.aliasValid = false;
+        }
+        this.$store.commit('setAlias', value)
+      }
     }
   }, 
   methods: {
-    checkAlias: function() {
-      this.aliasLength = this.alias.length;
-
-      if (this.aliasLength >= 5) {
-        this.aliasContainsFiveCharacters = true;
-        this.aliasValid = true;
-      } else {
-        this.aliasContainsFiveCharacters = false;
-        this.aliasValid = false;
-      }
-    },
     cancel: function() {
-      this.resetData();
+      this.$store.dispatch('resetWalletState');
+      this.$store.dispatch('resetAppState');
       this.$router.go(-1);
-    },
-    resetData: function() {
-      this.alias = "";
-      this.aliasLength = 0;
-      this.aliasContainsFiveCharacters = false;
-      this.aliasValid = false;
-      this.KeyPassword = "";
-      this.KeyPasswordValid = false;
-      this.keystorePassword = "";
-      this.KeystorePasswordValid = false;
-      this.$store.state.walletInfo.keystorePath = "";
-      this.$store.state.walletInfo.alias = "";
-      this.$store.state.walletInfo.keystorePassword = "";
-      this.$store.state.walletInfo.KeyPassword = "";
-      this.$store.state.displayLoginError = false;
     },
     createWallet: function() {
       var self = this;
       self.$Progress.start();
       self.overlay = true;
       if (self.newWalletLabel !== "") {
-        self.$store.state.walletInfo.email = self.newWalletLabel;
+        self.$store.commit('setEmail', self.newWalletLabel);
         window.backend.WalletApplication.StoreWalletLabelInDB(
           self.newWalletLabel
         );
@@ -225,7 +220,7 @@ export default {
           ).then(loggedIn => {
             if (loggedIn) {
               self.overlay = false;
-              self.$store.state.app.isLoggedIn = true;
+              self.$store.commit('setIsLoggedIn', loggedIn);
               self.$router.push({
                 name: 'accept terms of service',
                 params: {message: "Terms of Service"}

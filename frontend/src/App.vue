@@ -61,20 +61,7 @@ export default {
         if (this.$store.state.idleVue.isIdle) {
           window.backend.WalletApplication.LogOut().then(txFinishedState => {
             if (txFinishedState) {
-              this.$store.state.txInfo.txHistory = [];
-              this.$store.state.walletInfo.keystorePath = "";
-              this.$store.state.walletInfo.alias = "";
-              this.$store.state.walletInfo.keystorePassword = "";
-              this.$store.state.walletInfo.KeyPassword = "";
-              this.$store.state.walletInfo.email = "";
-              this.$store.state.walletInfo.totalValue = 0;
-              this.$store.state.walletInfo.tokenAmount = 0;
-              this.$store.state.app.isLoggedIn = false;
-              this.$store.state.walletInfo.currency = "";
-              this.$router.push({
-                name: 'login', 
-                params: {message: "Please enter your credentials below to access your Molly Wallet."}
-              });
+              this.logout();
             }
           }), (this.random = "1");
         }
@@ -84,7 +71,7 @@ export default {
   mounted() {
     // Backend Errors
     window.wails.Events.On("error_handling", (m, err) => {
-      this.$store.state.errorMessage = m + err;
+      this.$store.commit('setErrorMessage', m + err);
       this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
@@ -103,7 +90,7 @@ export default {
     });
 
     window.wails.Events.On("warning", m => {
-      this.$store.state.warningMessage = m;
+      this.$store.commit('setWarningMessage', m);
       this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
@@ -122,7 +109,7 @@ export default {
     });
 
     window.wails.Events.On("success", m => {
-      this.$store.state.successMessage = m;
+      this.$store.commit('setSuccessMessage', m);
       this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
@@ -141,7 +128,7 @@ export default {
     });
 
     window.wails.Events.On("new_release", m => {
-      this.$store.state.newRelease = m;
+      this.$store.commit('setNewRelease', m);
       var self = this;
       this.$notifications.clear();
       this.$notify({
@@ -186,38 +173,34 @@ export default {
     });
 
     window.wails.Events.On("login_error", (m, err) => {
-      this.$store.state.loginErrorMsg = m;
-      this.$store.state.displayLoginError = err;
+      this.$store.commit('setLoginErrorMessage', m);
+      this.$store.commit('setDisplayLoginError', err);
       setTimeout(() => {
-        this.$store.state.displayLoginError = false;
+        this.$store.commit('setDisplayLoginError', false);
       }, 10000);
-    });
-
-    window.wails.Events.On("wallet_init", (termsOfService, currency) => {
-      this.$store.state.app.termsOfService = termsOfService;
-      this.$store.state.walletInfo.currency = currency;
     });
 
     // Transactions.vue sockets
     window.wails.Events.On("update_tx_history", txHistoryFull => {
-      this.$store.state.txInfo.txHistory = txHistoryFull;
-      //this.$store.commit('updateFullTxHistory', txHistoryFull)
+      if (Object.entries(txHistoryFull).length != 0) {
+        this.$store.commit({type: 'updateFullTxHistory', txHistoryFull});
+      }
     });
     window.wails.Events.On("tx_in_transit", txFinished => {
-      this.$store.state.app.txFinished = txFinished;
+      this.$store.commit('setTxFinished', txFinished);
     });
     window.wails.Events.On("new_transaction", txObject => {
       this.$store.commit("updateTxHistory", txObject);
     });
     window.wails.Events.On("tx_pending", txStatus => {
-      this.$store.state.txInfo.txStatus = txStatus;
+      this.$store.commit("updateTxStatus", txStatus);
     });
 
     window.wails.Events.On("downloading", (filename, size) => {
-      if (this.$store.state.downloading.filename !== filename) {
-        this.$store.state.downloading.filename = filename;
+      if (this.$store.state.app.downloading.filename !== filename) {
+        this.$store.commit('setDownloadFileName', filename);
       }
-      this.$store.state.downloading.size = size;
+      this.$store.commit('setDownloadFileSize', size);
     });
 
     // Login.vue sockets
@@ -225,46 +208,53 @@ export default {
 
     // Dashboard.vue sockets
     window.wails.Events.On("token", (amount, available, total) => {
-      this.$store.state.walletInfo.tokenAmount = amount;
-      this.$store.state.walletInfo.availableBalance = available;
-      this.$store.state.walletInfo.totalBalance = total;
+      this.$store.commit('setTokenAmount', amount);
+      this.$store.commit('setAvailableBalance', available);
+      this.$store.commit('setTotalBalance', total);
     });
     window.wails.Events.On("blocks", number => {
-      this.$store.state.walletInfo.blocks = number;
+      this.$store.commit('setBlocks', number);
     });
     window.wails.Events.On("totalValue", (currency, value) => {
-      this.$store.state.walletInfo.currency = currency;
-      this.$store.state.walletInfo.totalValue = value;
+      this.$store.commit('setCurrency', currency);
+      this.$store.commit('setTotalValue', value);
     });
     window.wails.Events.On("token_counter", count => {
-      this.$store.state.counters.tokenCounter = count;
+      this.$store.commit('setTokenCounter', count);
     });
     window.wails.Events.On("value_counter", valueCount => {
-      this.$store.state.counters.valueCounter = valueCount;
+      this.$store.commit('setValueCounter', valueCount);
     });
     window.wails.Events.On("block_counter", blockCount => {
-      this.$store.state.counters.blockCounter = blockCount;
+      this.$store.commit('setBlockCounter', blockCount);
     });
     window.wails.Events.On("chart_counter", pieChartCount => {
-      this.$store.state.counters.nodesOnlineCounter = pieChartCount;
+      this.$store.commit('setNodesOnlineCounter', pieChartCount);
     });
     window.wails.Events.On("node_stats", (series, labels) => {
-      this.$store.state.chartData.nodesOnline.series = series;
-      this.$store.state.chartData.nodesOnline.labels = labels;
+      if (Object.entries(series).length != 0 && 
+          Object.entries(labels).length != 0) {
+        this.$store.commit({type: 'setNodeOnlineChart', series, labels});
+      }
     });
     window.wails.Events.On("tx_stats", (seriesOne, seriesTwo, labels) => {
-      this.$store.state.chartData.transactions.series = [seriesOne, seriesTwo];
-      this.$store.state.chartData.transactions.labels = labels;
+      if (Object.entries(seriesOne).length != 0 && 
+          Object.entries(seriesTwo).length != 0 && 
+          Object.entries(labels).length != 0) {
+        this.$store.commit({type: 'setTransactionStatsChart', seriesOne, seriesTwo, labels});
+      }
     });
     window.wails.Events.On("network_stats", (seriesOne, seriesTwo, labels) => {
-      this.$store.state.chartData.throughput.series = [seriesOne, seriesTwo];
-      this.$store.state.chartData.throughput.labels = labels;
+      if (Object.entries(seriesOne).length != 0 && 
+          Object.entries(seriesTwo).length != 0 && 
+          Object.entries(labels).length != 0) {
+        this.$store.commit({type: 'setNetworkStatsChart', seriesOne, seriesTwo, labels});
+      }
     });
 
     // Settings.vue sockets
     window.wails.Events.On("wallet_keys", address => {
-      // this.$store.state.walletInfo.keystorePath = keystorePath;
-      this.$store.state.walletInfo.address = address;
+      this.$store.commit('setAddress', address);
     });
   }
 };

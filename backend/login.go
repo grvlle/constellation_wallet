@@ -87,6 +87,11 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	return a.UserLoggedIn
 }
 
+// CheckTermsOfService is called from the FE to check the termsOfService has been accepted
+func (a *WalletApplication) CheckTermsOfService() bool {
+	return a.wallet.TermsOfService
+}
+
 // LogOut will reset the wallet UI and clear the wallet objects
 func (a *WalletApplication) LogOut() bool {
 	if a.TransactionFinished {

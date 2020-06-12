@@ -34,14 +34,18 @@ export default {
             '<i class="fa fa-thumbs-down"></i> Close Application',
           cancelButtonAriaLabel: "Close Application"
         }).then(result => {
-          if (result.value) {
-            self.$store.state.app.termsOfService = true;
-            window.backend.WalletApplication.StoreTermsOfServiceStateDB(
-              self.$store.state.app.termsOfService
-            );
-            self.$router.push({
-              name: 'loading', 
-              params: {message: "Getting your $DAG Wallet ready..."}
+          if (result.value) {            
+            window.backend.WalletApplication.StoreTermsOfServiceStateDB(true)
+            .then(result => {
+              if (result) {
+                self.$store.commit('setTermsOfService', true);
+                self.$router.push({
+                  name: 'loading', 
+                  params: {message: "Getting your $DAG Wallet ready..."}
+                });
+              } else {
+                self.$router.go(-1);
+              }
             });
           } else {
             Swal.fire({

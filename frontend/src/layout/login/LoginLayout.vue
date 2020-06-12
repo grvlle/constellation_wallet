@@ -1,16 +1,16 @@
 <template>
-  <div id="app" class="login-bg vertical-center" v-bind:style="{ backgroundImage: 'url(' + this.bgImg + ')' }" >
+  <div id="app" class="login-bg vertical-center" v-bind:style="{ backgroundImage: 'url(' + themeBG + ')' }" >
     <div class="container">
       <div class="row">
         <div class="col mx-auto text-center header">
           <div>
-            <img class="img-fluid" v-if="this.$store.state.walletInfo.darkMode" src="~@/assets/img/Constellation-Logo-White.png" style="max-height: 5.8rem;" />
+            <img class="img-fluid" v-if="darkMode" src="~@/assets/img/Constellation-Logo-White.png" style="max-height: 5.8rem;" />
             <img class="img-fluid" v-else src="~@/assets/img/Constellation-Logo-Black.png" style="max-height: 5.8rem;" />
             <p v-if="this.$route.params.message">{{this.$route.params.message}}</p>
             <p v-else>Downloading $DAG wallet dependencies...</p>
           </div>
-          <div class="page-error-box" v-if="this.$store.state.displayLoginError">
-            <p>{{this.$store.state.loginErrorMsg}}</p>
+          <div class="page-error-box" v-if="this.$store.state.app.displayLoginError">
+            <p>{{this.$store.state.app.loginErrorMsg}}</p>
           </div>
           <div class="page-error-box" v-else></div>
         </div>
@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="version">
-      <p class="version">Connected to: {{this.$store.state.network}}<br />
+      <p class="version">Connected to: {{this.$store.state.app.network}}<br />
       Molly Wallet version: {{this.$store.state.walletInfo.uiVersion}}</p>
     </div>
   </div>
@@ -33,12 +33,8 @@ import BrightBG from '../../assets/img/nodes2.jpg';
 import DarkBG from '../../assets/img/nodes2_dark.jpg';
 export default {
   data: () => ({
-    bgImg: DarkBG,
     transitionName: ""
   }),
-  mounted() {
-    this.themeBG()
-  },
   watch: {
     '$route' (from, to) {
       if (
@@ -52,14 +48,21 @@ export default {
       }
     }
   },
-  methods: {
+  computed: {
     themeBG: function () {
-      if (this.$store.state.walletInfo.darkMode) {
-          this.bgImg = DarkBG;
+      if (this.$store.state.walletInfo.darkMode || this.$route.params.darkMode) {
+          return DarkBG;
         } else {
-          this.bgImg = BrightBG;
+          return BrightBG;
         }
     },
+    darkMode: function () {
+      if (this.$store.state.walletInfo.darkMode || this.$route.params.darkMode) {
+        return true
+      } else {
+        return false
+      }
+    }
   }
 };
 </script>

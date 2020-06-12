@@ -3,8 +3,8 @@
     <div class="row">
       <div class="col-md-6 mx-auto text-center">
         <p
-          v-if="this.$store.state.downloading.filename !== ''"
-        >{{this.$store.state.downloading.filename}}: {{this.$store.state.downloading.size}}</p>
+          v-if="this.$store.state.app.downloading.filename !== ''"
+        >{{this.$store.state.app.downloading.filename}}: {{this.$store.state.app.downloading.size}}</p>
       </div>
     </div>
     <div class="row">

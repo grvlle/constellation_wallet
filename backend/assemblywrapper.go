@@ -59,7 +59,7 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 		a.sendError("Unable to pipe STDOUT, Reason: ", err)
 	}
 	os.Stdout = w
-	err = a.runWalletCMD("wallet", "show-address", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--env_args=true")
+	err = a.runWalletCMD("wallet", "show-address", "--keystore="+a.wallet.KeyStorePath, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
 		a.log.Warn("KeyStore Access Rejected!")
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
@@ -104,7 +104,7 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	}
 	os.Stdout = w
 
-	err = a.runWalletCMD("wallet", "show-address", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--env_args=true")
+	err = a.runWalletCMD("wallet", "show-address", "--keystore="+a.wallet.KeyStorePath, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to generate wallet address. Reason:", err)
 		a.log.Errorf("Unable to generate wallet address. Reason: %s", err.Error())
@@ -187,7 +187,7 @@ func (a *WalletApplication) produceTXObject(amount int64, fee int64, address, ne
 	}
 
 	// newTX is the full command to sign a new transaction
-	err = a.runWalletCMD("wallet", "create-transaction", "--keystore="+a.paths.EncPrivKeyFile, "--normalized", "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeNorm, "-d="+address, "-f="+newTX, "-p="+prevTX, "--env_args=true")
+	err = a.runWalletCMD("wallet", "create-transaction", "--keystore="+a.wallet.KeyStorePath, "--normalized", "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeNorm, "-d="+address, "-f="+newTX, "-p="+prevTX, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
 		a.log.Errorln("Unable to send transaction. Reason: ", err)
@@ -200,7 +200,7 @@ func (a *WalletApplication) produceTXObject(amount int64, fee int64, address, ne
 // will create a new password protected encrypted keypair stored in user selected location
 // java -jar cl-keytool.jar --keystore testkey.p12 --alias alias --storepass storepass --keypass keypass
 func (a *WalletApplication) CreateEncryptedKeyStore() error {
-	err := a.runWalletCMD("keytool", "--keystore="+a.paths.EncPrivKeyFile, "--alias="+a.wallet.WalletAlias, "--env_args=true")
+	err := a.runWalletCMD("keytool", "--keystore="+a.wallet.KeyStorePath, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
 		a.LoginError("Unable to write encrypted keys to filesystem.")
 		a.log.Errorf("Unable to write encrypted keys to filesystem. Reason: %s", err.Error())

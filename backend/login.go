@@ -21,7 +21,9 @@ func (a *WalletApplication) LoginError(errMsg string) {
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
-	a.wallet.WalletAlias = alias
+	a.wallet = models.Wallet{
+		KeyStorePath: keystorePath,
+		WalletAlias:  alias}
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
@@ -105,33 +107,34 @@ func (a *WalletApplication) LogOut() bool {
 
 // ImportKey is called from the frontend when browsing the fs for a keyfile
 func (a *WalletApplication) ImportKey() string {
-	a.paths.EncPrivKeyFile = a.RT.Dialog.SelectFile()
-	if a.paths.EncPrivKeyFile == "" {
+	var keyfile = a.RT.Dialog.SelectFile()
+	if keyfile == "" {
 		a.LoginError("Access Denied. No key path detected.")
 		return ""
 	}
 
-	if a.paths.EncPrivKeyFile[len(a.paths.EncPrivKeyFile)-4:] != ".p12" {
+	if keyfile[len(keyfile)-4:] != ".p12" {
 		a.LoginError("Access Denied. Not a key file.")
 		return ""
 	}
-	a.log.Info("Path to imported key: " + a.paths.EncPrivKeyFile)
-	return a.paths.EncPrivKeyFile
+	a.log.Info("Path to imported key: " + keyfile)
+	return keyfile
 }
 
 // SelectDirToStoreKey is called from the FE when creating a new keyfile
 func (a *WalletApplication) SelectDirToStoreKey() string {
-	a.paths.EncPrivKeyFile = a.RT.Dialog.SelectSaveFile()
 
-	if len(a.paths.EncPrivKeyFile) <= 0 {
+	var keyfile = a.RT.Dialog.SelectSaveFile()
+
+	if len(keyfile) <= 0 {
 		a.LoginError("No valid path were provided. Please try again.")
 		return ""
 	}
-	if a.paths.EncPrivKeyFile[len(a.paths.EncPrivKeyFile)-4:] != ".p12" {
-		a.paths.EncPrivKeyFile = a.paths.EncPrivKeyFile + ".p12"
-		return a.paths.EncPrivKeyFile
+	if keyfile[len(keyfile)-4:] != ".p12" {
+		keyfile = keyfile + ".p12"
+		return keyfile
 	}
-	return a.paths.EncPrivKeyFile
+	return keyfile
 }
 
 // GenerateSaltedHash converts plain text to a salted hash

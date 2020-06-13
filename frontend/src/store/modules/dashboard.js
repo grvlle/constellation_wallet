@@ -1,17 +1,17 @@
 const getDefaultState = () => {
     return {
         counters: {
-            blockCounter: 5,
-            tokenCounter: 30,
-            valueCounter: 60,
-            nodesOnlineCounter: 24
+            block: 5,
+            token: 30,
+            value: 60,
+            chart: 24
         },
-        toggleDashboard: {
-            showNodesOnline: false,
-            showTransactions: true,
-            showThroughput: true,
+        toggle: {
+            nodesOnline: false,
+            transactions: true,
+            throughput: true,
         },
-        chartData: {
+        chart: {
             nodesOnline: {
                 labels: [], // ChartData.nodes_online.labels,
                 series: []  // ChartData.nodes_online.series
@@ -40,37 +40,37 @@ const mutations = {
         Object.assign(state, getDefaultState())
     },
     setTokenCounter(state, counter) {
-        state.counters.tokenCounter = counter
+        state.counters.token = counter
     },
     setValueCounter(state, counter) {
-        state.counters.valueCounter = counter
+        state.counters.value = counter
     },
     setBlockCounter(state, counter) {
-        state.counters.blockCounter = counter
+        state.counters.block = counter
     },
-    setNodesOnlineCounter(state, counter) {
-        state.counters.nodesOnlineCounter = counter
+    setChartCounter(state, counter) {
+        state.counters.chart = counter
     },
     setShowNodesOnline(state, val) {
-        state.toggleDashboard.showNodesOnline = val;
+        state.toggle.nodesOnline = val;
     },
     setShowTransactions(state, val) {
-        state.toggleDashboard.showTransactions = val;
+        state.toggle.transactions = val;
     },
     setShowThroughput(state, val) {
-        state.toggleDashboard.showThroughput = val;
+        state.toggle.throughput = val;
     },
     setNodeOnlineChart(state, obj) {
-        state.chartData.nodesOnline.series = obj.series;
-        state.chartData.nodesOnline.labels = obj.labels;
+        state.chart.nodesOnline.series = obj.series;
+        state.chart.nodesOnline.labels = obj.labels;
     },
     setTransactionStatsChart(state, obj) {
-        state.chartData.transactions.series = [obj.seriesOne, obj.seriesTwo];
-        state.chartData.transactions.labels = obj.labels;
+        state.chart.transactions.series = [obj.seriesOne, obj.seriesTwo];
+        state.chart.transactions.labels = obj.labels;
     },
     setNetworkStatsChart(state, obj) {
-        state.chartData.throughput.series = [obj.seriesOne, obj.seriesTwo];
-        state.chartData.throughput.labels = obj.labels;
+        state.chart.throughput.series = [obj.seriesOne, obj.seriesTwo];
+        state.chart.throughput.labels = obj.labels;
     }
 }
 

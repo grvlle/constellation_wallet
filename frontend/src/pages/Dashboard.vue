@@ -8,11 +8,11 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>DAG</p>
-            {{this.$store.state.walletInfo.tokenAmount | asCurrency('DAG')}}
+            {{tokenAmount | asCurrency('DAG')}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.dashboard.counters.tokenCounter}} seconds
+            Updates in {{counters.token}} seconds
           </div>
         </stats-card>
       </div>
@@ -22,12 +22,12 @@
             <i class="fas fa-search-dollar"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
-            <p>{{this.$store.state.walletInfo.currency}}</p>
-            {{this.$store.state.walletInfo.totalValue | asCurrency(this.$store.state.walletInfo.currency)}}
+            <p>{{currency}}</p>
+            {{totalValue | asCurrency(currency)}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.dashboard.counters.valueCounter}} seconds
+            Updates in {{counters.value}} seconds
           </div>
         </stats-card>
       </div>
@@ -38,14 +38,14 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>Blocks</p>
-            {{wallet2.blocks}}
+            {{blocks}}
             <!-- {{this.$store.state.OS.windows}}
             {{this.$store.state.OS.macOS}}
             {{this.$store.state.OS.linux}} -->
           </div>
           <div class="stats" slot="footer">
             <i class="ti-reload"></i>
-            Updates in {{this.$store.state.dashboard.counters.blockCounter}} seconds
+            Updates in {{counters.block}} seconds
           </div>
         </stats-card>
       </div>
@@ -60,8 +60,8 @@
                   class="text-overflow"
                   style="word-wrap:break-word; padding-top: 20px; padding-left: 15px; width: 100%;"
                 >
-                  <span style="width: 100%;" class="text-overflow">{{wallet2.address}}</span>
-                  <input type="hidden" id="testing-code" :value="wallet2.address" />
+                  <span style="width: 100%;" class="text-overflow">{{address}}</span>
+                  <input type="hidden" id="testing-code" :value="address" />
                 </td>
                 <td style="padding-top: 10px; width: 9%;">
                   <p-button
@@ -80,11 +80,11 @@
       </div>
     </div>
     <div class="row">
-      <div v-if="this.$store.state.dashboard.toggleDashboard.showNodesOnline" class="col-md-6 col-12 d-flex">
+      <div v-if="toggle.nodesOnline" class="col-md-6 col-12 d-flex">
         <chart-card
           title="Nodes Online"
           sub-title="Since last 24 hours"
-          :chart-data="this.$store.state.dashboard.chartData.nodesOnline"
+          :chart-data="chart.nodesOnline"
           chart-type="Pie"
         >
           <div slot="legend">
@@ -94,16 +94,16 @@
           </div>
           <span slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.dashboard.counters.nodesOnlineCounter}} seconds
+            Updates in {{counters.nodesOnline}} seconds
           </span>
         </chart-card>
       </div>
 
-      <div v-if="this.$store.state.dashboard.toggleDashboard.showTransactions" class="col-md-6 col-12 d-flex">
+      <div v-if="toggle.transactions" class="col-md-6 col-12 d-flex">
         <chart-card
           title="Transactions"
           sub-title="Sent vs. received over the last year"
-          :chart-data="this.$store.state.dashboard.chartData.transactions"
+          :chart-data="chart.transactions"
           :chart-options="transactionChart.options"
           chart-type="Line"
         >
@@ -113,22 +113,22 @@
           </div>
           <span style="padding-top: 0.625em;" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.dashboard.counters.nodesOnlineCounter}} seconds
+            Updates in {{counters.nodesOnline}} seconds
           </span>
         </chart-card>
       </div>
 
-      <div v-if="this.$store.state.dashboard.toggleDashboard.showThroughput" class="col-md-6 col-12 d-flex">
+      <div v-if="toggle.throughput" class="col-md-6 col-12 d-flex">
         <chart-card
           title="Network Throughput (tps)"
           sub-title="24 Hours performance"
-          :chart-data="this.$store.state.dashboard.chartData.throughput"
+          :chart-data="chart.throughput"
           :chart-options="this.throughputChart.options"
           chart-type="Line"
         >
           <span slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{this.$store.state.dashboard.counters.nodesOnlineCounter}} seconds
+            Updates in {{counters.nodesOnline}} seconds
           </span>
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> $DAG Tokens
@@ -141,6 +141,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import { StatsCard, ChartCard} from "@/components/index";
 import Chartist from 'chartist';
 import WalletCopiedNotification from "./Notifications/WalletCopied";
@@ -151,7 +152,6 @@ export default {
     StatsCard,
     ChartCard
   },
-
   methods: {
     copyTestingCode() {
       let testingCodeToCopy = document.querySelector("#testing-code");
@@ -194,12 +194,8 @@ export default {
     }
   },
   computed: {
-    wallet2() {
-      return this.$store.state.walletInfo;
-    },
-    // transactionChartData() {
-    //   return this.$store.state.chartData.transactions;
-    // }
+    ...mapState('walletInfo', ['tokenAmount', 'currency', 'totalValue', 'blocks', 'address']),
+    ...mapState('dashboard', ['counters', 'toggle','chart']) 
   },
   filters: {
     asCurrency: function(value, currency) {
@@ -253,8 +249,6 @@ export default {
           showLine: true,
           showPoint: false
         },
-          
-        
       },
       throughputChart: {
         options: {
@@ -266,9 +260,7 @@ export default {
         }
       }
     };
-
   }
-
 };
 
 </script>

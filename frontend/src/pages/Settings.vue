@@ -24,7 +24,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleNodesOnline"
-                    :value="this.$store.state.dashboard.toggleDashboard.showNodesOnline"
+                    :value="this.$store.state.dashboard.toggle.nodesOnline"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -38,7 +38,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleTransactions"
-                    :value="this.$store.state.dashboard.toggleDashboard.showTransactions"
+                    :value="this.$store.state.dashboard.toggle.transactions"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -52,7 +52,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleThroughput"
-                    :value="this.$store.state.dashboard.toggleDashboard.showThroughput"
+                    :value="this.$store.state.dashboard.toggle.throughput"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -278,13 +278,13 @@ export default {
       }
     },
     toggleNodesOnline: function() {
-      this.$store.commit('dashboard/setShowNodesOnline', !this.$store.state.dashboard.toggleDashboard.showNodesOnline);
+      this.$store.commit('dashboard/setShowNodesOnline', !this.$store.state.dashboard.toggle.nodesOnline);
     },
     toggleTransactions: function() {
-      this.$store.commit('dashboard/setShowTransactions', !this.$store.state.dashboard.toggleDashboard.showTransactions);
+      this.$store.commit('dashboard/setShowTransactions', !this.$store.state.dashboard.toggle.transactions);
     },
     toggleThroughput: function() {
-      this.$store.commit('dashboard/setShowThroughput', !this.$store.state.dashboard.toggleDashboard.showThroughput);
+      this.$store.commit('dashboard/setShowThroughput', !this.$store.state.dashboard.toggle.throughput);
     },
     toggleDarkMode: function() {
       window.backend.WalletApplication.StoreDarkModeStateDB(!this.$store.state.walletInfo.darkMode)

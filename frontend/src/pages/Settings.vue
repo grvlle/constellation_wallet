@@ -24,7 +24,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleNodesOnline"
-                    :value="this.$store.state.dashboard.toggle.nodesOnline"
+                    :value="toggle.nodesOnline"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -38,7 +38,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleTransactions"
-                    :value="this.$store.state.dashboard.toggle.transactions"
+                    :value="toggle.transactions"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -52,7 +52,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleThroughput"
-                    :value="this.$store.state.dashboard.toggle.throughput"
+                    :value="toggle.throughput"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -86,8 +86,8 @@
                   type="text"
                   :disabled="true"
                   class="form-control"
-                  :placeholder="this.$store.state.walletInfo.imgPath"
-                  v-model="this.$store.state.walletInfo.imgPath"
+                  :placeholder="imgPath"
+                  v-model="imgPath"
                 />
                 <span class="input-group-append">
                   <p-button @click.native="uploadImage()" type="default" style="width:6rem;">Browse</p-button>
@@ -111,7 +111,7 @@
               </p>
               <div class="row">
                 <div class="input-group col-md-12">
-                  <input :type=seed class="form-control" :disabled="true" placeholder="Mnemonic Seed" v-model="this.$store.state.walletInfo.seed">
+                  <input :type=seed class="form-control" :disabled="true" placeholder="Mnemonic Seed" v-model="seed">
                   <div class="input-group-append">
                     <p-button class="btn" @click.native="showPassword2()" type="danger"><i v-bind:class="btnText"/></p-button>
                   </div>
@@ -126,7 +126,7 @@
                     type="text"
                     :disabled="true"
                     placeholder="Path to private key (key.p12)"
-                    v-model="this.$store.state.walletInfo.keystorePath"
+                    v-model="keystorePath"
                   ></fg-input>
                 </div>
               </div>
@@ -146,7 +146,7 @@
                       class="form-control"
                       label="Private Key"
                       placeholder="Mnemonic Seed (coming soon)"
-                      v-model="this.$store.state.walletInfo.seed"
+                      v-model="seed"
                       aria-describedby="basic-addon2"
                     />
                     <div class="input-group-append">
@@ -199,7 +199,7 @@
               <div class="col-5" align="right">
                 <toggle-button
                   @change="toggleDarkMode"
-                  :value="this.$store.state.walletInfo.darkMode"
+                  :value="darkMode"
                   color="#5fd1fa"
                   :sync="true"
                   :labels="true"
@@ -213,7 +213,7 @@
               <div class="col-5" align="right">
                 <vue-select class="select"
                   @input="setCurrency"
-                  :value="this.$store.state.walletInfo.currency"
+                  :value="currency"
                   :options="['BTC', 'EUR', 'USD']">
                 </vue-select>
               </div>
@@ -226,6 +226,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import ImgUploaded from "./Notifications/ImageUploaded";
 import VueSelect from 'vue-select';
 import Swal from "sweetalert2/dist/sweetalert2";
@@ -238,7 +239,7 @@ export default {
     submitLabel: function() {
       const swalPopup = Swal.mixin({
         customClass: {
-          container: this.$store.state.walletInfo.darkMode
+          container: this.darkMode
             ? "theme--dark"
             : "theme--light"
         }
@@ -278,19 +279,19 @@ export default {
       }
     },
     toggleNodesOnline: function() {
-      this.$store.commit('dashboard/setShowNodesOnline', !this.$store.state.dashboard.toggle.nodesOnline);
+      this.$store.commit('dashboard/setShowNodesOnline', !this.toggle.nodesOnline);
     },
     toggleTransactions: function() {
-      this.$store.commit('dashboard/setShowTransactions', !this.$store.state.dashboard.toggle.transactions);
+      this.$store.commit('dashboard/setShowTransactions', !this.toggle.transactions);
     },
     toggleThroughput: function() {
-      this.$store.commit('dashboard/setShowThroughput', !this.$store.state.dashboard.toggle.throughput);
+      this.$store.commit('dashboard/setShowThroughput', !this.toggle.throughput);
     },
     toggleDarkMode: function() {
-      window.backend.WalletApplication.StoreDarkModeStateDB(!this.$store.state.walletInfo.darkMode)
+      window.backend.WalletApplication.StoreDarkModeStateDB(!this.darkMode)
       .then(result => {
         if (result) {
-          this.$store.commit('app/setDarkMode', !this.$store.state.walletInfo.darkMode);
+          this.$store.commit('walletInfo/setDarkMode', !this.darkMode);
         }
       });
     },
@@ -312,7 +313,7 @@ export default {
       window.backend.WalletApplication.UploadImage().then(path => {
         const swalPopup = Swal.mixin({
           customClass: {
-            container: this.$store.state.walletInfo.darkMode
+            container: this.darkMode
               ? "theme--dark"
               : "theme--light"
           }
@@ -373,22 +374,15 @@ export default {
         this.btnText = "fa fa-eye";
       }
     },
-    showPassword2: function() {
-      if (this.seed === "password") {
-        this.seed = "text";
-        this.btnText = "fa fa-eye-slash";
-      } else {
-        this.seed = "password";
-        this.btnText = "fa fa-eye";
-      }
-    }
   },
-
+  computed: {
+    ...mapState('walletInfo', ['imgPath', 'seed', 'keystorePath', 'darkMode', 'currency']),
+    ...mapState('dashboard', ['toggle'])
+  },
   data() {
     return {
       newLabel: "",
       type: "password",
-      seed: "password",
       btnText: "fa fa-eye"
     };
   }

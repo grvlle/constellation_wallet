@@ -11,7 +11,7 @@ export const store = new Vuex.Store({
     modules: {
         app: App,
         walletInfo: Wallet,
-        txInfo: Transaction,
+        transaction: Transaction,
         dashboard: Dashboard
     },
     getters: {

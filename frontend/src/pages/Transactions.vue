@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col">
         <card title="Transactions" subTitle="Submit a $DAG Transaction">
-          <!-- <p>Last Transaction State: {{this.$store.state.txInfo.txStatus}}</p> -->
+          <!-- <p>Last Transaction State: {{this.$store.state.transaction.txStatus}}</p> -->
           <form @submit.prevent class="container">
             <div class="form-row align-items-center">
               <div class="col-md-4">
@@ -174,17 +174,17 @@ export default {
       return `table-${this.type}`;
     },
     txInTransit() {
-      return this.$store.state.txInfo.txStatus == "Pending";
+      return this.$store.state.transaction.txStatus == "Pending";
     },
     pageCount() {
-      let l = this.$store.state.txInfo.txHistory.length,
+      let l = this.$store.state.transaction.txHistory.length,
         s = this.size;
       return Math.ceil(l / s);
     },
     paginatedData() {
       const start = this.pageNumber * this.size,
         end = start + this.size;
-      return this.$store.state.txInfo.txHistory.slice(start, end);
+      return this.$store.state.transaction.txHistory.slice(start, end);
     }
   },
   methods: {
@@ -337,7 +337,7 @@ export default {
         title: "Transaction History",
         subTitle: "Table containing all previous transactions",
         columns: [...tableColumns],
-        data: this.$store.state.txInfo.txHistory
+        data: this.$store.state.transaction.txHistory
       },
       pageNumber: 0,
       size: 10

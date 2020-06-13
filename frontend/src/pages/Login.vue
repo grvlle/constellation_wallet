@@ -126,7 +126,7 @@ export default {
 
           window.backend.WalletApplication.CheckTermsOfService()
           .then (result => {
-            self.$store.commit('app/setTermsOfService', result)
+            self.$store.commit('walletInfo/setTermsOfService', result)
             if (result) {
               self.$router.push({
                 name: 'loading', 

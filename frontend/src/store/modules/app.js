@@ -1,6 +1,5 @@
 const getDefaultState = () => {
     return {
-        termsOfService: false,
         txFinished: true,
         isLoggedIn: false,
         errorMessage: "",
@@ -27,9 +26,6 @@ const actions = {
 const mutations = {
     resetState(state) {
         Object.assign(state, getDefaultState())
-    },
-    setTermsOfService(state, termsOfService) {
-        state.termsOfService = termsOfService;
     },
     setTxFinished(state, setTxFinished) {
         state.txFinished = setTxFinished;

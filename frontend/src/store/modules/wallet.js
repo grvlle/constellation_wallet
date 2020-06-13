@@ -13,13 +13,14 @@ const getDefaultState = () => {
     totalValue: 0.0,
     blocks: "NaN",
     address: "N/A",
-    keystorePath: "",
+    keystorePath: "C:\\Users\\alexa\\Documents\\temp1.p12",
     saveKeystorePath: "",
     alias: "",
     privateKey: "NaN",
     publicKey: "NaN",
     seed: "Mnemonic Seed will be introduced with a later software release",
-    darkMode: false
+    darkMode: false,
+    termsOfService: false
   }
 }
 
@@ -72,7 +73,10 @@ const mutations = {
   },
   setImgPath(state, path) {
     state.imgPath = path;
-  }
+  },
+  setTermsOfService(state, termsOfService) {
+    state.termsOfService = termsOfService;
+},
 }
 
 export default {

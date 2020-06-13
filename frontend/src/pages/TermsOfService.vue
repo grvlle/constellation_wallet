@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="container" v-if="this.$store.state.app.termsOfService">
+  <div id="app" class="container" v-if="this.$store.state.walletInfo.termsOfService">
     <div class="row">
       <div class="col-9 mx-auto">
         <card>
@@ -16,7 +16,7 @@ export default {
   name: "terms-of-service",
   created() {
     var self = this;
-    if (!this.$store.state.app.termsOfService) {
+    if (!this.$store.state.walletInfo.termsOfService) {
       setTimeout(() => {
         Swal.fire({
           html:
@@ -38,7 +38,7 @@ export default {
             window.backend.WalletApplication.StoreTermsOfServiceStateDB(true)
             .then(result => {
               if (result) {
-                self.$store.commit('app/setTermsOfService', true);
+                self.$store.commit('walletInfo/setTermsOfService', true);
                 self.$router.push({
                   name: 'loading', 
                   params: {message: "Getting your $DAG Wallet ready..."}

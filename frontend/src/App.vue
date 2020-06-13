@@ -216,7 +216,7 @@ export default {
       this.$store.commit('walletInfo/setBlocks', number);
     });
     window.wails.Events.On("totalValue", (currency, value) => {
-      this.$store.commit('app/setCurrency', currency);
+      this.$store.commit('walletInfo/setCurrency', currency);
       this.$store.commit('walletInfo/setTotalValue', value);
     });
     window.wails.Events.On("token_counter", count => {
@@ -229,7 +229,7 @@ export default {
       this.$store.commit('dashboard/setBlockCounter', blockCount);
     });
     window.wails.Events.On("chart_counter", pieChartCount => {
-      this.$store.commit('dashboard/setNodesOnlineCounter', pieChartCount);
+      this.$store.commit('dashboard/setChartCounter', pieChartCount);
     });
     window.wails.Events.On("node_stats", (series, labels) => {
       if (Object.entries(series).length != 0 && 

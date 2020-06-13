@@ -298,7 +298,7 @@ export default {
       window.backend.WalletApplication.StoreCurrencyStateDB(value)
       .then(result => {
         if (result) {
-          this.$store.commit('app/setCurrency', value);
+          this.$store.commit('walletInfo/setCurrency', value);
         }
       });
     },

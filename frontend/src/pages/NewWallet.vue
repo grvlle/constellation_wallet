@@ -170,7 +170,7 @@ export default {
         return this.$store.state.walletInfo.saveKeystorePath
       },
       set (value) {
-        this.$store.commit('setSaveKeystorePath', value)
+        this.$store.commit('walletInfo/setSaveKeystorePath', value)
       }
     },
     alias: {
@@ -185,7 +185,7 @@ export default {
           this.aliasContainsFiveCharacters = false;
           this.aliasValid = false;
         }
-        this.$store.commit('setAlias', value)
+        this.$store.commit('walletInfo/setAlias', value)
       }
     }
   }, 
@@ -200,7 +200,7 @@ export default {
       self.$Progress.start();
       self.overlay = true;
       if (self.newWalletLabel !== "") {
-        self.$store.commit('setEmail', self.newWalletLabel);
+        self.$store.commit('walletInfo/setEmail', self.newWalletLabel);
         window.backend.WalletApplication.StoreWalletLabelInDB(
           self.newWalletLabel
         );
@@ -220,7 +220,7 @@ export default {
           ).then(loggedIn => {
             if (loggedIn) {
               self.overlay = false;
-              self.$store.commit('setIsLoggedIn', loggedIn);
+              self.$store.commit('app/setIsLoggedIn', loggedIn);
               self.$router.push({
                 name: 'accept terms of service',
                 params: {message: "Terms of Service"}

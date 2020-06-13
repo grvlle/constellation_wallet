@@ -77,7 +77,7 @@ export default {
         return this.$store.state.walletInfo.keystorePath
       },
       set (value) {
-        this.$store.commit('setKeystorePath', value)
+        this.$store.commit('walletInfo/setKeystorePath', value)
       }
     },
     alias: {
@@ -85,7 +85,7 @@ export default {
         return this.$store.state.walletInfo.alias
       },
       set (value) {
-        this.$store.commit('setAlias', value)
+        this.$store.commit('walletInfo/setAlias', value)
       }
     }
   },
@@ -112,21 +112,21 @@ export default {
       ).then(result => {
         if (result) {
           window.backend.WalletApplication.SetUserTheme().then(
-            darkMode => (self.$store.commit('setDarkMode', darkMode))
+            darkMode => (self.$store.commit('walletInfo/setDarkMode', darkMode))
           )
           window.backend.WalletApplication.SetWalletTag().then(
-            walletTag => (self.$store.commit('setEmail', walletTag))
+            walletTag => (self.$store.commit('walletInfo/setEmail', walletTag))
           );
           window.backend.WalletApplication.SetImagePath().then(
-            imagePath => (self.$store.commit('setImgPath', imagePath))
+            imagePath => (self.$store.commit('walletInfo/setImgPath', imagePath))
           );
           self.overlay = false;
           self.$Progress.finish();
-          self.$store.commit('setIsLoggedIn', true);
+          self.$store.commit('app/setIsLoggedIn', true);
 
           window.backend.WalletApplication.CheckTermsOfService()
           .then (result => {
-            self.$store.commit('setTermsOfService', result)
+            self.$store.commit('app/setTermsOfService', result)
             if (result) {
               self.$router.push({
                 name: 'loading', 

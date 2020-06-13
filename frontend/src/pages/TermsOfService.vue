@@ -38,7 +38,7 @@ export default {
             window.backend.WalletApplication.StoreTermsOfServiceStateDB(true)
             .then(result => {
               if (result) {
-                self.$store.commit('setTermsOfService', true);
+                self.$store.commit('app/setTermsOfService', true);
                 self.$router.push({
                   name: 'loading', 
                   params: {message: "Getting your $DAG Wallet ready..."}

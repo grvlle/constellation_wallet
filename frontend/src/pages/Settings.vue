@@ -264,7 +264,7 @@ export default {
           })
           .then(result => {
             if (result.value) {
-              self.$store.commit('setEmail', this.newLabel);
+              self.$store.commit('walletInfo/setEmail', this.newLabel);
               window.backend.WalletApplication.StoreWalletLabelInDB(
                 this.newLabel
               );
@@ -278,19 +278,19 @@ export default {
       }
     },
     toggleNodesOnline: function() {
-      this.$store.commit('setShowNodesOnline', !this.$store.state.dashboard.toggleDashboard.showNodesOnline);
+      this.$store.commit('dashboard/setShowNodesOnline', !this.$store.state.dashboard.toggleDashboard.showNodesOnline);
     },
     toggleTransactions: function() {
-      this.$store.commit('setShowTransactions', !this.$store.state.dashboard.toggleDashboard.showTransactions);
+      this.$store.commit('dashboard/setShowTransactions', !this.$store.state.dashboard.toggleDashboard.showTransactions);
     },
     toggleThroughput: function() {
-      this.$store.commit('setShowThroughput', !this.$store.state.dashboard.toggleDashboard.showThroughput);
+      this.$store.commit('dashboard/setShowThroughput', !this.$store.state.dashboard.toggleDashboard.showThroughput);
     },
     toggleDarkMode: function() {
       window.backend.WalletApplication.StoreDarkModeStateDB(!this.$store.state.walletInfo.darkMode)
       .then(result => {
         if (result) {
-          this.$store.commit('setDarkMode', !this.$store.state.walletInfo.darkMode);
+          this.$store.commit('app/setDarkMode', !this.$store.state.walletInfo.darkMode);
         }
       });
     },
@@ -298,7 +298,7 @@ export default {
       window.backend.WalletApplication.StoreCurrencyStateDB(value)
       .then(result => {
         if (result) {
-          this.$store.commit('setCurrency', value);
+          this.$store.commit('app/setCurrency', value);
         }
       });
     },
@@ -339,7 +339,7 @@ export default {
             })
             .then(result => {
               if (result.value) {
-                this.$store.commit('setImgPath', path);
+                this.$store.commit('walletInfo/setImgPath', path);
                 swalPopup.fire({
                   title: "Success!",
                   text: "You have uploaded a new wallet picture",

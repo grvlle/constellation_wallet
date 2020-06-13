@@ -91,13 +91,13 @@ export default {
   },
   methods: {
     newWallet: function() {
-      this.$store.dispatch('resetWalletState');
-      this.$store.dispatch('resetAppState');
-      this.$router.push({
-        name: 'new wallet', 
-        params: {
-          message: "Create a new Molly wallet. Please ensure that you backup all information provided below in a safe place.",
-          darkMode: this.$route.params.darkMode}
+      this.$store.dispatch('walletInfo/resetWalletState').then(() => {
+        this.$router.push({
+          name: 'new wallet', 
+          params: {
+            message: "Create a new Molly wallet. Please ensure that you backup all information provided below in a safe place.",
+            darkMode: this.$route.params.darkMode}
+        });
       });
     },
     login: function() {
@@ -111,13 +111,13 @@ export default {
         self.alias
       ).then(result => {
         if (result) {
-          window.backend.WalletApplication.SetUserTheme().then(
+          window.backend.WalletApplication.GetUserTheme().then(
             darkMode => (self.$store.commit('walletInfo/setDarkMode', darkMode))
           )
-          window.backend.WalletApplication.SetWalletTag().then(
-            walletTag => (self.$store.commit('walletInfo/setEmail', walletTag))
+          window.backend.WalletApplication.GetWalletTag().then(
+            walletTag => (self.$store.commit('walletInfo/setLabel', walletTag))
           );
-          window.backend.WalletApplication.SetImagePath().then(
+          window.backend.WalletApplication.GetImagePath().then(
             imagePath => (self.$store.commit('walletInfo/setImgPath', imagePath))
           );
           self.overlay = false;

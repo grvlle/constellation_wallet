@@ -74,8 +74,9 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Enter a new Wallet Label..."
-                  v-model="newLabel"
+                  placeholder="Enter a label for your wallet..."
+                  @input="setWalletLabel($event.target.value)"
+                  :value="walletLabel"                
                 />
                 <span class="input-group-append">
                   <p-button @click.native="submitLabel()" type="success" style="width:6rem;">Apply</p-button>
@@ -86,8 +87,8 @@
                   type="text"
                   :disabled="true"
                   class="form-control"
-                  :placeholder="imgPath"
-                  v-model="imgPath"
+                  placeholder="Browser for an image..."
+                  :value="imgPath"
                 />
                 <span class="input-group-append">
                   <p-button @click.native="uploadImage()" type="default" style="width:6rem;">Browse</p-button>
@@ -126,7 +127,7 @@
                     type="text"
                     :disabled="true"
                     placeholder="Path to private key (key.p12)"
-                    v-model="keystorePath"
+                    :value="keystorePath"
                   ></fg-input>
                 </div>
               </div>
@@ -146,7 +147,7 @@
                       class="form-control"
                       label="Private Key"
                       placeholder="Mnemonic Seed (coming soon)"
-                      v-model="seed"
+                      :value="seed"
                       aria-describedby="basic-addon2"
                     />
                     <div class="input-group-append">
@@ -236,48 +237,6 @@ export default {
     VueSelect
   },
   methods: {
-    submitLabel: function() {
-      const swalPopup = Swal.mixin({
-        customClass: {
-          container: this.darkMode
-            ? "theme--dark"
-            : "theme--light"
-        }
-      });
-      if (this.newLabel === "") {
-        swalPopup.fire({
-          title: "Failed!",
-          text: "Unable to change wallet label. No new label entered.",
-          type: "error"
-        });
-      } else {
-        swalPopup
-          .fire({
-            title: "Are you sure?",
-            html:
-              "You are about change wallet label to " +
-              this.newLabel +
-              ". This will replace your wallet label.",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#6DECBB",
-            confirmButtonText: "Yes, change label!"
-          })
-          .then(result => {
-            if (result.value) {
-              self.$store.commit('walletInfo/setEmail', this.newLabel);
-              window.backend.WalletApplication.StoreWalletLabelInDB(
-                this.newLabel
-              );
-              swalPopup.fire({
-                title: "Success!",
-                text: "You have set a new wallet label",
-                type: "success"
-              });
-            }
-          });
-      }
-    },
     toggleNodesOnline: function() {
       this.$store.commit('dashboard/setShowNodesOnline', !this.toggle.nodesOnline);
     },
@@ -295,6 +254,50 @@ export default {
         }
       });
     },
+    setWalletLabel: function(value) {
+      this.newLabel = value;
+    },
+    submitLabel: function() {
+      const swalPopup = Swal.mixin({
+        customClass: {
+          container: this.darkMode
+            ? "theme--dark"
+            : "theme--light"
+        }
+      });
+      if (this.newLabel === "") {
+        swalPopup.fire({
+          title: "Failed!",
+          text: "Unable to change wallet label. No new label entered.",
+        });
+      } else {
+        swalPopup
+          .fire({
+            title: "Are you sure?",
+            html:
+              "You are about change wallet label to " +
+              this.newLabel +
+              ". This will replace your wallet label.",
+            showCancelButton: true,
+            confirmButtonColor: "#6DECBB",
+            confirmButtonText: "Yes, change label!"
+          })
+          .then(result => {
+            if (result.value) {              
+              window.backend.WalletApplication.StoreWalletLabelInDB(this.newLabel)
+              .then(result => {
+                if (result) {
+                  this.$store.commit('walletInfo/setLabel', this.newLabel);
+                }
+              });
+              swalPopup.fire({
+                title: "Success!",
+                text: "You have set a new wallet label",
+              });
+            }
+          });
+      }
+    },
     setCurrency: function(value) {
       window.backend.WalletApplication.StoreCurrencyStateDB(value)
       .then(result => {
@@ -302,12 +305,6 @@ export default {
           this.$store.commit('walletInfo/setCurrency', value);
         }
       });
-    },
-    importKeys: function() {
-      window.backend.WalletApplication.ImportKeys();
-    },
-    exportKeys: function() {
-      window.backend.WalletApplication.ExportKeys();
     },
     uploadImage: function() {
       window.backend.WalletApplication.UploadImage().then(path => {
@@ -364,7 +361,12 @@ export default {
         }
       });
     },
-
+    importKeys: function() {
+      window.backend.WalletApplication.ImportKeys();
+    },
+    exportKeys: function() {
+      window.backend.WalletApplication.ExportKeys();
+    },
     showPassword: function() {
       if (this.type === "password") {
         this.type = "text";
@@ -376,7 +378,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('walletInfo', ['imgPath', 'seed', 'keystorePath', 'darkMode', 'currency']),
+    ...mapState('walletInfo', ['walletLabel', 'imgPath', 'seed', 'keystorePath', 'darkMode', 'currency']),
     ...mapState('dashboard', ['toggle'])
   },
   data() {

@@ -2,7 +2,7 @@ const getDefaultState = () => {
   return {
     version: "v2.6.0",
     uiVersion: "v1.2.0",
-    email: "Molly Wallet",
+    walletLabel: "",
     imgPath: 'faces/face-0.jpg',
     transactions: 0,
     tokenAmount: 0,
@@ -65,8 +65,8 @@ const mutations = {
   setSaveKeystorePath(state, path) {
     state.saveKeystorePath = path;
   },
-  setEmail(state, email) {
-    state.email = email;
+  setLabel(state, label) {
+    state.walletLabel = label;
   },
   setDarkMode(state, darkMode) {
     state.darkMode = darkMode;

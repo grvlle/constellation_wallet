@@ -91,7 +91,7 @@ export default {
   },
   methods: {
     newWallet: function() {
-      this.$store.dispatch('walletInfo/resetWalletState').then(() => {
+      this.$store.dispatch('walletInfo/reset').then(() => {
         this.$router.push({
           name: 'new wallet', 
           params: {

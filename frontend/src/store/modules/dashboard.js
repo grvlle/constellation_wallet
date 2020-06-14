@@ -31,7 +31,7 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const actions = {
-    resetDashboardState({ commit }) {
+    reset({ commit }) {
         commit('resetState')
     }
 }

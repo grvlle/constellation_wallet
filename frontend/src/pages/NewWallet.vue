@@ -197,7 +197,7 @@ export default {
   },
   methods: {
     cancel: function() {
-      this.$store.dispatch('walletInfo/resetWalletState').then(() => {
+      this.$store.dispatch('walletInfo/reset').then(() => {
         this.$router.go(-1);
       })
     },

@@ -27,7 +27,7 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const actions = {
-  resetWalletState({ commit }) {
+  reset({ commit }) {
     commit('resetState')
   }
 }

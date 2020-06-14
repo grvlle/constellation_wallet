@@ -19,7 +19,7 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const actions = {
-    resetAppState({ commit }) {
+    reset({ commit }) {
         commit('resetState')
     }
 }

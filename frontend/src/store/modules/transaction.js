@@ -8,7 +8,7 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const actions = {
-    resetTransactionsState({ commit }) {
+    reset({ commit }) {
         commit('resetState')
     }
 }

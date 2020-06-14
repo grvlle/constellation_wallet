@@ -1,5 +1,5 @@
 <template>
-  <div :class="this.$store.state.walletInfo.darkMode ? 'theme--dark' : 'theme--light'">
+  <div :class="darkMode ? 'theme--dark' : 'theme--light'">
     <vue-progress-bar></vue-progress-bar>
     <div :class="{'nav-open': $sidebar.showSidebar}">
       <notifications></notifications>
@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import ErrorNotification from "./pages/Notifications/ErrorMessage";
 import WarningNotification from "./pages/Notifications/Warning";
 import SuccessNotification from "./pages/Notifications/Success";
@@ -18,6 +19,9 @@ import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
   components: {
+  },
+  computed: {
+    ...mapState('walletInfo', ['darkMode'])
   },
   data() {
     return {

@@ -218,7 +218,7 @@ export default {
       this.$store.commit('walletInfo/setTotalBalance', total);
     });
     window.wails.Events.On("blocks", number => {
-      this.$store.commit('walletInfo/setBlocks', number);
+      this.$store.commit('dashboard/setBlocks', number);
     });
     window.wails.Events.On("totalValue", (currency, value) => {
       this.$store.commit('walletInfo/setCurrency', currency);

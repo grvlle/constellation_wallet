@@ -49,7 +49,6 @@ export default {
     SelectDirToStoreKey: function() {
       window.backend.WalletApplication.SelectDirToStoreKey().then(
         result => {
-          this.$store.commit('walletInfo/setSaveKeystorePath', result);
           this.$store.commit('walletInfo/setKeystorePath', result);
         }
       );

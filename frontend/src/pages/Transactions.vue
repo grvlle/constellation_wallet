@@ -63,7 +63,7 @@
                 <p-button
                   type="info"
                   block
-                  @click.native="tx"
+                  @click.native="submitTransaction"
                   style="max-width: 10rem; margin-left: auto;"
                   :disabled="txInTransit || txAddressValidation == address"
                 >
@@ -184,9 +184,8 @@ export default {
         end = start + this.size;
       return this.txHistory.slice(start, end);
     },
-    ...mapState('app', ['txFinished']),
     ...mapState('walletInfo', ['address', 'availableBalance', 'darkMode']),
-    ...mapState('transaction', ['txHistory', 'txStatus'])
+    ...mapState('transaction', ['txHistory', 'txStatus', 'txFinished'])
   },
   methods: {
     isFloat: function(n) {
@@ -203,7 +202,7 @@ export default {
       this.txAddressValidation = value;
       this.$v.txAddressValidation.$touch();
     },
-    tx: function() {
+    submitTransaction: function() {
       var self = this;
       self.$v.$touch();
       if (self.$v.$invalid) {

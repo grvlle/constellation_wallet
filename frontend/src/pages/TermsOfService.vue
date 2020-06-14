@@ -42,11 +42,10 @@ export default {
             window.backend.WalletApplication.StoreTermsOfServiceStateDB(true)
             .then(result => {
               if (result) {
-                self.$store.commit('walletInfo/setTermsOfService', true).then(() => {
-                  self.$router.push({
-                    name: 'loading', 
-                    params: {message: "Getting your $DAG Wallet ready..."}
-                  });
+                self.$store.commit('walletInfo/setTermsOfService', result)
+                self.$router.push({
+                  name: 'loading', 
+                  params: {message: "Getting your $DAG Wallet ready..."}
                 });
               } else {
                 self.$router.go(-1);

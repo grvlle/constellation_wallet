@@ -147,7 +147,7 @@
                       class="form-control"
                       label="Private Key"
                       placeholder="Mnemonic Seed (coming soon)"
-                      :value="seed"
+                      value="Mnemonic Seed will be introduced with a later software release"
                       aria-describedby="basic-addon2"
                     />
                     <div class="input-group-append">
@@ -378,7 +378,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('walletInfo', ['walletLabel', 'imgPath', 'seed', 'keystorePath', 'darkMode', 'currency']),
+    ...mapState('walletInfo', ['walletLabel', 'imgPath', 'keystorePath', 'darkMode', 'currency']),
     ...mapState('dashboard', ['toggle'])
   },
   data() {

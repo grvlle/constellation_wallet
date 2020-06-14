@@ -11,6 +11,9 @@ const getDefaultState = () => {
             transactions: true,
             throughput: true,
         },
+        stat: {
+            blocks: "NaN",
+        },
         chart: {
             nodesOnline: {
                 labels: [], // ChartData.nodes_online.labels,
@@ -60,6 +63,9 @@ const mutations = {
     setShowThroughput(state, val) {
         state.toggle.throughput = val;
     },
+    setBlocks(state, blocks) {
+        state.stat.blocks = blocks;
+      },
     setNodeOnlineChart(state, obj) {
         state.chart.nodesOnline.series = obj.series;
         state.chart.nodesOnline.labels = obj.labels;

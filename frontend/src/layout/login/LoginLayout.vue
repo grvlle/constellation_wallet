@@ -65,8 +65,8 @@ export default {
         return false
       }
     },
-    ...mapState('app', ['displayLoginError', 'loginErrorMsg', 'network']),
-    ...mapState('walletInfo', ['darkMode', 'uiVersion'])
+    ...mapState('app', ['displayLoginError', 'loginErrorMsg', 'network', 'uiVersion']),
+    ...mapState('walletInfo', ['darkMode'])
   }
 };
 </script>

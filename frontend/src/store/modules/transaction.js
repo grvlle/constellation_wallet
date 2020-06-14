@@ -1,7 +1,8 @@
 const getDefaultState = () => {
     return {
         txHistory: [],
-        txStatus: "Complete"
+        txStatus: "Complete",
+        txFinished: true
     }
 }
 
@@ -24,6 +25,9 @@ const mutations = {
     },
     updateTxStatus(state, status) {
         state.txStatus = status
+    },
+    setTxFinished(state, setTxFinished) {
+        state.txFinished = setTxFinished;
     }
 }
 

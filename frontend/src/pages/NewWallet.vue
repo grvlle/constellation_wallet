@@ -48,8 +48,7 @@
                     Select a directory to store your private key (key.p12) in
                   </label>
                   <file-selector 
-                    v-model="saveKeystorePath" 
-                    :placeholder="saveKeystorePath" 
+                    v-model="keystorePath"
                     action="SelectSaveFile"
                   />
                 </div>
@@ -163,12 +162,12 @@ export default {
         return false;
       }
     },
-    saveKeystorePath: {
+    keystorePath: {
       get () {
-        return this.$store.state.walletInfo.saveKeystorePath
+        return this.$store.state.walletInfo.keystorePath
       },
       set (value) {
-        this.$store.commit('walletInfo/setSaveKeystorePath', value)
+        this.$store.commit('walletInfo/setKeystorePath', value)
       }
     },
     alias: {
@@ -206,7 +205,7 @@ export default {
       self.$Progress.start();
       self.overlay = true;
       window.backend.WalletApplication.CreateWallet(
-        self.saveKeystorePath,
+        self.keystorePath,
         self.keystorePassword,
         self.KeyPassword,
         self.alias,
@@ -214,7 +213,7 @@ export default {
       ).then(walletCreated => {
         if (walletCreated) {
           window.backend.WalletApplication.Login(
-            self.saveKeystorePath,
+            self.keystorePath,
             self.keystorePassword,
             self.KeyPassword,
             self.alias

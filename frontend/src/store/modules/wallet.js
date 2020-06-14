@@ -1,7 +1,5 @@
 const getDefaultState = () => {
   return {
-    version: "v2.6.0",
-    uiVersion: "v1.2.0",
     walletLabel: "",
     imgPath: 'faces/face-0.jpg',
     transactions: 0,
@@ -11,14 +9,10 @@ const getDefaultState = () => {
     nonce: 0,
     currency: "USD",
     totalValue: 0.0,
-    blocks: "NaN",
     address: "N/A",
     keystorePath: "",
-    saveKeystorePath: "",
     alias: "",
-    privateKey: "NaN",
     publicKey: "NaN",
-    seed: "Mnemonic Seed will be introduced with a later software release",
     darkMode: false,
     termsOfService: false
   }
@@ -47,9 +41,6 @@ const mutations = {
   setTotalBalance(state, total) {
     state.totalBalance = total;
   },
-  setBlocks(state, blocks) {
-    state.blocks = blocks;
-  },
   setTotalValue(state, value) {
     state.totalValue = value;
   },
@@ -62,9 +53,6 @@ const mutations = {
   setKeystorePath(state, path) {
     state.keystorePath = path;
   },
-  setSaveKeystorePath(state, path) {
-    state.saveKeystorePath = path;
-  },
   setLabel(state, label) {
     state.walletLabel = label;
   },
@@ -76,7 +64,7 @@ const mutations = {
   },
   setTermsOfService(state, termsOfService) {
     state.termsOfService = termsOfService;
-},
+  }
 }
 
 export default {

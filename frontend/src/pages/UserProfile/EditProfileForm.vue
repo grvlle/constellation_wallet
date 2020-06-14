@@ -114,9 +114,11 @@ export default {
     return {};
   },
   computed: {
+    ...mapState('app', ['version', 'uiVersion']),
     ...mapState('walletInfo', [
-      'address', 'availableBalance', 'nonce', 'totalBalance', 'version', 
-      'uiVersion', 'alias', 'keystorePath', 'termsOfService'])
+      'address', 'availableBalance', 'nonce', 'totalBalance', 
+      'alias', 'keystorePath', 'termsOfService'])
+
   }
 };
 </script>

@@ -1,6 +1,7 @@
 const getDefaultState = () => {
     return {
-        txFinished: true,
+        version: "v2.6.0",
+        uiVersion: "v1.2.0",
         isLoggedIn: false,
         errorMessage: "",
         warningMessage: "",
@@ -26,9 +27,6 @@ const actions = {
 const mutations = {
     resetState(state) {
         Object.assign(state, getDefaultState())
-    },
-    setTxFinished(state, setTxFinished) {
-        state.txFinished = setTxFinished;
     },
     setIsLoggedIn(state, isLoggedIn) {
         state.isLoggedIn = isLoggedIn;

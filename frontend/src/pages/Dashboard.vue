@@ -38,7 +38,7 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>Blocks</p>
-            {{blocks}}
+            {{stat.blocks}}
             <!-- {{this.$store.state.OS.windows}}
             {{this.$store.state.OS.macOS}}
             {{this.$store.state.OS.linux}} -->
@@ -194,8 +194,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('walletInfo', ['tokenAmount', 'currency', 'totalValue', 'blocks', 'address']),
-    ...mapState('dashboard', ['counters', 'toggle','chart']) 
+    ...mapState('walletInfo', ['tokenAmount', 'currency', 'totalValue', 'address']),
+    ...mapState('dashboard', ['counters', 'toggle', 'stat', 'chart']) 
   },
   filters: {
     asCurrency: function(value, currency) {

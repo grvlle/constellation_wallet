@@ -2,9 +2,9 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6 mx-auto text-center">
-        <p
-          v-if="this.$store.state.app.downloading.filename !== ''"
-        >{{this.$store.state.app.downloading.filename}}: {{this.$store.state.app.downloading.size}}</p>
+        <p v-if="downloading.filename !== ''" >
+          {{downloading.filename}}: {{downloading.size}}
+        </p>
       </div>
     </div>
     <div class="row">
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import Loader from "../components/Loader";
 export default {
   name: "downloading-screen",
@@ -33,7 +34,10 @@ export default {
         });
       }
     });
-  }
+  },
+  computed: {
+    ...mapState('app', ['downloading']) 
+  },
 };
 </script>
 

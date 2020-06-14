@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="container" v-if="this.$store.state.walletInfo.termsOfService">
+  <div id="app" class="container" v-if="termsOfService">
     <div class="row">
       <div class="col-9 mx-auto">
         <card>
@@ -11,12 +11,16 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import Swal from "sweetalert2/dist/sweetalert2";
 export default {
   name: "terms-of-service",
+  computed: {
+    ...mapState('walletInfo', ['termsOfService'])
+  },
   created() {
     var self = this;
-    if (!this.$store.state.walletInfo.termsOfService) {
+    if (!this.termsOfService) {
       setTimeout(() => {
         Swal.fire({
           html:
@@ -38,10 +42,11 @@ export default {
             window.backend.WalletApplication.StoreTermsOfServiceStateDB(true)
             .then(result => {
               if (result) {
-                self.$store.commit('walletInfo/setTermsOfService', true);
-                self.$router.push({
-                  name: 'loading', 
-                  params: {message: "Getting your $DAG Wallet ready..."}
+                self.$store.commit('walletInfo/setTermsOfService', true).then(() => {
+                  self.$router.push({
+                    name: 'loading', 
+                    params: {message: "Getting your $DAG Wallet ready..."}
+                  });
                 });
               } else {
                 self.$router.go(-1);

@@ -13,7 +13,7 @@ const getDefaultState = () => {
     totalValue: 0.0,
     blocks: "NaN",
     address: "N/A",
-    keystorePath: "C:\\Users\\alexa\\Documents\\temp1.p12",
+    keystorePath: "",
     saveKeystorePath: "",
     alias: "",
     privateKey: "NaN",

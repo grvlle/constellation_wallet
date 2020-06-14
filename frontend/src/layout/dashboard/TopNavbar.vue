@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
-      <img class="img-fluid" v-if="this.$store.state.walletInfo.darkMode"
+      <img class="img-fluid" v-if="darkMode"
         src="~@/assets/img/Constellation-Logo-White.png"
         style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem;" />
       <img class="img-fluid" v-else
@@ -38,12 +38,14 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 export default {
   computed: {
     routeName() {
       const { name } = this.$route;
       return this.capitalizeFirstLetter(name);
-    }
+    },
+    ...mapState('walletInfo', ['darkMode'])
   },
   data() {
     return {

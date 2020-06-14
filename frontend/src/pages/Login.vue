@@ -105,7 +105,7 @@ export default {
       self.$Progress.start();
       self.overlay = true;
       window.backend.WalletApplication.Login(
-        self.$store.state.walletInfo.keystorePath,
+        self.keystorePath,
         self.keystorePassword,
         self.KeyPassword,
         self.alias

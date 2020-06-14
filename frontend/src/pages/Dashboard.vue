@@ -94,7 +94,7 @@
           </div>
           <span slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.nodesOnline}} seconds
+            Updates in {{counters.chart}} seconds
           </span>
         </chart-card>
       </div>
@@ -113,7 +113,7 @@
           </div>
           <span style="padding-top: 0.625em;" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.nodesOnline}} seconds
+            Updates in {{counters.chart}} seconds
           </span>
         </chart-card>
       </div>
@@ -128,7 +128,7 @@
         >
           <span slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.nodesOnline}} seconds
+            Updates in {{counters.chart}} seconds
           </span>
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> $DAG Tokens

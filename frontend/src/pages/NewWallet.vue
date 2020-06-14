@@ -206,7 +206,7 @@ export default {
       self.$Progress.start();
       self.overlay = true;
       window.backend.WalletApplication.CreateWallet(
-        self.$store.state.walletInfo.keystorePath,
+        self.saveKeystorePath,
         self.keystorePassword,
         self.KeyPassword,
         self.alias,
@@ -214,7 +214,7 @@ export default {
       ).then(walletCreated => {
         if (walletCreated) {
           window.backend.WalletApplication.Login(
-            self.$store.state.walletInfo.keystorePath,
+            self.saveKeystorePath,
             self.keystorePassword,
             self.KeyPassword,
             self.alias

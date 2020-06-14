@@ -21,6 +21,7 @@ export default {
   components: {
   },
   computed: {
+    ...mapState('app', ['isLoggedIn', 'downloading']),
     ...mapState('walletInfo', ['darkMode'])
   },
   data() {
@@ -32,12 +33,12 @@ export default {
     let timerInterval, closeInSeconds = 10
     const swalPopup = Swal.mixin({
       customClass: {
-        container: this.$store.state.walletInfo.darkMode
+        container: this.darkMode
           ? "theme--dark"
           : "theme--light"
       }
     });
-    if (this.$store.state.app.isLoggedIn) {
+    if (this.isLoggedIn) {
       swalPopup.fire({
         title: "You have been idle for 5 minutes.",
         html: "To keep your Molly wallet safe from unauthorised access it will automatically logout in <b>10</b> seconds",
@@ -145,7 +146,7 @@ export default {
         onClick: () => {
           const swalPopup = Swal.mixin({
             customClass: {
-              container: this.$store.state.walletInfo.darkMode
+              container: this.darkMode
                 ? "theme--dark"
                 : "theme--light"
             }
@@ -201,7 +202,7 @@ export default {
     });
 
     window.wails.Events.On("downloading", (filename, size) => {
-      if (this.$store.state.app.downloading.filename !== filename) {
+      if (this.downloading.filename !== filename) {
         this.$store.commit('app/setDownloadFileName', filename);
       }
       this.$store.commit('app/setDownloadFileSize', size);

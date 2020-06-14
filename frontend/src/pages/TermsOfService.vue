@@ -16,7 +16,7 @@ import Swal from "sweetalert2/dist/sweetalert2";
 export default {
   name: "terms-of-service",
   computed: {
-    ...mapState('walletInfo', ['termsOfService'])
+    ...mapState('wallet', ['termsOfService'])
   },
   created() {
     var self = this;
@@ -42,7 +42,7 @@ export default {
             window.backend.WalletApplication.StoreTermsOfServiceStateDB(true)
             .then(result => {
               if (result) {
-                self.$store.commit('walletInfo/setTermsOfService', result)
+                self.$store.commit('wallet/setTermsOfService', result)
                 self.$router.push({
                   name: 'loading', 
                   params: {message: "Getting your $DAG Wallet ready..."}

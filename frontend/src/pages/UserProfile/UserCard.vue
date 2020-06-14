@@ -46,7 +46,7 @@
 import {mapState} from 'vuex'
 export default {
   computed: {
-    ...mapState('walletInfo', 
+    ...mapState('wallet', 
       ['imgPath', 'walletLabel', 'address', 'transactions', 'tokenAmount', 'totalValue', 'currency'])
   },
   filters: {

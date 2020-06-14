@@ -74,24 +74,24 @@ export default {
   computed: {
     keystorePath: {
       get () {
-        return this.$store.state.walletInfo.keystorePath
+        return this.$store.state.wallet.keystorePath
       },
       set (value) {
-        this.$store.commit('walletInfo/setKeystorePath', value)
+        this.$store.commit('wallet/setKeystorePath', value)
       }
     },
     alias: {
       get () {
-        return this.$store.state.walletInfo.alias
+        return this.$store.state.wallet.alias
       },
       set (value) {
-        this.$store.commit('walletInfo/setAlias', value)
+        this.$store.commit('wallet/setAlias', value)
       }
     }
   },
   methods: {
     newWallet: function() {
-      this.$store.dispatch('walletInfo/reset').then(() => {
+      this.$store.dispatch('wallet/reset').then(() => {
         this.$router.push({
           name: 'new wallet', 
           params: {
@@ -112,13 +112,13 @@ export default {
       ).then(result => {
         if (result) {
           window.backend.WalletApplication.GetUserTheme().then(
-            darkMode => (self.$store.commit('walletInfo/setDarkMode', darkMode))
+            darkMode => (self.$store.commit('wallet/setDarkMode', darkMode))
           )
           window.backend.WalletApplication.GetWalletTag().then(
-            walletTag => (self.$store.commit('walletInfo/setLabel', walletTag))
+            walletTag => (self.$store.commit('wallet/setLabel', walletTag))
           );
           window.backend.WalletApplication.GetImagePath().then(
-            imagePath => (self.$store.commit('walletInfo/setImgPath', imagePath))
+            imagePath => (self.$store.commit('wallet/setImgPath', imagePath))
           );
           self.overlay = false;
           self.$Progress.finish();
@@ -126,7 +126,7 @@ export default {
 
           window.backend.WalletApplication.CheckTermsOfService()
           .then (result => {
-            self.$store.commit('walletInfo/setTermsOfService', result)
+            self.$store.commit('wallet/setTermsOfService', result)
             if (result) {
               self.$router.push({
                 name: 'loading', 

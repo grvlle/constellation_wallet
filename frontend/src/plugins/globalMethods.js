@@ -5,9 +5,9 @@ Vue.mixin({
     logout: function() {
       window.backend.WalletApplication.LogOut().then(txFinishedState => {
         if (txFinishedState) {
-          let darkMode = this.$store.state.walletInfo.darkMode
+          let darkMode = this.$store.state.wallet.darkMode
           this.$store.dispatch('transaction/reset').then(() => {
-            this.$store.dispatch('walletInfo/reset').then(() => {
+            this.$store.dispatch('wallet/reset').then(() => {
               this.$store.dispatch('app/reset').then(() => {
                 this.$router.push({
                   name: 'login',

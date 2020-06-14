@@ -41,7 +41,7 @@ export default {
       window.backend.WalletApplication.ImportKey().then(
         result => {
           if (result) {
-            this.$store.commit('walletInfo/setKeystorePath', result);
+            this.$store.commit('wallet/setKeystorePath', result);
           }
         }
       );
@@ -49,7 +49,7 @@ export default {
     SelectDirToStoreKey: function() {
       window.backend.WalletApplication.SelectDirToStoreKey().then(
         result => {
-          this.$store.commit('walletInfo/setKeystorePath', result);
+          this.$store.commit('wallet/setKeystorePath', result);
         }
       );
     }

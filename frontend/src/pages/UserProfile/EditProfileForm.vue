@@ -115,7 +115,7 @@ export default {
   },
   computed: {
     ...mapState('app', ['version', 'uiVersion']),
-    ...mapState('walletInfo', [
+    ...mapState('wallet', [
       'address', 'availableBalance', 'nonce', 'totalBalance', 
       'alias', 'keystorePath', 'termsOfService'])
 

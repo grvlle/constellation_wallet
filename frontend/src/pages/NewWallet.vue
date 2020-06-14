@@ -164,15 +164,15 @@ export default {
     },
     keystorePath: {
       get () {
-        return this.$store.state.walletInfo.keystorePath
+        return this.$store.state.wallet.keystorePath
       },
       set (value) {
-        this.$store.commit('walletInfo/setKeystorePath', value)
+        this.$store.commit('wallet/setKeystorePath', value)
       }
     },
     alias: {
       get () {
-        return this.$store.state.walletInfo.alias
+        return this.$store.state.wallet.alias
       },
       set (value) {
         if (value.length >= 5) {
@@ -182,21 +182,21 @@ export default {
           this.aliasContainsFiveCharacters = false;
           this.aliasValid = false;
         }
-        this.$store.commit('walletInfo/setAlias', value)
+        this.$store.commit('wallet/setAlias', value)
       }
     },
     walletLabel: {
       get () {
-        return this.$store.state.walletInfo.walletLabel
+        return this.$store.state.wallet.walletLabel
       },
       set (value) {
-        this.$store.commit('walletInfo/setLabel', value)
+        this.$store.commit('wallet/setLabel', value)
       }
     }
   },
   methods: {
     cancel: function() {
-      this.$store.dispatch('walletInfo/reset').then(() => {
+      this.$store.dispatch('wallet/reset').then(() => {
         this.$router.go(-1);
       })
     },

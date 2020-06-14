@@ -45,7 +45,7 @@ export default {
       const { name } = this.$route;
       return this.capitalizeFirstLetter(name);
     },
-    ...mapState('walletInfo', ['darkMode'])
+    ...mapState('wallet', ['darkMode'])
   },
   data() {
     return {

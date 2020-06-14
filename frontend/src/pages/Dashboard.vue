@@ -194,7 +194,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('walletInfo', ['tokenAmount', 'currency', 'totalValue', 'address']),
+    ...mapState('wallet', ['tokenAmount', 'currency', 'totalValue', 'address']),
     ...mapState('dashboard', ['counters', 'toggle', 'stat', 'chart']) 
   },
   filters: {

@@ -250,7 +250,7 @@ export default {
       window.backend.WalletApplication.StoreDarkModeStateDB(!this.darkMode)
       .then(result => {
         if (result) {
-          this.$store.commit('walletInfo/setDarkMode', !this.darkMode);
+          this.$store.commit('wallet/setDarkMode', !this.darkMode);
         }
       });
     },
@@ -287,7 +287,7 @@ export default {
               window.backend.WalletApplication.StoreWalletLabelInDB(this.newLabel)
               .then(result => {
                 if (result) {
-                  this.$store.commit('walletInfo/setLabel', this.newLabel);
+                  this.$store.commit('wallet/setLabel', this.newLabel);
                 }
               });
               swalPopup.fire({
@@ -302,7 +302,7 @@ export default {
       window.backend.WalletApplication.StoreCurrencyStateDB(value)
       .then(result => {
         if (result) {
-          this.$store.commit('walletInfo/setCurrency', value);
+          this.$store.commit('wallet/setCurrency', value);
         }
       });
     },
@@ -337,7 +337,7 @@ export default {
             })
             .then(result => {
               if (result.value) {
-                this.$store.commit('walletInfo/setImgPath', path);
+                this.$store.commit('wallet/setImgPath', path);
                 swalPopup.fire({
                   title: "Success!",
                   text: "You have uploaded a new wallet picture",
@@ -378,7 +378,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('walletInfo', ['walletLabel', 'imgPath', 'keystorePath', 'darkMode', 'currency']),
+    ...mapState('wallet', ['walletLabel', 'imgPath', 'keystorePath', 'darkMode', 'currency']),
     ...mapState('dashboard', ['toggle'])
   },
   data() {

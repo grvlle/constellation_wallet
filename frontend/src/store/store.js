@@ -10,7 +10,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     modules: {
         app: App,
-        walletInfo: Wallet,
+        wallet: Wallet,
         transaction: Transaction,
         dashboard: Dashboard
     },

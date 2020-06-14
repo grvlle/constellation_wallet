@@ -22,7 +22,7 @@ export default {
   },
   computed: {
     ...mapState('app', ['isLoggedIn', 'downloading']),
-    ...mapState('walletInfo', ['darkMode'])
+    ...mapState('wallet', ['darkMode'])
   },
   data() {
     return {
@@ -213,16 +213,16 @@ export default {
 
     // Dashboard.vue sockets
     window.wails.Events.On("token", (amount, available, total) => {
-      this.$store.commit('walletInfo/setTokenAmount', amount);
-      this.$store.commit('walletInfo/setAvailableBalance', available);
-      this.$store.commit('walletInfo/setTotalBalance', total);
+      this.$store.commit('wallet/setTokenAmount', amount);
+      this.$store.commit('wallet/setAvailableBalance', available);
+      this.$store.commit('wallet/setTotalBalance', total);
     });
     window.wails.Events.On("blocks", number => {
       this.$store.commit('dashboard/setBlocks', number);
     });
     window.wails.Events.On("totalValue", (currency, value) => {
-      this.$store.commit('walletInfo/setCurrency', currency);
-      this.$store.commit('walletInfo/setTotalValue', value);
+      this.$store.commit('wallet/setCurrency', currency);
+      this.$store.commit('wallet/setTotalValue', value);
     });
     window.wails.Events.On("token_counter", count => {
       this.$store.commit('dashboard/setTokenCounter', count);
@@ -259,7 +259,7 @@ export default {
 
     // Settings.vue sockets
     window.wails.Events.On("wallet_keys", address => {
-      this.$store.commit('walletInfo/setAddress', address);
+      this.$store.commit('wallet/setAddress', address);
     });
   }
 };

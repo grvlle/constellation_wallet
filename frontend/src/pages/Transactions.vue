@@ -184,7 +184,7 @@ export default {
         end = start + this.size;
       return this.txHistory.slice(start, end);
     },
-    ...mapState('walletInfo', ['address', 'availableBalance', 'darkMode']),
+    ...mapState('wallet', ['address', 'availableBalance', 'darkMode']),
     ...mapState('transaction', ['txHistory', 'txStatus', 'txFinished'])
   },
   methods: {

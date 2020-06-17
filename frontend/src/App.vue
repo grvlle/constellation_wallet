@@ -1,5 +1,5 @@
 <template>
-  <div :class="this.$store.state.walletInfo.darkMode ? 'theme--dark' : 'theme--light'">
+  <div :class="darkMode ? 'theme--dark' : 'theme--light'">
     <vue-progress-bar></vue-progress-bar>
     <div :class="{'nav-open': $sidebar.showSidebar}">
       <notifications></notifications>
@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import ErrorNotification from "./pages/Notifications/ErrorMessage";
 import WarningNotification from "./pages/Notifications/Warning";
 import SuccessNotification from "./pages/Notifications/Success";
@@ -18,6 +19,10 @@ import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
   components: {
+  },
+  computed: {
+    ...mapState('app', ['isLoggedIn', 'downloading']),
+    ...mapState('wallet', ['darkMode'])
   },
   data() {
     return {
@@ -28,12 +33,12 @@ export default {
     let timerInterval, closeInSeconds = 10
     const swalPopup = Swal.mixin({
       customClass: {
-        container: this.$store.state.walletInfo.darkMode
+        container: this.darkMode
           ? "theme--dark"
           : "theme--light"
       }
     });
-    if (this.$store.state.app.isLoggedIn) {
+    if (this.isLoggedIn) {
       swalPopup.fire({
         title: "You have been idle for 5 minutes.",
         html: "To keep your Molly wallet safe from unauthorised access it will automatically logout in <b>10</b> seconds",
@@ -71,7 +76,7 @@ export default {
   mounted() {
     // Backend Errors
     window.wails.Events.On("error_handling", (m, err) => {
-      this.$store.commit('setErrorMessage', m + err);
+      this.$store.commit('app/setErrorMessage', m + err);
       this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
@@ -90,7 +95,7 @@ export default {
     });
 
     window.wails.Events.On("warning", m => {
-      this.$store.commit('setWarningMessage', m);
+      this.$store.commit('app/setWarningMessage', m);
       this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
@@ -109,7 +114,7 @@ export default {
     });
 
     window.wails.Events.On("success", m => {
-      this.$store.commit('setSuccessMessage', m);
+      this.$store.commit('app/setSuccessMessage', m);
       this.$notifications.clear();
       setTimeout(() => {
         this.$notifications.clear();
@@ -128,7 +133,7 @@ export default {
     });
 
     window.wails.Events.On("new_release", m => {
-      this.$store.commit('setNewRelease', m);
+      this.$store.commit('app/setNewRelease', m);
       var self = this;
       this.$notifications.clear();
       this.$notify({
@@ -141,7 +146,7 @@ export default {
         onClick: () => {
           const swalPopup = Swal.mixin({
             customClass: {
-              container: this.$store.state.walletInfo.darkMode
+              container: this.darkMode
                 ? "theme--dark"
                 : "theme--light"
             }
@@ -173,34 +178,34 @@ export default {
     });
 
     window.wails.Events.On("login_error", (m, err) => {
-      this.$store.commit('setLoginErrorMessage', m);
-      this.$store.commit('setDisplayLoginError', err);
+      this.$store.commit('app/setLoginErrorMessage', m);
+      this.$store.commit('app/setDisplayLoginError', err);
       setTimeout(() => {
-        this.$store.commit('setDisplayLoginError', false);
+        this.$store.commit('app/setDisplayLoginError', false);
       }, 10000);
     });
 
     // Transactions.vue sockets
     window.wails.Events.On("update_tx_history", txHistoryFull => {
       if (Object.entries(txHistoryFull).length != 0) {
-        this.$store.commit({type: 'updateFullTxHistory', txHistoryFull});
+        this.$store.commit({type: 'transaction/updateFullTxHistory', txHistoryFull});
       }
     });
     window.wails.Events.On("tx_in_transit", txFinished => {
-      this.$store.commit('setTxFinished', txFinished);
+      this.$store.commit('transaction/setTxFinished', txFinished);
     });
     window.wails.Events.On("new_transaction", txObject => {
-      this.$store.commit("updateTxHistory", txObject);
+      this.$store.commit("transaction/updateTxHistory", txObject);
     });
     window.wails.Events.On("tx_pending", txStatus => {
-      this.$store.commit("updateTxStatus", txStatus);
+      this.$store.commit("transaction/updateTxStatus", txStatus);
     });
 
     window.wails.Events.On("downloading", (filename, size) => {
-      if (this.$store.state.app.downloading.filename !== filename) {
-        this.$store.commit('setDownloadFileName', filename);
+      if (this.downloading.filename !== filename) {
+        this.$store.commit('app/setDownloadFileName', filename);
       }
-      this.$store.commit('setDownloadFileSize', size);
+      this.$store.commit('app/setDownloadFileSize', size);
     });
 
     // Login.vue sockets
@@ -208,53 +213,53 @@ export default {
 
     // Dashboard.vue sockets
     window.wails.Events.On("token", (amount, available, total) => {
-      this.$store.commit('setTokenAmount', amount);
-      this.$store.commit('setAvailableBalance', available);
-      this.$store.commit('setTotalBalance', total);
+      this.$store.commit('wallet/setTokenAmount', amount);
+      this.$store.commit('wallet/setAvailableBalance', available);
+      this.$store.commit('wallet/setTotalBalance', total);
     });
     window.wails.Events.On("blocks", number => {
-      this.$store.commit('setBlocks', number);
+      this.$store.commit('dashboard/setBlocks', number);
     });
     window.wails.Events.On("totalValue", (currency, value) => {
-      this.$store.commit('setCurrency', currency);
-      this.$store.commit('setTotalValue', value);
+      this.$store.commit('wallet/setCurrency', currency);
+      this.$store.commit('wallet/setTotalValue', value);
     });
     window.wails.Events.On("token_counter", count => {
-      this.$store.commit('setTokenCounter', count);
+      this.$store.commit('dashboard/setTokenCounter', count);
     });
     window.wails.Events.On("value_counter", valueCount => {
-      this.$store.commit('setValueCounter', valueCount);
+      this.$store.commit('dashboard/setValueCounter', valueCount);
     });
     window.wails.Events.On("block_counter", blockCount => {
-      this.$store.commit('setBlockCounter', blockCount);
+      this.$store.commit('dashboard/setBlockCounter', blockCount);
     });
     window.wails.Events.On("chart_counter", pieChartCount => {
-      this.$store.commit('setNodesOnlineCounter', pieChartCount);
+      this.$store.commit('dashboard/setChartCounter', pieChartCount);
     });
     window.wails.Events.On("node_stats", (series, labels) => {
       if (Object.entries(series).length != 0 && 
           Object.entries(labels).length != 0) {
-        this.$store.commit({type: 'setNodeOnlineChart', series, labels});
+        this.$store.commit({type: 'dashboard/setNodeOnlineChart', series, labels});
       }
     });
     window.wails.Events.On("tx_stats", (seriesOne, seriesTwo, labels) => {
       if (Object.entries(seriesOne).length != 0 && 
           Object.entries(seriesTwo).length != 0 && 
           Object.entries(labels).length != 0) {
-        this.$store.commit({type: 'setTransactionStatsChart', seriesOne, seriesTwo, labels});
+        this.$store.commit({type: 'dashboard/setTransactionStatsChart', seriesOne, seriesTwo, labels});
       }
     });
     window.wails.Events.On("network_stats", (seriesOne, seriesTwo, labels) => {
       if (Object.entries(seriesOne).length != 0 && 
           Object.entries(seriesTwo).length != 0 && 
           Object.entries(labels).length != 0) {
-        this.$store.commit({type: 'setNetworkStatsChart', seriesOne, seriesTwo, labels});
+        this.$store.commit({type: 'dashboard/setNetworkStatsChart', seriesOne, seriesTwo, labels});
       }
     });
 
     // Settings.vue sockets
     window.wails.Events.On("wallet_keys", address => {
-      this.$store.commit('setAddress', address);
+      this.$store.commit('wallet/setAddress', address);
     });
   }
 };

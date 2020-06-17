@@ -5,10 +5,10 @@
     </div>
     <div>
       <div class="author">
-        <img class="avatar border-white" :src="require('@/assets/img/' + this.$store.state.walletInfo.imgPath)" alt="...">
-        <h4 class="title">{{this.$store.state.walletInfo.email}}
+        <img class="avatar border-white" :src="require('@/assets/img/' + imgPath)" alt="...">
+        <h4 class="title">{{walletLabel}}
           <br>
-            <small>{{this.$store.state.walletInfo.address}}</small>
+            <small>{{address}}</small>
         </h4>
       </div>
       <p class="description text-center">
@@ -20,21 +20,21 @@
       <br>
       <div class="row">
         <div class="col-4">
-          <h5>{{this.$store.state.walletInfo.transactions}}
+          <h5>{{transactions}}
             <br>
             <small>Transactions</small>
           </h5>
         </div>
         <div class="col-4">
-          <h5>{{this.$store.state.walletInfo.tokenAmount | asCurrency('DAG')}}
+          <h5>{{tokenAmount | asCurrency('DAG')}}
             <br>
             <small>DAG</small>
           </h5>
         </div>
         <div class="col-4">
-          <h5>{{this.$store.state.walletInfo.totalValue | asCurrency(this.$store.state.walletInfo.currency)}}
+          <h5>{{totalValue | asCurrency(currency)}}
             <br>
-            <small>{{this.$store.state.walletInfo.currency}}</small>
+            <small>{{currency}}</small>
           </h5>
         </div>
       </div>
@@ -43,7 +43,12 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 export default {
+  computed: {
+    ...mapState('wallet', 
+      ['imgPath', 'walletLabel', 'address', 'transactions', 'tokenAmount', 'totalValue', 'currency'])
+  },
   filters: {
     asCurrency: function(value, currency) {
 

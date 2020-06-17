@@ -52,9 +52,9 @@ func (a *WalletApplication) UploadImage() string {
 	return filename
 }
 
-// SetImagePath is called from the Login.Vue. It'll query the DB for the user's profile picture
+// GetImagePath is called from the Login.Vue. It'll query the DB for the user's profile picture
 // and return it to the FE to be displayed.
-func (a *WalletApplication) SetImagePath() string {
+func (a *WalletApplication) GetImagePath() string {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Error; err != nil {
 		a.log.Errorln("Unable to query the DB record for the Image path. Reason: ", err)
 		a.sendError("Unable to query the DB record for the Image path. Reason: ", err)
@@ -65,15 +65,17 @@ func (a *WalletApplication) SetImagePath() string {
 }
 
 // StoreImagePathInDB stores the path to where the profile picture is located in the database
-func (a *WalletApplication) StoreImagePathInDB(path string) {
+func (a *WalletApplication) StoreImagePathInDB(path string) bool {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("ProfilePicture", path).Error; err != nil {
 		a.log.Errorln("Unable to update the DB record with the Image path. Reason: ", err)
 		a.sendError("Unable to update the DB record with the Image path. Reason: ", err)
+		return false
 	}
+	return true
 }
 
-// SetWalletTag is called from the Login.Vue
-func (a *WalletApplication) SetWalletTag() string {
+// GetWalletTag is called from the Login.Vue
+func (a *WalletApplication) GetWalletTag() string {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Error; err != nil {
 		a.log.Errorln("Unable to query the DB record for the Image path. Reason: ", err)
 		a.sendError("Unable to query the DB record for the Image path. Reason: ", err)
@@ -83,15 +85,17 @@ func (a *WalletApplication) SetWalletTag() string {
 }
 
 // StoreWalletLabelInDB takes a wallet label string entered by a user and stores it in the database
-func (a *WalletApplication) StoreWalletLabelInDB(walletTag string) {
+func (a *WalletApplication) StoreWalletLabelInDB(walletTag string) bool {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("WalletTag", walletTag).Error; err != nil {
 		a.log.Errorln("Unable to update the DB record with the wallet tag. Reason: ", err)
 		a.sendError("Unable to update the DB record with the wallet tag. Reason: ", err)
+		return false
 	}
+	return true
 }
 
-// SetUserTheme is called from the Login.Vue
-func (a *WalletApplication) SetUserTheme() bool {
+// GetUserTheme is called from the Login.Vue
+func (a *WalletApplication) GetUserTheme() bool {
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Error; err != nil {
 		a.log.Errorln("Unable to query the DB record for the Image path. Reason: ", err)
 		a.sendError("Unable to query the DB record for the Image path. Reason: ", err)

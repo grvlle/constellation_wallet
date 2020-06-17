@@ -48,8 +48,7 @@
                     Select a directory to store your private key (key.p12) in
                   </label>
                   <file-selector 
-                    v-model="saveKeystorePath" 
-                    :placeholder="saveKeystorePath" 
+                    v-model="keystorePath"
                     action="SelectSaveFile"
                   />
                 </div>
@@ -89,8 +88,7 @@
                 <div>
                   <fg-input
                     type="text"
-                    v-model="newWalletLabel"
-                    :placeholder="this.$store.state.walletInfo.email"
+                    v-model="walletLabel"
                     label="Wallet Label (optional)"
                   ></fg-input>
                 </div>
@@ -140,7 +138,6 @@
 export default {
   name: "new-wallet-screen",
   data: () => ({
-    newWalletLabel: "",
     aliasValid: false,
     aliasLength: 0,
     aliasContainsFiveCharacters: false,
@@ -165,17 +162,17 @@ export default {
         return false;
       }
     },
-    saveKeystorePath: {
+    keystorePath: {
       get () {
-        return this.$store.state.walletInfo.saveKeystorePath
+        return this.$store.state.wallet.keystorePath
       },
       set (value) {
-        this.$store.commit('setSaveKeystorePath', value)
+        this.$store.commit('wallet/setKeystorePath', value)
       }
     },
     alias: {
       get () {
-        return this.$store.state.walletInfo.alias
+        return this.$store.state.wallet.alias
       },
       set (value) {
         if (value.length >= 5) {
@@ -185,42 +182,45 @@ export default {
           this.aliasContainsFiveCharacters = false;
           this.aliasValid = false;
         }
-        this.$store.commit('setAlias', value)
+        this.$store.commit('wallet/setAlias', value)
+      }
+    },
+    walletLabel: {
+      get () {
+        return this.$store.state.wallet.walletLabel
+      },
+      set (value) {
+        this.$store.commit('wallet/setLabel', value)
       }
     }
-  }, 
+  },
   methods: {
     cancel: function() {
-      this.$store.dispatch('resetWalletState');
-      this.$store.dispatch('resetAppState');
-      this.$router.go(-1);
+      this.$store.dispatch('wallet/reset').then(() => {
+        this.$router.go(-1);
+      })
     },
     createWallet: function() {
       var self = this;
       self.$Progress.start();
       self.overlay = true;
-      if (self.newWalletLabel !== "") {
-        self.$store.commit('setEmail', self.newWalletLabel);
-        window.backend.WalletApplication.StoreWalletLabelInDB(
-          self.newWalletLabel
-        );
-      }
       window.backend.WalletApplication.CreateWallet(
-        self.$store.state.walletInfo.keystorePath,
+        self.keystorePath,
         self.keystorePassword,
         self.KeyPassword,
-        self.alias
+        self.alias,
+        self.walletLabel
       ).then(walletCreated => {
         if (walletCreated) {
           window.backend.WalletApplication.Login(
-            self.$store.state.walletInfo.keystorePath,
+            self.keystorePath,
             self.keystorePassword,
             self.KeyPassword,
             self.alias
           ).then(loggedIn => {
             if (loggedIn) {
               self.overlay = false;
-              self.$store.commit('setIsLoggedIn', loggedIn);
+              self.$store.commit('app/setIsLoggedIn', loggedIn);
               self.$router.push({
                 name: 'accept terms of service',
                 params: {message: "Terms of Service"}

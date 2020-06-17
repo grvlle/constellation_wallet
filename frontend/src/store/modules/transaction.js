@@ -1,14 +1,15 @@
 const getDefaultState = () => {
     return {
         txHistory: [],
-        txStatus: "Complete"
+        txStatus: "Complete",
+        txFinished: true
     }
 }
 
 const state = getDefaultState()
 
 const actions = {
-    resetTransactionsState({ commit }) {
+    reset({ commit }) {
         commit('resetState')
     }
 }
@@ -24,10 +25,14 @@ const mutations = {
     },
     updateTxStatus(state, status) {
         state.txStatus = status
+    },
+    setTxFinished(state, setTxFinished) {
+        state.txFinished = setTxFinished;
     }
 }
 
 export default {
+    namespaced: true,
     state,
     getters: {},
     actions,

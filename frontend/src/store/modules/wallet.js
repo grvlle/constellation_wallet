@@ -1,8 +1,6 @@
 const getDefaultState = () => {
   return {
-    version: "v2.6.0",
-    uiVersion: "v1.2.0",
-    email: "Molly Wallet",
+    walletLabel: "",
     imgPath: 'faces/face-0.jpg',
     transactions: 0,
     tokenAmount: 0,
@@ -11,22 +9,19 @@ const getDefaultState = () => {
     nonce: 0,
     currency: "USD",
     totalValue: 0.0,
-    blocks: "NaN",
     address: "N/A",
     keystorePath: "",
-    saveKeystorePath: "",
     alias: "",
-    privateKey: "NaN",
     publicKey: "NaN",
-    seed: "Mnemonic Seed will be introduced with a later software release",
-    darkMode: false
+    darkMode: false,
+    termsOfService: false
   }
 }
 
 const state = getDefaultState()
 
 const actions = {
-  resetWalletState({ commit }) {
+  reset({ commit }) {
     commit('resetState')
   }
 }
@@ -46,9 +41,6 @@ const mutations = {
   setTotalBalance(state, total) {
     state.totalBalance = total;
   },
-  setBlocks(state, blocks) {
-    state.blocks = blocks;
-  },
   setTotalValue(state, value) {
     state.totalValue = value;
   },
@@ -61,21 +53,22 @@ const mutations = {
   setKeystorePath(state, path) {
     state.keystorePath = path;
   },
-  setSaveKeystorePath(state, path) {
-    state.saveKeystorePath = path;
-  },
-  setEmail(state, email) {
-    state.email = email;
+  setLabel(state, label) {
+    state.walletLabel = label;
   },
   setDarkMode(state, darkMode) {
     state.darkMode = darkMode;
   },
   setImgPath(state, path) {
     state.imgPath = path;
+  },
+  setTermsOfService(state, termsOfService) {
+    state.termsOfService = termsOfService;
   }
 }
 
 export default {
+  namespaced: true,
   state,
   getters: {},
   actions,

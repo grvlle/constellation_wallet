@@ -74,30 +74,30 @@ export default {
   computed: {
     keystorePath: {
       get () {
-        return this.$store.state.walletInfo.keystorePath
+        return this.$store.state.wallet.keystorePath
       },
       set (value) {
-        this.$store.commit('setKeystorePath', value)
+        this.$store.commit('wallet/setKeystorePath', value)
       }
     },
     alias: {
       get () {
-        return this.$store.state.walletInfo.alias
+        return this.$store.state.wallet.alias
       },
       set (value) {
-        this.$store.commit('setAlias', value)
+        this.$store.commit('wallet/setAlias', value)
       }
     }
   },
   methods: {
     newWallet: function() {
-      this.$store.dispatch('resetWalletState');
-      this.$store.dispatch('resetAppState');
-      this.$router.push({
-        name: 'new wallet', 
-        params: {
-          message: "Create a new Molly wallet. Please ensure that you backup all information provided below in a safe place.",
-          darkMode: this.$route.params.darkMode}
+      this.$store.dispatch('wallet/reset').then(() => {
+        this.$router.push({
+          name: 'new wallet', 
+          params: {
+            message: "Create a new Molly wallet. Please ensure that you backup all information provided below in a safe place.",
+            darkMode: this.$route.params.darkMode}
+        });
       });
     },
     login: function() {
@@ -105,28 +105,28 @@ export default {
       self.$Progress.start();
       self.overlay = true;
       window.backend.WalletApplication.Login(
-        self.$store.state.walletInfo.keystorePath,
+        self.keystorePath,
         self.keystorePassword,
         self.KeyPassword,
         self.alias
       ).then(result => {
         if (result) {
-          window.backend.WalletApplication.SetUserTheme().then(
-            darkMode => (self.$store.commit('setDarkMode', darkMode))
+          window.backend.WalletApplication.GetUserTheme().then(
+            darkMode => (self.$store.commit('wallet/setDarkMode', darkMode))
           )
-          window.backend.WalletApplication.SetWalletTag().then(
-            walletTag => (self.$store.commit('setEmail', walletTag))
+          window.backend.WalletApplication.GetWalletTag().then(
+            walletTag => (self.$store.commit('wallet/setLabel', walletTag))
           );
-          window.backend.WalletApplication.SetImagePath().then(
-            imagePath => (self.$store.commit('setImgPath', imagePath))
+          window.backend.WalletApplication.GetImagePath().then(
+            imagePath => (self.$store.commit('wallet/setImgPath', imagePath))
           );
           self.overlay = false;
           self.$Progress.finish();
-          self.$store.commit('setIsLoggedIn', true);
+          self.$store.commit('app/setIsLoggedIn', true);
 
           window.backend.WalletApplication.CheckTermsOfService()
           .then (result => {
-            self.$store.commit('setTermsOfService', result)
+            self.$store.commit('wallet/setTermsOfService', result)
             if (result) {
               self.$router.push({
                 name: 'loading', 

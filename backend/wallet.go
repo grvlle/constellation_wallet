@@ -129,7 +129,7 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 }
 
 // CreateWallet is called when creating a new wallet in frontend component Login.vue
-func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
+func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias, label string) bool {
 
 	alias = strings.ToLower(alias)
 
@@ -179,7 +179,8 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		KeyStorePath:         keystorePath,
 		KeystorePasswordHash: keystorePasswordHashed,
 		KeyPasswordHash:      keyPasswordHashed,
-		WalletAlias:          alias}
+		WalletAlias:          alias,
+		WalletTag:            label}
 
 	if !a.DB.NewRecord(&a.wallet) {
 		if err := a.DB.Create(&a.wallet).Error; err != nil {
@@ -227,7 +228,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 			a.FirstTX = true
 			a.NewUser = true
 
-			a.initNewWallet(a.wallet.KeyStorePath)
+			a.initNewWallet()
 
 			return true
 		}
@@ -240,7 +241,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 
 // initWallet initializes a new wallet. This is called from login.vue
 // only when a new wallet is created.
-func (a *WalletApplication) initNewWallet(keystorePath string) {
+func (a *WalletApplication) initNewWallet() {
 
 	a.StoreImagePathInDB("faces/face-0.jpg")
 

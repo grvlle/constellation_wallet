@@ -1,7 +1,7 @@
 const getDefaultState = () => {
     return {
-        termsOfService: false,
-        txFinished: true,
+        version: "v2.6.0",
+        uiVersion: "v1.2.0",
         isLoggedIn: false,
         errorMessage: "",
         warningMessage: "",
@@ -20,19 +20,13 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const actions = {
-    resetAppState({ commit }) {
+    reset({ commit }) {
         commit('resetState')
     }
 }
 const mutations = {
     resetState(state) {
         Object.assign(state, getDefaultState())
-    },
-    setTermsOfService(state, termsOfService) {
-        state.termsOfService = termsOfService;
-    },
-    setTxFinished(state, setTxFinished) {
-        state.txFinished = setTxFinished;
     },
     setIsLoggedIn(state, isLoggedIn) {
         state.isLoggedIn = isLoggedIn;
@@ -64,6 +58,7 @@ const mutations = {
 }
 
 export default {
+    namespaced: true,
     state,
     getters: {},
     actions,

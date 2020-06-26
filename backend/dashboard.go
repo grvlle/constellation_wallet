@@ -292,7 +292,6 @@ func (a *WalletApplication) pricePoller() {
 					UpdateCounter(updateIntervalCurrency, "value_counter", time.Second, a.RT)
 					time.Sleep(updateIntervalCurrency * time.Second)
 				}
-
 			}
 		}
 	}()

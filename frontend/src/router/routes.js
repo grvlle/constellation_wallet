@@ -10,7 +10,7 @@ import WalletInformation from "@/pages/WalletInformation.vue";
 import About from "@/pages/About.vue";
 import Settings from "@/pages/Settings.vue";
 import Transactions from "@/pages/Transactions.vue";
-
+import AdddressBook from "@/pages/AddressBook.vue";
 import TermsOfService from "@/pages/TermsOfService.vue";
 import NotFound from "@/pages/NotFoundPage.vue";
 
@@ -77,6 +77,11 @@ const routes = [
         path: "settings",
         name: "settings",
         component: Settings
+      },
+      {
+        path: "address-book",
+        name: "address book",
+        component: AdddressBook
       },
       {
         path: "terms-of-service",

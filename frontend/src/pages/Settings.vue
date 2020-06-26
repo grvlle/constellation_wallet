@@ -24,7 +24,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleNodesOnline"
-                    :value="this.$store.state.toggleDashboard.showNodesOnline"
+                    :value="toggle.nodesOnline"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -38,7 +38,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleTransactions"
-                    :value="this.$store.state.toggleDashboard.showTransactions"
+                    :value="toggle.transactions"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -52,7 +52,7 @@
                 <td align="right">
                   <toggle-button
                     @change="toggleThroughput"
-                    :value="this.$store.state.toggleDashboard.showThroughput"
+                    :value="toggle.throughput"
                     color="#5fd1fa"
                     :sync="true"
                     :labels="true"
@@ -74,8 +74,9 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Enter a new Wallet Label..."
-                  v-model="newLabel"
+                  placeholder="Enter a label for your wallet..."
+                  @input="setWalletLabel($event.target.value)"
+                  :value="walletLabel"                
                 />
                 <span class="input-group-append">
                   <p-button @click.native="submitLabel()" type="success" style="width:6rem;">Apply</p-button>
@@ -86,8 +87,8 @@
                   type="text"
                   :disabled="true"
                   class="form-control"
-                  :placeholder="this.$store.state.walletInfo.imgPath"
-                  v-model="this.$store.state.walletInfo.imgPath"
+                  placeholder="Browser for an image..."
+                  :value="imgPath"
                 />
                 <span class="input-group-append">
                   <p-button @click.native="uploadImage()" type="default" style="width:6rem;">Browse</p-button>
@@ -111,7 +112,7 @@
               </p>
               <div class="row">
                 <div class="input-group col-md-12">
-                  <input :type=seed class="form-control" :disabled="true" placeholder="Mnemonic Seed" v-model="this.$store.state.walletInfo.seed">
+                  <input :type=seed class="form-control" :disabled="true" placeholder="Mnemonic Seed" v-model="seed">
                   <div class="input-group-append">
                     <p-button class="btn" @click.native="showPassword2()" type="danger"><i v-bind:class="btnText"/></p-button>
                   </div>
@@ -126,7 +127,7 @@
                     type="text"
                     :disabled="true"
                     placeholder="Path to private key (key.p12)"
-                    v-model="this.$store.state.walletInfo.keystorePath"
+                    :value="keystorePath"
                   ></fg-input>
                 </div>
               </div>
@@ -146,7 +147,7 @@
                       class="form-control"
                       label="Private Key"
                       placeholder="Mnemonic Seed (coming soon)"
-                      v-model="this.$store.state.walletInfo.seed"
+                      value="Mnemonic Seed will be introduced with a later software release"
                       aria-describedby="basic-addon2"
                     />
                     <div class="input-group-append">
@@ -163,25 +164,15 @@
       </div>
       <!-- <div class="col-md-6 d-flex">
         <card
-          title="Import / Export Keys"
-          sub-title="Restore your Wallet from a previously exported file or create a new export"
+          title="Update Molly Wallet"
+          sub-title="Update Molly Wallet to the latest stable build"
         >
           <div class="container" style="margin-top: auto;">
             <div class="row">
-              <div class="col">
-                <p>This feature is currently disabled since the team wallet does not support it for now.</p>
-                <p class="small">
-                  Select Import if you wish to restore your wallet from a previously exported file.
-                  Select Export to export your keys into an encrypted .pem file on your filesystem.
-                  Store this file in cold storage for optimal security.
-                </p>
-              </div>
-            </div>
-            <div class="row">
               <div class="col-md-6 pr-md-2 mb-3">
-                <p-button @click.native="importKeys()" type="info" block :disabled="true">
+                <p-button @click.native="updateWallet()" type="info" block :disabled="false">
                   <span style="display: block;">
-                    <i class="fa fa-file-import"></i> IMPORT
+                    <i class="fa fa-file-import"></i> UPDATE
                   </span>
                 </p-button>
               </div>
@@ -198,26 +189,36 @@
       </div> -->
       <div class="col-md-6 d-flex">
         <card
-          title="General settings"
-          sub-title="Settings affecting your overall Molly Wallet user experience"
+          title="Display settings"
+          sub-title="Customize your Molly Wallet display settings"
         >
           <div class="container">
-            <table class="table-noheader">
-              <tr>
-                <td>
-                  <p>Dark Mode [BETA]</p>
-                </td>
-                <td align="right">
-                  <toggle-button
-                    @change="toggleDarkMode"
-                    :value="this.$store.state.walletInfo.darkMode"
-                    color="#5fd1fa"
-                    :sync="true"
-                    :labels="true"
-                  />
-                </td>
-              </tr>
-            </table>
+            <div class="row settings">
+              <div class="col-7">
+                <p>Dark Mode [BETA]</p>
+              </div>
+              <div class="col-5" align="right">
+                <toggle-button
+                  @change="toggleDarkMode"
+                  :value="darkMode"
+                  color="#5fd1fa"
+                  :sync="true"
+                  :labels="true"
+                />
+              </div>
+            </div>
+            <div class="row settings">
+              <div class="col-7">
+                <p>Currency</p>
+              </div>
+              <div class="col-5" align="right">
+                <vue-select class="select"
+                  @input="setCurrency"
+                  :value="currency"
+                  :options="['BTC', 'EUR', 'USD']">
+                </vue-select>
+              </div>
+            </div>
           </div>
         </card>
       </div>
@@ -226,14 +227,40 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import ImgUploaded from "./Notifications/ImageUploaded";
-import Swal from "sweetalert2";
+import VueSelect from 'vue-select';
+import Swal from "sweetalert2/dist/sweetalert2";
+
 export default {
+  components: {
+    VueSelect
+  },
   methods: {
+    toggleNodesOnline: function() {
+      this.$store.commit('dashboard/setShowNodesOnline', !this.toggle.nodesOnline);
+    },
+    toggleTransactions: function() {
+      this.$store.commit('dashboard/setShowTransactions', !this.toggle.transactions);
+    },
+    toggleThroughput: function() {
+      this.$store.commit('dashboard/setShowThroughput', !this.toggle.throughput);
+    },
+    toggleDarkMode: function() {
+      window.backend.WalletApplication.StoreDarkModeStateDB(!this.darkMode)
+      .then(result => {
+        if (result) {
+          this.$store.commit('wallet/setDarkMode', !this.darkMode);
+        }
+      });
+    },
+    setWalletLabel: function(value) {
+      this.newLabel = value;
+    },
     submitLabel: function() {
       const swalPopup = Swal.mixin({
         customClass: {
-          container: this.$store.state.walletInfo.darkMode
+          container: this.darkMode
             ? "theme--dark"
             : "theme--light"
         }
@@ -242,7 +269,6 @@ export default {
         swalPopup.fire({
           title: "Failed!",
           text: "Unable to change wallet label. No new label entered.",
-          type: "error"
         });
       } else {
         swalPopup
@@ -252,53 +278,39 @@ export default {
               "You are about change wallet label to " +
               this.newLabel +
               ". This will replace your wallet label.",
-            type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#6DECBB",
             confirmButtonText: "Yes, change label!"
           })
           .then(result => {
-            if (result.value) {
-              this.$store.state.walletInfo.email = this.newLabel;
-              window.backend.WalletApplication.StoreWalletLabelInDB(
-                this.newLabel
-              );
+            if (result.value) {              
+              window.backend.WalletApplication.StoreWalletLabelInDB(this.newLabel)
+              .then(result => {
+                if (result) {
+                  this.$store.commit('wallet/setLabel', this.newLabel);
+                }
+              });
               swalPopup.fire({
                 title: "Success!",
                 text: "You have set a new wallet label",
-                type: "success"
               });
             }
           });
       }
     },
-    toggleNodesOnline: function() {
-      this.$store.state.toggleDashboard.showNodesOnline = !this.$store.state
-        .toggleDashboard.showNodesOnline;
-    },
-    toggleTransactions: function() {
-      this.$store.state.toggleDashboard.showTransactions = !this.$store.state
-        .toggleDashboard.showTransactions;
-    },
-    toggleThroughput: function() {
-      this.$store.state.toggleDashboard.showThroughput = !this.$store.state
-        .toggleDashboard.showThroughput;
-    },
-    toggleDarkMode: function() {
-      this.$store.state.walletInfo.darkMode = !this.$store.state.walletInfo.darkMode;
-      window.backend.WalletApplication.StoreDarkModeStateDB(this.$store.state.walletInfo.darkMode);
-    },
-    importKeys: function() {
-      window.backend.WalletApplication.ImportKeys();
-    },
-    exportKeys: function() {
-      window.backend.WalletApplication.ExportKeys();
+    setCurrency: function(value) {
+      window.backend.WalletApplication.StoreCurrencyStateDB(value)
+      .then(result => {
+        if (result) {
+          this.$store.commit('wallet/setCurrency', value);
+        }
+      });
     },
     uploadImage: function() {
       window.backend.WalletApplication.UploadImage().then(path => {
         const swalPopup = Swal.mixin({
           customClass: {
-            container: this.$store.state.walletInfo.darkMode
+            container: this.darkMode
               ? "theme--dark"
               : "theme--light"
           }
@@ -325,7 +337,7 @@ export default {
             })
             .then(result => {
               if (result.value) {
-                this.$store.state.walletInfo.imgPath = path;
+                this.$store.commit('wallet/setImgPath', path);
                 swalPopup.fire({
                   title: "Success!",
                   text: "You have uploaded a new wallet picture",
@@ -349,7 +361,12 @@ export default {
         }
       });
     },
-
+    importKeys: function() {
+      window.backend.WalletApplication.ImportKeys();
+    },
+    exportKeys: function() {
+      window.backend.WalletApplication.ExportKeys();
+    },
     showPassword: function() {
       if (this.type === "password") {
         this.type = "text";
@@ -359,22 +376,15 @@ export default {
         this.btnText = "fa fa-eye";
       }
     },
-    showPassword2: function() {
-      if (this.seed === "password") {
-        this.seed = "text";
-        this.btnText = "fa fa-eye-slash";
-      } else {
-        this.seed = "password";
-        this.btnText = "fa fa-eye";
-      }
-    }
   },
-
+  computed: {
+    ...mapState('wallet', ['walletLabel', 'imgPath', 'keystorePath', 'darkMode', 'currency']),
+    ...mapState('dashboard', ['toggle'])
+  },
   data() {
     return {
       newLabel: "",
       type: "password",
-      seed: "password",
       btnText: "fa fa-eye"
     };
   }
@@ -382,4 +392,7 @@ export default {
 </script>
 
 <style lang="scss">
+.vs__clear {
+  display: none;
+}
 </style>

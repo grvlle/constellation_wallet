@@ -12,13 +12,13 @@
         aria-describedby="basic-addon2"
         :value="value"
         @input="checkPassword($event.target.value)" />
-      <span class="input-group-btn">
+      <span class="input-group-append">
         <p-button tabIndex="-1" class="btn" @click.native="showPassword()" type="default">
           <i v-bind:class="btnText" />
         </p-button>
       </span>
     </div>
-    <div class="validate" v-if="!valid_password && !this.$store.state.app.login">             
+    <div class="validate" v-if="validate && !valid_password">             
       <p v-if="!this.contains_eight_characters"> 8 Characters Long, </p> 
       <p v-if="!this.contains_number"> Number,</p> 
       <p v-if="!this.contains_uppercase"> Uppercase, </p> 
@@ -35,7 +35,8 @@
     props: {
       value: String,
       label: String,
-      placeholder: String
+      placeholder: String,
+      validate: Boolean
     },
     data: () => ({
       valid_password: false,

@@ -1,0 +1,34 @@
+@import 'sweetalert2/src/variables';
+@import '@sweetalert2/theme-bootstrap-4/bootstrap-4.scss';
+
+$swal2-font: 'Puppet', Helvetica, Arial, sans-serif;
+$swal2-title-font-size: 1.5rem;
+$swal2-input-font-size: 1rem;
+$swal2-content-font-size: 0.875rem;
+$swal2-validation-message-font-size: 0.875rem;
+$swal2-confirm-button-font-size: 0.75rem;
+$swal2-cancel-button-font-size: 0.75rem;
+$swal2-confirm-button-background-color: $primary-color;
+
+.swal2-popup.swal2-modal.swal2-show {
+  @include themed() {
+    background: t('popupBackgroundColor');
+  }
+}
+
+.swal2-actions.swal2-loading .swal2-styled.swal2-confirm {
+  min-width: 1rem;
+  min-height: 1rem;
+}
+
+button.swal2-styled {
+  min-width: 6rem;
+  min-height: 2.3rem;
+}
+
+button.swal2-styled.swal2-confirm:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+@import 'sweetalert2/src/sweetalert2';

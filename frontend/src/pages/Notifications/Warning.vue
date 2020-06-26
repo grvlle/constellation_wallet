@@ -1,5 +1,5 @@
 <template>
-  <span>{{ this.$store.state.warningMessage }}</span>
+  <span>{{ this.$store.state.app.warningMessage }}</span>
 </template>
 
 <script>

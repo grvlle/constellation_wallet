@@ -1,13 +1,21 @@
 package main
 
 import (
+	"math/rand"
 	"os"
+	"time"
 
 	"runtime"
 
 	"github.com/leaanthony/mewn"
 	"github.com/wailsapp/wails"
+
+	app "github.com/grvlle/constellation_wallet/backend"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 func main() {
 	if runtime.GOOS != "windows" {
@@ -21,13 +29,13 @@ func main() {
 		Width:     1280,
 		Height:    780,
 		Resizable: true,
-		Title:     "Molly - Constellation Desktop Wallet [Beta]",
+		Title:     "Molly - Constellation Desktop Wallet",
 		JS:        js,
 		CSS:       css,
 		Colour:    "#131313",
 	})
 
-	frontend.Bind(&WalletApplication{})
+	frontend.Bind(&app.WalletApplication{})
 	err := frontend.Run()
 	if err != nil {
 		panic(err)

@@ -1,4 +1,4 @@
-package main
+package models
 
 import (
 	"time"
@@ -22,6 +22,8 @@ type Wallet struct {
 	ProfilePicture       string
 	WalletTag            string
 	DarkMode             bool
+	Currency             string
+	TermsOfService       bool
 	Balance              float64 `json:"balance"`
 	AvailableBalance     float64 `json:"available_balance"`
 	Nonce                float64 `json:"nonce"`
@@ -37,33 +39,3 @@ type Wallet struct {
 		} `json:"DAG"`
 	} `json:"token_price"`
 }
-
-// Path carries the file paths
-type Path struct {
-	ID          uint   `json:"id"`
-	Alias       string `json:"alias"`
-	LastTXFile  string
-	PrevTXFile  string
-	EmptyTXFile string
-}
-
-// TXHistory stores inidividual transactions
-type TXHistory struct {
-	ID                 uint   `json:"id"`
-	Alias              string `json:"alias"`
-	Amount             int64  `json:"amount"`
-	Sender             string `json:"sender"`
-	Receiver           string `json:"receiver"`
-	Fee                int64  `json:"fee"`
-	Hash               string `json:"hash"`
-	LastTransactionRef struct {
-		Hash    string `json:"prevHash"`
-		Ordinal int    `json:"ordinal"`
-	} `json:"lastTransactionRef"`
-	TS     string `json:"date"`
-	Status string `json:"status"`
-	Failed bool
-}
-
-// Address holds the DAG address
-type Address string

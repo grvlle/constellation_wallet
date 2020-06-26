@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -11,14 +11,18 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/grvlle/constellation_wallet/backend/models"
 )
 
-/* Database Model is located in models.go */
-
-// ImportWallet is triggered from the FE when a user imports a wallet
+// ImportWallet is triggered when a user logs into a new Molly wallet for the first time
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
+	a.wallet = models.Wallet{
+		KeyStorePath: keystorePath,
+		WalletAlias:  alias,
+		Currency:     "USD"}
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
@@ -43,10 +47,6 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 	os.Setenv("CL_STOREPASS", keystorePassword)
 	os.Setenv("CL_KEYPASS", keyPassword)
-
-	a.wallet = Wallet{
-		KeyStorePath: keystorePath,
-		WalletAlias:  alias}
 
 	a.wallet.Address = a.GenerateDAGAddress()
 	a.KeyStoreAccess = a.WalletKeystoreAccess()
@@ -73,9 +73,9 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 				return false
 			}
 
-			a.paths.LastTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
-			a.paths.PrevTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
-			a.paths.EmptyTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.LastTXFile = a.TempFileName("tx-")
+			a.paths.PrevTXFile = a.TempFileName("tx-")
+			a.paths.EmptyTXFile = a.TempFileName("tx-")
 
 			err = a.createTXFiles()
 			if err != nil {
@@ -83,12 +83,12 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 				a.sendError("Unable to create TX files. Check fs permissions. Reason: ", err)
 			}
 
-			if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("Path", Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
+			if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Update("Path", models.Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
 				a.log.Errorln("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
 				a.sendError("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
 			}
 
-			if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
+			if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Updates(&models.Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
 				a.log.Errorln("Unable to query database object for the imported wallet. Reason: ", err)
 				a.LoginError("Unable to query database object for the imported wallet.")
 				return false
@@ -129,7 +129,7 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 }
 
 // CreateWallet is called when creating a new wallet in frontend component Login.vue
-func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
+func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias, label string) bool {
 
 	alias = strings.ToLower(alias)
 
@@ -175,11 +175,12 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		return false
 	}
 
-	a.wallet = Wallet{
+	a.wallet = models.Wallet{
 		KeyStorePath:         keystorePath,
 		KeystorePasswordHash: keystorePasswordHashed,
 		KeyPasswordHash:      keyPasswordHashed,
-		WalletAlias:          alias}
+		WalletAlias:          alias,
+		WalletTag:            label}
 
 	if !a.DB.NewRecord(&a.wallet) {
 		if err := a.DB.Create(&a.wallet).Error; err != nil {
@@ -188,7 +189,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 			return false
 		}
 
-		if err := a.DB.Where("wallet_alias = ?", alias).First(&a.wallet).Updates(&Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
+		if err := a.DB.Where("wallet_alias = ?", alias).First(&a.wallet).Updates(&models.Wallet{KeyStorePath: keystorePath, KeystorePasswordHash: keystorePasswordHashed, KeyPasswordHash: keyPasswordHashed}).Error; err != nil {
 			a.log.Errorln("Unable to query database object for new wallet after wallet creation. Reason: ", err)
 			a.sendError("Unable to query database object for new wallet after wallet creation. Reason: ", err)
 			return false
@@ -208,9 +209,9 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 		a.KeyStoreAccess = a.WalletKeystoreAccess()
 
 		if a.KeyStoreAccess {
-			a.paths.LastTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
-			a.paths.PrevTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
-			a.paths.EmptyTXFile = a.TempFileName("tx-", "-"+a.wallet.WalletAlias)
+			a.paths.LastTXFile = a.TempFileName("tx-")
+			a.paths.PrevTXFile = a.TempFileName("tx-")
+			a.paths.EmptyTXFile = a.TempFileName("tx-")
 
 			err := a.createTXFiles()
 			if err != nil {
@@ -218,7 +219,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 				a.sendError("Unable to create TX files. Check fs permissions. Reason: ", err)
 			}
 
-			if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Update("Path", Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
+			if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Update("Path", models.Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
 				a.log.Errorln("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
 				a.sendError("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
 			}
@@ -257,8 +258,6 @@ func (a *WalletApplication) initNewWallet() {
 // the information to the front end components.
 func (a *WalletApplication) initWallet(keystorePath string) error {
 
-	a.paths.EncPrivKeyFile = keystorePath
-
 	if a.NewUser {
 		err := a.initTXFromBlockExplorer()
 		if err != nil {
@@ -270,6 +269,8 @@ func (a *WalletApplication) initWallet(keystorePath string) error {
 		a.initTXFilePath() // Update paths from DB.
 	}
 
+	a.RT.Events.Emit("wallet_init", a.wallet.TermsOfService, a.wallet.Currency)
+
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
 	}
@@ -278,8 +279,8 @@ func (a *WalletApplication) initWallet(keystorePath string) error {
 	}
 
 	a.log.Infoln("User has logged into the wallet")
-	return nil
 
+	return nil
 }
 
 func (a *WalletApplication) initDashboardWidgets() {
@@ -348,10 +349,10 @@ func (a *WalletApplication) initTXFromDB() {
 		return
 	}
 
-	allTX := []TXHistory{}
+	allTX := []models.TXHistory{}
 
 	for i, tx := range a.wallet.TXHistory {
-		allTX = append([]TXHistory{tx}, allTX...) // prepend to reverse list for FE
+		allTX = append([]models.TXHistory{tx}, allTX...) // prepend to reverse list for FE
 
 		if a.wallet.TXHistory[i].Status == "Pending" {
 			a.TxPending(a.wallet.TXHistory[i].Hash)
@@ -394,7 +395,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 			return nil
 		}
 
-		allTX := []TXHistory{}
+		allTX := []models.TXHistory{}
 
 		err = json.Unmarshal(bodyBytes, &allTX)
 		if err != nil {
@@ -413,7 +414,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 
 		for i, tx := range allTX {
 
-			txData := &TXHistory{
+			txData := &models.TXHistory{
 				Amount:   tx.Amount,
 				Receiver: tx.Receiver,
 				Fee:      tx.Fee,
@@ -453,7 +454,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 // PassKeysToFrontend emits the keys to the settings.Vue component on a
 // 5 second interval
 func (a *WalletApplication) passKeysToFrontend() {
-	if a.paths.EncPrivKeyFile != "" && a.wallet.Address != "" {
+	if a.wallet.KeyStorePath != "" && a.wallet.Address != "" {
 		go func() {
 			for {
 				a.RT.Events.Emit("wallet_keys", a.wallet.Address)
@@ -467,10 +468,7 @@ func (a *WalletApplication) passKeysToFrontend() {
 }
 
 func (a *WalletApplication) passwordsProvided(keystorePassword, keyPassword, alias string) bool {
-	if a.paths.EncPrivKeyFile == "" {
-		a.LoginError("Please provide a valid path to your KeyStore file.")
-		return false
-	} else if keystorePassword == "" {
+	if keystorePassword == "" {
 		a.LoginError("Please provide a Key Store password.")
 		return false
 	} else if keyPassword == "" {
@@ -505,7 +503,6 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		return 0, err
 	}
 
-	// Declared an empty interface
 	var result map[string]interface{}
 
 	// Unmarshal or Decode the JSON to the interface.
@@ -519,6 +516,8 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		s = "0" // Empty means zero
 	}
 
+	a.log.Infoln("Parsed the following balance: ", s)
+
 	b, ok := s.(float64)
 	if !ok {
 		if err != nil {
@@ -529,11 +528,15 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 
 	f := fmt.Sprintf("%.2f", b/1e8) // Reverse normalized float
 
+	a.log.Infoln("Normalized the following balance: ", f)
+
 	balance, err := strconv.ParseFloat(f, 64)
 	if err != nil {
 		a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
 		return 0, err
 	}
+
+	a.log.Infoln("Returning the following balance: ", balance)
 
 	return balance, nil
 }

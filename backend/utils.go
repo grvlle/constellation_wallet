@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"bytes"
@@ -13,16 +13,31 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/dustin/go-humanize"
 )
 
-// WriteCounter stores dl state of the cl binaries
-type WriteCounter struct {
-	Total    uint64
-	LastEmit uint64
-	Filename string
-	a        *WalletApplication
+// newReleaseAvailable generates a notification to FE everytime a new release on
+// GitHub doesn't match a.Version.
+func (a *WalletApplication) newReleaseAvailable() {
+	update := new(UpdateWallet)
+	update.app = a
+	currentRelease := a.Version
+
+	a.log.Infoln("Checking for new releases...")
+
+	go func() {
+		for i := 200; i > 0; i-- {
+			newRelease := update.GetLatestRelease()
+			if currentRelease != newRelease {
+				a.log.Infoln("There's a newer release available")
+				a.RT.Events.Emit("new_release", newRelease)
+			}
+			time.Sleep(time.Duration(i) * time.Second)
+		}
+	}()
+
 }
 
 func (a *WalletApplication) javaInstalled() bool {
@@ -81,10 +96,18 @@ func normalizeAmounts(i int64) (string, error) {
 }
 
 // TempFileName creates temporary file names for the transaction files
-func (a *WalletApplication) TempFileName(prefix, suffix string) string {
+func (a *WalletApplication) TempFileName(prefix string) string {
 	randBytes := make([]byte, 16)
 	rand.Read(randBytes)
-	return filepath.Join(a.paths.TMPDir, prefix+hex.EncodeToString(randBytes)+suffix)
+	return filepath.Join(a.paths.TMPDir, prefix+hex.EncodeToString(randBytes))
+}
+
+// WriteCounter stores dl state of the cl binaries
+type WriteCounter struct {
+	Total    uint64
+	LastEmit uint64
+	Filename string
+	a        *WalletApplication
 }
 
 // Write emits the download progress of the CL binaries to the frontend

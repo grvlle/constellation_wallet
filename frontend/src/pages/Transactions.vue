@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col">
         <card title="Transactions" subTitle="Submit a $DAG Transaction">
-          <!-- <p>Last Transaction State: {{this.$store.state.txInfo.txStatus}}</p> -->
+          <!-- <p>Last Transaction State: {{this.txStatus}}</p> -->
           <form @submit.prevent class="container">
             <div class="form-row align-items-center">
               <div class="col-md-4">
@@ -53,7 +53,7 @@
                 </div>
                 <div
                   class="validate"
-                  v-else-if="txAddressValidation == this.$store.state.walletInfo.address"
+                  v-else-if="txAddressValidation == address"
                 >
                   <p>You can not send to your own wallet.</p>
                 </div>
@@ -63,9 +63,9 @@
                 <p-button
                   type="info"
                   block
-                  @click.native="tx"
+                  @click.native="submitTransaction"
                   style="max-width: 10rem; margin-left: auto;"
-                  :disabled="txInTransit || txAddressValidation == this.$store.state.walletInfo.address"
+                  :disabled="txInTransit || txAddressValidation == address"
                 >
                   <span>
                     <i class="fa fa-paper-plane"></i> SEND
@@ -90,7 +90,7 @@
               </thead>
               <tbody>
                 <tr v-for="tx in paginatedData" v-bind:key="tx.ID">
-                  <slot :row="item">
+                  <slot :row="tx">
                     <td class="columnA">
                       <i
                         style="color: #6DECBB;"
@@ -123,10 +123,7 @@
                 </tr>
               </tbody>
             </table>
-            <ul
-              v-if="this.transactionTable.data.length > 0"
-              class="pagination justify-content-center"
-            >
+            <ul v-if="this.txHistory.length > 0" class="pagination justify-content-center" >
               <li class="page-item" :class="pageNumber == 0 ? 'disabled' : ''">
                 <a class="page-link" style="cursor: pointer;" @click="prevPage">Previous</a>
               </li>
@@ -156,14 +153,15 @@ const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
+import {mapState} from 'vuex'
 import Spinner from 'vue-spinner-component/src/Spinner.vue';
-import Swal from "sweetalert2";
 import {
   required,
   minLength,
   maxLength,
   between
 } from "vuelidate/lib/validators";
+import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
   components: {
@@ -174,18 +172,20 @@ export default {
       return `table-${this.type}`;
     },
     txInTransit() {
-      return this.$store.state.txInfo.txStatus == "Pending";
+      return this.txStatus == "Pending";
     },
     pageCount() {
-      let l = this.$store.state.txInfo.txHistory.length,
+      let l = this.txHistory.length,
         s = this.size;
       return Math.ceil(l / s);
     },
     paginatedData() {
       const start = this.pageNumber * this.size,
         end = start + this.size;
-      return this.$store.state.txInfo.txHistory.slice(start, end);
-    }
+      return this.txHistory.slice(start, end);
+    },
+    ...mapState('wallet', ['address', 'availableBalance', 'darkMode']),
+    ...mapState('transaction', ['txHistory', 'txStatus', 'txFinished'])
   },
   methods: {
     isFloat: function(n) {
@@ -202,7 +202,7 @@ export default {
       this.txAddressValidation = value;
       this.$v.txAddressValidation.$touch();
     },
-    tx: function() {
+    submitTransaction: function() {
       var self = this;
       self.$v.$touch();
       if (self.$v.$invalid) {
@@ -210,7 +210,7 @@ export default {
       } else {
         // do your submit logic here
 
-        if (!self.$store.state.app.txFinished) {
+        if (!self.txFinished) {
           self.submitStatus = "PENDING";
         }
         self.submitStatus = "OK";
@@ -220,7 +220,7 @@ export default {
         Swal.mixin({
           progressSteps: ["1", "2"],
           customClass: {
-            container: this.$store.state.walletInfo.darkMode
+            container: this.darkMode
               ? "theme--dark"
               : "theme--light"
           }
@@ -270,7 +270,7 @@ export default {
               let fee = result.value;
               const swalPopup = Swal.mixin({
                 customClass: {
-                  container: this.$store.state.walletInfo.darkMode
+                  container: this.darkMode
                     ? "theme--dark"
                     : "theme--light"
                 }
@@ -309,7 +309,7 @@ export default {
       }
     },
     setMaxDAGs() {
-      this.txAmountValidation = this.$store.state.walletInfo.availableBalance;
+      this.txAmountValidation = this.availableBalance;
     },
     nextPage() {
       this.pageNumber++;
@@ -337,7 +337,7 @@ export default {
         title: "Transaction History",
         subTitle: "Table containing all previous transactions",
         columns: [...tableColumns],
-        data: this.$store.state.txInfo.txHistory
+        data: this.txHistory
       },
       pageNumber: 0,
       size: 10

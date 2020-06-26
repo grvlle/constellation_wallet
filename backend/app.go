@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -10,14 +10,18 @@ import (
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/wailsapp/wails"
+
+	"github.com/grvlle/constellation_wallet/backend/api"
+	"github.com/grvlle/constellation_wallet/backend/models"
 )
 
 // WalletApplication holds all application specific objects
 // such as the Client/Server event bus and logger
 type WalletApplication struct {
+	Version    string
 	RT         *wails.Runtime
 	log        *logrus.Logger
-	wallet     Wallet
+	wallet     models.Wallet
 	DB         *gorm.DB
 	killSignal chan struct{}
 	Network    struct {
@@ -39,17 +43,16 @@ type WalletApplication struct {
 		}
 	}
 	paths struct {
-		HomeDir        string
-		DAGDir         string
-		TMPDir         string
-		EncryptedDir   string
-		EncPrivKeyFile string
-		EmptyTXFile    string
-		PrevTXFile     string
-		LastTXFile     string
-		AddressFile    string
-		ImageDir       string
-		Java           string
+		HomeDir      string
+		DAGDir       string
+		TMPDir       string
+		EncryptedDir string
+		EmptyTXFile  string
+		PrevTXFile   string
+		LastTXFile   string
+		AddressFile  string
+		ImageDir     string
+		Java         string
 	}
 	KeyStoreAccess      bool
 	TransactionFinished bool
@@ -71,7 +74,7 @@ type WalletApplication struct {
 
 // WailsShutdown is called when the application is closed
 func (a *WalletApplication) WailsShutdown() {
-	a.wallet = Wallet{}
+	a.wallet = models.Wallet{}
 	close(a.killSignal) // Kills the Go Routines
 	a.DB.Close()
 }
@@ -88,22 +91,31 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 
 	a.initLogger()
 
+	err = api.InitRPCServer()
+	if err != nil {
+		a.log.Panicf("Unable to initialize RPC Server. Reason: %v", err)
+	}
+	a.log.Infoln("RPC Server initialized.")
+
 	a.UserLoggedIn = false
 	a.NewUser = false
 	a.TransactionFinished = true
 	a.RT = runtime
 	a.killSignal = make(chan struct{}) // Used to kill go routines and hand back system resources
+	a.wallet.Currency = "USD"          // Set default currency
 	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download"
 	a.WalletCLI.Version = "2.6.0"
+	a.Version = "1.2.0"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {
 		a.log.Panicln("failed to connect database", err)
 	}
 	// Migrate the schema
-	a.DB.AutoMigrate(&Wallet{}, &TXHistory{}, &Path{})
+	a.DB.AutoMigrate(&models.Wallet{}, &models.TXHistory{}, &models.Path{})
 	a.detectJavaPath()
 	a.initMainnetConnection()
+	a.newReleaseAvailable()
 
 	return nil
 }
@@ -133,7 +145,6 @@ func (a *WalletApplication) initDirectoryStructure() error {
 	a.paths.HomeDir = user.HomeDir             // Home directory of the user
 	a.paths.DAGDir = a.paths.HomeDir + "/.dag" // DAG directory for configuration files and wallet specific data
 	a.paths.TMPDir = a.paths.DAGDir + "/tmp"
-	a.paths.EncPrivKeyFile = a.paths.EncryptedDir
 	a.paths.LastTXFile = a.paths.TMPDir + "/last_tx"
 	a.paths.PrevTXFile = a.paths.TMPDir + "/prev_tx"
 	a.paths.EmptyTXFile = a.paths.TMPDir + "/genesis_tx"

@@ -1,11 +1,11 @@
 <template>
-  <div class="wrapper">
+  <div id="app" class="wrapper">
     <side-bar>
       <template slot="links">
-        <sidebar-link to="/dashboard" name="Dashboard" icon="fa fa-columns" />
-        <sidebar-link to="/wallet-info" name="Wallet Info" icon="fa fa-wallet" />
-        <sidebar-link to="/submit-transaction" name="Transactions" icon="fa fa-paper-plane" />
-        <sidebar-link to="/about" name="About" icon="fa fa-question-circle" />
+        <sidebar-link to="dashboard" name="Dashboard" icon="fa fa-columns" />
+        <sidebar-link to="wallet-info" name="Wallet Info" icon="fa fa-wallet" />
+        <sidebar-link to="submit-transaction" name="Transactions" icon="fa fa-paper-plane" />
+        <sidebar-link to="about" name="About" icon="fa fa-question-circle" />
         <p class="nav-item">
           <a @click="notifyVue2('top', 'right')" class="nav-link" style="cursor: pointer;">
             <i class="fa fa-trophy"></i>Team
@@ -17,6 +17,16 @@
           </a>
         </p>
       </template>
+      <ul class="nav text-center" style="width: 100%; bottom: 0;position: absolute;">
+        <hr class="divider"/>
+        <li class="nav-item">
+          <p class="nav-item" style="font-size: 0.6rem;">
+            <a href="javascript:void(0)" @click="toTermsofService" class="nav-link" style="cursor: pointer;">
+              Terms of Service
+            </a>
+          </p>
+        </li>
+      </ul>
       <mobile-menu>
         <li class="nav-item">
           <a class="nav-link" @click="logout" style="cursor: pointer;">
@@ -48,6 +58,7 @@ import TopNavbar from "./TopNavbar.vue";
 import DashboardContent from "./Content.vue";
 import MobileMenu from "./MobileMenu";
 import PathBlockedNotification from "../../pages/Notifications/PathBlocked.vue";
+
 export default {
   components: {
     TopNavbar,
@@ -55,26 +66,6 @@ export default {
     MobileMenu
   },
   methods: {
-    logout() {
-      window.backend.WalletApplication.LogOut().then(txFinishedState => {
-        if (txFinishedState) {
-          this.$store.state.txInfo.txHistory = [];
-          this.$store.state.walletInfo.keystorePath = "";
-          this.$store.state.walletInfo.alias = "";
-          this.$store.state.walletInfo.keystorePassword = "";
-          this.$store.state.walletInfo.KeyPassword = "";
-          this.$store.state.walletInfo.email = "";
-          this.$store.state.app.isLoading = false;
-          this.$store.state.app.isLoggedIn = false;
-          this.$store.state.app.register = false;
-          this.$store.state.app.import = false;
-          this.$store.state.app.login = true;
-          return;
-        }
-      }),
-        (this.random = "1");
-      return;
-    },
     notifyVue2(verticalAlign, horizontalAlign) {
       setTimeout(() => {
         this.$notifications.clear();
@@ -94,6 +85,11 @@ export default {
       if (this.$sidebar.showSidebar) {
         this.$sidebar.displaySidebar(false);
       }
+    },
+    toTermsofService() {
+      this.$router.push({
+        name: 'terms of service'
+      });
     }
   }
 };

@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
   <div class="container">
     <div class="row">
       <div class="col-12">
@@ -7,64 +6,6 @@
           <div class="row">
             <div class="col mx-auto login-box">
               <div class="input-box">
-||||||| merged common ancestors
-
-  <div class="login-bg vertical-center" v-bind:style="{ backgroundImage: 'url(' + this.bgImg + ')' }" id="app">
-    <div class="container">
-      <div class="row">
-        <div class="col mx-auto text-center header">
-          <div v-if="isLogin">
-            <img class="img-fluid" v-if="this.$store.state.walletInfo.darkMode" src="~@/assets/img/Constellation-Logo-White.png" style="max-height: 5.8rem;" />
-            <img class="img-fluid" v-else src="~@/assets/img/Constellation-Logo-Black.png" style="max-height: 5.8rem;" />
-            <p>Please enter your credentials below to access your Molly Wallet.</p>
-          </div>
-          <div class="page-error-box" v-if="this.$store.state.displayLoginError">
-            <p>{{this.$store.state.loginErrorMsg}}</p>
-          </div>
-          <div class="page-error-box" v-else></div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <form ref="textareaform" @submit.prevent="form" class="container">
-            <div class="row">
-              <div class="col mx-auto login-box" v-if="isRegister">
-=======
-  <div
-    class="login-bg vertical-center"
-    v-bind:style="{ backgroundImage: 'url(' + this.bgImg + ')' }"
-    id="app"
-  >
-    <div class="container">
-      <div class="row">
-        <div class="col mx-auto text-center header">
-          <div v-if="isLogin">
-            <img
-              class="img-fluid"
-              v-if="this.$store.state.walletInfo.darkMode"
-              src="~@/assets/img/Constellation-Logo-White.png"
-              style="max-height: 5.8rem;"
-            />
-            <img
-              class="img-fluid"
-              v-else
-              src="~@/assets/img/Constellation-Logo-Black.png"
-              style="max-height: 5.8rem;"
-            />
-            <p>Please enter your credentials below to access your Molly Wallet.</p>
-          </div>
-          <div class="page-error-box" v-if="this.$store.state.displayLoginError">
-            <p>{{this.$store.state.loginErrorMsg}}</p>
-          </div>
-          <div class="page-error-box" v-else></div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <form ref="textareaform" @submit.prevent="form" class="container">
-            <div class="row">
-              <div class="col mx-auto login-box" v-if="isRegister">
->>>>>>> master
                 <div>
                   <label class="control-label">Select your private key (key.p12)</label>
                   <file-selector 

@@ -25,6 +25,9 @@ const actions = {
 const mutations = {
     resetState(state) {
         Object.assign(state, getDefaultState())
+    },
+    setContact(state, obj) {
+        state.addressBook.push(obj.contact);
     }
 }
 

@@ -32,6 +32,12 @@ export default {
   data: () => ({
     searchFilter: ""
   }),
+  created: function() {
+        this.$router.push({
+          name: "new-edit contact",
+          params: { id: "" }
+        });    
+  },
   computed: {
     filteredAddressBook: function() {
       if (this.searchFilter == "") {

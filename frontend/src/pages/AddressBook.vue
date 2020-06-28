@@ -33,10 +33,20 @@ export default {
     searchFilter: ""
   }),
   created: function() {
-        this.$router.push({
-          name: "new-edit contact",
-          params: { id: "" }
-        });    
+    this.$router.push({
+      name: "new-edit contact",
+      params: { id: "" }
+    });
+
+    window.backend.WalletApplication.GetAddressBook().then(ab => {
+      let addressBook;
+      try {
+        addressBook = JSON.parse(ab);
+      } catch (e) {
+        addressBook = [];
+      }
+      this.$store.commit({ type: "addressBook/setAddressBook", addressBook });
+    });
   },
   computed: {
     filteredAddressBook: function() {

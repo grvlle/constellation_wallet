@@ -112,7 +112,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 		a.log.Panicln("failed to connect database", err)
 	}
 	// Migrate the schema
-	a.DB.AutoMigrate(&models.Wallet{}, &models.TXHistory{}, &models.Path{})
+	a.DB.AutoMigrate(&models.Wallet{}, &models.TXHistory{}, &models.Path{}, &models.Contact{})
 	a.detectJavaPath()
 	a.initMainnetConnection()
 	a.newReleaseAvailable()

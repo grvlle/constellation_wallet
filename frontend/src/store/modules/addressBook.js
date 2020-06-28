@@ -1,9 +1,6 @@
 const getDefaultState = () => {
     return {
-        addressBook: [
-            { id: 1, name: "John Doe", tag: "PERSONAL" },
-            { id: 2, name: "Jane Doe", tag: "PERSONAL" }
-        ],
+        addressBook: []
     }
 }
 
@@ -26,6 +23,9 @@ const mutations = {
     resetState(state) {
         Object.assign(state, getDefaultState())
     },
+    setAddressBook(state, obj) {
+        state.addressBook = obj.addressBook;
+    },    
     setContact(state, obj) {
         state.addressBook.push(obj.contact);
     }

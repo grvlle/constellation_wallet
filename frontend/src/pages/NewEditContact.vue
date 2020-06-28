@@ -1,6 +1,6 @@
 <template>
   <card title="Create a contact" sub-title="Provide your contacts details and press save.">
-    <form @submit.prevent="submitContact">
+    <form @submit.prevent="submitContact()">
       <div class="form-group">
         <label for="addressInput">DAG Address</label>
         <input
@@ -55,7 +55,7 @@
           rows="2"
         ></textarea>
       </div>
-      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="submit" class="btn btn-primary" :disabled="this.$v.$invalid">Save</button>
     </form>
   </card>
 </template>
@@ -100,13 +100,22 @@ export default {
     submitContact: function() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let contact = {
-          address: this.address,
-          name: this.name,
-          tag: this.tag,
-          description: this.description
-        };
-        this.$store.commit({ type: "addressBook/setContact", contact });
+        window.backend.WalletApplication.StoreContact(
+          this.address,
+          this.name,
+          this.tag,
+          this.description
+        ).then(stored => {
+          if (stored) {
+            let contact = {
+              address: this.address,
+              name: this.name,
+              tag: this.tag,
+              description: this.description
+            };
+            this.$store.commit({ type: "addressBook/setContact", contact });
+          }
+        });
       }
     }
   }

@@ -37,6 +37,7 @@
           <div class="card-footer">
             <small class="text-muted">{{contact.address}}</small>
           </div>
+          <a href="javascript:void(0)" @click="showContact(contact)" class="stretched-link"></a>
         </div>
       </div>
     </div>
@@ -77,6 +78,14 @@ export default {
         name: "new-edit contact",
         params: { id: "" }
       });
+    },
+    showContact: function(contact) {
+      if (contact.id != this.$route.params.id) {
+        this.$router.push({
+          name: "contact details",
+          params: { id: contact.id }
+        });
+      }
     }
   }
 };

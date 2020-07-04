@@ -12,7 +12,9 @@ import Settings from "@/pages/Settings.vue";
 import Transactions from "@/pages/Transactions.vue";
 import AdddressBook from "@/pages/AddressBook.vue";
 import NewEditContact from "@/pages/NewEditContact";
+import ContactDetails from "@/pages/ContactDetails";
 import TermsOfService from "@/pages/TermsOfService.vue";
+
 import NotFound from "@/pages/NotFoundPage.vue";
 
 const routes = [
@@ -88,6 +90,11 @@ const routes = [
         path: "new-edit-contact/:id",
         name: "new-edit contact",
         component: NewEditContact
+      },
+      {
+        path: "contact-details/:id",
+        name: "contact details",
+        component: ContactDetails
       },
       {
         path: "terms-of-service",

@@ -11,6 +11,9 @@ const getters = {
         return state.addressBook.filter(contact => {
             return contact.name.toUpperCase().includes(searchText.toUpperCase())
         })
+    },
+    byId: (state) => (id) => {
+        return state.addressBook.find(contact => contact.id === id)
     }
 }
 

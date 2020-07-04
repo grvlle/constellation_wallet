@@ -82,14 +82,12 @@ const routes = [
       {
         path: "address-book",
         name: "address book",
-        component: AdddressBook,
-        children: [
-          {
-            path: "new-edit-contact/:id",
-            name: "new-edit contact",
-            component: NewEditContact
-          }
-        ]
+        component: AdddressBook
+      },
+      {
+        path: "new-edit-contact/:id",
+        name: "new-edit contact",
+        component: NewEditContact
       },
       {
         path: "terms-of-service",

@@ -28,9 +28,12 @@ const mutations = {
     },
     setAddressBook(state, obj) {
         state.addressBook = obj.addressBook;
-    },    
+    },
     setContact(state, obj) {
         state.addressBook.push(obj.contact);
+    },
+    deleteContact(state, obj) {
+        state.addressBook = state.addressBook.filter(contact => contact.id === obj.contact.id);
     }
 }
 

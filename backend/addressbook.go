@@ -40,5 +40,17 @@ func (a *WalletApplication) StoreContact(address string, name string, tag string
 	}
 	a.log.Infoln("Successfully stored contact in DB")
 	return true
+}
 
+// DeleteContact will delete a contact from the address book
+func (a *WalletApplication) DeleteContact(id uint) bool {
+	var contact models.Contact
+	if err := a.DB.First(&contact, id).Error; err != nil {
+		a.log.Errorln("Unable to find the DB record for the contact to be deleted. Reason: ", err)
+		a.sendError("Unable to find the DB record for the contact to be deleted. Reason: ", err)
+		return false
+	}
+
+	a.DB.Delete(&contact)
+	return true
 }

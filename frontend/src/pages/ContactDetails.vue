@@ -8,23 +8,33 @@
               {{contact.name}}
               <span class="badge badge-success float-right">{{contact.tag}}</span>
             </h5>
-            
-            <p class="card-text">{{contact.description}}</p>
+            <p class="card-text">{{contact.address}}</p>
+            <p class="card-text">
+              {{contact.description}}
+            </p>
           </div>
           <div class="card-footer">
             <div style="float: right;">
-              <button type="submit" class="btn btn-secondary mr-2" @click="cancel">
+              <button type="button" class="btn btn-secondary mr-2" @click="cancel">
                 <i class="fa fa-times"></i>
                 Cancel
               </button>
               <button type="button" class="btn btn-primary mr-2" @click="editContact(contact)">
                 <i class="fa fa-edit"></i>
-                Edit                
+                Edit
               </button>
               <button type="button" class="btn btn-danger mr-2" @click="deleteContact(contact)">
                 <i class="fa fa-trash"></i>
-                Delete                
+                Delete
               </button>
+              <button
+                type="button"
+                class="btn btn-info float-right"
+                @click="toTransactionsPage(contact)"
+              >
+                <i class="fa fa-paper-plane"></i>
+                To Transactions
+              </button>              
             </div>
           </div>
         </div>
@@ -87,6 +97,12 @@ export default {
             );
           }
         });
+    },
+    toTransactionsPage: function(contact) {
+      this.$router.push({
+        name: "submit transaction",
+        params: { txAddressParam: contact.address }
+      });
     }
   }
 };

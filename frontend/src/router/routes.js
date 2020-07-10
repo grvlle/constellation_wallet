@@ -72,9 +72,10 @@ const routes = [
         component: About
       },
       {
-        path: "submit-transaction",
+        path: "submit-transaction/:txAddressProvided?",
         name: "submit transaction",
-        component: Transactions
+        component: Transactions,
+        props: true,
       },
       {
         path: "settings",

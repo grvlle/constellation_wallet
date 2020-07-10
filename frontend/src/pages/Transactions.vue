@@ -180,6 +180,11 @@ export default {
     Spinner,
     AddressBookSearch
   },
+  created: function() {
+    if (this.txAddressParam != "") {
+      this.txAddress = this.txAddressParam;
+    }
+  },
   computed: {
     tableClass() {
       return `table-${this.type}`;
@@ -404,7 +409,11 @@ export default {
     subTitle: {
       type: String,
       default: ""
-    }
+    },
+    txAddressParam: {
+      type: String,
+      default: ""
+    },
   }
 };
 </script>

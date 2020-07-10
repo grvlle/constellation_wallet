@@ -8,9 +8,16 @@ const state = getDefaultState()
 
 const getters = {
     search: (state) => (searchText) => {
-        return state.addressBook.filter(contact => {
-            return contact.name.toUpperCase().includes(searchText.toUpperCase())
-        })
+        return state.addressBook.filter(function (contact) {
+            if (contact.name.toUpperCase().includes(searchText.toUpperCase()) ||
+                contact.address.toUpperCase().includes(searchText.toUpperCase()) ||
+                contact.tag.toUpperCase().includes(searchText.toUpperCase())
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+        });
     },
     byId: (state) => (id) => {
         return state.addressBook.find(contact => contact.id === id)

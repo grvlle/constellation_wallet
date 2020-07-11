@@ -1,0 +1,72 @@
+<template>
+  <ul v-if="this.dataset.length > 0" class="pagination justify-content-center">
+    <li class="page-item" :class="pageNumber == 0 ? 'disabled' : ''">
+      <a class="page-link" style="cursor: pointer;" @click="prevPage">Previous</a>
+    </li>
+    <li
+      class="page-item"
+      :class="page == pageNumber + 1 ? 'active' : ''"
+      v-for="page in pageCount"
+      :key="page"
+    >
+      <a class="page-link" style="cursor: pointer;" @click="gotoPage(page)">{{page}}</a>
+    </li>
+    <li class="page-item" :class="pageNumber >= pageCount - 1 ? 'disabled' : ''">
+      <a class="page-link" style="cursor: pointer;" @click="nextPage">Next</a>
+    </li>
+  </ul>
+</template>
+
+<script>
+import { integer } from 'vuelidate/lib/validators';
+export default {
+  name: "pagination",
+  props: {
+    dataset: [],
+    pageSize: integer,
+    value: []
+  },
+  data() {
+    return {
+      pageNumber: 0
+    };
+  },
+  computed: {
+    pageCount() {
+      let l = this.dataset.length,
+        s = this.pageSize;
+      return Math.ceil(l / s);
+    },
+    paginatedData() {
+      const start = this.pageNumber * this.pageSize,
+        end = start + this.pageSize,
+        pageData = this.dataset.slice(start, end);
+      return pageData;
+    }
+  },/*
+  watch: {
+    paginatedData(newValue) {
+      this.$emit("input", newValue);
+    }
+  },*/
+  watch: {
+    paginatedData: {
+      handler() {
+        this.$emit("input", this.paginatedData);
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    nextPage() {
+      this.pageNumber++;
+    },
+    prevPage() {
+      this.pageNumber--;
+    },
+    gotoPage(page) {
+      this.pageNumber = page - 1;
+    }
+  }
+};
+</script>

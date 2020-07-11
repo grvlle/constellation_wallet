@@ -99,7 +99,7 @@
                 </slot>
               </thead>
               <tbody>
-                <tr v-for="tx in paginatedData" v-bind:key="tx.ID">
+                <tr v-for="tx in txHistoryPage" v-bind:key="tx.ID">
                   <slot :row="tx">
                     <td class="columnA">
                       <i
@@ -135,22 +135,7 @@
                 </tr>
               </tbody>
             </table>
-            <ul v-if="this.txHistory.length > 0" class="pagination justify-content-center">
-              <li class="page-item" :class="pageNumber == 0 ? 'disabled' : ''">
-                <a class="page-link" style="cursor: pointer;" @click="prevPage">Previous</a>
-              </li>
-              <li
-                class="page-item"
-                :class="page == pageNumber + 1 ? 'active' : ''"
-                v-for="page in pageCount"
-                :key="page"
-              >
-                <a class="page-link" style="cursor: pointer;" @click="gotoPage(page)">{{page}}</a>
-              </li>
-              <li class="page-item" :class="pageNumber >= pageCount - 1 ? 'disabled' : ''">
-                <a class="page-link" style="cursor: pointer;" @click="nextPage">Next</a>
-              </li>
-            </ul>
+            <pagination :dataset="txHistory" :pageSize=10 v-model="txHistoryPage" />
           </div>
         </card>
       </div>
@@ -173,12 +158,14 @@ import {
   between
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2/dist/sweetalert2";
-import AddressBookSearch from "../components/AddressBookSearch"
+import AddressBookSearch from "../components/AddressBookSearch";
+import Pagination from "../components/Pagination";
 
 export default {
   components: {
     Spinner,
-    AddressBookSearch
+    AddressBookSearch,
+    Pagination
   },
   created: function() {
     if (this.txAddressParam != "") {
@@ -191,23 +178,6 @@ export default {
     },
     txInTransit() {
       return this.txStatus == "Pending";
-    },
-    pageCount() {
-      let l = this.txHistory.length,
-        s = this.size;
-      return Math.ceil(l / s);
-    },
-    paginatedData() {
-      const start = this.pageNumber * this.size,
-        end = start + this.size;
-      return this.txHistory.slice(start, end);
-    },
-    filteredAddressBook: function() {
-      if (this.searchFilter == "") {
-        return this.$store.state.addressBook.addressBook;
-      } else {
-        return this.$store.getters["addressBook/search"](this.searchFilter);
-      }
     },
     ...mapState("wallet", ["address", "availableBalance", "darkMode"]),
     ...mapState("transaction", ["txHistory", "txStatus", "txFinished"])
@@ -334,15 +304,6 @@ export default {
     },
     setMaxDAGs() {
       this.txAmount = this.availableBalance;
-    },
-    nextPage() {
-      this.pageNumber++;
-    },
-    prevPage() {
-      this.pageNumber--;
-    },
-    gotoPage(page) {
-      this.pageNumber = page - 1;
     }
   },
   data() {
@@ -359,10 +320,8 @@ export default {
         title: "Transaction History",
         subTitle: "Table containing all previous transactions",
         columns: [...tableColumns],
-        data: this.txHistory
       },
-      pageNumber: 0,
-      size: 10,
+      txHistoryPage: [],
       showAddressBook: false
     };
   },

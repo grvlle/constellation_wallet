@@ -23,7 +23,7 @@
         <div
           class="list-group-item list-group-item-action"
           style="cursor: pointer;"
-          v-for="contact in filteredAddressBook"
+          v-for="contact in addressBookPage"
           :key="contact.id"
           @click="selectAddress(contact)"
         >
@@ -35,19 +35,26 @@
           <i v-if="contact.address == value" class="fa fa-check float-right"></i>
         </div>
       </div>
+      <pagination style="margin-left: auto" :dataset="filteredAddressBook" :pageSize=3 v-model="addressBookPage" />
     </div>
   </div>
 </template>
 
 <script>
+import Pagination from "../components/Pagination";
+
 export default {
   name: "address-book-search",
+  components: {
+    Pagination
+  },
   props: {
     value: String
   },
   data() {
     return {
-      searchFilter: ""
+      searchFilter: "",
+      addressBookPage: []
     };
   },
   created: function() {

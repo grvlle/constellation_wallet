@@ -1,7 +1,9 @@
 <template>
-  <ul v-if="this.dataset.length > 0" class="pagination justify-content-center">
+  <ul v-if="pageCount > 1" class="pagination justify-content-center">
     <li class="page-item" :class="pageNumber == 0 ? 'disabled' : ''">
-      <a class="page-link" style="cursor: pointer;" @click="prevPage">Previous</a>
+      <a class="page-link" style="cursor: pointer;" @click="prevPage">
+        <i class="fa fa-angle-left"></i>
+      </a>
     </li>
     <li
       class="page-item"
@@ -12,13 +14,15 @@
       <a class="page-link" style="cursor: pointer;" @click="gotoPage(page)">{{page}}</a>
     </li>
     <li class="page-item" :class="pageNumber >= pageCount - 1 ? 'disabled' : ''">
-      <a class="page-link" style="cursor: pointer;" @click="nextPage">Next</a>
+      <a class="page-link" style="cursor: pointer;" @click="nextPage">
+        <i class="fa fa-angle-right"></i>
+      </a>
     </li>
   </ul>
 </template>
 
 <script>
-import { integer } from 'vuelidate/lib/validators';
+import { integer } from "vuelidate/lib/validators";
 export default {
   name: "pagination",
   props: {
@@ -43,12 +47,7 @@ export default {
         pageData = this.dataset.slice(start, end);
       return pageData;
     }
-  },/*
-  watch: {
-    paginatedData(newValue) {
-      this.$emit("input", newValue);
-    }
-  },*/
+  },
   watch: {
     paginatedData: {
       handler() {

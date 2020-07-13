@@ -22,13 +22,12 @@
 </template>
 
 <script>
-import { integer } from "vuelidate/lib/validators";
 export default {
   name: "pagination",
   props: {
-    dataset: [],
-    pageSize: integer,
-    value: []
+    dataset: Array,
+    pageSize: Number,
+    value: Array
   },
   data() {
     return {

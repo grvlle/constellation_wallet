@@ -30,7 +30,7 @@
     name: "fg-input",
     props: {
       label: String,
-      value: [String, Number],
+      value: [String, Number, Boolean],
       addonRightIcon: String,
       addonLeftIcon: String
     },

@@ -71,24 +71,12 @@ export default {
       chartId: "no-id",
       chartSelected: "",
       chartUpdated: false,
-      count: 0,
-      onWindows: false,
-      onMacOS: false,
-      onLinux: false,
+      count: 0
     };
   },
   computed: {
     counter() {
       return this.$store.state.dashboard.counters.nodesOnlineCounter;
-    },
-    UserRunningOnWindows() {
-      return this.$store.state.OS.windows;
-    },
-    UserRunningOnMacOS() {
-      return this.$store.state.OS.macOS;
-    },
-    UserRunningOnLinux() {
-      return this.$store.state.OS.linux;
     }
   },
   watch: {
@@ -97,15 +85,6 @@ export default {
       if (this.count == 1) {
         this.chartSelected.update();
       }
-    },
-    UserRunningOnWindows(val) {
-        this.onWindows = val;
-    },
-    UserRunningOnMacOS(val) {
-        this.onMacOS = val;
-    },
-    UserRunningOnLinux(val) {
-        this.onLinux = val;
     }
   },
 

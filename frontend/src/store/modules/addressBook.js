@@ -37,7 +37,12 @@ const mutations = {
         state.addressBook = obj.addressBook;
     },
     setContact(state, obj) {
-        state.addressBook.push(obj.contact);
+        const index = state.addressBook.findIndex((contact) => contact.id === obj.contact.id);
+        if (index === -1) {
+            state.addressBook.push(obj.contact);
+        } else {
+            state.addressBook[index] = obj.contact;
+        }
     },
     deleteContact(state, obj) {
         state.addressBook = state.addressBook.filter(contact => contact.id === obj.contact.id);

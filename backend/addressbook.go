@@ -21,8 +21,8 @@ func (a *WalletApplication) GetAddressBook() string {
 	return s
 }
 
-// StoreContact will add a new contact to the address book
-func (a *WalletApplication) StoreContact(address string, name string, tag string, description string) bool {
+// CreateContact will add a new contact to the address book
+func (a *WalletApplication) CreateContact(address string, name string, tag string, description string) bool {
 	contact := &models.Contact{
 		Address:     address,
 		Name:        name,
@@ -39,6 +39,28 @@ func (a *WalletApplication) StoreContact(address string, name string, tag string
 		return false
 	}
 	a.log.Infoln("Successfully stored contact in DB")
+	return true
+}
+
+// UpdateContact will delete a contact from the address book
+func (a *WalletApplication) UpdateContact(id uint, address string, name string, tag string, description string) bool {
+
+	contact := &models.Contact{
+		ID:          id,
+		Address:     address,
+		Name:        name,
+		Tag:         tag,
+		Description: description,
+	}
+
+	if contact == nil {
+		return false
+	}
+	if err := a.DB.Save(&contact).Error; err != nil {
+		a.log.Errorln("Unable to update the DB record with the existing contact. Reason: ", err)
+		a.sendError("Unable to update the DB record with the existing contact. Reason: ", err)
+		return false
+	}
 	return true
 }
 

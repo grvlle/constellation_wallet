@@ -58,7 +58,7 @@
             <p>Invalid wallet address.</p>
           </div>
           <div class="validate" v-else />
-        </div>        
+        </div>
       </form>
     </div>
     <div class="card-footer">
@@ -124,7 +124,7 @@ export default {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         if (this.$route.params.id == "") {
-          window.backend.WalletApplication.StoreContact(
+          window.backend.WalletApplication.CreateContact(
             this.address,
             this.name,
             this.tag,
@@ -144,7 +144,27 @@ export default {
             }
           });
         } else {
-          // UpdateContact()
+          window.backend.WalletApplication.UpdateContact(
+            this.$route.params.id,
+            this.address,
+            this.name,
+            this.tag,
+            this.description
+          ).then(stored => {
+            if (stored) {
+              let contact = {
+                id: this.$route.params.id,
+                address: this.address,
+                name: this.name,
+                tag: this.tag,
+                description: this.description
+              };
+              this.$store.commit({ type: "addressBook/setContact", contact });
+              this.$router.push({
+                name: "address book"
+              });
+            }
+          });
         }
       }
     }

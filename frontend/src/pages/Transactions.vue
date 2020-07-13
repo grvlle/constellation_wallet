@@ -26,7 +26,7 @@
                     <button type="button" @click="setMaxDAGs()" class="btn">Max.</button>
                   </div>
                 </div>
-                <div class="validate" v-if="!$v.txAmount.inBetween">
+                <div class="validate" v-if="$v.txAmount.$invalid">
                   <p>Invalid amount. Please verify.</p>
                 </div>
                 <div class="validate" v-else></div>

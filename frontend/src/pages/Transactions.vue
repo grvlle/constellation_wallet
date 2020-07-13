@@ -78,14 +78,14 @@
                 <div class="validate"></div>
               </div>
             </div>
-            <div class="row" v-if="showAddressBook">
-              <div class="col-md-5" />
-              <div class="col-md-5">
-                <address-book-search v-model="txAddress"/>
-              </div>
-            </div>
           </div>
         </card>
+      </div>
+    </div>
+    <div class="row" v-if="showAddressBook">
+      <div class="col-md-5" />
+      <div class="col-md-5">
+        <address-book-search v-model="txAddress" />
       </div>
     </div>
     <div class="row">
@@ -135,7 +135,7 @@
                 </tr>
               </tbody>
             </table>
-            <pagination :dataset="txHistory" :pageSize=10 v-model="txHistoryPage" />
+            <pagination :dataset="txHistory" :pageSize="10" v-model="txHistoryPage" />
           </div>
         </card>
       </div>
@@ -319,7 +319,7 @@ export default {
       transactionTable: {
         title: "Transaction History",
         subTitle: "Table containing all previous transactions",
-        columns: [...tableColumns],
+        columns: [...tableColumns]
       },
       txHistoryPage: [],
       showAddressBook: false
@@ -372,7 +372,7 @@ export default {
     txAddressParam: {
       type: String,
       default: ""
-    },
+    }
   }
 };
 </script>

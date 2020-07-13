@@ -10,13 +10,6 @@
               placeholder="Search a contact..."
               v-model="searchFilter"
             />
-            <button
-              class="btn bg-transparent"
-              @click="clearSearch"
-              style="margin-left: -40px; z-index: 100; border: none; color:darkgray;"
-            >
-              <i class="fa fa-times"></i>
-            </button>
             <button type="button" class="btn btn-primary ml-2" @click="createContact">
               <i class="fa fa-plus"></i>
             </button>
@@ -69,10 +62,7 @@ export default {
       }
     }
   },
-  methods: {
-    clearSearch: function() {
-      this.searchFilter = "";
-    },    
+  methods: {  
     createContact: function() {
       this.$router.push({
         name: "new-edit contact",

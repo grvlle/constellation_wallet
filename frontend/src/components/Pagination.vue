@@ -69,3 +69,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.disabled .page-link {
+  opacity: 0.7;
+}
+</style>

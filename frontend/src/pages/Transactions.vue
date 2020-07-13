@@ -43,6 +43,7 @@
                     aria-label="Amount (in DAGs)"
                     v-model.trim="txAddress"
                     @change="setName($event.target.value)"
+                    @keypress="setName($event.target.value)"
                     placeholder="Enter Recipients Wallet Address..."
                   />
                   <div class="input-group-append">
@@ -59,7 +60,14 @@
                   <p>Invalid wallet address. Please verify.</p>
                 </div>
                 <div class="validate" v-else-if="txAddress == address">
-                  <p>You can not send to your own wallet.</p>
+                  <p>You can not send to your own wallet address.</p>
+                </div>
+                <div class="validate" v-else-if="txAddress != ''">
+                  <p v-if="txAddressInformation" style="color: green">{{txAddressInformation}}</p>
+                  <p
+                    v-else
+                    style="color: gray"
+                  >This DAG address is not stored in any of your address book contacts.</p>
                 </div>
                 <div class="validate" v-else></div>
               </div>
@@ -173,11 +181,23 @@ export default {
     }
   },
   computed: {
-    tableClass() {
+    tableClass: function() {
       return `table-${this.type}`;
     },
-    txInTransit() {
+    txInTransit: function() {
       return this.txStatus == "Pending";
+    },
+    txAddressInformation: function() {
+      let addressInfo = "";
+      let contact = this.$store.getters["addressBook/search"](this.txAddress);
+      if (contact.length) {
+        addressInfo =
+          "This DAG address belongs to your address book contact with the name " +
+          '"' +
+          contact[0].name +
+          '".';
+      }
+      return addressInfo;
     },
     ...mapState("wallet", ["address", "availableBalance", "darkMode"]),
     ...mapState("transaction", ["txHistory", "txStatus", "txFinished"])

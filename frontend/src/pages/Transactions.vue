@@ -53,10 +53,7 @@
                     </button>
                   </div>
                 </div>
-                <div
-                  class="validate"
-                  v-if="!$v.txAddress.minLength || !$v.txAddress.verifyPrefix || !$v.txAddress.maxLength"
-                >
+                <div class="validate" v-if="$v.txAddress.$invalid">
                   <p>Invalid wallet address. Please verify.</p>
                 </div>
                 <div class="validate" v-else-if="txAddress == address">
@@ -189,13 +186,15 @@ export default {
     },
     txAddressInformation: function() {
       let addressInfo = "";
-      let contact = this.$store.getters["addressBook/search"](this.txAddress);
-      if (contact.length) {
-        addressInfo =
-          "This DAG address belongs to your address book contact with the name " +
-          '"' +
-          contact[0].name +
-          '".';
+      if (!this.$v.txAddress.$invalid) {        
+        let contact = this.$store.getters["addressBook/search"](this.txAddress);
+        if (contact.length) {
+          addressInfo =
+            "This DAG address belongs to your address book contact with the name " +
+            '"' +
+            contact[0].name +
+            '".';
+        }
       }
       return addressInfo;
     },

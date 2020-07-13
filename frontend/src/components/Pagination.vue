@@ -69,7 +69,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
 .disabled .page-link {
   opacity: 0.7;
 }

@@ -396,7 +396,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 td {
   max-width: 0;
   overflow: hidden;

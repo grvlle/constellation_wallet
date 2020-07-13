@@ -71,7 +71,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
 .login-bg {
   /* Full height */
   height: 100%;

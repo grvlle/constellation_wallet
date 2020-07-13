@@ -265,7 +265,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped lang="scss">
 .text-overflow {
   display: block;
   overflow: hidden;

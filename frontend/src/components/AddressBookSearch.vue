@@ -85,7 +85,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
 tr:hover {
   opacity: 0.8;
   font-weight: bold;

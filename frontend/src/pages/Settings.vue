@@ -391,7 +391,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .vs__clear {
   display: none;
 }

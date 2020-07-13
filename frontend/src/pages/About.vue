@@ -103,7 +103,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 /* Color Variables */
 
 $color-codepen: #000;

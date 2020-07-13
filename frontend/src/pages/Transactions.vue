@@ -90,7 +90,7 @@
     <div class="row" v-if="showAddressBook">
       <div class="col-md-5" />
       <div class="col-md-5">
-        <address-book-search v-model="txAddress" />
+        <address-book-search v-model="txAddress" v-on:input="showAddressBook = false"/>
       </div>
     </div>
     <div class="row">

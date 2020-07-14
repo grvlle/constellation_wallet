@@ -20,13 +20,12 @@
                     @change="sendAmount($event.target.value)"
                     pattern="[0-9]+([,\.][0-9]+)?"
                     step="0.01"
-                    placeholder="0"
                   />
                   <div class="input-group-append">
                     <button type="button" @click="setMaxDAGs()" class="btn">Max.</button>
                   </div>
                 </div>
-                <div class="validate" v-if="$v.txAmount.$invalid">
+                <div class="validate" v-if="$v.txAmount.$invalid && txAmount != 0">
                   <p>Invalid amount. Please verify.</p>
                 </div>
                 <div class="validate" v-else></div>
@@ -53,7 +52,7 @@
                     </button>
                   </div>
                 </div>
-                <div class="validate" v-if="$v.txAddress.$invalid">
+                <div class="validate" v-if="$v.txAddress.$invalid && txAddress != ''">
                   <p>Invalid wallet address. Please verify.</p>
                 </div>
                 <div class="validate" v-else-if="txAddress == address">
@@ -328,7 +327,7 @@ export default {
   data() {
     return {
       txAddress: "",
-      txAmount: null,
+      txAmount: 0,
       submitStatus: null,
       amountSubmitted: null,
       notifications: {

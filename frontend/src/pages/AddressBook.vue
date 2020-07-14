@@ -17,7 +17,7 @@
         </card>
       </div>
     </div>
-    <div class="row">
+    <div class="row" v-if="this.$store.state.addressBook.addressBook.length">
       <div class="col-md-4 mb-4" v-for="contact in filteredAddressBook" :key="contact.id">
         <div class="card h-100">
           <div class="card-body">
@@ -33,6 +33,14 @@
           <a href="javascript:void(0)" @click="showContact(contact)" class="stretched-link"></a>
         </div>
       </div>
+    </div>
+    <div v-else>
+      <card class="text-center" style="height: 10rem;">
+        <p class="card-text text-muted font-weight-bold mt-4">EMPTY ADDRESS BOOK</p>
+        <p
+          class="card-text text-muted font-italic"
+        >You can start adding your contacts by clicking the '+' button at the top right of the page</p>
+      </card>
     </div>
   </div>
 </template>
@@ -62,7 +70,7 @@ export default {
       }
     }
   },
-  methods: {  
+  methods: {
     createContact: function() {
       this.$router.push({
         name: "new-edit contact",

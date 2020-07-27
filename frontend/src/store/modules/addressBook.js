@@ -10,7 +10,7 @@ const getters = {
     search: (state) => (searchText) => {
         return state.addressBook.filter(function (contact) {
             if (contact.name.toUpperCase().includes(searchText.toUpperCase()) ||
-                contact.address.toUpperCase().includes(searchText.toUpperCase()) ||
+                contact.address.includes(searchText) ||
                 contact.tag.toUpperCase().includes(searchText.toUpperCase())
             ) {
                 return true;

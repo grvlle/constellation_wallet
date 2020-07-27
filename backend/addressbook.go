@@ -14,11 +14,11 @@ func (a *WalletApplication) GetAddressBook() string {
 
 	addressBook, err := json.Marshal(contacts)
 	if err != nil {
+		a.log.Errorln("Unable to produce a JSON encoding from the retrieved DB records. Reason: ", err)
+		a.sendError("Unable to produce a JSON encoding from the retrieved DB records. Reason: ", err)
 		return ""
 	}
-	n := len(addressBook)
-	s := string(addressBook[:n])
-	return s
+	return string(addressBook)
 }
 
 // CreateContact will add a new contact to the address book

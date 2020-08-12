@@ -3,9 +3,8 @@
     <div class="row">
       <div class="col">
         <card title="Transactions" subTitle="Submit a $DAG Transaction">
-          <!-- <p>Last Transaction State: {{this.txStatus}}</p> -->
-          <form @submit.prevent class="container">
-            <div class="form-row align-items-center">
+          <div class="container">
+            <div class="row align-items-center">
               <div class="col-md-4">
                 <div class="input-group" style="margin-bottom: 0;">
                   <div class="input-group-prepend">
@@ -17,17 +16,16 @@
                     type="text"
                     class="form-control"
                     aria-label="Amount (in DAGs)"
-                    v-model.number="txAmountValidation"
+                    v-model.number="txAmount"
                     @change="sendAmount($event.target.value)"
                     pattern="[0-9]+([,\.][0-9]+)?"
                     step="0.01"
-                    placeholder="0"
                   />
                   <div class="input-group-append">
                     <button type="button" @click="setMaxDAGs()" class="btn">Max.</button>
                   </div>
                 </div>
-                <div class="validate" v-if="!$v.txAmountValidation.inBetween">
+                <div class="validate" v-if="$v.txAmount.$invalid && txAmount != 0">
                   <p>Invalid amount. Please verify.</p>
                 </div>
                 <div class="validate" v-else></div>
@@ -37,25 +35,35 @@
                 <div class="validate"></div>
               </div>
               <div class="col-md-5">
-                <input
-                  type="text"
-                  class="form-control"
-                  aria-label="Amount (in DAGs)"
-                  v-model.trim="txAddressValidation"
-                  @change="setName($event.target.value)"
-                  placeholder="Enter Recipients Wallet Address..."
-                />
-                <div
-                  class="validate"
-                  v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength"
-                >
+                <div class="input-group" style="margin-bottom: 0;">
+                  <input
+                    type="text"
+                    class="form-control"
+                    aria-label="Amount (in DAGs)"
+                    v-model.trim="txAddress"
+                    @change="setName($event.target.value)"
+                    @keypress="setName($event.target.value)"
+                    placeholder="Enter Recipients Wallet Address..."
+                  />
+                  <div class="input-group-append">
+                    <button type="button" class="btn" @click="toggleAddressBook">
+                      <i class="fa fa-address-book"></i>
+                      Address book
+                    </button>
+                  </div>
+                </div>
+                <div class="validate" v-if="$v.txAddress.$invalid && txAddress != ''">
                   <p>Invalid wallet address. Please verify.</p>
                 </div>
-                <div
-                  class="validate"
-                  v-else-if="txAddressValidation == address"
-                >
-                  <p>You can not send to your own wallet.</p>
+                <div class="validate" v-else-if="txAddress == address">
+                  <p>You can not send to your own wallet address.</p>
+                </div>
+                <div class="validate" v-else-if="txAddress != ''">
+                  <p v-if="txAddressInformation" style="color: green">{{txAddressInformation}}</p>
+                  <p
+                    v-else
+                    style="color: gray"
+                  >This DAG address is not stored in any of your address book contacts.</p>
                 </div>
                 <div class="validate" v-else></div>
               </div>
@@ -65,7 +73,7 @@
                   block
                   @click.native="submitTransaction"
                   style="max-width: 10rem; margin-left: auto;"
-                  :disabled="txInTransit || txAddressValidation == address"
+                  :disabled="txInTransit || txAddress == address"
                 >
                   <span>
                     <i class="fa fa-paper-plane"></i> SEND
@@ -74,8 +82,14 @@
                 <div class="validate"></div>
               </div>
             </div>
-          </form>
+          </div>
         </card>
+      </div>
+    </div>
+    <div class="row" v-if="showAddressBook">
+      <div class="col-md-5" />
+      <div class="col-md-5">
+        <address-book-search v-model="txAddress" v-on:input="showAddressBook = false"/>
       </div>
     </div>
     <div class="row">
@@ -84,12 +98,12 @@
           <div class="table-full-width table-responsive" style="width: 100%;">
             <table class="table" :class="tableClass">
               <thead>
-                <slot txAddressValidation="columns">
+                <slot txAddress="columns">
                   <th v-for="column in transactionTable.columns" v-bind:key="column.id">{{column}}</th>
                 </slot>
               </thead>
               <tbody>
-                <tr v-for="tx in paginatedData" v-bind:key="tx.ID">
+                <tr v-for="tx in txHistoryPage" v-bind:key="tx.ID">
                   <slot :row="tx">
                     <td class="columnA">
                       <i
@@ -97,7 +111,9 @@
                         v-if="tx.status === 'Complete'"
                         class="fa fa-check"
                       ></i>
-                      <center><spinner :size="15" color="#F9EC31" v-if="tx.status === 'Pending'"></spinner></center>
+                      <center>
+                        <spinner :size="15" color="#F9EC31" v-if="tx.status === 'Pending'"></spinner>
+                      </center>
                       <i style="color: firebrick;" v-if="tx.status === 'Error'" class="fa fa-times"></i>
                     </td>
                     <td class="columnB">
@@ -123,22 +139,7 @@
                 </tr>
               </tbody>
             </table>
-            <ul v-if="this.txHistory.length > 0" class="pagination justify-content-center" >
-              <li class="page-item" :class="pageNumber == 0 ? 'disabled' : ''">
-                <a class="page-link" style="cursor: pointer;" @click="prevPage">Previous</a>
-              </li>
-              <li
-                class="page-item"
-                :class="page == pageNumber + 1 ? 'active' : ''"
-                v-for="page in pageCount"
-                :key="page"
-              >
-                <a class="page-link" style="cursor: pointer;" @click="gotoPage(page)">{{page}}</a>
-              </li>
-              <li class="page-item" :class="pageNumber >= pageCount - 1 ? 'disabled' : ''">
-                <a class="page-link" style="cursor: pointer;" @click="nextPage">Next</a>
-              </li>
-            </ul>
+            <pagination :dataset="txHistory" :pageSize="10" v-model="txHistoryPage" />
           </div>
         </card>
       </div>
@@ -148,13 +149,12 @@
 </template>
 
 <script>
-
 const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
-import {mapState} from 'vuex'
-import Spinner from 'vue-spinner-component/src/Spinner.vue';
+import { mapState } from "vuex";
+import Spinner from "vue-spinner-component/src/Spinner.vue";
 import {
   required,
   minLength,
@@ -162,30 +162,43 @@ import {
   between
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2/dist/sweetalert2";
+import AddressBookSearch from "../components/AddressBookSearch";
+import Pagination from "../components/Pagination";
 
 export default {
   components: {
-    Spinner
+    Spinner,
+    AddressBookSearch,
+    Pagination
+  },
+  created: function() {
+    if (this.txAddressParam != "") {
+      this.txAddress = this.txAddressParam;
+    }
   },
   computed: {
-    tableClass() {
+    tableClass: function() {
       return `table-${this.type}`;
     },
-    txInTransit() {
+    txInTransit: function() {
       return this.txStatus == "Pending";
     },
-    pageCount() {
-      let l = this.txHistory.length,
-        s = this.size;
-      return Math.ceil(l / s);
+    txAddressInformation: function() {
+      let addressInfo = "";
+      if (!this.$v.txAddress.$invalid) {        
+        let contact = this.$store.getters["addressBook/search"](this.txAddress);
+        if (contact.length) {
+          addressInfo =
+            "This DAG address belongs to your address book contact with the name " +
+            '"' +
+            contact[0].name +
+            '".';
+        }
+      }
+      return addressInfo;
     },
-    paginatedData() {
-      const start = this.pageNumber * this.size,
-        end = start + this.size;
-      return this.txHistory.slice(start, end);
-    },
-    ...mapState('wallet', ['address', 'availableBalance', 'darkMode']),
-    ...mapState('transaction', ['txHistory', 'txStatus', 'txFinished'])
+    ...mapState("wallet", ["address", "availableBalance", "darkMode"]),
+    ...mapState("transaction", ["txHistory", "txStatus", "txFinished"])
   },
   methods: {
     isFloat: function(n) {
@@ -195,12 +208,15 @@ export default {
       return n === +n && n === (n | 0);
     },
     sendAmount(value) {
-      this.txAmountValidation = value;
-      this.$v.txAmountValidation.$touch();
+      this.txAmount = value;
+      this.$v.txAmount.$touch();
     },
     setName(value) {
-      this.txAddressValidation = value;
-      this.$v.txAddressValidation.$touch();
+      this.txAddress = value;
+      this.$v.txAddress.$touch();
+    },
+    toggleAddressBook() {
+      this.showAddressBook = !this.showAddressBook;
     },
     submitTransaction: function() {
       var self = this;
@@ -220,9 +236,7 @@ export default {
         Swal.mixin({
           progressSteps: ["1", "2"],
           customClass: {
-            container: this.darkMode
-              ? "theme--dark"
-              : "theme--light"
+            container: this.darkMode ? "theme--dark" : "theme--light"
           }
         })
           .queue([
@@ -230,9 +244,9 @@ export default {
               title: "Are you sure?",
               html:
                 "You are about to send <b>" +
-                self.txAmountValidation +
+                self.txAmount +
                 "</b> $DAG tokens to " +
-                self.txAddressValidation,
+                self.txAddress,
               type: "warning",
               showCancelButton: true,
               confirmButtonColor: "#5FD1FB",
@@ -265,14 +279,12 @@ export default {
             if (result.value) {
               self.$Progress.start();
               self.overlay = true;
-              let amount = self.txAmountValidation;
-              let address = self.txAddressValidation;
+              let amount = self.txAmount;
+              let address = self.txAddress;
               let fee = result.value;
               const swalPopup = Swal.mixin({
                 customClass: {
-                  container: this.darkMode
-                    ? "theme--dark"
-                    : "theme--light"
+                  container: this.darkMode ? "theme--dark" : "theme--light"
                 }
               });
               window.backend.WalletApplication.TriggerTXFromFE(
@@ -294,9 +306,9 @@ export default {
                     title: "Success!",
                     text:
                       "You have sent " +
-                      self.txAmountValidation +
+                      self.txAmount +
                       " $DAG tokens to address " +
-                      self.txAddressValidation +
+                      self.txAddress +
                       ".",
                     type: "success"
                   });
@@ -309,26 +321,15 @@ export default {
       }
     },
     setMaxDAGs() {
-      this.txAmountValidation = this.availableBalance;
-    },
-    nextPage() {
-      this.pageNumber++;
-    },
-    prevPage() {
-      this.pageNumber--;
-    },
-    gotoPage(page) {
-      this.pageNumber = page - 1;
+      this.txAmount = this.availableBalance;
     }
   },
   data() {
     return {
-      txAddressValidation: "",
-      txAmountValidation: null,
+      txAddress: "",
+      txAmount: 0,
       submitStatus: null,
       amountSubmitted: null,
-      txAmount: "",
-      txAddress: "",
       notifications: {
         topCenter: false
       },
@@ -336,11 +337,10 @@ export default {
       transactionTable: {
         title: "Transaction History",
         subTitle: "Table containing all previous transactions",
-        columns: [...tableColumns],
-        data: this.txHistory
+        columns: [...tableColumns]
       },
-      pageNumber: 0,
-      size: 10
+      txHistoryPage: [],
+      showAddressBook: false
     };
   },
   filters: {
@@ -361,13 +361,13 @@ export default {
     }
   },
   validations: {
-    txAddressValidation: {
+    txAddress: {
       required,
       minLength: minLength(40),
       maxLength: maxLength(40),
       verifyPrefix
     },
-    txAmountValidation: {
+    txAmount: {
       required,
       inBetween: between(0.00000001, 3711998690)
     }
@@ -386,12 +386,16 @@ export default {
     subTitle: {
       type: String,
       default: ""
+    },
+    txAddressParam: {
+      type: String,
+      default: ""
     }
   }
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 td {
   max-width: 0;
   overflow: hidden;

@@ -457,19 +457,6 @@
   }
 }
 
-//overwrite table responsive for 768px screens
-
-@media (min-width: 992px) {
-  .table-full-width {
-    margin-left: -0.9375em;
-    margin-right: -0.9375em;
-  }
-  .table-responsive {
-    overflow: visible;
-  }
-
-}
-
 @media (max-width: 991px) {
   .table-responsive {
     width: 100%;

@@ -4,6 +4,7 @@ import Wallet from './modules/wallet';
 import App from './modules/app';
 import Transaction from './modules/transaction';
 import Dashboard from './modules/dashboard';
+import AddressBook from './modules/addressBook'
 
 Vue.use(Vuex);
 
@@ -12,7 +13,8 @@ export const store = new Vuex.Store({
         app: App,
         wallet: Wallet,
         transaction: Transaction,
-        dashboard: Dashboard
+        dashboard: Dashboard,
+        addressBook: AddressBook
     },
     getters: {
         runningOnWindows (state) {

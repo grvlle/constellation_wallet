@@ -6,6 +6,7 @@
         <sidebar-link to="wallet-info" name="Wallet Info" icon="fa fa-wallet" />
         <sidebar-link to="submit-transaction" name="Transactions" icon="fa fa-paper-plane" />
         <sidebar-link to="about" name="About" icon="fa fa-question-circle" />
+        <sidebar-link to="address-book" name="Address Book" icon="fa fa-address-book" />
         <p class="nav-item">
           <a @click="notifyVue2('top', 'right')" class="nav-link" style="cursor: pointer;">
             <i class="fa fa-trophy"></i>Team
@@ -50,7 +51,7 @@
   </div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 </style>
 
 <script>

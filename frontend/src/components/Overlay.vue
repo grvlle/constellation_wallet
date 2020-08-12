@@ -14,7 +14,7 @@
   }
 </script>
 
-<style>
+<style scoped lang="scss">
 .overlay {
   position: fixed; /* Sit on top of the page content */
   visibility: hidden;

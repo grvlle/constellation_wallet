@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <div class="total-value text-center">{{availableBalance | asCurrency('DAG-short')}} $DAG</div>
     <ul class="timeline">
       <li class="timeline-inverted" v-for="tx in value" v-bind:key="tx.ID">
         <div class="timeline-value" :class="[address == tx.receiver ? 'receive' : 'send']">
@@ -58,7 +59,7 @@ export default {
     value: [],
   },
   computed: {
-    ...mapState("wallet", ["address"]),
+    ...mapState("wallet", ["address", "availableBalance"]),
   },
   filters: {
     asCurrency: function (value, currency) {
@@ -104,6 +105,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.total-value {
+  width: 9.6rem;
+}
 .timeline {
   list-style: none;
   padding: 1.25rem 0 0.25rem;

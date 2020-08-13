@@ -183,3 +183,73 @@ hr.divider {
   margin: 0 auto 0 auto;
   border-top: 1px solid #3b424a;
 }
+
+.timeline:before {
+  @include themed() {
+    background-color: t('borderColor');
+  }  
+}
+
+.timeline > li > .timeline-panel {
+  @include themed() {
+    background-color: t('cardTableColor');
+    border-color: t('borderColor');
+  }
+}
+
+.timeline-badge .fa {
+  @include themed() {
+    color: t('cardBackgroundColor');
+  }
+}
+
+.timeline-badge.receive {
+  @include themed() {
+    background-color: t('warningColor');
+  }
+}
+
+.timeline-badge.send {
+  @include themed() {
+    background-color: t('infoColor');
+  }
+}
+
+.timeline-value.receive {
+  @include themed() {
+    color: t('warningColor');
+  }
+}
+
+.timeline-value.send {
+  @include themed() {
+    color: t('infoColor');
+  }
+}
+
+
+.timeline > li > .timeline-panel.send:before {
+  @include themed() {
+    border-left-color: t('infoColor');
+    border-right-color: t('infoColor');
+  }
+}
+.timeline > li > .timeline-panel.send:after {
+  @include themed() {
+    border-left-color: t('cardTableColor');
+    border-right-color: t('cardTableColor');
+  }
+}
+
+.timeline > li > .timeline-panel.receive:before {
+  @include themed() {
+    border-left-color: t('warningColor');
+    border-right-color: t('warningColor');
+  }
+}
+.timeline > li > .timeline-panel.receive:after {
+  @include themed() {
+    border-left-color: t('cardTableColor');
+    border-right-color: t('cardTableColor');
+  }
+}

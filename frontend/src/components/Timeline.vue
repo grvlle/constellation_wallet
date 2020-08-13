@@ -30,7 +30,7 @@
             </div>
             <div class="row">
               <div class="col">
-                <a :href="'https://www.dagexplorer.io/search?term=' + tx.hash">{{tx.hash}}</a>
+                <a style="color:dimgray;" :href="'https://www.dagexplorer.io/search?term=' + tx.hash">{{tx.hash}}</a>
               </div>
             </div>
           </div>
@@ -106,7 +106,8 @@ export default {
 <style scoped lang="scss">
 .timeline {
   list-style: none;
-  padding: 1.25rem 0 1.25rem;
+  padding: 1.25rem 0 0.25rem;
+  margin-bottom: 0;
   position: relative;
 }
 
@@ -116,7 +117,6 @@ export default {
   position: absolute;
   content: " ";
   width: 0.1875rem;
-  background-color: #eeeeee;
   left: 4.8rem;
   margin-left: -0.09375rem;
 }
@@ -149,7 +149,7 @@ export default {
 .timeline > li > .timeline-panel {
   width: 88%;
   float: left;
-  border: 0.0625rem solid #d4d4d4;
+  border-width: 0.0625rem;
   border-radius: 0.125rem;
   padding: 0.3125rem 1.25rem 0.625rem 1.25rem;
   position: relative;
@@ -170,15 +170,11 @@ export default {
   display: inline-block;
   border-top: 0.9375rem solid transparent;
   border-bottom: 0.9375rem solid transparent;
+  border-left-style: solid;
+  border-left-width: 0.9375rem;
+  border-right-style: solid;  
+  border-right-width: 0;  
   content: " ";
-}
-.timeline > li > .timeline-panel.send:before {
-  border-left: 0.9375rem solid #5bc0de;
-  border-right: 0 solid #5bc0de;
-}
-.timeline > li > .timeline-panel.receive:before {
-  border-left: 0.9375rem solid #f0ad4e;
-  border-right: 0 solid #f0ad4e;
 }
 
 .timeline > li > .timeline-panel:after {
@@ -187,9 +183,11 @@ export default {
   right: -0.875rem;
   display: inline-block;
   border-top: 0.875rem solid transparent;
-  border-left: 0.875rem solid #fff;
-  border-right: 0 solid #fff;
   border-bottom: 0.875rem solid transparent;
+  border-left-style: solid;
+  border-left-width: 0.875rem;
+  border-right-style: solid;  
+  border-right-width: 0;  
   content: " ";
 }
 
@@ -213,7 +211,6 @@ export default {
   top: 0.9375rem;
   left: 4.8rem;
   margin-left: -0.9375rem;
-  background-color: #999999;
   z-index: 100;
   border-top-right-radius: 50%;
   border-top-left-radius: 50%;
@@ -237,21 +234,5 @@ export default {
   border-right-width: 0.875rem;
   left: -0.875rem;
   right: auto;
-}
-
-.timeline-badge.receive {
-  background-color: #f0ad4e !important;
-}
-
-.timeline-badge.send {
-  background-color: #5bc0de !important;
-}
-
-.timeline-value.receive {
-  color: #f0ad4e !important;
-}
-
-.timeline-value.send {
-  color: #5bc0de !important;
 }
 </style>

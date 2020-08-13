@@ -94,51 +94,9 @@
     </div>
     <div class="row">
       <div class="col">
-        <card class="card" :title="transactionTable.title" :subTitle="transactionTable.subTitle">
-          <div class="table-full-width table-responsive" style="width: 100%;">
-            <table class="table" :class="tableClass">
-              <thead>
-                <slot txAddress="columns">
-                  <th v-for="column in transactionTable.columns" v-bind:key="column.id">{{column}}</th>
-                </slot>
-              </thead>
-              <tbody>
-                <tr v-for="tx in txHistoryPage" v-bind:key="tx.ID">
-                  <slot :row="tx">
-                    <td class="columnA">
-                      <i
-                        style="color: #6DECBB;"
-                        v-if="tx.status === 'Complete'"
-                        class="fa fa-check"
-                      ></i>
-                      <center>
-                        <spinner :size="15" color="#F9EC31" v-if="tx.status === 'Pending'"></spinner>
-                      </center>
-                      <i style="color: firebrick;" v-if="tx.status === 'Error'" class="fa fa-times"></i>
-                    </td>
-                    <td class="columnB">
-                      <p class="description" style="font-size: 0.9375rem;">
-                        <b>{{(tx.amount / 1e8).toFixed(8).replace(/\.?0+$/,"")}}</b> DAG
-                      </p>
-                    </td>
-                    <td class="columnC">
-                      <p class="description" style="font-size: 0.9375rem;">{{tx.receiver}}</p>
-                    </td>
-                    <td class="columnD">
-                      <p class="description" style="font-size: 0.9375rem;">{{tx.fee / 1e8}}</p>
-                    </td>
-                    <td class="columnE">
-                      <a id="txhash">
-                        <p style="font-size: 0.9375rem;">{{tx.hash}}</p>
-                      </a>
-                    </td>
-                    <td class="columnF">
-                      <p class="description" style="font-size: 0.9375rem;">{{tx.date}}</p>
-                    </td>
-                  </slot>
-                </tr>
-              </tbody>
-            </table>
+        <card class="card" title="Transaction History">
+          <div>
+            <timeline v-model="txHistoryPage" />
             <pagination :dataset="txHistory" :pageSize="10" v-model="txHistoryPage" />
           </div>
         </card>
@@ -149,12 +107,10 @@
 </template>
 
 <script>
-const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
 import { mapState } from "vuex";
-import Spinner from "vue-spinner-component/src/Spinner.vue";
 import {
   required,
   minLength,
@@ -164,12 +120,13 @@ import {
 import Swal from "sweetalert2/dist/sweetalert2";
 import AddressBookSearch from "../components/AddressBookSearch";
 import Pagination from "../components/Pagination";
+import Timeline from "../components/Timeline";
 
 export default {
   components: {
-    Spinner,
     AddressBookSearch,
-    Pagination
+    Pagination,
+    Timeline
   },
   created: function() {
     if (this.txAddressParam != "") {
@@ -334,11 +291,6 @@ export default {
         topCenter: false
       },
       overlay: false,
-      transactionTable: {
-        title: "Transaction History",
-        subTitle: "Table containing all previous transactions",
-        columns: [...tableColumns]
-      },
       txHistoryPage: [],
       showAddressBook: false
     };
@@ -373,20 +325,6 @@ export default {
     }
   },
   props: {
-    columns: Array,
-    data: Array,
-    type: {
-      type: String, // striped | hover
-      default: "striped"
-    },
-    title: {
-      type: String,
-      default: ""
-    },
-    subTitle: {
-      type: String,
-      default: ""
-    },
     txAddressParam: {
       type: String,
       default: ""
@@ -396,45 +334,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-td {
-  max-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-td.columnA {
-  width: 3%;
-  padding-top: 0px;
-  text-align: center;
-}
-td.columnB {
-  width: 15%;
-}
-td.columnC {
-  width: 40%;
-}
-td.columnD {
-  width: 5%;
-}
-td.columnE {
-  width: 22%;
-}
-td.columnF {
-  width: 15%;
-}
-
-txhash a {
-  color: blue;
-}
-
-txhash a:visited {
-  color: blue;
-}
-
-txhash p {
-  font-weight: bold;
-}
-
 .validate {
   height: 1.25em;
 }

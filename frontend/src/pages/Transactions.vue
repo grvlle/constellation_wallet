@@ -25,10 +25,10 @@
                     <button type="button" @click="setMaxDAGs()" class="btn">Max.</button>
                   </div>
                 </div>
-                <div class="validate" v-if="$v.txAmount.$invalid && txAmount != 0">
+                <div class="validate text-danger" v-if="$v.txAmount.$invalid && txAmount != 0">
                   <p>Invalid amount. Please verify.</p>
                 </div>
-                <div class="validate" v-else></div>
+                <div class="validate text-danger" v-else></div>
               </div>
               <div class="col-md-1">
                 <i class="fa fa-chevron-circle-right icon-point-right"></i>
@@ -52,20 +52,19 @@
                     </button>
                   </div>
                 </div>
-                <div class="validate" v-if="$v.txAddress.$invalid && txAddress != ''">
+                <div class="validate text-danger" v-if="$v.txAddress.$invalid && txAddress != ''">
                   <p>Invalid wallet address. Please verify.</p>
                 </div>
-                <div class="validate" v-else-if="txAddress == address">
+                <div class="validate text-danger" v-else-if="txAddress == address">
                   <p>You can not send to your own wallet address.</p>
                 </div>
-                <div class="validate" v-else-if="txAddress != ''">
-                  <p v-if="txAddressInformation" style="color: green">{{txAddressInformation}}</p>
+                <div class="validate text-success" v-else-if="txAddress != ''">
+                  <p v-if="txAddressInformation">{{txAddressInformation}}</p>
                   <p
-                    v-else
-                    style="color: gray"
+                    v-else class="text-muted"
                   >This DAG address is not stored in any of your address book contacts.</p>
                 </div>
-                <div class="validate" v-else></div>
+                <div class="validate text-danger" v-else></div>
               </div>
               <div class="col-md-2">
                 <p-button

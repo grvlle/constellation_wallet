@@ -9,10 +9,10 @@
             <p v-if="this.$route.params.message">{{this.$route.params.message}}</p>
             <p v-else>Downloading $DAG wallet dependencies...</p>
           </div>
-          <div class="page-error-box" v-if="displayLoginError">
+          <div class="page-error-box text-danger" v-if="displayLoginError">
             <p>{{loginErrorMsg}}</p>
           </div>
-          <div class="page-error-box" v-else></div>
+          <div class="page-error-box text-danger" v-else></div>
         </div>
       </div>
       <div class="row" style="min-height: 32rem;">
@@ -110,5 +110,14 @@ export default {
   display: flex;
   align-items: bottom;
   margin-right: 1.8em;
+}
+
+.page-error-box {
+  height: 1.875em;
+  padding-bottom: 0.625rem;
+}
+
+.page-error-box p {
+    font-size: 0.75rem;
 }
 </style>

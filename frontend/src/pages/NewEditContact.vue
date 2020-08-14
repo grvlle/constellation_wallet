@@ -14,10 +14,10 @@
             v-model.trim="name"
             placeholder="Enter name..."
           />
-          <div class="validate" v-if="!$v.name.required">
+          <div class="validate text-danger" v-if="!$v.name.required">
             <p>Field is required</p>
           </div>
-          <div class="validate" v-else />
+          <div class="validate text-danger" v-else />
         </div>
         <div class="form-group">
           <label for="tagInput">Tag</label>
@@ -48,11 +48,11 @@
             v-model.trim="address"
             placeholder="Enter address..."
           />
-          <div class="validate" v-if="!$v.address.required">
+          <div class="validate text-danger" v-if="!$v.address.required">
             <p>Field is required</p>
           </div>
           <div
-            class="validate"
+            class="validate text-danger"
             v-else-if="!$v.address.minLength || !$v.address.verifyPrefix || !$v.address.maxLength"
           >
             <p>Invalid wallet address.</p>

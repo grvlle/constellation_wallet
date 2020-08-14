@@ -10,9 +10,6 @@
   font-size: 0.625rem;
   margin-top: 0em;
   margin-right: 0.125em;
-  @include themed() {
-    color: t('errorTextColor');
-  }
 }
 
 .wallet-address {
@@ -27,19 +24,6 @@
   @include themed() {
       color: t('walletAddressColor');
   }
-}
-
-
-.page-error-box {
-  height: 1.875em;
-  padding-bottom: 0.625rem;
-}
-
-.page-error-box p {
-    font-size: 0.75rem;
-    @include themed() {
-      color: t('errorTextColor');
-    }
 }
 
 .icon-point-right {

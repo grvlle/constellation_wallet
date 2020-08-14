@@ -31,7 +31,7 @@
             </div>
             <div class="row">
               <div class="col">
-                <a style="color:dimgray;" :href="'https://www.dagexplorer.io/search?term=' + tx.hash">{{tx.hash}}</a>
+                <a style="color:dimgray;" :href="'https://www.dagexplorer.io/search?term=' + tx.hash" rel="noopener noreferrer" target="_blank">{{tx.hash}}</a>
               </div>
             </div>
           </div>

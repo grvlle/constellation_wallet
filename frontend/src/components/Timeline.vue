@@ -4,10 +4,9 @@
     <ul class="timeline">
       <li class="timeline-inverted" v-for="tx in value" v-bind:key="tx.ID">
         <div class="timeline-value" :class="[address == tx.receiver ? 'receive' : 'send']">
-          <div
-            v-if="address == tx.receiver"
-          >+ {{tx.amount | normalizeDAG | asCurrency('DAG-short')}}</div>
-          <div v-else>- {{tx.amount | normalizeDAG | asCurrency('DAG-short')}}</div>
+          <span v-if="address == tx.receiver">+</span>
+          <span v-else>-</span>
+          {{tx.amount | normalizeDAG | asCurrency('DAG-short')}}
         </div>
         <div class="timeline-badge" :class="[address == tx.receiver ? 'receive' : 'send']">
           <i v-if="tx.status == 'PENDING'" class="fa fa-spinner fa-pulse"></i>
@@ -17,21 +16,28 @@
         <div class="timeline-panel" :class="[address == tx.receiver ? 'receive' : 'send']">
           <div class="container" style="padding: 0;">
             <div class="row">
-              <div class="col-md-3" v-if="address == tx.receiver">
-                Received: {{tx.amount | normalizeDAG | asCurrency('DAG')}}
+              <div
+                class="col-md-3"
+                v-if="address == tx.receiver"
+              >received: {{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
+              <div class="col-md-3" v-else>send: {{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
+              <div class="col-md-7">
+                <span v-if="address == tx.receiver">from: </span>
+                <span v-else>to: </span>
+                <span v-html="displayContact(tx.receiver)" />
               </div>
-              <div class="col-md-3" v-else>
-                Send: {{tx.amount | normalizeDAG | asCurrency('DAG')}}
-              </div>
-              <div class="col-md-7" v-if="address == tx.receiver">From: {{tx.receiver}}</div>
-              <div class="col-md-7" v-else>To: {{tx.receiver}}</div>
               <div class="col-md-2 text-right">
                 <small class="text-muted">{{tx.date}}</small>
               </div>
             </div>
             <div class="row">
               <div class="col">
-                <a style="color:dimgray;" :href="'https://www.dagexplorer.io/search?term=' + tx.hash" rel="noopener noreferrer" target="_blank">{{tx.hash}}</a>
+                <a
+                  style="color:dimgray;"
+                  :href="'https://www.dagexplorer.io/search?term=' + tx.hash"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >{{tx.hash}}</a>
               </div>
             </div>
           </div>
@@ -60,6 +66,16 @@ export default {
   },
   computed: {
     ...mapState("wallet", ["address", "availableBalance"]),
+  },
+  methods: {
+    displayContact: function (value) {
+      let contactInfo = "<span class='text-danger'>unknown contact</span>";
+      let contact = this.$store.getters["addressBook/search"](value);
+      if (contact.length) {
+        contactInfo = "<span>" + contact[0].name + "</span>";
+      }
+      return contactInfo + "<span> (" + value + ")</span>";
+    },
   },
   filters: {
     asCurrency: function (value, currency) {
@@ -176,8 +192,8 @@ export default {
   border-bottom: 0.9375rem solid transparent;
   border-left-style: solid;
   border-left-width: 0.9375rem;
-  border-right-style: solid;  
-  border-right-width: 0;  
+  border-right-style: solid;
+  border-right-width: 0;
   content: " ";
 }
 
@@ -190,8 +206,8 @@ export default {
   border-bottom: 0.875rem solid transparent;
   border-left-style: solid;
   border-left-width: 0.875rem;
-  border-right-style: solid;  
-  border-right-width: 0;  
+  border-right-style: solid;
+  border-right-width: 0;
   content: " ";
 }
 

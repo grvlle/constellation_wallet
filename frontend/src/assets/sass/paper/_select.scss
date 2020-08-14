@@ -26,7 +26,7 @@
   }
 }
 
-.select .vs__dropdown-menu li:hover,li:focus,li:visited,li:active {
+.select .vs__dropdown-menu li:hover,li:focus,li:visited {
   @include themed() {
     background-color: t('infoColor');
   }

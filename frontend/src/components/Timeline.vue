@@ -2,42 +2,51 @@
   <div class="container">
     <div class="total-value text-center">{{availableBalance | asCurrency('DAG-short')}} $DAG</div>
     <ul class="timeline">
-      <li class="timeline-inverted" v-for="tx in value" v-bind:key="tx.ID">
-        <div class="timeline-value" :class="[address == tx.receiver ? 'receive' : 'send']">
-          <span v-if="address == tx.receiver">+</span>
-          <span v-else>-</span>
-          {{tx.amount | normalizeDAG | asCurrency('DAG-short')}}
-        </div>
-        <div class="timeline-badge" :class="[address == tx.receiver ? 'receive' : 'send']">
-          <i v-if="tx.status == 'PENDING'" class="fa fa-spinner fa-pulse"></i>
-          <i v-else-if="address == tx.receiver" class="fa fa-hand-holding-usd"></i>
-          <i v-else class="fa fa-hand-holding-usd fa-flip-horizontal"></i>
+      <li class="timeline-inverted d-flex" v-for="tx in value" v-bind:key="tx.ID">
+        <div class="timeline-label">
+          <div class="timeline-value" :class="[address == tx.receiver ? 'receive' : 'send']">
+            <span v-if="address == tx.receiver">+</span>
+            <span v-else>-</span>
+            {{tx.amount | normalizeDAG | asCurrency('DAG-short')}}
+          </div>
+          <div class="timeline-badge" :class="[address == tx.receiver ? 'receive' : 'send']">
+            <i v-if="tx.status == 'PENDING'" class="fa fa-spinner fa-pulse"></i>
+            <i v-else-if="address == tx.receiver" class="fa fa-hand-holding-usd"></i>
+            <i v-else class="fa fa-hand-holding-usd fa-flip-horizontal"></i>
+          </div>
         </div>
         <div class="timeline-panel" :class="[address == tx.receiver ? 'receive' : 'send']">
           <div class="container" style="padding: 0;">
             <div class="row">
-              <div
-                class="col-md-3"
-                v-if="address == tx.receiver"
-              >received: {{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
-              <div class="col-md-3" v-else>send: {{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
-              <div class="col-md-7">
-                <span v-if="address == tx.receiver">from: </span>
-                <span v-else>to: </span>
-                <span v-html="displayContact(tx.receiver)" />
+              <div class="col-10">
+                <div class="row">
+                  <div
+                    class="col-md-3 text-truncate"
+                    v-if="address == tx.receiver"
+                  >received: {{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
+                  <div
+                    class="col-md-3 text-truncate"
+                    v-else
+                  >send: {{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
+                  <div class="col-md-9 text-truncate">
+                    <span v-if="address == tx.receiver">from:</span>
+                    <span v-else>to:</span>
+                    <span v-html="displayContact(tx.receiver)" />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col text-truncate">
+                    <a
+                      class="text-muted"
+                      :href="'https://www.dagexplorer.io/search?term=' + tx.hash"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >{{tx.hash}}</a>
+                  </div>
+                </div>
               </div>
               <div class="col-md-2 text-right">
                 <small class="text-muted">{{tx.date}}</small>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <a
-                  style="color:dimgray;"
-                  :href="'https://www.dagexplorer.io/search?term=' + tx.hash"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >{{tx.hash}}</a>
               </div>
             </div>
           </div>
@@ -69,7 +78,7 @@ export default {
   },
   methods: {
     displayContact: function (value) {
-      let contactInfo = "<span class='text-danger'>unknown contact</span>";
+      let contactInfo = "<span class='text-danger'>unknown</span>";
       let contact = this.$store.getters["addressBook/search"](value);
       if (contact.length) {
         contactInfo = "<span>" + contact[0].name + "</span>";
@@ -121,9 +130,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.timeline-label {
+  width: 9.6rem;
+}
+
 .total-value {
   width: 9.6rem;
 }
+
 .timeline {
   list-style: none;
   padding: 1.25rem 0 0.25rem;
@@ -167,8 +181,7 @@ export default {
 }
 
 .timeline > li > .timeline-panel {
-  width: 88%;
-  float: left;
+  width: 100%;
   border-width: 0.0625rem;
   border-radius: 0.125rem;
   padding: 0.3125rem 1.25rem 0.625rem 1.25rem;
@@ -176,14 +189,14 @@ export default {
   -webkit-box-shadow: 0 0.0625rem 0.375rem rgba(0, 0, 0, 0.175);
   box-shadow: 0 0.0625rem 0.375rem rgba(0, 0, 0, 0.175);
 }
-.timeline > li > .timeline-panel.send {
+.timeline > li .timeline-panel.send {
   border-left: solid #5bc0de;
 }
-.timeline > li > .timeline-panel.receive {
+.timeline > li .timeline-panel.receive {
   border-left: solid #f0ad4e;
 }
 
-.timeline > li > .timeline-panel:before {
+.timeline > li .timeline-panel:before {
   position: absolute;
   top: 0.875rem;
   right: -0.9375rem;
@@ -197,7 +210,7 @@ export default {
   content: " ";
 }
 
-.timeline > li > .timeline-panel:after {
+.timeline > li .timeline-panel:after {
   position: absolute;
   top: 1rem;
   right: -0.875rem;
@@ -211,7 +224,7 @@ export default {
   content: " ";
 }
 
-.timeline > li > .timeline-value {
+.timeline > li .timeline-value {
   font-size: 0.875rem;
   text-align: center;
   position: absolute;
@@ -220,7 +233,7 @@ export default {
   z-index: 100;
 }
 
-.timeline > li > .timeline-badge {
+.timeline > li .timeline-badge {
   color: #fff;
   width: 1.9rem;
   height: 1.9rem;
@@ -238,18 +251,14 @@ export default {
   border-bottom-left-radius: 50%;
 }
 
-.timeline > li.timeline-inverted > .timeline-panel {
-  float: right;
-}
-
-.timeline > li.timeline-inverted > .timeline-panel:before {
+.timeline > li.timeline-inverted .timeline-panel:before {
   border-left-width: 0;
   border-right-width: 0.9375rem;
   left: -0.9375rem;
   right: auto;
 }
 
-.timeline > li.timeline-inverted > .timeline-panel:after {
+.timeline > li.timeline-inverted .timeline-panel:after {
   border-left-width: 0;
   border-right-width: 0.875rem;
   left: -0.875rem;

@@ -265,7 +265,11 @@ func (a *WalletApplication) initWallet(keystorePath string) error {
 		}
 		a.StoreImagePathInDB("faces/face-0.jpg")
 	} else if !a.NewUser {
-		a.initTXFromDB()   // Disregard upon import
+		err := a.initTXFromBlockExplorer()
+		if err != nil {
+			return err
+		}
+		// a.initTXFromDB()   // Disregard upon import
 		a.initTXFilePath() // Update paths from DB.
 	}
 

@@ -99,15 +99,13 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	r, w, err := os.Pipe()
 	if err != nil {
 		a.log.Errorln("Unable to pipe STDOUT, Reason: ", err)
-		a.sendError("Unable to pipe STDOUT, Reason: ", err)
 		return ""
 	}
 	os.Stdout = w
 
 	err = a.runWalletCMD("wallet", "show-address", "--keystore="+a.wallet.KeyStorePath, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
-		a.sendError("Unable to generate wallet address. Reason:", err)
-		a.log.Errorf("Unable to generate wallet address. Reason: %s", err.Error())
+		a.log.Errorf("Unable to get wallet address. Reason: %s", err.Error())
 		return ""
 	}
 
@@ -115,7 +113,6 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	dagAddress, err := ioutil.ReadAll(r)
 	if err != nil {
 		a.log.Errorln("Unable to read address from STDOUT", err)
-		a.sendError("Unable to read address from STDOUT", err)
 	}
 	os.Stdout = rescueStdout
 	a.wallet.Address = string(dagAddress[:40])
@@ -156,9 +153,10 @@ func (a *WalletApplication) CheckAndFetchWalletCLI() bool {
 
 	if a.fileExists(keytoolPath) && a.fileExists(walletPath) {
 		return true
-	} else {
-		return false
 	}
+
+	return false
+
 }
 
 // produceTXObject will put an actual transaction on the network. This is called from the

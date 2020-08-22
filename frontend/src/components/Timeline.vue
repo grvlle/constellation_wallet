@@ -1,58 +1,66 @@
 <template>
   <div class="container">
-    <div class="total-value text-center">{{availableBalance | asCurrency('DAG-short')}} $DAG</div>
-    <ul class="timeline">
-      <li class="timeline-inverted d-flex" v-for="tx in value" v-bind:key="tx.ID">
-        <div class="timeline-label">
-          <div class="timeline-value" :class="[address == tx.receiver ? 'receive' : 'send']">
-            <span v-if="address == tx.receiver">+</span>
-            <span v-else>-</span>
-            {{tx.amount | normalizeDAG | asCurrency('DAG-short')}}
+    <div v-if="value.length">
+      <div class="total-value text-center">{{availableBalance | asCurrency('DAG-short')}} $DAG</div>
+      <ul class="timeline">
+        <li class="timeline-inverted d-flex" v-for="tx in value" v-bind:key="tx.ID">
+          <div class="timeline-label">
+            <div class="timeline-value" :class="[address == tx.receiver ? 'receive' : 'send']">
+              <span v-if="address == tx.receiver">+</span>
+              <span v-else>-</span>
+              {{tx.amount | normalizeDAG | asCurrency('DAG-short')}}
+            </div>
+            <div class="timeline-badge" :class="[address == tx.receiver ? 'receive' : 'send']">
+              <i v-if="tx.status == 'PENDING'" class="fa fa-spinner fa-pulse"></i>
+              <i v-else-if="address == tx.receiver" class="fa fa-hand-holding-usd"></i>
+              <i v-else class="fa fa-hand-holding-usd fa-flip-horizontal"></i>
+            </div>
           </div>
-          <div class="timeline-badge" :class="[address == tx.receiver ? 'receive' : 'send']">
-            <i v-if="tx.status == 'PENDING'" class="fa fa-spinner fa-pulse"></i>
-            <i v-else-if="address == tx.receiver" class="fa fa-hand-holding-usd"></i>
-            <i v-else class="fa fa-hand-holding-usd fa-flip-horizontal"></i>
-          </div>
-        </div>
-        <div class="timeline-panel" :class="[address == tx.receiver ? 'receive' : 'send']">
-          <div class="container" style="padding: 0;">
-            <div class="row">
-              <div class="col-10">
-                <div class="row">
-                  <div
-                    class="col-md-3 text-truncate"
-                    v-if="address == tx.receiver"
-                  >received:&nbsp;{{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
-                  <div
-                    class="col-md-3 text-truncate"
-                    v-else
-                  >send:&nbsp;{{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
-                  <div class="col-md-9 text-truncate">
-                    <span v-if="address == tx.receiver">from:&nbsp;</span>
-                    <span v-else>to:&nbsp;</span>
-                    <span v-html="displayContact(tx.receiver)" />
+          <div class="timeline-panel" :class="[address == tx.receiver ? 'receive' : 'send']">
+            <div class="container" style="padding: 0;">
+              <div class="row">
+                <div class="col-10">
+                  <div class="row">
+                    <div
+                      class="col-md-3 text-truncate"
+                      v-if="address == tx.receiver"
+                    >received:&nbsp;{{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
+                    <div
+                      class="col-md-3 text-truncate"
+                      v-else
+                    >send:&nbsp;{{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
+                    <div class="col-md-9 text-truncate">
+                      <span v-if="address == tx.receiver">from:&nbsp;</span>
+                      <span v-else>to:&nbsp;</span>
+                      <span v-html="displayContact(tx.receiver)" />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col text-truncate">
+                      <a
+                        class="text-muted"
+                        :href="'https://www.dagexplorer.io/search?term=' + tx.hash"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >{{tx.hash}}</a>
+                    </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col text-truncate">
-                    <a
-                      class="text-muted"
-                      :href="'https://www.dagexplorer.io/search?term=' + tx.hash"
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >{{tx.hash}}</a>
-                  </div>
+                <div class="col-md-2 text-right">
+                  <small class="text-muted">{{tx.date}}</small>
                 </div>
-              </div>
-              <div class="col-md-2 text-right">
-                <small class="text-muted">{{tx.date}}</small>
               </div>
             </div>
           </div>
-        </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
+    <div v-else class="text-center" style="height: 10rem;">
+      <p class="card-text text-muted font-weight-bold mt-4">NO TRANSACTIONS</p>
+      <p
+        class="card-text text-muted font-italic"
+      >You have not send any transactions yet from this address. Monitoring also the received transactions will be added to the Molly wallet shortly.</p>
+    </div>
   </div>
 </template>
 

@@ -11,7 +11,7 @@
               {{tx.amount | normalizeDAG | asCurrency('DAG-short')}}
             </div>
             <div class="timeline-badge" :class="[tx.status.toLowerCase(), address == tx.receiver ? 'receive' : 'send']">
-              <i v-if="tx.status == 'Pending'" class="fa fa-spinner fa-pulse"></i>
+              <i v-if="tx.status == 'Pending'" class="fa fa-spinner fa-spin"></i>
               <i v-else-if="tx.status == 'Error'" class="fa fa-times"></i>
               <i v-else-if="address == tx.receiver" class="fa fa-hand-holding-usd"></i>
               <i v-else class="fa fa-hand-holding-usd fa-flip-horizontal"></i>

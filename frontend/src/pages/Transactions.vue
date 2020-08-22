@@ -131,6 +131,17 @@ export default {
     if (this.txAddressParam != "") {
       this.txAddress = this.txAddressParam;
     }
+
+    // TODO: refactor into wallet-init instead calling from indivual pages
+    window.backend.WalletApplication.GetAddressBook().then(ab => {
+      let addressBook;
+      try {
+        addressBook = JSON.parse(ab);
+      } catch (e) {
+        addressBook = [];
+      }
+      this.$store.commit({ type: "addressBook/setAddressBook", addressBook });
+    });    
   },
   computed: {
     tableClass: function() {

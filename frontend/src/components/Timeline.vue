@@ -5,18 +5,19 @@
       <ul class="timeline">
         <li class="timeline-inverted d-flex" v-for="tx in value" v-bind:key="tx.ID">
           <div class="timeline-label">
-            <div class="timeline-value" :class="[address == tx.receiver ? 'receive' : 'send']">
+            <div class="timeline-value" :class="[tx.status.toLowerCase(), address == tx.receiver ? 'receive' : 'send']" >
               <span v-if="address == tx.receiver">+</span>
               <span v-else>-</span>
               {{tx.amount | normalizeDAG | asCurrency('DAG-short')}}
             </div>
-            <div class="timeline-badge" :class="[address == tx.receiver ? 'receive' : 'send']">
-              <i v-if="tx.status == 'PENDING'" class="fa fa-spinner fa-pulse"></i>
+            <div class="timeline-badge" :class="[tx.status.toLowerCase(), address == tx.receiver ? 'receive' : 'send']">
+              <i v-if="tx.status == 'Pending'" class="fa fa-spinner fa-pulse"></i>
+              <i v-else-if="tx.status == 'Error'" class="fa fa-times"></i>
               <i v-else-if="address == tx.receiver" class="fa fa-hand-holding-usd"></i>
               <i v-else class="fa fa-hand-holding-usd fa-flip-horizontal"></i>
             </div>
           </div>
-          <div class="timeline-panel" :class="[address == tx.receiver ? 'receive' : 'send']">
+          <div class="timeline-panel" :class="[tx.status.toLowerCase(), address == tx.receiver ? 'receive' : 'send']">
             <div class="container" style="padding: 0;">
               <div class="row">
                 <div class="col-10">
@@ -190,18 +191,12 @@ export default {
 
 .timeline > li > .timeline-panel {
   width: 100%;
-  border-width: 0.0625rem;
+  border-left-style: solid;
   border-radius: 0.125rem;
   padding: 0.3125rem 1.25rem 0.625rem 1.25rem;
   position: relative;
   -webkit-box-shadow: 0 0.0625rem 0.375rem rgba(0, 0, 0, 0.175);
   box-shadow: 0 0.0625rem 0.375rem rgba(0, 0, 0, 0.175);
-}
-.timeline > li .timeline-panel.send {
-  border-left: solid #5bc0de;
-}
-.timeline > li .timeline-panel.receive {
-  border-left: solid #f0ad4e;
 }
 
 .timeline > li .timeline-panel:before {
@@ -242,11 +237,10 @@ export default {
 }
 
 .timeline > li .timeline-badge {
-  color: #fff;
   width: 1.9rem;
   height: 1.9rem;
   line-height: 1.9rem;
-  font-size: 1.4em;
+  font-size: 0.875rem;
   text-align: center;
   position: absolute;
   top: 0.9375rem;
@@ -257,6 +251,9 @@ export default {
   border-top-left-radius: 50%;
   border-bottom-right-radius: 50%;
   border-bottom-left-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .timeline > li.timeline-inverted .timeline-panel:before {

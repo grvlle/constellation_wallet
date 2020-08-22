@@ -8,12 +8,12 @@
         <sidebar-link to="about" name="About" icon="fa fa-question-circle" />
         <sidebar-link to="address-book" name="Address Book" icon="fa fa-address-book" />
         <p class="nav-item">
-          <a @click="notifyVue2('top', 'right')" class="nav-link disabled" style="cursor: pointer;">
+          <a @click="notifyVue2('top', 'right')" class="nav-link" style="cursor: pointer; color: #6c757d;">
             <i class="fa fa-trophy"></i>Team
           </a>
         </p>
         <p class="nav-item">
-          <a @click="notifyVue2('top', 'right')" class="nav-link disabled" style="cursor: pointer;">
+          <a @click="notifyVue2('top', 'right')" class="nav-link" style="cursor: pointer; color: #6c757d;">
             <i class="fa fa-gavel"></i>Governance
           </a>
         </p>

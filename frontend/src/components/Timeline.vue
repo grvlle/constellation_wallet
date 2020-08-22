@@ -23,14 +23,14 @@
                   <div
                     class="col-md-3 text-truncate"
                     v-if="address == tx.receiver"
-                  >received: {{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
+                  >received:&nbsp;{{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
                   <div
                     class="col-md-3 text-truncate"
                     v-else
-                  >send: {{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
+                  >send:&nbsp;{{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
                   <div class="col-md-9 text-truncate">
-                    <span v-if="address == tx.receiver">from:</span>
-                    <span v-else>to:</span>
+                    <span v-if="address == tx.receiver">from:&nbsp;</span>
+                    <span v-else>to:&nbsp;</span>
                     <span v-html="displayContact(tx.receiver)" />
                   </div>
                 </div>
@@ -71,7 +71,7 @@ import { mapState } from "vuex";
 export default {
   name: "timeline",
   props: {
-    value: [],
+    value: Array,
   },
   computed: {
     ...mapState("wallet", ["address", "availableBalance"]),

@@ -50,21 +50,6 @@
   margin-top: auto;
 }
 
-.input-group-append .btn {
-  border: 1px solid;
-  @include themed() {
-    border-color: t('inputAppendBorderColor');
-  }
-}
-
-.input-group-text {
-  @include themed() {
-    background-color: t('inputBackgroundColor');
-    color: t('inputTextColor');
-    border-color: t('inputBorderColor');
-  }
-}
-
 .page-link {
   @include themed() {
     color: t('cardTextColor');

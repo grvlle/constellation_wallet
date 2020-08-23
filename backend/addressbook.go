@@ -10,7 +10,7 @@ import (
 func (a *WalletApplication) GetAddressBook() string {
 
 	var contacts []models.Contact
-	a.DB.Find(&contacts)
+	a.DB.Where("alias = ?", a.wallet.WalletAlias).Find(&contacts)
 
 	addressBook, err := json.Marshal(contacts)
 	if err != nil {

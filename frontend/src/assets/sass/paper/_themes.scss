@@ -8,7 +8,6 @@ $themes: (
     cardLabelColor: $dark-gray,
     cardTextColor: $font-color,
     cardTableColor: $smoke-bg,
-    cardTransactionTableColor: $white-bg,
 
     navbarBackgroundColor: $bg-nude,
     navbarBorderColor: $medium-gray,
@@ -39,7 +38,6 @@ $themes: (
     pieSeriesBFillColor: $success-color,
     pieSeriesCFillolor: $secondary-color,
 
-    errorTextColor: firebrick,
     walletAddressColor: $medium-dark-gray,
 
     popupBackgroundColor: $bg-nude,
@@ -66,7 +64,6 @@ $themes: (
     cardLabelColor: #AFAFAF,
     cardTextColor: #BCBCBC,
     cardTableColor: #202020,
-    cardTransactionTableColor: #202020,
 
     navbarBackgroundColor: #1d1d1d,
     navbarBorderColor: #272727,
@@ -97,7 +94,6 @@ $themes: (
     pieSeriesBFillColor: $success-color-dark,
     pieSeriesCFillColor: $secondary-color-dark,
 
-    errorTextColor: orangered,
     walletAddressColor: #BCBCBC,
 
     popupBackgroundColor: #272727,
@@ -110,10 +106,10 @@ $themes: (
     infoStatesColor: $info-states-color-dark,
     successColor: $success-color-dark,
     successStatesColor: $success-states-color-dark,
-    warningColor: $warning-color,
-    warningStatesColor: $warning-states-color,
-    dangerColor: $danger-color,
-    dangerStatesColor: $danger-states-color
+    warningColor: $warning-color-dark,
+    warningStatesColor: $warning-states-color-dark,
+    dangerColor: $danger-color-dark,
+    dangerStatesColor: $danger-states-color-dark
   ),
 );
 

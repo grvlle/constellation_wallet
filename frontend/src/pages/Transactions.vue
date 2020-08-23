@@ -347,4 +347,12 @@ export default {
 .validate {
   height: 1.25em;
 }
+
+.icon-point-right {
+  @include themed() {
+    color: t('successColor');
+  }
+  font-size: 2.5rem; 
+  width:100%;
+}
 </style>

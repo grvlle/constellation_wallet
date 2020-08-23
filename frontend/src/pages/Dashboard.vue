@@ -288,6 +288,20 @@ export default {
   margin-top: auto;
 }
 
+.wallet-address {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-radius: 0.313rem;
+  text-overflow: ellipsis;
+  padding-top: 0em;
+  margin-bottom: 0em;
+  font-size: 1.5625rem;
+  @include themed() {
+      color: t('walletAddressColor');
+  }
+}
+
 .wallet-address > p-button {
   margin-bottom: 10em;
 }

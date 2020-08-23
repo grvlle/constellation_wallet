@@ -395,4 +395,12 @@ export default {
 .vs__clear {
   display: none;
 }
+
+.container .row.settings {
+  margin: 0.625rem 0 0.625rem 0;
+  padding-top: 0.625rem;
+  @include themed() {
+    background-color: t('cardTableColor');
+  }
+}
 </style>

@@ -73,4 +73,26 @@ export default {
 .disabled .page-link {
   opacity: 0.7;
 }
+
+.page-link {
+  @include themed() {
+    color: t('cardTextColor');
+    background-color: t('cardTableColor');
+    border-color: t('inputBorderColor');
+  }
+}
+
+.page-item.active .page-link {
+  @include themed() {
+    background-color: t('infoColor');
+    border-color: t('inputBorderColor');
+  }
+}
+
+.page-item.disabled .page-link {
+  @include themed() {
+    background-color: t('cardBackgroundColor');
+    border-color: t('inputBorderColor');
+  }
+}
 </style>

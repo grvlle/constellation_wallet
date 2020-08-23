@@ -12,28 +12,6 @@
   margin-right: 0.125em;
 }
 
-.wallet-address {
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-  border-radius: 0.313rem;
-  text-overflow: ellipsis;
-  padding-top: 0em;
-  margin-bottom: 0em;
-  font-size: 1.5625rem;
-  @include themed() {
-      color: t('walletAddressColor');
-  }
-}
-
-.icon-point-right {
-  @include themed() {
-    color: t('successColor');
-  }
-  font-size: 2.5rem; 
-  width:100%;
-}
-
 .card {
   width: 100%;
   display: flex;
@@ -48,28 +26,6 @@
 
 .card-footer {
   margin-top: auto;
-}
-
-.page-link {
-  @include themed() {
-    color: t('cardTextColor');
-    background-color: t('cardTableColor');
-    border-color: t('inputBorderColor');
-  }
-}
-
-.page-item.active .page-link {
-  @include themed() {
-    background-color: t('infoColor');
-    border-color: t('inputBorderColor');
-  }
-}
-
-.page-item.disabled .page-link {
-  @include themed() {
-    background-color: t('cardBackgroundColor');
-    border-color: t('inputBorderColor');
-  }
 }
 
 .ct-series-a .ct-line,
@@ -151,129 +107,4 @@ hr.divider {
   width: 80%; 
   margin: 0 auto 0 auto;
   border-top: 1px solid #3b424a;
-}
-
-.timeline:before {
-  @include themed() {
-    background-color: t('borderColor');
-  }  
-}
-
-.timeline > li > .timeline-panel {
-  @include themed() {
-    background-color: t('cardTableColor');
-    border-color: t('borderColor');
-  }
-}
-
-.timeline-badge .fa {
-  @include themed() {
-    color: t('cardBackgroundColor');
-  }
-}
-
-.timeline-badge.receive {
-  @include themed() {
-    background-color: t('warningColor');
-  }
-}
-
-.timeline-badge.send {
-  @include themed() {
-    background-color: t('infoColor');
-  }
-}
-
-.timeline-badge.error {
-  @include themed() {
-    background-color: t('dangerColor');
-  }
-}
-
-.timeline-badge.pending {
-  @include themed() {
-    background-color: t('borderColor');
-  }
-}
-.timeline-badge.pending .fa {
-  @include themed() {
-    color: t('cardTextColor'); 
-  }
-}
-.timeline-badge.pending.send {
-  border-style: solid;
-  @include themed() {
-    border-color: t('infoColor');
-  }
-}
-.timeline-badge.pending.receive {
-  border-style: solid;
-  @include themed() {
-    border-color: t('warningColor');
-  }
-}
-
-.timeline-value.receive {
-  @include themed() {
-    color: t('warningColor');
-  }
-}
-
-.timeline-value.send {
-  @include themed() {
-    color: t('infoColor');
-  }
-}
-
-.timeline-value.error {
-  @include themed() {
-    color: t('dangerColor');
-  }
-}
-
-
-.timeline > li .timeline-panel.send {
-  @include themed() {
-    border-left-color: t('infoColor');
-  }
-}
-
-.timeline > li .timeline-panel.receive {
-  @include themed() {
-    border-left-color: t('warningColor');
-  }
-}
-
-.timeline > li .timeline-panel.error {
-  @include themed() {
-    border-left-color: t('dangerColor');
-  }
-}
-
-.timeline > li > .timeline-panel:after {
-  @include themed() {
-    border-left-color: t('cardTableColor');
-    border-right-color: t('cardTableColor');
-  }
-}
-
-.timeline > li > .timeline-panel.send:before {
-  @include themed() {
-    border-left-color: t('infoColor');
-    border-right-color: t('infoColor');
-  }
-}
-
-.timeline > li > .timeline-panel.receive:before {
-  @include themed() {
-    border-left-color: t('warningColor');
-    border-right-color: t('warningColor');
-  }
-}
-
-.timeline > li > .timeline-panel.error:before {
-  @include themed() {
-    border-left-color: t('dangerColor');
-    border-right-color: t('dangerColor');
-  }
 }

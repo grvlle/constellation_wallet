@@ -154,36 +154,3 @@ strong {
     color: t('dangerColor');
   }
 }
-
-.chart-legend {
-  .text-primary, .text-primary:hover {
-    @include themed() {
-      color: t('primaryColor');
-    }
-  }
-  .text-secondary, .text-secondary:hover {
-    @include themed() {
-      color: t('secondaryColor');
-    }
-  }
-  .text-info, .text-info:hover {
-    @include themed() {
-      color: t('infoColor');
-    }
-  }
-  .text-success, .text-success:hover {
-    @include themed() {
-      color: t('successColor');
-    }
-  }
-  .text-warning, .text-warning:hover {
-    @include themed() {
-      color: t('warningColor');
-    }
-  }
-  .text-danger, .text-danger:hover {
-    @include themed() {
-      color: t('dangerColor');
-    }
-  }
-}

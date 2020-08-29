@@ -47,6 +47,7 @@ func (a *WalletApplication) UpdateContact(id uint, address string, name string, 
 
 	contact := &models.Contact{
 		ID:          id,
+		Alias:       a.wallet.WalletAlias,
 		Address:     address,
 		Name:        name,
 		Tag:         tag,

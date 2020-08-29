@@ -10,7 +10,6 @@ import "vue-notifyjs/themes/default.css";
 import VueNotify from 'vue-notifyjs';
 import {store} from './store/store';
 import Vuelidate from 'vuelidate';
-import ToggleButton from 'vue-js-toggle-button';
 import VueProgressBar from 'vue-progressbar';
 import VueSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
@@ -30,7 +29,6 @@ Vue.use(VueProgressBar, {
   height: '0.4rem',
   thickness: '0.4rem'
 })
-Vue.use(ToggleButton)
 Vue.use(Vuelidate)
 Vue.use(VueNotify);
 Vue.use(PaperDashboard);

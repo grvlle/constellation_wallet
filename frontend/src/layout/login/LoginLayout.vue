@@ -105,8 +105,11 @@ export default {
 }
 
 .version {
-  width: 8rem;
+  width: 10rem;
   position: fixed;
+  bottom:0;
+  right:0;
+  font-size: 0.7rem;
   display: flex;
   align-items: bottom;
   margin-right: 1.8em;

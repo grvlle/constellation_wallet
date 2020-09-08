@@ -157,6 +157,21 @@
   border-left: 0 none;
 }
 
+.input-group-append .btn {
+  border: 1px solid;
+  @include themed() {
+    border-color: t('inputAppendBorderColor');
+  }
+}
+
+.input-group-text {
+  @include themed() {
+    background-color: t('inputBackgroundColor');
+    color: t('inputTextColor');
+    border-color: t('inputBorderColor');
+  }
+}
+
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
   @include themed() {
     background-color: t('inputDisabledBackgroundColor');

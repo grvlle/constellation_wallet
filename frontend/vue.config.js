@@ -1,13 +1,23 @@
+let loaderOptions = {
+  sass: {
+    prependData: `
+    @import "@/assets/sass/paper/_variables.scss";
+    @import "@/assets/sass/paper/_themes.scss";
+    `
+  }
+}
 
-
-let cssConfig = {};
+let cssConfig = {
+  loaderOptions
+};
 
 if (process.env.NODE_ENV == "production") {
   cssConfig = {
     extract: {
       filename: "[name].css",
       chunkFilename: "[name].css"
-    }
+    },
+    loaderOptions
   };
 }
 

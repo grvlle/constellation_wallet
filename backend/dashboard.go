@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -216,7 +215,7 @@ func (a *WalletApplication) pricePoller() {
 
 	go func() {
 		retryCounter := 1
-		time.Sleep(3 * time.Second) // Give some space to pollTokenBalance
+		time.Sleep(3 * time.Second) // Give some space to pricePoller
 
 		for {
 			select {
@@ -226,51 +225,52 @@ func (a *WalletApplication) pricePoller() {
 				a.wallet.TokenPrice.DAG.USD = 0
 				a.wallet.TokenPrice.DAG.EUR = 0
 				a.wallet.TokenPrice.DAG.BTC = 0
+
 				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
 				for retryCounter <= 20 && a.wallet.Balance != 0 {
-					a.log.Infoln("Contacting token evaluation API on: " + url + ticker)
+
+					if retryCounter == 5 || retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
+						warn := "No data recieved from the Token Price API. Trying again."
+						a.log.Errorln(warn)
+						a.sendWarning(warn)
+					}
+
+					a.log.Infoln("Contacting the the Token Price API on: " + url + ticker)
 
 					resp, err := http.Get(url)
 					if err != nil {
-						a.log.Warnln("Unable to poll token evaluation. Reason: ", err) // Log this
 						retryCounter++
+						a.log.Warnln("Unable to poll the Token Price API. Reason: ", err) // Log this
 						break
 					}
 
 					if resp == nil {
 						retryCounter++
-						a.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
-						a.sendWarning("Unable to showcase token USD evaluation. Please check your internet connectivity and restart the wallet application.")
+						a.log.Warnln("Received empty response from the Token Price API.")
 						break
 					}
 
 					body, err := ioutil.ReadAll(resp.Body)
 					if err != nil {
 						retryCounter++
-						a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
-						a.log.Warnln("Unable to read HTTP resonse from Token API. Reason: ", err)
+						a.log.Warnln("Unable to read the HTTP response from the Token Price API. Reason: ", err)
 						break
 					}
 					err = json.Unmarshal([]byte(body), &a.wallet.TokenPrice)
 					if err != nil {
 						retryCounter++
-						a.sendError("Unable to display token price. Reason: ", err)
-						a.log.Warnln("Unable to display token price. Reason:", err)
+						a.log.Warnln("Unable to unmarshal the HTTP response from the Token Price API. Reason: ", err)
 						break
 					}
 
 					if a.wallet.Balance != 0 && a.wallet.TokenPrice.DAG.USD == 0 {
 
-						a.log.Infoln("Contacting alternate token evaluation API")
+						a.log.Infoln("Contacting alternate Token Price API")
 						a.wallet.TokenPrice.DAG.USD, a.wallet.TokenPrice.DAG.BTC, err = getTokenPriceAlternateRoute()
 
 						if err != nil {
-							a.log.Errorln("Failed to fetch token metrics using alternate endpoint. Reason: ", err)
-							if retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
-								warn := fmt.Sprintf("No data recieved from Token Price API. Will try again in %v seconds.", retryCounter)
-								a.sendWarning(warn)
-							}
 							retryCounter++
+							a.log.Warnln("Failed to fetch token price using alternate endpoint. Reason: ", err)
 							break
 						}
 					}

@@ -178,6 +178,7 @@ func (a *WalletApplication) blockAmount() {
 func (a *WalletApplication) pollTokenBalance() {
 	go func() {
 		retryCounter := 1
+		time.Sleep(3 * time.Second) // Give some space to pollTokenBalance
 		for {
 			select {
 			case <-a.killSignal:
@@ -188,6 +189,9 @@ func (a *WalletApplication) pollTokenBalance() {
 
 					balance, err := a.GetTokenBalance()
 					if err != nil {
+						if retryCounter == 3 || retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
+							a.sendWarning("No data recieved from the Token Balance API. Trying again.")
+						}
 						retryCounter++
 						break
 					}
@@ -229,7 +233,7 @@ func (a *WalletApplication) pricePoller() {
 				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
 				for retryCounter <= 20 && a.wallet.Balance != 0 {
 
-					if retryCounter == 5 || retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
+					if retryCounter == 3 || retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
 						warn := "No data recieved from the Token Price API. Trying again."
 						a.log.Errorln(warn)
 						a.sendWarning(warn)

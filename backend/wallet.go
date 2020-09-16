@@ -491,19 +491,19 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 
 	resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
 	if err != nil {
-		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+		a.log.Warnln("Failed to send HTTP request. Reason: ", err)
 		return 0, err
 	}
 	if resp == nil {
-		a.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
-		a.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
+		err = errors.New("Received empty response from the Token Balance API")
+		a.log.Warnln("Unable to update token balance. Reason: ", err)
 		return 0, err
 	}
 	defer resp.Body.Close()
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		a.log.Warn("Unable to update token balance. Reason: ", err)
+		a.log.Warnln("Unable to update token balance. Reason: ", err)
 		return 0, err
 	}
 
@@ -520,15 +520,13 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		s = "0" // Empty means zero
 	}
 
-	a.log.Infoln("Parsed the following balance: ", s)
-
 	b, ok := s.(float64)
 	if !ok {
-		if err != nil {
-			a.log.Warnln("Unable to parse balance. Reason:", err)
-		}
+		err = errors.New("Unable to parse balance")
+		a.log.Warnln("Unable to update token balance. Reason: ", err)
 		return 0, err
 	}
+	a.log.Infoln("Parsed the following balance: ", s)
 
 	f := fmt.Sprintf("%.2f", b/1e8) // Reverse normalized float
 

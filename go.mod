@@ -6,6 +6,7 @@ require (
 	github.com/jinzhu/gorm v1.9.12
 	github.com/leaanthony/mewn v0.10.7
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
+	github.com/mcuadros/go-version v0.0.0-20190830083331-035f6764e8d2
 	github.com/sirupsen/logrus v1.4.1
 	github.com/wailsapp/wails v1.7.2-pre2
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9

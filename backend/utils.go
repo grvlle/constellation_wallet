@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
+	"github.com/mcuadros/go-version"
 )
 
 // newReleaseAvailable generates a notification to FE everytime a new release on
@@ -30,7 +31,7 @@ func (a *WalletApplication) newReleaseAvailable() {
 	go func() {
 		for i := 200; i > 0; i-- {
 			newRelease := update.GetLatestRelease()
-			if currentRelease != newRelease {
+			if version.Compare(newRelease, currentRelease, ">") && newRelease != "" {
 				a.log.Infoln("There's a newer release available")
 				a.RT.Events.Emit("new_release", newRelease)
 			}

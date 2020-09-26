@@ -17,7 +17,7 @@
           <div class="col-md-12">
             <fg-input
               type="text"
-              label="Available Balance"
+              label="Available Balance (not normalized)"
               :disabled="true"
               placeholder="0"
               v-model="availableBalance"
@@ -39,7 +39,7 @@
           <div class="col-md-12">
             <fg-input
               type="text"
-              label="Total Balance"
+              label="Total Balance (not normalized)"
               :disabled="true"
               placeholder="0"
               v-model="totalBalance"

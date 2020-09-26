@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div v-if="value.length">
-      <div class="total-value text-center">{{availableBalance | asCurrency('DAG-short')}} $DAG</div>
+      <div class="total-value text-center">{{availableBalance | normalizeDAG | asCurrency('DAG-short')}} $DAG</div>
       <ul class="timeline">
         <li class="timeline-inverted d-flex" v-for="tx in value" v-bind:key="tx.ID">
           <div class="timeline-label">

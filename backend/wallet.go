@@ -3,12 +3,10 @@ package app
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"runtime"
-	"strconv"
 	"strings"
 	"time"
 
@@ -530,17 +528,7 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		return 0, err
 	}
 
-	f := fmt.Sprintf("%.2f", b/1e8) // Reverse normalized float
+	a.log.Infoln("Returning the following balance: ", b)
 
-	a.log.Infoln("Normalized the following balance: ", f)
-
-	balance, err := strconv.ParseFloat(f, 64)
-	if err != nil {
-		a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
-		return 0, err
-	}
-
-	a.log.Infoln("Returning the following balance: ", balance)
-
-	return balance, nil
+	return b, nil
 }

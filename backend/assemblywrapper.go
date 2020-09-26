@@ -169,23 +169,10 @@ func (a *WalletApplication) produceTXObject(amount int64, fee int64, address, ne
 
 	// Convert to string
 	amountStr := strconv.FormatInt(amount, 10)
-	// feeStr := strconv.FormatInt(fee, 10)
-
-	// amountNorm, err := normalizeAmounts(amount)
-	// if err != nil {
-	// 	a.log.Errorln("Unable to normalize amounts when producing tx object. Reason: ", err)
-	// 	a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
-	// 	return
-	// }
-	feeNorm, err := normalizeAmounts(fee)
-	if err != nil {
-		a.log.Errorln("Unable to normalize amounts when producing tx object. Reason: ", err)
-		a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
-		return
-	}
+	feeStr := strconv.FormatInt(fee, 10)
 
 	// newTX is the full command to sign a new transaction
-	err = a.runWalletCMD("wallet", "create-transaction", "--keystore="+a.wallet.KeyStorePath, "--normalized", "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeNorm, "-d="+address, "-f="+newTX, "-p="+prevTX, "--env_args=true")
+	err := a.runWalletCMD("wallet", "create-transaction", "--keystore="+a.wallet.KeyStorePath, "--normalized", "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeStr, "-d="+address, "-f="+newTX, "-p="+prevTX, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
 		a.log.Errorln("Unable to send transaction. Reason: ", err)

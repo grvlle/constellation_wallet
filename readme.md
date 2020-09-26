@@ -39,7 +39,7 @@ efficient software.
 ### Installation  
   
 #### Pre-requisits  
-Molly Wallet requires [OpenJDK v9](https://java.com/) and [JRE](https://www.oracle.com/java/technologies/javase-jre8-downloads.html) to run.  
+Molly Wallet requires [OpenJDK v9](https://java.com/) and [JRE](https://www.oracle.com/java/technologies/javase-jre8-downloads.html) to run. If installing the MacOS version, use [Unarchiver](https://theunarchiver.com/) to unzip molly_installer.zip
   
 #### Download Molly Wallet  
 The latest builds can be found under [releases](https://github.com/grvlle/constellation_wallet/releases).  

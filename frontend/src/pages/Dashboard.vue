@@ -8,7 +8,7 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>DAG</p>
-            {{tokenAmount | normalizeDAG | asCurrency('DAG')}}
+            {{tokenAmount | normalizeDAG}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
@@ -23,7 +23,7 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>{{currency}}</p>
-            {{totalValue | asCurrency(currency)}}
+            {{valueInCurrency}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState, mapGetters} from 'vuex'
 import { StatsCard, ChartCard} from "@/components/index";
 import Chartist from 'chartist';
 import WalletCopiedNotification from "./Notifications/WalletCopied";
@@ -188,34 +188,11 @@ export default {
     }
   },
   computed: {
-    ...mapState('wallet', ['tokenAmount', 'currency', 'totalValue', 'address']),
-    ...mapState('dashboard', ['counters', 'toggle', 'stat', 'chart']) 
+    ...mapState('wallet', ['tokenAmount', 'currency', 'address']),
+    ...mapGetters('wallet', ['valueInCurrency']),
+    ...mapState('dashboard', ['counters', 'toggle', 'stat', 'chart'])
   },
   filters: {
-    asCurrency: function(value, currency) {
-
-      if (currency == "" || value == "" ) return "...";
-
-      var formatter
-      if (currency == "DAG") {
-        formatter = new Intl.NumberFormat(navigator.language);
-      } else if (currency == "BTC") {
-        formatter = new Intl.NumberFormat(navigator.language, {
-          style: "currency",
-          currency: "XBT",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 8
-        });
-      } else {
-        formatter = new Intl.NumberFormat(navigator.language, {
-          style: "currency",
-          currency: currency,
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-      }
-      return formatter.format(value).replace(/XBT/,'₿');
-    },
     normalizeDAG: function (value) {
       return (value / 1e8).toFixed(8).replace(/\.?0+$/, "");
     }

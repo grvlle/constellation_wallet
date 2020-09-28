@@ -7,7 +7,7 @@ const getDefaultState = () => {
     totalBalance: "",
     availableBalance: "",
     currency: "USD",
-    totalValue: "",
+    currencyRates: [],
     address: "",
     keystorePath: "",
     alias: "",
@@ -22,6 +22,32 @@ const state = getDefaultState()
 const getters = {
   getNormalizedAvailableBalance: (state) => {
     return (state.availableBalance / 1e8).toFixed(8).replace(/\.?0+$/, "");
+  },
+  valueInCurrency: (state) => {
+    let currencyRate = state.currencyRates.find(v => v.currency === state.currency)
+    if (currencyRate === undefined) {
+      return "..."
+    } else {
+      let formatOptions, value
+      value = state.availableBalance/1e8 * currencyRate.tokenprice
+      if (state.currency == "BTC") {
+        formatOptions = {
+          style: "currency",
+          currency: "XBT",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 8
+        };
+      } else {
+        formatOptions = {
+          style: "currency",
+          currency: state.currency,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        };
+      }      
+      let formatter = new Intl.NumberFormat(navigator.language, formatOptions);
+      return formatter.format(value).replace(/XBT/,'₿');
+    }
   }
 }
 
@@ -46,8 +72,8 @@ const mutations = {
   setTotalBalance(state, total) {
     state.totalBalance = total;
   },
-  setTotalValue(state, value) {
-    state.totalValue = value;
+  setCurrencyRates(state, value) {
+    state.currencyRates = value;
   },
   setAddress(state, address) {
     state.address = address;

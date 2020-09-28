@@ -218,17 +218,11 @@ export default {
     });
 
     window.wails.Events.On("tokenPrice", tokenPrice => {
-      let balance = this.$store.state.wallet.totalBalance;
-      
-      let tokenPriceCurrency
-      if (this.$store.wallet.currency == "USD") {
-        tokenPriceCurrency = tokenPrice.DAG.USD;
-      } else if (this.$store.wallet.currency == "EUR") {
-        tokenPriceCurrency = tokenPrice.DAG.EUR;
-      } if (this.$store.wallet.currency == "BTC") {
-        tokenPriceCurrency = tokenPrice.DAG.BTC;
-      }      
-      this.$store.commit('wallet/setTotalValue', balance/1e8 * tokenPriceCurrency);
+      let rates = []
+      rates.push({currency: "USD", tokenprice: tokenPrice.DAG.USD});
+      rates.push({currency: "EUR", tokenprice: tokenPrice.DAG.EUR});
+      rates.push({currency: "BTC", tokenprice: tokenPrice.DAG.BTC});
+      this.$store.commit('wallet/setCurrencyRates', rates);
     });
     window.wails.Events.On("token_counter", count => {
       this.$store.commit('dashboard/setTokenCounter', count);

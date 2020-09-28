@@ -100,9 +100,6 @@ export default {
     ...mapState("app", ["version", "uiVersion"]),
     ...mapState("wallet", [
       "address",
-      "availableBalance",
-      "nonce",
-      "totalBalance",
       "alias",
       "keystorePath",
       "termsOfService",

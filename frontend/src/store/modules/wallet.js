@@ -6,7 +6,6 @@ const getDefaultState = () => {
     tokenAmount: 0,
     totalBalance: 0,
     availableBalance: 0,
-    nonce: 0,
     currency: "USD",
     totalValue: 0.0,
     address: "N/A",

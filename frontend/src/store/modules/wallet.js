@@ -2,16 +2,16 @@ const getDefaultState = () => {
   return {
     walletLabel: "",
     imgPath: 'faces/face-0.jpg',
-    transactions: 0,
-    tokenAmount: 0,
-    totalBalance: 0,
-    availableBalance: 0,
+    transactions: "",
+    tokenAmount: "",
+    totalBalance: "",
+    availableBalance: "",
     currency: "USD",
-    totalValue: 0.0,
-    address: "N/A",
+    totalValue: "",
+    address: "",
     keystorePath: "",
     alias: "",
-    publicKey: "NaN",
+    publicKey: "",
     darkMode: false,
     termsOfService: false
   }

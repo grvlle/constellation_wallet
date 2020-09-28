@@ -194,7 +194,7 @@ export default {
   filters: {
     asCurrency: function(value, currency) {
 
-      if (currency == "") return "";
+      if (currency == "" || value == "" ) return "...";
 
       var formatter
       if (currency == "DAG") {

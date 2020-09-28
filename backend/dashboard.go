@@ -282,16 +282,7 @@ func (a *WalletApplication) pricePoller() {
 					a.log.Infof("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
 					a.log.Infof("Collected token price in EUR: %v", a.wallet.TokenPrice.DAG.EUR)
 					a.log.Infof("Collected token price in BTC: %v", a.wallet.TokenPrice.DAG.BTC)
-
-					totalCurrencyBalance := 0.0
-					if a.wallet.Currency == "USD" {
-						totalCurrencyBalance = float64(a.wallet.Balance/1e8) * a.wallet.TokenPrice.DAG.USD
-					} else if a.wallet.Currency == "EUR" {
-						totalCurrencyBalance = float64(a.wallet.Balance/1e8) * a.wallet.TokenPrice.DAG.EUR
-					} else if a.wallet.Currency == "BTC" {
-						totalCurrencyBalance = float64(a.wallet.Balance/1e8) * a.wallet.TokenPrice.DAG.BTC
-					}
-					a.RT.Events.Emit("totalValue", a.wallet.Currency, totalCurrencyBalance)
+					a.RT.Events.Emit("tokenPrice", a.wallet.TokenPrice)
 
 					UpdateCounter(updateIntervalCurrency, "value_counter", time.Second, a.RT)
 					time.Sleep(updateIntervalCurrency * time.Second)

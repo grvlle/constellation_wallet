@@ -20,29 +20,7 @@
               label="Available Balance"
               :disabled="true"
               placeholder="0"
-              v-model="availableBalance"
-            ></fg-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
-              label="Nonce"
-              :disabled="true"
-              placeholder="0"
-              v-model="nonce"
-            ></fg-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
-              label="Total Balance"
-              :disabled="true"
-              placeholder="0"
-              v-model="totalBalance"
+              v-model="getNormalizedAvailableBalance"
             ></fg-input>
           </div>
         </div>
@@ -108,18 +86,25 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState } from "vuex";
 export default {
   data() {
-    return {};
+    return {
+      normAvailableBalance: this.getNormalizedAvailableBalance() 
+    };
   },
   computed: {
-    ...mapState('app', ['version', 'uiVersion']),
-    ...mapState('wallet', [
-      'address', 'availableBalance', 'nonce', 'totalBalance', 
-      'alias', 'keystorePath', 'termsOfService'])
-
-  }
+    getNormalizedAvailableBalance () {
+      return this.$store.getters["wallet/getNormalizedAvailableBalance"];
+    },
+    ...mapState("app", ["version", "uiVersion"]),
+    ...mapState("wallet", [
+      "address",
+      "alias",
+      "keystorePath",
+      "termsOfService",
+    ]),    
+  },
 };
 </script>
 <style scoped lang="scss">

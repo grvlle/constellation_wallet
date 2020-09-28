@@ -6,7 +6,6 @@ const getDefaultState = () => {
     tokenAmount: "",
     totalBalance: "",
     availableBalance: "",
-    nonce: "",
     currency: "USD",
     totalValue: "",
     address: "",
@@ -19,6 +18,12 @@ const getDefaultState = () => {
 }
 
 const state = getDefaultState()
+
+const getters = {
+  getNormalizedAvailableBalance: (state) => {
+    return (state.availableBalance / 1e8).toFixed(8).replace(/\.?0+$/, "");
+  }
+}
 
 const actions = {
   reset({ commit }) {
@@ -70,7 +75,7 @@ const mutations = {
 export default {
   namespaced: true,
   state,
-  getters: {},
+  getters,
   actions,
   mutations
 }

@@ -8,7 +8,7 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>DAG</p>
-            {{tokenAmount | normalizeDAG}}
+            {{normalizedAvailableBalance}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
@@ -188,20 +188,10 @@ export default {
     }
   },
   computed: {
-    ...mapState('wallet', ['tokenAmount', 'currency', 'address']),
-    ...mapGetters('wallet', ['valueInCurrency']),
+    ...mapState('wallet', ['currency', 'address']),
+    ...mapGetters('wallet', ['valueInCurrency', 'normalizedAvailableBalance']),
     ...mapState('dashboard', ['counters', 'toggle', 'stat', 'chart'])
   },
-  filters: {
-    normalizeDAG: function (value) {
-      return (value / 1e8).toFixed(8).replace(/\.?0+$/, "");
-    }
-  },
-
-  /**
-   * Chart data used to render stats, charts. Should be replaced with server data
-   */
-
   data() {
     return {
       type: ["", "info", "success", "warning", "danger"],

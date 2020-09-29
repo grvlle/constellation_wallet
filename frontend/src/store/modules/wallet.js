@@ -20,7 +20,7 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const getters = {
-  getNormalizedAvailableBalance: (state) => {
+  normalizedAvailableBalance: (state) => {
     return (state.availableBalance / 1e8).toFixed(8).replace(/\.?0+$/, "");
   },
   valueInCurrency: (state) => {

@@ -26,7 +26,7 @@
           </h5>
         </div>
         <div class="col-4">
-          <h5>{{tokenAmount | normalizeDAG}}
+          <h5>{{normalizedAvailableBalance}}
             <br>
             <small>DAG</small>
           </h5>
@@ -46,13 +46,8 @@
 import {mapState, mapGetters} from 'vuex'
 export default {
   computed: {
-    ...mapState('wallet', ['imgPath', 'walletLabel', 'address', 'transactions', 'tokenAmount', 'currency']),
-    ...mapGetters('wallet', ['valueInCurrency'])
-  },
-  filters: {
-    normalizeDAG: function (value) {
-      return (value / 1e8).toFixed(8).replace(/\.?0+$/, "");
-    }
+    ...mapState('wallet', ['imgPath', 'walletLabel', 'address', 'transactions', 'currency']),
+    ...mapGetters('wallet', ['valueInCurrency', 'normalizedAvailableBalance'])
   }
 };
 </script>

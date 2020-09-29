@@ -26,7 +26,7 @@
           </h5>
         </div>
         <div class="col-4">
-          <h5>{{tokenAmount | asCurrency('DAG')}}
+          <h5>{{tokenAmount | normalizeDAG | asCurrency('DAG')}}
             <br>
             <small>DAG</small>
           </h5>
@@ -52,7 +52,7 @@ export default {
   filters: {
     asCurrency: function(value, currency) {
 
-      if (currency == "") return "";
+      if (currency == "" || value == "" ) return "...";
       
       var formatter
       if (currency == "DAG") {
@@ -73,8 +73,11 @@ export default {
         });
       }
       return formatter.format(value).replace(/XBT/,'₿');
+    },
+    normalizeDAG: function (value) {
+      return (value / 1e8).toFixed(8).replace(/\.?0+$/, "");
     }
-  },
+  }
 };
 </script>
 <style scoped lang="scss">

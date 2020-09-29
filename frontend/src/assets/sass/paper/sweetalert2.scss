@@ -10,9 +10,28 @@ $swal2-confirm-button-font-size: 0.75rem;
 $swal2-cancel-button-font-size: 0.75rem;
 $swal2-confirm-button-background-color: $primary-color;
 
-.swal2-popup.swal2-modal.swal2-show {
+.swal2-popup.swal2-modal {
   @include themed() {
     background: t('popupBackgroundColor');
+  }
+}
+
+#swal2-title {
+  @include themed() {
+    color: t('popupTextColor');
+  }
+}
+
+#swal2-content {
+  @include themed() {
+    color: t('popupTextColor');
+  }
+}
+
+#swal2-validation-message {
+  @include themed() {
+    background: t('cardTableColor');
+    border-color: t('inputBorderColor');
   }
 }
 

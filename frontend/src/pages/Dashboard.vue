@@ -8,7 +8,7 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>DAG</p>
-            {{tokenAmount | asCurrency('DAG')}}
+            {{tokenAmount | normalizeDAG | asCurrency('DAG')}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
@@ -171,12 +171,6 @@ export default {
       testingCodeToCopy.setAttribute("type", "hidden");
       window.getSelection().removeAllRanges();
     },
-    getTokens: function() {
-      var self = this;
-      window.backend.retrieveTokenAmount().then(result => {
-        self.tokenAmount = result;
-      });
-    },
     addNotification(verticalAlign, horizontalAlign, color, copied) {
       setTimeout(() => {
         this.$notifications.clear();
@@ -200,7 +194,7 @@ export default {
   filters: {
     asCurrency: function(value, currency) {
 
-      if (currency == "") return "";
+      if (currency == "" || value == "" ) return "...";
 
       var formatter
       if (currency == "DAG") {
@@ -221,6 +215,9 @@ export default {
         });
       }
       return formatter.format(value).replace(/XBT/,'₿');
+    },
+    normalizeDAG: function (value) {
+      return (value / 1e8).toFixed(8).replace(/\.?0+$/, "");
     }
   },
 

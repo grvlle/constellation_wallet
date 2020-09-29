@@ -126,11 +126,11 @@ func (a *WalletApplication) StoreCurrencyStateDB(currency string) bool {
 	}
 	totalCurrencyBalance := 0.0
 	if a.wallet.Currency == "USD" {
-		totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD
+		totalCurrencyBalance = float64(a.wallet.Balance/1e8) * a.wallet.TokenPrice.DAG.USD
 	} else if a.wallet.Currency == "EUR" {
-		totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.EUR
+		totalCurrencyBalance = float64(a.wallet.Balance/1e8) * a.wallet.TokenPrice.DAG.EUR
 	} else if a.wallet.Currency == "BTC" {
-		totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.BTC
+		totalCurrencyBalance = float64(a.wallet.Balance/1e8) * a.wallet.TokenPrice.DAG.BTC
 	}
 	a.RT.Events.Emit("totalValue", a.wallet.Currency, totalCurrencyBalance)
 	return true

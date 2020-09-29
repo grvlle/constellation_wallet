@@ -60,8 +60,8 @@ type Transaction struct {
 
 // TriggerTXFromFE will initate a new transaction triggered from the frontend.
 func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address string) bool {
-	amountConverted := int64(amount * 1e8)
-	feeConverted := int64(fee * 1e8)
+	amountConverted := int64(amount)
+	feeConverted := int64(fee)
 
 	a.PrepareTransaction(amountConverted, feeConverted, address)
 	for !a.TransactionFinished {
@@ -82,9 +82,9 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address 
 		return
 	}
 
-	if amount+fee > int64(balance*1e8) {
+	if amount+fee > int64(balance) {
 		a.log.Warnf("Trying to send: %d", amount+fee)
-		a.log.Warnf("Insufficient Balance: %d", int64(balance*1e8))
+		a.log.Warnf("Insufficient Balance: %d", int64(balance))
 		a.sendWarning("Insufficent Balance.")
 		a.TransactionFailed = true
 		return

@@ -2,23 +2,28 @@ const getDefaultState = () => {
   return {
     walletLabel: "",
     imgPath: 'faces/face-0.jpg',
-    transactions: 0,
-    tokenAmount: 0,
-    totalBalance: 0,
-    availableBalance: 0,
-    nonce: 0,
+    transactions: "",
+    tokenAmount: "",
+    totalBalance: "",
+    availableBalance: "",
     currency: "USD",
-    totalValue: 0.0,
-    address: "N/A",
+    totalValue: "",
+    address: "",
     keystorePath: "",
     alias: "",
-    publicKey: "NaN",
+    publicKey: "",
     darkMode: false,
     termsOfService: false
   }
 }
 
 const state = getDefaultState()
+
+const getters = {
+  getNormalizedAvailableBalance: (state) => {
+    return (state.availableBalance / 1e8).toFixed(8).replace(/\.?0+$/, "");
+  }
+}
 
 const actions = {
   reset({ commit }) {
@@ -70,7 +75,7 @@ const mutations = {
 export default {
   namespaced: true,
   state,
-  getters: {},
+  getters,
   actions,
   mutations
 }

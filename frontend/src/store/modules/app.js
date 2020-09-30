@@ -8,7 +8,7 @@ const getDefaultState = () => {
     successMessage: "",
     loginErrorMsg: "",
     newRelease: "",
-    network: "MAINNET",
+    network: "Main Constellation Network",
     displayLoginError: false,
     downloading: {
       filename: "",
@@ -27,6 +27,9 @@ const actions = {
 const mutations = {
   resetState(state) {
     Object.assign(state, getDefaultState());
+  },
+  setNetwork(state, network) {
+    state.network = network;
   },
   setIsLoggedIn(state, isLoggedIn) {
     state.isLoggedIn = isLoggedIn;

@@ -10,9 +10,9 @@
               </slot>
               <vue-select
                 class="select"
-                @input="setCurrency"
-                :value="currency"
-                :options="['Main Constellation Network (default)', 'Eros Test Network', 'Ceres Test Network']"
+                @input="setNetwork"
+                :value="network"
+                :options="['Main Constellation Network', 'Eros Test Network', 'Ceres Test Network']"
               ></vue-select>
               <br />
               <div class="input-box">
@@ -82,6 +82,7 @@
 
 <script>
 import VueSelect from "vue-select";
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -94,6 +95,9 @@ export default {
     overlay: false,
   }),
   computed: {
+    ...mapState("app", [
+      "network",
+    ]),
     keystorePath: {
       get() {
         return this.$store.state.wallet.keystorePath;
@@ -112,11 +116,11 @@ export default {
     },
   },
   methods: {
-    setCurrency: function (value) {
+    setNetwork: function (value) {
       window.backend.WalletApplication.StoreCurrencyStateDB(value).then(
         (result) => {
           if (result) {
-            this.$store.commit("wallet/setCurrency", value);
+            this.$store.commit("app/setNetwork", value);
           }
         }
       );

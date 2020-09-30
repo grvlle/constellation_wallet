@@ -11,7 +11,7 @@
               <vue-select
                 class="select"
                 @input="setNetwork"
-                :value="network"
+                
                 :options="['Main Constellation Network', 'Eros Test Network', 'Ceres Test Network']"
               ></vue-select>
               <br />
@@ -117,7 +117,7 @@ export default {
   },
   methods: {
     setNetwork: function (value) {
-      window.backend.WalletApplication.StoreCurrencyStateDB(value).then(
+      window.backend.WalletApplication.SelectNetwork(value).then(
         (result) => {
           if (result) {
             this.$store.commit("app/setNetwork", value);

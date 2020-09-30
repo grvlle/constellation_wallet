@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div v-if="value.length">
-      <div class="total-value text-center">{{availableBalance | normalizeDAG | asCurrency('DAG-short')}} $DAG</div>
+      <div class="balance text-center">{{normalizedAvailableBalance | asCurrency('DAG-short')}} $DAG</div>
       <ul class="timeline">
         <li class="timeline-inverted d-flex" v-for="tx in value" v-bind:key="tx.ID">
           <div class="timeline-label">
@@ -75,7 +75,7 @@ const suffixRanges = [
   { divider: 1e3, suffix: "k" },
 ];
 
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 export default {
   name: "timeline",
@@ -83,7 +83,8 @@ export default {
     value: Array,
   },
   computed: {
-    ...mapState("wallet", ["address", "availableBalance"]),
+    ...mapState("wallet", ["address"]),
+    ...mapGetters('wallet', ['normalizedAvailableBalance'])
   },
   methods: {
     displayContact: function (value) {
@@ -109,27 +110,10 @@ export default {
           }
         }
         return value.toString();
-      }
-
-      var formatter;
-      if (currency == "DAG") {
-        formatter = new Intl.NumberFormat(navigator.language);
-      } else if (currency == "BTC") {
-        formatter = new Intl.NumberFormat(navigator.language, {
-          style: "currency",
-          currency: "XBT",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 8,
-        });
       } else {
-        formatter = new Intl.NumberFormat(navigator.language, {
-          style: "currency",
-          currency: currency,
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
+        var formatter = new Intl.NumberFormat(navigator.language);
+        return formatter.format(value);
       }
-      return formatter.format(value).replace(/XBT/, "₿");
     },
     normalizeDAG: function (value) {
       return (value / 1e8).toFixed(8).replace(/\.?0+$/, "");
@@ -143,7 +127,7 @@ export default {
   width: 9.6rem;
 }
 
-.total-value {
+.balance {
   width: 9.6rem;
 }
 

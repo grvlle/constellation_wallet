@@ -110,7 +110,7 @@
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import {
   required,
   minLength,
@@ -163,6 +163,7 @@ export default {
       return addressInfo;
     },
     ...mapState("wallet", ["address", "availableBalance", "darkMode"]),
+    ...mapGetters('wallet', ['normalizedAvailableBalance']),
     ...mapState("transaction", ["txHistory", "txStatus", "txFinished"])
   },
   methods: {
@@ -203,7 +204,7 @@ export default {
             html: 
               "<p>You are about to send <b>" + self.txAmount.normalized + "</b> $DAG tokens to " + self.txAddress + "</p>" +
               "<div class='border border-dark'>" + 
-                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + (this.availableBalance / 1e8).toFixed(8).replace(/\.?0+$/, "") + ")</p>" +              
+                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + self.normalizedAvailableBalance + ")</p>" +              
                 "<p>Transaction amount: " + self.txAmount.normalized + "</p>" +
                 "<p>To: " + self.txAddress + "</p>" +
               "</div>",
@@ -215,7 +216,7 @@ export default {
             title: "Set a fee to prioritize your transaction.",
             html: 
               "<div class='border border-dark'>" + 
-                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + (this.availableBalance / 1e8).toFixed(8).replace(/\.?0+$/, "") + ")</p>" +              
+                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + self.normalizedAvailableBalance + ")</p>" +              
                 "<p>Transaction amount: " + self.txAmount.normalized + "</p>" +
                 "<p>To: " + self.txAddress + "</p>" +
               "</div>" + 
@@ -283,11 +284,8 @@ export default {
       }
     },
     setMaxDAGs() {
-      this.txAmount.normalized = (this.availableBalance / 1e8).toFixed(8).replace(/\.?0+$/, "");
+      this.txAmount.normalized = this.normalizedAvailableBalance;
       this.txAmount.denormalized = this.availableBalance;
-    },
-    normalizeDAG: function (value) {
-      return (value / 1e8).toFixed(8).replace(/\.?0+$/, "");
     }
   },
   data() {
@@ -306,23 +304,6 @@ export default {
       txHistoryPage: [],
       showAddressBook: false
     };
-  },
-  filters: {
-    dropzero: function(value) {
-      if (!value || value === null) return "";
-      let index;
-      value = value.toString().split("");
-      index = value.length - 8;
-      value = value.splice(0, index);
-      return value.join("");
-    },
-    truncate: function(value) {
-      if (!value || value === null) return "";
-      if (value.length > 30) {
-        value = value.substring(0, 27) + "...";
-      }
-      return value;
-    },
   },
   validations: {
     txAddress: {

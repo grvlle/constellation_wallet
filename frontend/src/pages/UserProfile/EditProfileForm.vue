@@ -20,7 +20,7 @@
               label="Available Balance"
               :disabled="true"
               placeholder="0"
-              v-model="getNormalizedAvailableBalance"
+              v-model="normalizedAvailableBalance"
             ></fg-input>
           </div>
         </div>
@@ -86,24 +86,17 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 export default {
-  data() {
-    return {
-      normAvailableBalance: this.getNormalizedAvailableBalance() 
-    };
-  },
   computed: {
-    getNormalizedAvailableBalance () {
-      return this.$store.getters["wallet/getNormalizedAvailableBalance"];
-    },
     ...mapState("app", ["version", "uiVersion"]),
     ...mapState("wallet", [
       "address",
       "alias",
       "keystorePath",
       "termsOfService",
-    ]),    
+    ]),
+    ...mapGetters("wallet", ["normalizedAvailableBalance"])
   },
 };
 </script>

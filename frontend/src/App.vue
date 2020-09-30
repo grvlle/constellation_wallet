@@ -208,10 +208,6 @@ export default {
       this.$store.commit('app/setDownloadFileSize', size);
     });
 
-    // Login.vue sockets
-    // window.wails.Events.On("registeredLogin", event => {});
-
-    // Dashboard.vue sockets
     window.wails.Events.On("token", (amount, available, total) => {
       this.$store.commit('wallet/setTokenAmount', amount);
       this.$store.commit('wallet/setAvailableBalance', available);
@@ -220,9 +216,13 @@ export default {
     window.wails.Events.On("blocks", number => {
       this.$store.commit('dashboard/setBlocks', number);
     });
-    window.wails.Events.On("totalValue", (currency, value) => {
-      this.$store.commit('wallet/setCurrency', currency);
-      this.$store.commit('wallet/setTotalValue', value);
+
+    window.wails.Events.On("tokenPrice", tokenPrice => {
+      let rates = []
+      rates.push({currency: "USD", tokenprice: tokenPrice.DAG.USD});
+      rates.push({currency: "EUR", tokenprice: tokenPrice.DAG.EUR});
+      rates.push({currency: "BTC", tokenprice: tokenPrice.DAG.BTC});
+      this.$store.commit('wallet/setCurrencyRates', rates);
     });
     window.wails.Events.On("token_counter", count => {
       this.$store.commit('dashboard/setTokenCounter', count);
@@ -257,7 +257,10 @@ export default {
       }
     });
 
-    // Settings.vue sockets
+    window.wails.Events.On("currency", currency => {
+      this.$store.commit('wallet/setCurrency', currency);
+    });
+
     window.wails.Events.On("wallet_keys", address => {
       this.$store.commit('wallet/setAddress', address);
     });

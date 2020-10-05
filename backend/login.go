@@ -94,6 +94,9 @@ func (a *WalletApplication) LogOut() bool {
 	if a.TransactionFinished {
 		a.UserLoggedIn = false
 		a.wallet = models.Wallet{}
+		a.Network.URL = "http://lb.constellationnetwork.io:9000" // Reset to default network upon every logout
+		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
+		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
 		return true
 	}
 	a.sendWarning("Cannot log out while transaction is processing. Please try again.")
@@ -137,6 +140,7 @@ func (a *WalletApplication) SelectNetwork(network string) bool {
 		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
 		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
 	}
+
 	return true
 }
 

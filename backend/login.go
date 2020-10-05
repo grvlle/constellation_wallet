@@ -21,9 +21,6 @@ func (a *WalletApplication) LoginError(errMsg string) {
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
-	a.wallet = models.Wallet{
-		KeyStorePath: keystorePath,
-		WalletAlias:  alias}
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
@@ -31,18 +28,20 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	}
 
 	if !a.TransactionFinished {
-		a.log.Warn("Cannot login to another wallet during a pending transaction.")
+		a.log.Warnln("Cannot login to another wallet during a pending transaction.")
 		a.LoginError("Cannot login to another wallet during a pending transaction.")
 		return false
 	}
 
 	if keystorePath == "" {
+		a.log.Warnln("The provided path to the keystore file is empty.")
 		a.LoginError("Please provide a path to the KeyStore file.")
 		return false
 	}
 
 	if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
+		a.LoginError("One or more passwords were not provided.")
 		return false
 	}
 
@@ -54,7 +53,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 		return a.ImportWallet(keystorePath, keystorePassword, keyPassword, alias)
 	}
 
-	if !a.WalletKeystoreAccess() {
+	if !a.WalletKeystoreAccess(keystorePath, alias) {
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
 		return false
 	}
@@ -67,10 +66,6 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	// Check password strings against salted hashes stored in DB. Also make sure KeyStore has been accessed.
 	if a.CheckAccess(keystorePassword, a.wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, a.wallet.KeyPasswordHash) && a.KeyStoreAccess {
 		a.UserLoggedIn = true
-
-		// os.Setenv("CL_STOREPASS", keystorePassword)
-		// os.Setenv("CL_KEYPASS", keyPassword)
-
 	} else {
 		a.UserLoggedIn = false
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")

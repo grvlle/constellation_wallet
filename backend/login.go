@@ -53,15 +53,14 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 		return a.ImportWallet(keystorePath, keystorePassword, keyPassword, alias)
 	}
 
-	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", alias).Update("KeyStorePath", keystorePath).Error; err != nil {
-		a.log.Errorln("Unable to update the database with the path to the provided keystore file. Reason: ", err)
-		a.LoginError("Unable to update the database with the path to the provided keystore file.")
+	if !a.WalletKeystoreAccess(keystorePath, alias) {
+		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
 		return false
 	}
 
-	if !a.WalletKeystoreAccess() {
-		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
-		return false
+	if !a.NewUser {
+		a.DB.Model(&a.wallet).Update("KeystorePath", keystorePath)
+		a.log.Infoln("PrivateKey path: ", keystorePath)
 	}
 
 	// Check password strings against salted hashes stored in DB. Also make sure KeyStore has been accessed.

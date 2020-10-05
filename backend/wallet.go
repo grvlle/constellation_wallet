@@ -47,7 +47,7 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 	os.Setenv("CL_KEYPASS", keyPassword)
 
 	a.wallet.Address = a.GenerateDAGAddress()
-	a.KeyStoreAccess = a.WalletKeystoreAccess()
+	a.KeyStoreAccess = a.WalletKeystoreAccess(keystorePath, alias)
 
 	if a.KeyStoreAccess {
 		if !a.DB.NewRecord(&a.wallet) {
@@ -204,7 +204,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 			a.log.Errorln("Unable to update db object new wallet, with the DAG address. Reason: ", err)
 			a.sendError("Unable to update db object new wallet, with the DAG address. Reason. Reason: ", err)
 		}
-		a.KeyStoreAccess = a.WalletKeystoreAccess()
+		a.KeyStoreAccess = a.WalletKeystoreAccess(keystorePath, alias)
 
 		if a.KeyStoreAccess {
 			a.paths.LastTXFile = a.TempFileName("tx-")

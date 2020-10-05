@@ -49,7 +49,7 @@ func (a *WalletApplication) runWalletCMD(tool string, scalaFunc string, scalaArg
 
 // WalletKeystoreAccess is true if the user can unlock the .p12 keystore
 // and key using storepass and keypass
-func (a *WalletApplication) WalletKeystoreAccess() bool {
+func (a *WalletApplication) WalletKeystoreAccess(keyStorePath, alias string) bool {
 	a.log.Infoln("Checking Keystore Access...")
 
 	rescueStdout := os.Stdout
@@ -59,7 +59,7 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 		a.sendError("Unable to pipe STDOUT, Reason: ", err)
 	}
 	os.Stdout = w
-	err = a.runWalletCMD("wallet", "show-address", "--keystore="+a.wallet.KeyStorePath, "--alias="+a.wallet.WalletAlias, "--env_args=true")
+	err = a.runWalletCMD("wallet", "show-address", "--keystore="+keyStorePath, "--alias="+alias, "--env_args=true")
 	if err != nil {
 		a.log.Warn("KeyStore Access Rejected!")
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")

@@ -174,7 +174,7 @@
           <div class="container">
             <div class="row settings">
               <div class="col-7">
-                <p>Dark Mode [BETA]</p>
+                <p>Dark Mode</p>
               </div>
               <div class="col-5" align="right">
                 <toggle-switch v-model="darkMode" />

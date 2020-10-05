@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="version">
-      <p class="version">Connected to: {{network}}<br />
+      <p class="version">Connected to:<br /> {{network}}<br />
       Molly Wallet version: {{uiVersion}}</p>
     </div>
   </div>

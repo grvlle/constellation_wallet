@@ -505,6 +505,10 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		return 0, err
 	}
 
+	if string(bodyBytes) == "null" { // null body is returned when a wallet has zero balance.
+		return 0.0, nil
+	}
+
 	var result map[string]interface{}
 
 	// Unmarshal or Decode the JSON to the interface.
@@ -512,6 +516,8 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 	if err != nil {
 		return 0, err
 	}
+
+	a.log.Infoln(result) //TEMP
 
 	s := result["balance"]
 	if s == "" {

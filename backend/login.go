@@ -94,6 +94,9 @@ func (a *WalletApplication) LogOut() bool {
 	if a.TransactionFinished {
 		a.UserLoggedIn = false
 		a.wallet = models.Wallet{}
+		a.Network.URL = "http://lb.constellationnetwork.io:9000" // Reset to default network upon every logout
+		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
+		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
 		return true
 	}
 	a.sendWarning("Cannot log out while transaction is processing. Please try again.")
@@ -114,6 +117,31 @@ func (a *WalletApplication) ImportKey() string {
 	}
 	a.log.Info("Path to imported key: " + keyfile)
 	return keyfile
+}
+
+// SelectNetwork is triggered from the login page and will change the network an loadbalancer endpoints
+func (a *WalletApplication) SelectNetwork(network string) bool {
+	a.log.Infoln("User requested network: ", network)
+	switch network {
+	case "Main Constellation Network":
+		a.Network.URL = "http://lb.constellationnetwork.io:9000"
+		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
+		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
+	case "Eros Test Network":
+		a.Network.URL = "http://cl-lb-alb-testnet-1216020584.us-west-1.elb.amazonaws.com:9000"
+		a.Network.BlockExplorer.URL = "https://8akak07rv8.execute-api.us-west-1.amazonaws.com/cl-block-explorer-testnet"
+		a.log.Infoln("Connected to: Eros Test Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
+	case "Ceres Test Network":
+		a.Network.URL = "http://cl-lb-alb-exchanges-582714291.us-west-1.elb.amazonaws.com:9000"
+		a.Network.BlockExplorer.URL = "https://pdvmh8pagf.execute-api.us-west-1.amazonaws.com/cl-block-explorer-exchanges"
+		a.log.Infoln("Connected to: Ceres Test Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
+	default:
+		a.Network.URL = "http://lb.constellationnetwork.io:9000"
+		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
+		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
+	}
+
+	return true
 }
 
 // SelectDirToStoreKey is called from the FE when creating a new keyfile

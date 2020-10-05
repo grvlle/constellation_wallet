@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -155,7 +156,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 	}
 	bodyString := string(bodyBytes)
 	a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
-	a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
+	a.log.Errorln(fmt.Sprintf("Unable to put TX on the network. HTTP Code: %d - %s", resp.StatusCode, bodyString))
 
 	return false, ""
 }

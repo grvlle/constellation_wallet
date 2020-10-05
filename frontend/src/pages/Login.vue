@@ -11,7 +11,7 @@
               <vue-select
                 class="select"
                 @input="setNetwork"
-                
+                :value="network"
                 :options="['Main Constellation Network', 'Eros Test Network', 'Ceres Test Network']"
               ></vue-select>
               <br />

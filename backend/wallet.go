@@ -425,7 +425,9 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 				Status:   "Complete",
 				Failed:   false,
 			}
-			a.storeTX(txData)
+			if a.NewUser {
+				a.storeTX(txData)
+			}
 			a.RT.Events.Emit("new_transaction", txData)
 
 			if i+1 == len(allTX) {

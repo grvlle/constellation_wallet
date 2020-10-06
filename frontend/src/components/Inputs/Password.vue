@@ -18,7 +18,7 @@
         </p-button>
       </span>
     </div>
-    <div class="validate" v-if="validate && !valid_password">             
+    <div class="validate text-danger" v-if="validate && !valid_password">             
       <p v-if="!this.contains_eight_characters"> 8 Characters Long, </p> 
       <p v-if="!this.contains_number"> Number,</p> 
       <p v-if="!this.contains_uppercase"> Uppercase, </p> 
@@ -92,12 +92,5 @@
 .validate {
   height: 0.625em;
   display: flex;
-}
-.validate > p {
-  /*flex: 1;*/
-  font-size: 0.625rem;
-  color: firebrick;
-  margin-top: 0em;
-  margin-right: 0.125em;
 }
 </style>

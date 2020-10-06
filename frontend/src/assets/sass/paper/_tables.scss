@@ -13,7 +13,7 @@
       @include themed() {
         border-top-color: t('borderColor');
         border-bottom-color: t('borderColor');
-        background-color: t('cardTransactionTableColor'); 
+        background-color: t('cardTableColor'); 
       }
     }
   }

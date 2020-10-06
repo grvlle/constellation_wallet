@@ -60,12 +60,12 @@
                     v-model="alias" 
                     :placeholder="alias"
                   />
-                  <div class="validate" v-if="!this.aliasValid">
+                  <div class="validate text-danger" v-if="!this.aliasValid">
                     <p v-if="!this.aliasContainsFiveCharacters">
                       Alias has to be atleast 5 characters long.
                     </p>
                   </div>
-                  <div class="validate" v-else />
+                  <div class="validate text-danger" v-else />
                 </div>
                 <div>
                   <password-input

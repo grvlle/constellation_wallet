@@ -3,12 +3,10 @@ package app
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"runtime"
-	"strconv"
 	"strings"
 	"time"
 
@@ -49,7 +47,7 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 	os.Setenv("CL_KEYPASS", keyPassword)
 
 	a.wallet.Address = a.GenerateDAGAddress()
-	a.KeyStoreAccess = a.WalletKeystoreAccess()
+	a.KeyStoreAccess = a.WalletKeystoreAccess(keystorePath, alias)
 
 	if a.KeyStoreAccess {
 		if !a.DB.NewRecord(&a.wallet) {
@@ -206,7 +204,7 @@ func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPass
 			a.log.Errorln("Unable to update db object new wallet, with the DAG address. Reason: ", err)
 			a.sendError("Unable to update db object new wallet, with the DAG address. Reason. Reason: ", err)
 		}
-		a.KeyStoreAccess = a.WalletKeystoreAccess()
+		a.KeyStoreAccess = a.WalletKeystoreAccess(keystorePath, alias)
 
 		if a.KeyStoreAccess {
 			a.paths.LastTXFile = a.TempFileName("tx-")
@@ -265,7 +263,11 @@ func (a *WalletApplication) initWallet(keystorePath string) error {
 		}
 		a.StoreImagePathInDB("faces/face-0.jpg")
 	} else if !a.NewUser {
-		a.initTXFromDB()   // Disregard upon import
+		err := a.initTXFromBlockExplorer()
+		if err != nil {
+			return err
+		}
+		// a.initTXFromDB()   // Disregard upon import
 		a.initTXFilePath() // Update paths from DB.
 	}
 
@@ -423,7 +425,9 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 				Status:   "Complete",
 				Failed:   false,
 			}
-			a.storeTX(txData)
+			if a.NewUser {
+				a.storeTX(txData)
+			}
 			a.RT.Events.Emit("new_transaction", txData)
 
 			if i+1 == len(allTX) {
@@ -487,20 +491,24 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 
 	resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
 	if err != nil {
-		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+		a.log.Warnln("Failed to send HTTP request. Reason: ", err)
 		return 0, err
 	}
 	if resp == nil {
-		a.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
-		a.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
+		err = errors.New("Received empty response from the Token Balance API")
+		a.log.Warnln("Unable to update token balance. Reason: ", err)
 		return 0, err
 	}
 	defer resp.Body.Close()
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		a.log.Warn("Unable to update token balance. Reason: ", err)
+		a.log.Warnln("Unable to update token balance. Reason: ", err)
 		return 0, err
+	}
+
+	if string(bodyBytes) == "null" { // null body is returned when a wallet has zero balance.
+		return 0.0, nil
 	}
 
 	var result map[string]interface{}
@@ -511,32 +519,22 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		return 0, err
 	}
 
+	a.log.Infoln(result) //TEMP
+
 	s := result["balance"]
 	if s == "" {
 		s = "0" // Empty means zero
 	}
 
-	a.log.Infoln("Parsed the following balance: ", s)
-
 	b, ok := s.(float64)
 	if !ok {
-		if err != nil {
-			a.log.Warnln("Unable to parse balance. Reason:", err)
-		}
+		err = errors.New("Unable to parse balance")
+		a.log.Warnln("Unable to update token balance. Reason: ", err)
 		return 0, err
 	}
+	a.log.Infoln("Parsed the following balance: ", s)
 
-	f := fmt.Sprintf("%.2f", b/1e8) // Reverse normalized float
+	a.log.Infoln("Returning the following balance: ", b)
 
-	a.log.Infoln("Normalized the following balance: ", f)
-
-	balance, err := strconv.ParseFloat(f, 64)
-	if err != nil {
-		a.log.Warnln("Unable to type cast string to float for token balance poller. Check your internet connectivity")
-		return 0, err
-	}
-
-	a.log.Infoln("Returning the following balance: ", balance)
-
-	return balance, nil
+	return b, nil
 }

@@ -21,9 +21,6 @@ func (a *WalletApplication) LoginError(errMsg string) {
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
-	a.wallet = models.Wallet{
-		KeyStorePath: keystorePath,
-		WalletAlias:  alias}
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
@@ -31,18 +28,20 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	}
 
 	if !a.TransactionFinished {
-		a.log.Warn("Cannot login to another wallet during a pending transaction.")
+		a.log.Warnln("Cannot login to another wallet during a pending transaction.")
 		a.LoginError("Cannot login to another wallet during a pending transaction.")
 		return false
 	}
 
 	if keystorePath == "" {
+		a.log.Warnln("The provided path to the keystore file is empty.")
 		a.LoginError("Please provide a path to the KeyStore file.")
 		return false
 	}
 
 	if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
+		a.LoginError("One or more passwords were not provided.")
 		return false
 	}
 
@@ -54,7 +53,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 		return a.ImportWallet(keystorePath, keystorePassword, keyPassword, alias)
 	}
 
-	if !a.WalletKeystoreAccess() {
+	if !a.WalletKeystoreAccess(keystorePath, alias) {
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
 		return false
 	}
@@ -67,10 +66,6 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	// Check password strings against salted hashes stored in DB. Also make sure KeyStore has been accessed.
 	if a.CheckAccess(keystorePassword, a.wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, a.wallet.KeyPasswordHash) && a.KeyStoreAccess {
 		a.UserLoggedIn = true
-
-		// os.Setenv("CL_STOREPASS", keystorePassword)
-		// os.Setenv("CL_KEYPASS", keyPassword)
-
 	} else {
 		a.UserLoggedIn = false
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
@@ -99,6 +94,9 @@ func (a *WalletApplication) LogOut() bool {
 	if a.TransactionFinished {
 		a.UserLoggedIn = false
 		a.wallet = models.Wallet{}
+		a.Network.URL = "http://lb.constellationnetwork.io:9000" // Reset to default network upon every logout
+		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
+		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
 		return true
 	}
 	a.sendWarning("Cannot log out while transaction is processing. Please try again.")
@@ -119,6 +117,31 @@ func (a *WalletApplication) ImportKey() string {
 	}
 	a.log.Info("Path to imported key: " + keyfile)
 	return keyfile
+}
+
+// SelectNetwork is triggered from the login page and will change the network an loadbalancer endpoints
+func (a *WalletApplication) SelectNetwork(network string) bool {
+	a.log.Infoln("User requested network: ", network)
+	switch network {
+	case "Main Constellation Network":
+		a.Network.URL = "http://lb.constellationnetwork.io:9000"
+		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
+		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
+	case "Eros Test Network":
+		a.Network.URL = "http://cl-lb-alb-testnet-1216020584.us-west-1.elb.amazonaws.com:9000"
+		a.Network.BlockExplorer.URL = "https://8akak07rv8.execute-api.us-west-1.amazonaws.com/cl-block-explorer-testnet"
+		a.log.Infoln("Connected to: Eros Test Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
+	case "Ceres Test Network":
+		a.Network.URL = "http://cl-lb-alb-exchanges-582714291.us-west-1.elb.amazonaws.com:9000"
+		a.Network.BlockExplorer.URL = "https://pdvmh8pagf.execute-api.us-west-1.amazonaws.com/cl-block-explorer-exchanges"
+		a.log.Infoln("Connected to: Ceres Test Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
+	default:
+		a.Network.URL = "http://lb.constellationnetwork.io:9000"
+		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
+		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
+	}
+
+	return true
 }
 
 // SelectDirToStoreKey is called from the FE when creating a new keyfile

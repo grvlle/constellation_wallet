@@ -12,11 +12,15 @@ body {
 }
 
 a {
-  color: $info-color;
+  @include themed() {
+    color: t('infoColor');
+  }
 
   &:hover, &:focus {
-    color: $info-states-color;
-    text-decoration: none;
+    @include themed() {
+      color: t('infoStatesColor');
+    }    
+    text-decoration: underline;
   }
 }
 

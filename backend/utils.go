@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
+	"github.com/mcuadros/go-version"
 )
 
 // newReleaseAvailable generates a notification to FE everytime a new release on
@@ -30,7 +31,7 @@ func (a *WalletApplication) newReleaseAvailable() {
 	go func() {
 		for i := 200; i > 0; i-- {
 			newRelease := update.GetLatestRelease()
-			if currentRelease != newRelease {
+			if version.Compare(newRelease, currentRelease, ">") && newRelease != "" {
 				a.log.Infoln("There's a newer release available")
 				a.RT.Events.Emit("new_release", newRelease)
 			}
@@ -87,12 +88,6 @@ func (a *WalletApplication) detectJavaPath() {
 		a.log.Debugln(cmd)
 		a.paths.Java = jwPath
 	}
-}
-
-//normalizeAmounts takes amount/fee in int64 and normalizes it. Example: passing 821500000000 will return 8215
-func normalizeAmounts(i int64) (string, error) {
-	f := fmt.Sprintf("%.8f", float64(i)/1e8)
-	return f, nil
 }
 
 // TempFileName creates temporary file names for the transaction files

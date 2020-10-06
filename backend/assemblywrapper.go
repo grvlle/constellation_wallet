@@ -49,7 +49,7 @@ func (a *WalletApplication) runWalletCMD(tool string, scalaFunc string, scalaArg
 
 // WalletKeystoreAccess is true if the user can unlock the .p12 keystore
 // and key using storepass and keypass
-func (a *WalletApplication) WalletKeystoreAccess() bool {
+func (a *WalletApplication) WalletKeystoreAccess(keyStorePath, alias string) bool {
 	a.log.Infoln("Checking Keystore Access...")
 
 	rescueStdout := os.Stdout
@@ -59,7 +59,7 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 		a.sendError("Unable to pipe STDOUT, Reason: ", err)
 	}
 	os.Stdout = w
-	err = a.runWalletCMD("wallet", "show-address", "--keystore="+a.wallet.KeyStorePath, "--alias="+a.wallet.WalletAlias, "--env_args=true")
+	err = a.runWalletCMD("wallet", "show-address", "--keystore="+keyStorePath, "--alias="+alias, "--env_args=true")
 	if err != nil {
 		a.log.Warn("KeyStore Access Rejected!")
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
@@ -99,15 +99,13 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	r, w, err := os.Pipe()
 	if err != nil {
 		a.log.Errorln("Unable to pipe STDOUT, Reason: ", err)
-		a.sendError("Unable to pipe STDOUT, Reason: ", err)
 		return ""
 	}
 	os.Stdout = w
 
 	err = a.runWalletCMD("wallet", "show-address", "--keystore="+a.wallet.KeyStorePath, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
-		a.sendError("Unable to generate wallet address. Reason:", err)
-		a.log.Errorf("Unable to generate wallet address. Reason: %s", err.Error())
+		a.log.Errorf("Unable to get wallet address. Reason: %s", err.Error())
 		return ""
 	}
 
@@ -115,7 +113,6 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	dagAddress, err := ioutil.ReadAll(r)
 	if err != nil {
 		a.log.Errorln("Unable to read address from STDOUT", err)
-		a.sendError("Unable to read address from STDOUT", err)
 	}
 	os.Stdout = rescueStdout
 	a.wallet.Address = string(dagAddress[:40])
@@ -156,9 +153,10 @@ func (a *WalletApplication) CheckAndFetchWalletCLI() bool {
 
 	if a.fileExists(keytoolPath) && a.fileExists(walletPath) {
 		return true
-	} else {
-		return false
 	}
+
+	return false
+
 }
 
 // produceTXObject will put an actual transaction on the network. This is called from the
@@ -171,23 +169,10 @@ func (a *WalletApplication) produceTXObject(amount int64, fee int64, address, ne
 
 	// Convert to string
 	amountStr := strconv.FormatInt(amount, 10)
-	// feeStr := strconv.FormatInt(fee, 10)
-
-	// amountNorm, err := normalizeAmounts(amount)
-	// if err != nil {
-	// 	a.log.Errorln("Unable to normalize amounts when producing tx object. Reason: ", err)
-	// 	a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
-	// 	return
-	// }
-	feeNorm, err := normalizeAmounts(fee)
-	if err != nil {
-		a.log.Errorln("Unable to normalize amounts when producing tx object. Reason: ", err)
-		a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
-		return
-	}
+	feeStr := strconv.FormatInt(fee, 10)
 
 	// newTX is the full command to sign a new transaction
-	err = a.runWalletCMD("wallet", "create-transaction", "--keystore="+a.wallet.KeyStorePath, "--normalized", "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeNorm, "-d="+address, "-f="+newTX, "-p="+prevTX, "--env_args=true")
+	err := a.runWalletCMD("wallet", "create-transaction", "--keystore="+a.wallet.KeyStorePath, "--normalized", "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeStr, "-d="+address, "-f="+newTX, "-p="+prevTX, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
 		a.log.Errorln("Unable to send transaction. Reason: ", err)

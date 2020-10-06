@@ -63,6 +63,12 @@
     margin-bottom: 0.3125em;
   }
 
+  strong {
+    @include themed() {
+      color: t('cardTitleColor');
+    }
+  }
+  
   .card-title {
     margin: $none;
     font-weight: $font-weight-light;

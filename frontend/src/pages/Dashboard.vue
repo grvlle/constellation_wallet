@@ -8,7 +8,7 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>DAG</p>
-            {{tokenAmount | asCurrency('DAG')}}
+            {{normalizedAvailableBalance}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
@@ -23,7 +23,7 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>{{currency}}</p>
-            {{totalValue | asCurrency(currency)}}
+            {{valueInCurrency}}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState, mapGetters} from 'vuex'
 import { StatsCard, ChartCard} from "@/components/index";
 import Chartist from 'chartist';
 import WalletCopiedNotification from "./Notifications/WalletCopied";
@@ -171,12 +171,6 @@ export default {
       testingCodeToCopy.setAttribute("type", "hidden");
       window.getSelection().removeAllRanges();
     },
-    getTokens: function() {
-      var self = this;
-      window.backend.retrieveTokenAmount().then(result => {
-        self.tokenAmount = result;
-      });
-    },
     addNotification(verticalAlign, horizontalAlign, color, copied) {
       setTimeout(() => {
         this.$notifications.clear();
@@ -194,40 +188,10 @@ export default {
     }
   },
   computed: {
-    ...mapState('wallet', ['tokenAmount', 'currency', 'totalValue', 'address']),
-    ...mapState('dashboard', ['counters', 'toggle', 'stat', 'chart']) 
+    ...mapState('wallet', ['currency', 'address']),
+    ...mapGetters('wallet', ['valueInCurrency', 'normalizedAvailableBalance']),
+    ...mapState('dashboard', ['counters', 'toggle', 'stat', 'chart'])
   },
-  filters: {
-    asCurrency: function(value, currency) {
-
-      if (currency == "") return "";
-
-      var formatter
-      if (currency == "DAG") {
-        formatter = new Intl.NumberFormat(navigator.language);
-      } else if (currency == "BTC") {
-        formatter = new Intl.NumberFormat(navigator.language, {
-          style: "currency",
-          currency: "XBT",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 8
-        });
-      } else {
-        formatter = new Intl.NumberFormat(navigator.language, {
-          style: "currency",
-          currency: currency,
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-      }
-      return formatter.format(value).replace(/XBT/,'₿');
-    }
-  },
-
-  /**
-   * Chart data used to render stats, charts. Should be replaced with server data
-   */
-
   data() {
     return {
       type: ["", "info", "success", "warning", "danger"],
@@ -265,7 +229,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped lang="scss">
 .text-overflow {
   display: block;
   overflow: hidden;
@@ -286,6 +250,20 @@ export default {
 
 .card-footer {
   margin-top: auto;
+}
+
+.wallet-address {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-radius: 0.313rem;
+  text-overflow: ellipsis;
+  padding-top: 0em;
+  margin-bottom: 0em;
+  font-size: 1.5625rem;
+  @include themed() {
+      color: t('walletAddressColor');
+  }
 }
 
 .wallet-address > p-button {

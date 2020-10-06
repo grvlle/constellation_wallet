@@ -72,15 +72,15 @@ func (u *UpdateWallet) GetLatestRelease() string {
 		return ""
 	}
 	if resp == nil {
-		u.app.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
-		u.app.sendWarning("Unable to showcase current balance. Please check your internet connectivity and restart the wallet application.")
+		u.app.log.Errorln("Unable to get the latest release. Empty response from Github API, Reason: ", err)
+		u.app.sendWarning("Unable to get the latest release. Please check your internet connectivity and restart the wallet application.")
 		return ""
 	}
 	defer resp.Body.Close()
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		u.app.log.Warn("Unable to update token balance. Reason: ", err)
+		u.app.log.Warn("Unable to get the latest release. Reason: ", err)
 		return ""
 	}
 

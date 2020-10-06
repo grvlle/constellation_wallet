@@ -9,10 +9,10 @@
             <p v-if="this.$route.params.message">{{this.$route.params.message}}</p>
             <p v-else>Downloading $DAG wallet dependencies...</p>
           </div>
-          <div class="page-error-box" v-if="displayLoginError">
+          <div class="page-error-box text-danger" v-if="displayLoginError">
             <p>{{loginErrorMsg}}</p>
           </div>
-          <div class="page-error-box" v-else></div>
+          <div class="page-error-box text-danger" v-else></div>
         </div>
       </div>
       <div class="row" style="min-height: 32rem;">
@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="version">
-      <p class="version">Connected to: {{network}}<br />
+      <p class="version">Connected to:<br /> {{network}}<br />
       Molly Wallet version: {{uiVersion}}</p>
     </div>
   </div>
@@ -71,7 +71,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
 .login-bg {
   /* Full height */
   height: 100%;
@@ -105,10 +105,22 @@ export default {
 }
 
 .version {
-  width: 8rem;
+  width: 10rem;
   position: fixed;
+  bottom:0;
+  right:0;
+  font-size: 0.7rem;
   display: flex;
   align-items: bottom;
   margin-right: 1.8em;
+}
+
+.page-error-box {
+  height: 1.875em;
+  padding-bottom: 0.625rem;
+}
+
+.page-error-box p {
+    font-size: 0.75rem;
 }
 </style>

@@ -2,23 +2,54 @@ const getDefaultState = () => {
   return {
     walletLabel: "",
     imgPath: 'faces/face-0.jpg',
-    transactions: 0,
-    tokenAmount: 0,
-    totalBalance: 0,
-    availableBalance: 0,
-    nonce: 0,
+    transactions: "",
+    tokenAmount: "",
+    totalBalance: "",
+    availableBalance: "",
     currency: "USD",
-    totalValue: 0.0,
-    address: "N/A",
+    currencyRates: [],
+    address: "",
     keystorePath: "",
     alias: "",
-    publicKey: "NaN",
+    publicKey: "",
     darkMode: false,
     termsOfService: false
   }
 }
 
 const state = getDefaultState()
+
+const getters = {
+  normalizedAvailableBalance: (state) => {
+    return (state.availableBalance / 1e8).toFixed(8).replace(/\.?0+$/, "");
+  },
+  valueInCurrency: (state) => {
+    let currencyRate = state.currencyRates.find(v => v.currency === state.currency)
+    if (currencyRate === undefined) {
+      return "..."
+    } else {
+      let formatOptions, value
+      value = state.availableBalance/1e8 * currencyRate.tokenprice
+      if (state.currency == "BTC") {
+        formatOptions = {
+          style: "currency",
+          currency: "XBT",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 8
+        };
+      } else {
+        formatOptions = {
+          style: "currency",
+          currency: state.currency,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        };
+      }      
+      let formatter = new Intl.NumberFormat(navigator.language, formatOptions);
+      return formatter.format(value).replace(/XBT/,'₿');
+    }
+  }
+}
 
 const actions = {
   reset({ commit }) {
@@ -41,8 +72,8 @@ const mutations = {
   setTotalBalance(state, total) {
     state.totalBalance = total;
   },
-  setTotalValue(state, value) {
-    state.totalValue = value;
+  setCurrencyRates(state, value) {
+    state.currencyRates = value;
   },
   setAddress(state, address) {
     state.address = address;
@@ -70,7 +101,7 @@ const mutations = {
 export default {
   namespaced: true,
   state,
-  getters: {},
+  getters,
   actions,
   mutations
 }

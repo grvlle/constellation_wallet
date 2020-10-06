@@ -85,56 +85,11 @@ export default {
       this.$router.push({
         name: "login",
         params: {
-          message: "",
+          message: "Please enter your credentials below to access your Molly Wallet.",
         },
       });
     },
-    login: function () {
-      var self = this;
-      self.$Progress.start();
-      self.overlay = true;
-      window.backend.WalletApplication.Login(
-        self.keystorePath,
-        self.keystorePassword,
-        self.KeyPassword,
-        self.alias
-      ).then((result) => {
-        if (result) {
-          window.backend.WalletApplication.GetUserTheme().then((darkMode) =>
-            self.$store.commit("wallet/setDarkMode", darkMode)
-          );
-          window.backend.WalletApplication.GetWalletTag().then((walletTag) =>
-            self.$store.commit("wallet/setLabel", walletTag)
-          );
-          window.backend.WalletApplication.GetImagePath().then((imagePath) =>
-            self.$store.commit("wallet/setImgPath", imagePath)
-          );
-          self.overlay = false;
-          self.$Progress.finish();
-          self.$store.commit("app/setIsLoggedIn", true);
 
-          window.backend.WalletApplication.CheckTermsOfService().then(
-            (result) => {
-              self.$store.commit("wallet/setTermsOfService", result);
-              if (result) {
-                self.$router.push({
-                  name: "loading",
-                  params: { message: "Getting your $DAG Wallet ready..." },
-                });
-              } else {
-                self.$router.push({
-                  name: "accept terms of service",
-                  params: { message: "Terms of Service" },
-                });
-              }
-            }
-          );
-        } else {
-          self.overlay = false;
-          self.$Progress.fail();
-        }
-      });
-    },
   },
 };
 </script>
@@ -199,7 +154,6 @@ export default {
 .checkmark__check {
   transform-origin: 50% 50%;
   stroke-dasharray: 48;
-  stroke-dashoffset: 48;
   animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
 }
 

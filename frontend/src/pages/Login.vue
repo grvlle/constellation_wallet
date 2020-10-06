@@ -217,6 +217,7 @@ export default {
   max-width: 29rem;
   min-width: 29rem;
   padding-bottom: 2rem;
+  margin-top: 2.25em;
 }
 
 .input-box > div {

@@ -2,6 +2,9 @@ import LoginLayout from "@/layout/login/LoginLayout.vue";
 import Download from "@/pages/DownloadingScreen";
 import NewWallet from "@/pages/NewWallet";
 import Login from "@/pages/Login";
+import Migrate from "@/pages/Migrate";
+import PasswordMigration from "@/pages/PasswordMigration";
+import PasswordMigrationComplete from "@/pages/PasswordMigrationComplete";
 import Loading from "@/pages/LoadingScreen";
 
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
@@ -37,6 +40,21 @@ const routes = [
         path: "login",
         name: "login",
         component: Login
+      },
+      {
+        path: "migrate",
+        name: "migrate",
+        component: Migrate
+      },
+      {
+        path: "password-migration-screen",
+        name: "password migration",
+        component: PasswordMigration
+      },
+      {
+        path: "password-migration-complete",
+        name: "password migration complete",
+        component: PasswordMigrationComplete
       },
       {
         path: "accept-terms-of-service",

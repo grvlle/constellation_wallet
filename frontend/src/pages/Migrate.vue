@@ -5,20 +5,6 @@
         <form ref="textareaform" @submit.prevent="form" class="container">
           <div class="row">
             <div class="col mx-auto login-box">
-              <slot name="label">
-                <label class="control-label"> Select Network </label>
-              </slot>
-              <vue-select
-                class="select"
-                @input="setNetwork"
-                :value="network"
-                :options="[
-                  'Main Constellation Network',
-                  'Eros Test Network',
-                  'Ceres Test Network',
-                ]"
-              ></vue-select>
-              <br />
               <div class="input-box">
                 <div>
                   <label class="control-label"
@@ -31,9 +17,25 @@
                   />
                 </div>
                 <div>
+                  <fg-input
+                    style="margin-bottom: 0.125em"
+                    type="text"
+                    label="Key Alias"
+                    v-model="alias"
+                    :placeholder="alias"
+                  />
+                </div>
+                <div>
                   <password-input
                     v-model="keystorePassword"
-                    label="Password"
+                    label="Keystore Password"
+                    :validate="false"
+                  />
+                </div>
+                <div>
+                  <password-input
+                    v-model="KeyPassword"
+                    label="Key Password"
                     :validate="false"
                   />
                 </div>
@@ -42,19 +44,14 @@
                 <div class="container">
                   <div class="row">
                     <div class="col">
-                      <p-button type="primary" block @click.native="login()">
-                        <span style="display: block"> LOGIN</span>
+                      <p-button type="danger" block @click.native="migrate()">
+                        <span style="display: block"> NEXT</span>
                       </p-button>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col">
-                      <p class="text-right">
-                        Don't have a wallet yet? Create one
-                        <a href="javascript:void(0)" @click="newWallet()"
-                          >here!</a
-                        >
-                      </p>
+                      <!-- <p class="text-right">Don't have a wallet yet? Create one <a href="javascript:void(0)" @click="newWallet()">here!</a></p> -->
                     </div>
                   </div>
                 </div>
@@ -69,22 +66,14 @@
 </template>
 
 <script>
-import VueSelect from "vue-select";
-import { mapState } from "vuex";
-import Swal from "sweetalert2/dist/sweetalert2";
-
 export default {
-  components: {
-    VueSelect,
-  },
-  name: "login-screen",
+  name: "migrate-screen",
   data: () => ({
     keystorePassword: "",
     KeyPassword: "",
     overlay: false,
   }),
   computed: {
-    ...mapState("app", ["network"]),
     keystorePath: {
       get() {
         return this.$store.state.wallet.keystorePath;
@@ -102,54 +91,7 @@ export default {
       },
     },
   },
-  mounted() {
-    this.migrateNotification();
-  },
   methods: {
-    migrateNotification: function () {
-      Swal.fire({
-        title:
-          "<p style='text-align: left; color: white; margin: auto;'>Important Update</p>",
-        html: `<br><p style='text-align: left; color: white;'>If you have used the same password for both the KeyStore and the Key
-    Password you can now login together with your keyfile (key.p12) and 'a
-    single password'.<br /><br />
-    If you have used two different passwords you can migrate your Key Alias,
-    KeyStore Password and Key Password into 'a single password' by clicking the
-    button below.</p>`,
-        width: 300,
-        padding: 20,
-        backdrop: false,
-        toast: true,
-        background: "#dc3537",
-        position: "top-end",
-        confirmButtonColor: "white",
-        allowOutsideClick: false,
-        confirmButtonText: `<p style='width: 180px; color: #B53C19; font-weight: bold; margin: auto;'>MIGRATE</p>`,
-
-        showCloseButton: true,
-        // onClick: () => {
-
-        //     params: { message: "Getting your $DAG Wallet ready..." },
-        //   });
-        //   this.$notifications.clear();
-        // },
-      }).then((result) => {
-        /* Read more about isConfirmed, isDenied below */
-        if (result.isConfirmed) {
-          this.$router.push({
-            name: "migrate",
-            params: { message: "Please enter your existing wallet credentials." },
-          });
-        }
-      });
-    },
-    setNetwork: function (value) {
-      window.backend.WalletApplication.SelectNetwork(value).then((result) => {
-        if (result) {
-          this.$store.commit("app/setNetwork", value);
-        }
-      });
-    },
     newWallet: function () {
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
@@ -160,6 +102,14 @@ export default {
             darkMode: this.$route.params.darkMode,
           },
         });
+      });
+    },
+    migrate: function () {
+      this.$router.push({
+        name: "password migration",
+        params: {
+          message: "Please enter your new Molly Wallet password below: ",
+        },
       });
     },
     login: function () {

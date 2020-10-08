@@ -132,7 +132,7 @@ export default {
   stroke-dashoffset: 166;
   stroke-width: 2;
   stroke-miterlimit: 10;
-  stroke: #D32527;
+  stroke: #DD8D74;
   fill: none;
   animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
 }
@@ -146,7 +146,7 @@ export default {
   stroke: #fff;
   stroke-miterlimit: 10;
   margin: 10% auto 30%;
-  box-shadow: inset 0px 0px 0px #D32527;
+  box-shadow: inset 0px 0px 0px #DD8D74;
   animation: fill 0.4s ease-in-out 0.4s forwards,
     scale 0.3s ease-in-out 0.9s both;
 }
@@ -173,7 +173,7 @@ export default {
 }
 @keyframes fill {
   100% {
-    box-shadow: inset 0px 0px 0px 90px #D32527;
+    box-shadow: inset 0px 0px 0px 90px #DD8D74;
   }
 }
 </style>

@@ -110,21 +110,16 @@ export default {
       Swal.fire({
         title:
           "<p style='text-align: left; color: white; margin: auto;'>Important Update</p>",
-        html: `<br><p style='text-align: left; color: white;'>If you have used the same password for both the KeyStore and the Key
-    Password you can now login together with your keyfile (key.p12) and 'a
-    single password'.<br /><br />
-    If you have used two different passwords you can migrate your Key Alias,
-    KeyStore Password and Key Password into 'a single password' by clicking the
-    button below.</p>`,
+        html: `<br><p style='text-align: left; color: white;'>If you used to login to Molly Wallet with a file, multiple passwords and alias - you will need to create a new wallet and add your file during the import step.</p>`,
         width: 300,
         padding: 20,
         backdrop: false,
         toast: true,
-        background: "#dc3537",
+        background: "#2654C0",
         position: "top-end",
         confirmButtonColor: "white",
         allowOutsideClick: false,
-        confirmButtonText: `<p style='width: 180px; color: #B53C19; font-weight: bold; margin: auto;'>MIGRATE</p>`,
+        confirmButtonText: `<p style='width: 180px; color: #2654C0; font-weight: bold; margin: auto;'>MIGRATE</p>`,
 
         showCloseButton: true,
         // onClick: () => {
@@ -138,7 +133,9 @@ export default {
         if (result.isConfirmed) {
           this.$router.push({
             name: "migrate",
-            params: { message: "Please enter your existing wallet credentials." },
+            params: {
+              message: "Please enter your existing wallet credentials.",
+            },
           });
         }
       });

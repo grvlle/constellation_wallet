@@ -36,7 +36,7 @@
                       block
                       @click.native="moveToRecoveryPhrase()"
                     >
-                      KEYSTORE FILE + SINGLE PASSWORD
+                      MIGRATE YOUR KEYSTORE FILE + TWO PASSWORDS
                     </button>
                   </div>
                 </div>
@@ -123,7 +123,7 @@ export default {
   max-width: 29rem;
   min-width: 29rem;
   padding-bottom: 2rem;
-  margin-top: 2.25em;
+  margin-top: 0.25em;
 }
 
 .primary-btn {
@@ -131,6 +131,7 @@ export default {
   display: inline-block;
   margin: 15px 0px;
   width: 100%;
+  height: 90px;
   border-radius: 3px;
   background: #1d40b3;
   font-size: 14px;
@@ -227,22 +228,22 @@ export default {
 
 .icon-list:before {
   content: "\f0ca";
-  padding: 5px;
+  padding: 15px;
 }
 
 .icon-file:before {
   content: "\f15b";
-  padding: 5px;
+  padding: 15px;
 }
 
 .icon-info:before {
   content: "\f05a";
-  padding: 5px;
+  padding: 15px;
 }
 
 .icon-file2:before {
   content: "\f15c";
-  padding: 5px;
+  padding: 15px;
 }
 
 .input-box > div {

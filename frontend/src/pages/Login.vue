@@ -4,9 +4,7 @@
       <div class="col-12">
         <form ref="textareaform" @submit.prevent="form" class="container">
           <div class="row">
-            
             <div class="col mx-auto login-box">
-              
               <div class="input-box">
                 <div>
                   <password-input
@@ -20,7 +18,11 @@
                 <div class="container">
                   <div class="row">
                     <div class="col">
-                      <p-button type="primary" block @click.native="login()">
+                      <p-button
+                        type="primary"
+                        block
+                        @click.native="loginPass()"
+                      >
                         <span style="display: block"> LOGIN</span>
                       </p-button>
                     </div>
@@ -29,9 +31,7 @@
                     <div class="col">
                       <p class="text-right">
                         Don't have a wallet yet? Create one
-                        <a class="link-text" @click="createWallet()"
-                          >here!</a
-                        >
+                        <a class="link-text" @click="createWallet()">here!</a>
                       </p>
                     </div>
                   </div>
@@ -76,12 +76,12 @@ export default {
       },
     },
   },
- mounted() {
+  mounted() {
     this.migrateNotification();
-  }, 
+  },
   methods: {
-    migrateNotification: function () {
-      let timerInterval
+    migrateNotification: function() {
+      let timerInterval;
       Swal.fire({
         title:
           "<p style='text-align: left; color: white; margin: auto;'>Important Update</p>",
@@ -114,15 +114,15 @@ export default {
         },
       });
     },
-    setNetwork: function (value) {
+    setNetwork: function(value) {
       window.backend.WalletApplication.SelectNetwork(value).then((result) => {
         if (result) {
           this.$store.commit("app/setNetwork", value);
         }
       });
     },
-    createWallet: function () {
-      Swal.close()
+    createWallet: function() {
+      Swal.close();
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
           name: "create wallet",
@@ -134,7 +134,19 @@ export default {
         });
       });
     },
-    login: function () {
+    loginPass: function() {
+      var self = this;
+      window.backend.WalletApplication.LoginKeychain(
+        self.keystorePassword
+      ).then((result) => {
+        if (result) {
+          alert("succeed");
+        } else {
+          alert("failed");
+        }
+      });
+    },
+    login: function() {
       var self = this;
       self.$Progress.start();
       self.overlay = true;

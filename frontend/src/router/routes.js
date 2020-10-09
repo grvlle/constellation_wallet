@@ -66,8 +66,8 @@ const routes = [
         component: Login
       },
       {
-        path: "migrate",
-        name: "migrate",
+        path: "migrate-screen",
+        name: "migrate screen",
         component: Migrate
       },
       {

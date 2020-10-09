@@ -44,7 +44,7 @@
                 <div class="container">
                   <div class="row">
                     <div class="col">
-                      <p-button type="danger" block @click.native="migrate()">
+                      <p-button style="background: #DD8D74; border-color: #DD8D74;" block @click.native="migrate()">
                         <span style="display: block"> NEXT</span>
                       </p-button>
                     </div>
@@ -108,6 +108,7 @@ export default {
       this.$router.push({
         name: "password migration",
         params: {
+          title: "Molly Wallet migration wizard",
           message: "Please enter your new Molly Wallet password below: ",
         },
       });

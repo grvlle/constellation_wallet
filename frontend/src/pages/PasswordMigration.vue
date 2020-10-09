@@ -28,7 +28,7 @@
                 <div class="container">
                   <div class="row">
                     <div class="col">
-                      <p-button type="danger" block @click.native="completeMigration()">
+                      <p-button style="background: #dd8d74; border-color: #dd8d74;" block @click.native="completeMigration()">
                         <span style="display: block"> COMPLETE MIGRATION</span>
                       </p-button>
                     </div>
@@ -81,6 +81,7 @@ export default {
         this.$router.push({
         name: "password migration complete",
         params: {
+          title: "Molly Wallet migration wizard",
           message: "Congratulations! You have completed the Molly Wallet password migration!",
         },
       });

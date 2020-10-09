@@ -17,10 +17,24 @@
       <i class="fa fa-angle-left go-back-btn" @click="$router.go(-1)"></i>
       <div class="row">
         <div class="header-box">
-          <p class="header-title" v-if="this.$route.params.title">
+          <p
+            class="header-title"
+            v-if="this.$route.params.title && !isMigrationWizard"
+          >
             {{ this.$route.params.title }}
+           
+          </p>
+
+          <p
+            class="header-title"
+            style="color: #dd8d74"
+            v-else-if="isMigrationWizard"
+          >
+            {{ this.$route.params.title }}
+        
           </p>
           <p class="header-title" v-else>Welcome to Molly Wallet!</p>
+
           <p class="sub-title" v-if="this.$route.params.message">
             {{ this.$route.params.message }}
           </p>
@@ -44,19 +58,21 @@
         class="img-fluid"
         v-if="isDarkMode"
         src="~@/assets/img/Constellation-Logo-White.png"
-        style="max-height: 5.8rem"
+        style="max-height: 2rem"
       />
       <img
         class="img-fluid"
         v-else
         src="~@/assets/img/Constellation-Logo-Black.png"
-        style="max-height: 5.8rem"
+        style="max-height: 2rem"
       />
     </div>
     <div class="version">
       <p class="version">
-        Connected to:<br />
-        {{ network }}<br />
+        Connected to:
+        <br />
+        {{ network }}
+        <br />
         Molly Wallet version: {{ uiVersion }}
       </p>
     </div>
@@ -86,6 +102,9 @@ export default {
     },
   },
   computed: {
+    isMigrationWizard() {
+      return this.$route.name === "migrate screen" || this.$route.name === "password migration complete" || this.$route.name === "password migration";
+    },
     themeBG: function () {
       if (this.isDarkMode) {
         return DarkBG;
@@ -170,6 +189,7 @@ export default {
 
 .go-back-btn:hover {
   color: #ce9483;
+  cursor: pointer;
 }
 
 .header-title {

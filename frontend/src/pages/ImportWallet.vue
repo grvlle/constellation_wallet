@@ -34,7 +34,7 @@
                     <button
                       class="primary-btn btn-2 primary-btn-sep icon-file2"
                       block
-                      @click.native="moveToRecoveryPhrase()"
+                      v-on:click="moveToMigrate()"
                     >
                       MIGRATE YOUR KEYSTORE FILE + TWO PASSWORDS
                     </button>
@@ -57,10 +57,10 @@ export default {
   name: "import-wallet",
   data: () => ({}),
    mounted() {
-    this.migrateNotification();
+    this.triggerNotification();
   }, 
   methods: {
-    migrateNotification: function () {
+    triggerNotification: function () {
       let timerInterval
       Swal.fire({
         title:
@@ -94,13 +94,14 @@ export default {
         },
       });
     },
-    moveToRecoveryPhrase: function () {
+    moveToMigrate: function () {
+      Swal.close()
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
-          name: "recovery phrase",
+          name: "migrate screen",
           params: {
-            message: "Please write down your 12 word recovery phrase.",
-            title: "Recovery Phrase",
+            message: "Enter your information below to migrate your Molly Wallet:",
+            title: "Molly Wallet migration wizard",
             darkMode: this.$route.params.darkMode,
           },
         });
@@ -228,22 +229,22 @@ export default {
 
 .icon-list:before {
   content: "\f0ca";
-  padding: 15px;
+  padding: 0.8em;
 }
 
 .icon-file:before {
   content: "\f15b";
-  padding: 15px;
+  padding: 0.8em;
 }
 
 .icon-info:before {
   content: "\f05a";
-  padding: 15px;
+  padding: 0.8em;
 }
 
 .icon-file2:before {
   content: "\f15c";
-  padding: 15px;
+  padding: 0.8em;
 }
 
 .input-box > div {

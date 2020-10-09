@@ -29,7 +29,7 @@
                     <div class="col">
                       <p class="text-right">
                         Don't have a wallet yet? Create one
-                        <a href="javascript:void(0)" @click="createWallet()"
+                        <a class="link-text" @click="createWallet()"
                           >here!</a
                         >
                       </p>
@@ -190,6 +190,15 @@ export default {
   min-width: 29rem;
   padding-bottom: 2rem;
   margin-top: 5.25em;
+}
+
+.link-text {
+  color: #34b4e7;
+}
+
+.link-text:hover {
+  color: #ce9483;
+  cursor: pointer;
 }
 
 .input-box > div {

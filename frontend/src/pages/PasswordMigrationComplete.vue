@@ -31,7 +31,7 @@
                   <div class="row">
                     <div class="col">
                       <p-button
-                        type="danger"
+                        style="background: #dd8d74; border-color: #dd8d74;"
                         block
                         @click.native="moveToLogin()"
                       >

@@ -4,14 +4,20 @@
       <div class="col-12">
         <form ref="textareaform" @submit.prevent="form" class="container">
           <div class="row">
-            
             <div class="col mx-auto login-box">
-              
+              <br />
               <div class="input-box">
                 <div>
                   <password-input
                     v-model="keystorePassword"
-                    label="Password"
+                    label="New Password"
+                    :validate="true"
+                  />
+                </div>
+                <div>
+                  <password-input
+                    v-model="keyPassword"
+                    label="Repeat New Password"
                     :validate="false"
                   />
                 </div>
@@ -20,19 +26,24 @@
                 <div class="container">
                   <div class="row">
                     <div class="col">
-                      <p-button type="primary" block @click.native="login()">
-                        <span style="display: block"> LOGIN</span>
+                      <p-button
+                        type="primary"
+                        block
+                        @click.native="moveToRecoveryPhraseInfo()"
+                      >
+                        <span style="display: block"> CREATE NEW ACCOUNT</span>
                       </p-button>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col">
-                      <p class="text-right">
-                        Don't have a wallet yet? Create one
-                        <a href="javascript:void(0)" @click="createWallet()"
-                          >here!</a
-                        >
-                      </p>
+                      <p-button
+                        type="secondary"
+                        block
+                        @click.native="completeMigration()"
+                      >
+                        <span style="display: block"> RESTORE ACCOUNT</span>
+                      </p-button>
                     </div>
                   </div>
                 </div>
@@ -51,7 +62,8 @@ import { mapState } from "vuex";
 import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
-  name: "login-screen",
+  components: {},
+  name: "create-wallet",
   data: () => ({
     keystorePassword: "",
     KeyPassword: "",
@@ -76,16 +88,29 @@ export default {
       },
     },
   },
- mounted() {
+  mounted() {
     this.migrateNotification();
-  }, 
+  },
   methods: {
+      moveToRecoveryPhraseInfo: function () {
+      Swal.close()
+      this.$store.dispatch("wallet/reset").then(() => {
+        this.$router.push({
+          name: "recovery phrase info",
+          params: {
+            message: "Let's first create our recovery phrase!",
+            title: "Recovery Phrase",
+            darkMode: this.$route.params.darkMode,
+          },
+        });
+      });
+    },
     migrateNotification: function () {
-      let timerInterval
+      let timerInterval;
       Swal.fire({
         title:
-          "<p style='text-align: left; color: white; margin: auto;'>Important Update</p>",
-        html: `<br><p style='text-align: left; color: white;'>If you used to login to Molly Wallet with a file, multiple passwords and alias - you will need to create a new wallet and add your file during the import step.</p>`,
+          "<p style='text-align: left; color: white; margin: auto;'>Note</p>",
+        html: `<br><p style='text-align: left; color: white;'>This is the password you will use to login to your wallet each session. If you already have an existing wallet, please select the <b>restore</b> option.</p>`,
         width: 300,
         padding: 20,
         backdrop: false,
@@ -114,70 +139,13 @@ export default {
         },
       });
     },
-    setNetwork: function (value) {
-      window.backend.WalletApplication.SelectNetwork(value).then((result) => {
-        if (result) {
-          this.$store.commit("app/setNetwork", value);
-        }
-      });
-    },
-    createWallet: function () {
-      Swal.close()
-      this.$store.dispatch("wallet/reset").then(() => {
-        this.$router.push({
-          name: "create wallet",
-          params: {
-            message: "Please enter your new Molly Wallet passwords below.",
-            title: "Create wallet password",
-            darkMode: this.$route.params.darkMode,
-          },
-        });
-      });
-    },
-    login: function () {
-      var self = this;
-      self.$Progress.start();
-      self.overlay = true;
-      window.backend.WalletApplication.Login(
-        self.keystorePath,
-        self.keystorePassword,
-        self.KeyPassword,
-        self.alias
-      ).then((result) => {
-        if (result) {
-          window.backend.WalletApplication.GetUserTheme().then((darkMode) =>
-            self.$store.commit("wallet/setDarkMode", darkMode)
-          );
-          window.backend.WalletApplication.GetWalletTag().then((walletTag) =>
-            self.$store.commit("wallet/setLabel", walletTag)
-          );
-          window.backend.WalletApplication.GetImagePath().then((imagePath) =>
-            self.$store.commit("wallet/setImgPath", imagePath)
-          );
-          self.overlay = false;
-          self.$Progress.finish();
-          self.$store.commit("app/setIsLoggedIn", true);
-
-          window.backend.WalletApplication.CheckTermsOfService().then(
-            (result) => {
-              self.$store.commit("wallet/setTermsOfService", result);
-              if (result) {
-                self.$router.push({
-                  name: "loading",
-                  params: { message: "Getting your $DAG Wallet ready..." },
-                });
-              } else {
-                self.$router.push({
-                  name: "accept terms of service",
-                  params: { message: "Terms of Service" },
-                });
-              }
-            }
-          );
-        } else {
-          self.overlay = false;
-          self.$Progress.fail();
-        }
+    completeMigration: function () {
+      this.$router.push({
+        name: "password migration complete",
+        params: {
+          message:
+            "Congratulations! You have completed the Molly Wallet password migration!",
+        },
       });
     },
   },
@@ -189,7 +157,6 @@ export default {
   max-width: 29rem;
   min-width: 29rem;
   padding-bottom: 2rem;
-  margin-top: 5.25em;
 }
 
 .input-box > div {

@@ -1,9 +1,12 @@
 import LoginLayout from "@/layout/login/LoginLayout.vue";
 import Download from "@/pages/DownloadingScreen";
 import NewWallet from "@/pages/NewWallet";
+import CreateWallet from "@/pages/CreateWallet";
 import Login from "@/pages/Login";
 import Migrate from "@/pages/Migrate";
 import PasswordMigration from "@/pages/PasswordMigration";
+import RecoveryPhraseInfo from "@/pages/RecoveryPhraseInfo";
+import RecoveryPhrase from "@/pages/RecoveryPhrase";
 import PasswordMigrationComplete from "@/pages/PasswordMigrationComplete";
 import Loading from "@/pages/LoadingScreen";
 
@@ -35,6 +38,21 @@ const routes = [
         path: "new-wallet",
         name: "new wallet",
         component: NewWallet
+      },
+      {
+        path: "create-wallet",
+        name: "create wallet",
+        component: CreateWallet
+      },
+      {
+        path: "recovery-phrase-info",
+        name: "recovery phrase info",
+        component: RecoveryPhraseInfo
+      },
+      {
+        path: "recovery-phrase",
+        name: "recovery phrase",
+        component: RecoveryPhrase
       },
       {
         path: "login",

@@ -40,7 +40,7 @@
                       <p-button
                         type="secondary"
                         block
-                        @click.native="completeMigration()"
+                        @click.native="moveToImportWallet()"
                       >
                         <span style="display: block"> RESTORE ACCOUNT</span>
                       </p-button>
@@ -92,14 +92,27 @@ export default {
     this.migrateNotification();
   },
   methods: {
-      moveToRecoveryPhraseInfo: function () {
-      Swal.close()
+    moveToRecoveryPhraseInfo: function () {
+      Swal.close();
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
           name: "recovery phrase info",
           params: {
             message: "Let's first create our recovery phrase!",
             title: "Recovery Phrase",
+            darkMode: this.$route.params.darkMode,
+          },
+        });
+      });
+    },
+    moveToImportWallet: function () {
+      Swal.close();
+      this.$store.dispatch("wallet/reset").then(() => {
+        this.$router.push({
+          name: "import wallet",
+          params: {
+            message: "Please select how you would like to import your wallet:",
+            title: "Import an existing wallet",
             darkMode: this.$route.params.darkMode,
           },
         });

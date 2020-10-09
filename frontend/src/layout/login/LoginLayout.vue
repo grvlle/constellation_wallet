@@ -4,7 +4,17 @@
     class="login-bg vertical-center"
     v-bind:style="{ backgroundImage: 'url(' + themeBG + ')' }"
   >
+    <link
+      href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato"
+      rel="stylesheet"
+      type="text/css"
+    />
     <div class="container">
+      <i class="fa fa-angle-left go-back-btn" @click="$router.go(-1)"></i>
       <div class="row">
         <div class="header-box">
           <p class="header-title" v-if="this.$route.params.title">
@@ -14,12 +24,13 @@
           <p class="sub-title" v-if="this.$route.params.message">
             {{ this.$route.params.message }}
           </p>
-          <p class="sub-title" v-else>Downloading $DAG wallet dependencies...</p>
+          <p class="sub-title" v-else>
+            Downloading $DAG wallet dependencies...
+          </p>
           <div class="page-error-box text-danger" v-if="displayLoginError">
             <p>{{ loginErrorMsg }}</p>
           </div>
           <div class="page-error-box text-danger" v-else></div>
-
         </div>
       </div>
       <div class="row" style="min-height: 32rem">
@@ -144,26 +155,43 @@ export default {
   margin-right: 1.8em;
 }
 
+.go-back-btn {
+  width: 10rem;
+  position: fixed;
+  color: #b9b9b9;
+  top: 0;
+  left: 0;
+  font-size: 2.7rem;
+  display: flex;
+  align-items: bottom;
+  margin-left: 0.5em;
+  margin-top: 0.5em;
+}
+
+.go-back-btn:hover {
+  color: #ce9483;
+}
+
 .header-title {
-  color: #1D40B3;
+  color: #1d40b3;
   font-family: Poppins;
-  
+
   font-size: 28px;
   font-weight: 500;
   margin-bottom: 5px;
 }
 
 .sub-title {
-    color: #666666;
+  color: #666666;
   font-family: Poppins;
-  
+
   font-size: 13px;
   font-weight: 500;
 }
 
 .header-box {
   margin: auto;
-    min-height: 15%; /* Fallback for browsers do NOT support vh unit */
+  min-height: 15%; /* Fallback for browsers do NOT support vh unit */
   min-height: 15vh; /* These two lines are counted as one :-)       */
   max-width: 27rem;
   min-width: 27rem;

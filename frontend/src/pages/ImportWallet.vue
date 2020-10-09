@@ -1,0 +1,273 @@
+<template>
+  <div class="container">
+    <link
+      href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <div class="row">
+      <div class="col-12">
+        <div class="row">
+          <div class="col mx-auto login-box">
+            <div class="button-box">
+              <div class="container">
+                <div class="row">
+                  <div class="col">
+                    <button
+                      class="primary-btn btn-1 primary-btn-sep icon-list"
+                      block
+                      @click.native="moveToRecoveryPhrase()"
+                    >
+                      12 WORD RECOVERY PHRASE
+                    </button>
+                    <button
+                      class="primary-btn btn-1 primary-btn-sep icon-file"
+                      block
+                      @click.native="moveToRecoveryPhrase()"
+                    >
+                      KEYSTORE FILE + SINGLE PASSWORD
+                    </button>
+                    <button
+                      class="primary-btn btn-2 primary-btn-sep icon-file2"
+                      block
+                      @click.native="moveToRecoveryPhrase()"
+                    >
+                      KEYSTORE FILE + SINGLE PASSWORD
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <page-overlay text="Loading..." :isActive="overlay" />
+  </div>
+</template>
+
+<script>
+import Swal from "sweetalert2/dist/sweetalert2";
+
+export default {
+  name: "import-wallet",
+  data: () => ({}),
+   mounted() {
+    this.migrateNotification();
+  }, 
+  methods: {
+    migrateNotification: function () {
+      let timerInterval
+      Swal.fire({
+        title:
+          "<p style='text-align: left; color: white; margin: auto;'>Note!</p>",
+        html: `<br><p style='text-align: left; color: white;'>If you have a Keystore file that has two passwords and they are the same password, you can skip migrate and directly import it using the single password method.</p>`,
+        width: 300,
+        padding: 20,
+        backdrop: false,
+        toast: true,
+        background: "#2654C0",
+        position: "top-end",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        showCloseButton: true,
+        timer: 20000,
+        timerProgressBar: true,
+        willOpen: () => {
+          Swal.showLoading();
+          timerInterval = setInterval(() => {
+            const content = Swal.getContent();
+            if (content) {
+              const b = content.querySelector("b");
+              if (b) {
+                b.textContent = Swal.getTimerLeft();
+              }
+            }
+          }, 100);
+        },
+        onClose: () => {
+          clearInterval(timerInterval);
+        },
+      });
+    },
+    moveToRecoveryPhrase: function () {
+      this.$store.dispatch("wallet/reset").then(() => {
+        this.$router.push({
+          name: "recovery phrase",
+          params: {
+            message: "Please write down your 12 word recovery phrase.",
+            title: "Recovery Phrase",
+            darkMode: this.$route.params.darkMode,
+          },
+        });
+      });
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+.body-text {
+  color: #666666;
+  font-family: Poppins;
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.login-box {
+  max-width: 29rem;
+  min-width: 29rem;
+  padding-bottom: 2rem;
+  margin-top: 2.25em;
+}
+
+.primary-btn {
+  padding: 25px 80px;
+  display: inline-block;
+  margin: 15px 0px;
+  width: 100%;
+  border-radius: 3px;
+  background: #1d40b3;
+  font-size: 14px;
+  color: white;
+  outline: none;
+  border: none;
+  position: relative;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.primary-btn:after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+/* Pseudo elements for icons */
+.primary-btn:before {
+  font-family: "FontAwesome";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Icon separator */
+.primary-btn-sep {
+  padding: 25px 60px 25px 120px;
+}
+
+.primary-btn-sep:before {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Button 1 */
+.btn-1 {
+  background: #1d40b3;
+  color: #fff;
+}
+
+.btn-1:hover {
+  background: #284bbe;
+}
+
+.btn-1:active {
+  background: #284bbe;
+  top: 2px;
+}
+
+.btn-1:before {
+  position: absolute;
+  height: 100%;
+  left: 0;
+  top: 0;
+  line-height: 3;
+  font-size: 140%;
+  width: 60px;
+}
+
+/* Button 2 */
+.btn-2 {
+  background: #dd8d74;
+  color: #fff;
+}
+
+.btn-2:hover {
+  background: #ce9483;
+}
+
+.btn-2:active {
+  background: #ce9483;
+  top: 2px;
+}
+
+.btn-2:before {
+  position: absolute;
+  height: 100%;
+  left: 0;
+  top: 0;
+  line-height: 3;
+  font-size: 140%;
+  width: 60px;
+}
+
+/* Icons */
+
+.icon-list:before {
+  content: "\f0ca";
+  padding: 5px;
+}
+
+.icon-file:before {
+  content: "\f15b";
+  padding: 5px;
+}
+
+.icon-info:before {
+  content: "\f05a";
+  padding: 5px;
+}
+
+.icon-file2:before {
+  content: "\f15c";
+  padding: 5px;
+}
+
+.input-box > div {
+  margin-bottom: 1.875em;
+}
+
+.button-box .container {
+  margin-left: 0em;
+  margin-right: 0em;
+  padding-left: 0em;
+  padding-right: 0em;
+}
+
+.button-box .container .row {
+  margin-left: 0em;
+  margin-right: 0em;
+  padding-left: 0em;
+  padding-right: 0em;
+  margin-top: 1.25em;
+}
+
+.button-box .container .row [class^="col"] {
+  margin-left: 0em;
+  margin-right: 0em;
+  padding-left: 0em;
+  padding-right: 0em;
+}
+</style>

@@ -1,6 +1,7 @@
 import LoginLayout from "@/layout/login/LoginLayout.vue";
 import Download from "@/pages/DownloadingScreen";
 import NewWallet from "@/pages/NewWallet";
+import ImportWallet from "@/pages/ImportWallet";
 import CreateWallet from "@/pages/CreateWallet";
 import Login from "@/pages/Login";
 import Migrate from "@/pages/Migrate";
@@ -43,6 +44,11 @@ const routes = [
         path: "create-wallet",
         name: "create wallet",
         component: CreateWallet
+      },
+      {
+        path: "import-wallet",
+        name: "import wallet",
+        component: ImportWallet
       },
       {
         path: "recovery-phrase-info",

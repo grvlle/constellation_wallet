@@ -5,31 +5,8 @@
         <form ref="textareaform" @submit.prevent="form" class="container">
           <div class="row">
             <div class="col mx-auto login-box">
-              <slot name="label">
-                <label class="control-label"> Select Network </label>
-              </slot>
-              <vue-select
-                class="select"
-                @input="setNetwork"
-                :value="network"
-                :options="[
-                  'Main Constellation Network',
-                  'Eros Test Network',
-                  'Ceres Test Network',
-                ]"
-              ></vue-select>
-              <br />
+
               <div class="input-box">
-                <div>
-                  <label class="control-label"
-                    >Select your private key (key.p12)</label
-                  >
-                  <file-selector
-                    v-model="keystorePath"
-                    :placeholder="keystorePath"
-                    action="SelectFile"
-                  />
-                </div>
                 <div>
                   <password-input
                     v-model="keystorePassword"
@@ -69,14 +46,10 @@
 </template>
 
 <script>
-import VueSelect from "vue-select";
 import { mapState } from "vuex";
 import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
-  components: {
-    VueSelect,
-  },
   name: "login-screen",
   data: () => ({
     keystorePassword: "",
@@ -117,17 +90,12 @@ export default {
         toast: true,
         background: "#2654C0",
         position: "top-end",
-        confirmButtonColor: "white",
+        showConfirmButton: false,
         allowOutsideClick: false,
-        confirmButtonText: `<p style='width: 180px; color: #2654C0; font-weight: bold; margin: auto;'>MIGRATE</p>`,
+
 
         showCloseButton: true,
-        // onClick: () => {
 
-        //     params: { message: "Getting your $DAG Wallet ready..." },
-        //   });
-        //   this.$notifications.clear();
-        // },
       }).then((result) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {

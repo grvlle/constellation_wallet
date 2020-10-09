@@ -230,13 +230,17 @@ export default {
             confirmButtonColor: "#6DECBB",
             showCancelButton: true,
             animation: false,
-            preConfirm: (value) => {
-              if (value*1e8 + self.txAmount.denormalized > self.availableBalance) {
-                Swal.showValidationMessage("The transaction amount + fee can not exceed your balance")
-              } else if (value < 0 ||  value > 3711998690 || isNaN(parseFloat(value))) {
-                Swal.showValidationMessage("Please enter a transaction fee between 0 and 3711998690 $DAG")
-              }
-              return {input: value}
+            inputValidator: value => {
+              return new Promise(resolve => {
+                if (value*1e8 + self.txAmount.denormalized > self.availableBalance) {
+                  resolve("The transaction amount + fee can not exceed your balance");
+                } else if (value < 0 ||  value > 3711998690 || isNaN(parseFloat(value))) {
+                  resolve("Please enter a transaction fee between 0 and 3711998690");
+                }
+                else {
+                  resolve();
+                }
+              });
             }
           }
         ])

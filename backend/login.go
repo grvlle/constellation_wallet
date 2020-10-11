@@ -2,10 +2,12 @@ package app
 
 import (
 	"os"
+	"os/user"
 	"runtime"
 	"strings"
 
 	"github.com/grvlle/constellation_wallet/backend/models"
+	"github.com/zalando/go-keyring"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -14,6 +16,36 @@ func (a *WalletApplication) LoginError(errMsg string) {
 	if errMsg != "" {
 		a.RT.Events.Emit("login_error", errMsg, true)
 	}
+}
+
+// LoginKeychain is called from the FE and to store credentials
+func (a *WalletApplication) LoginKeychain(keystorePassword string) bool {
+	user, err := user.Current()
+
+	if err != nil {
+		a.log.Warnln("Unable to detect your username.")
+		a.LoginError("Unable to detect your username.")
+		return false
+	}
+
+	service := "molly-wallet"
+	account := user.Username
+
+	secret, err := keyring.Get(service, account)
+
+	if err != nil {
+		err := keyring.Set(service, account, keystorePassword)
+
+		if (err != nil) {
+			a.log.Warnln("Unable to create your keychain.")
+			a.LoginError("Unable to create your keycahin.")
+			return false
+		}
+		
+		return false
+	}
+
+	return secret == keystorePassword
 }
 
 // Login is called from the FE when a user logs in with a wallet object

@@ -33,7 +33,7 @@
             {{ this.$route.params.title }}
         
           </p>
-          <p class="header-title" v-else>Welcome to Molly Wallet!</p>
+          <p class="header-title" v-else>Welcome to <b>Molly Wallet</b> 2.0!</p>
 
           <p class="sub-title" v-if="this.$route.params.message">
             {{ this.$route.params.message }}

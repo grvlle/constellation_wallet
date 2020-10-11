@@ -27,7 +27,7 @@
                     <button
                       class="primary-btn btn-1 primary-btn-sep icon-file"
                       block
-                      @click.native="moveToRecoveryPhrase()"
+                      v-on:click="moveToImportKeystore()"
                     >
                       KEYSTORE FILE + SINGLE PASSWORD
                     </button>
@@ -102,6 +102,19 @@ export default {
           params: {
             message: "Enter your information below to migrate your Molly Wallet:",
             title: "Molly Wallet migration wizard",
+            darkMode: this.$route.params.darkMode,
+          },
+        });
+      });
+    },
+      moveToImportKeystore: function () {
+      Swal.close()
+      this.$store.dispatch("wallet/reset").then(() => {
+        this.$router.push({
+          name: "import keystore",
+          params: {
+            message: "Enter your information below to migrate your Molly Wallet:",
+            title: "Import keystore file",
             darkMode: this.$route.params.darkMode,
           },
         });

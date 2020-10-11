@@ -1,15 +1,19 @@
 import LoginLayout from "@/layout/login/LoginLayout.vue";
 import Download from "@/pages/DownloadingScreen";
 import NewWallet from "@/pages/NewWallet";
-import ImportWallet from "@/pages/ImportWallet";
 import CreateWallet from "@/pages/CreateWallet";
 import Login from "@/pages/Login";
-import Migrate from "@/pages/Migrate";
-import PasswordMigration from "@/pages/PasswordMigration";
 import RecoveryPhraseInfo from "@/pages/RecoveryPhraseInfo";
 import RecoveryPhrase from "@/pages/RecoveryPhrase";
-import PasswordMigrationComplete from "@/pages/PasswordMigrationComplete";
 import Loading from "@/pages/LoadingScreen";
+
+import ImportWallet from "@/pages/ImportWallet/ImportWallet";
+import ImportKeystore from "@/pages/ImportWallet/ImportKeystore";
+import CreateWalletPassword from "@/pages/ImportWallet/CreateWalletPassword";
+import ImportKeystoreComplete from "@/pages/ImportWallet/ImportKeystoreComplete";
+import Migrate from "@/pages/ImportWallet/Migrate";
+import PasswordMigration from "@/pages/ImportWallet/PasswordMigration";
+import PasswordMigrationComplete from "@/pages/ImportWallet/PasswordMigrationComplete";
 
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
 import Dashboard from "@/pages/Dashboard.vue";
@@ -46,11 +50,6 @@ const routes = [
         component: CreateWallet
       },
       {
-        path: "import-wallet",
-        name: "import wallet",
-        component: ImportWallet
-      },
-      {
         path: "recovery-phrase-info",
         name: "recovery phrase info",
         component: RecoveryPhraseInfo
@@ -59,6 +58,26 @@ const routes = [
         path: "recovery-phrase",
         name: "recovery phrase",
         component: RecoveryPhrase
+      },
+      {
+        path: "import-wallet",
+        name: "import wallet",
+        component: ImportWallet
+      },
+      {
+        path: "import-keystore",
+        name: "import keystore",
+        component: ImportKeystore
+      },
+      {
+        path: "import-keystore-complete",
+        name: "import keystore complete",
+        component: ImportKeystoreComplete
+      },
+      {
+        path: "create-wallet-password",
+        name: "create wallet password",
+        component: CreateWalletPassword
       },
       {
         path: "login",

@@ -8,12 +8,14 @@ import RecoveryPhrase from "@/pages/RecoveryPhrase";
 import Loading from "@/pages/LoadingScreen";
 
 import ImportWallet from "@/pages/ImportWallet/ImportWallet";
-import ImportKeystore from "@/pages/ImportWallet/ImportKeystore";
-import CreateWalletPassword from "@/pages/ImportWallet/CreateWalletPassword";
-import ImportKeystoreComplete from "@/pages/ImportWallet/ImportKeystoreComplete";
-import Migrate from "@/pages/ImportWallet/Migrate";
-import PasswordMigration from "@/pages/ImportWallet/PasswordMigration";
-import PasswordMigrationComplete from "@/pages/ImportWallet/PasswordMigrationComplete";
+
+import ImportKeystore from "@/pages/ImportWallet/Keystore/ImportKeystore";
+import CreateWalletPassword from "@/pages/ImportWallet/Keystore/CreateWalletPassword";
+import ImportKeystoreComplete from "@/pages/ImportWallet/Keystore/ImportKeystoreComplete";
+
+import Migrate from "@/pages/ImportWallet/Migrate/Migrate";
+import PasswordMigration from "@/pages/ImportWallet/Migrate/PasswordMigration";
+import PasswordMigrationComplete from "@/pages/ImportWallet/Migrate/PasswordMigrationComplete";
 
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
 import Dashboard from "@/pages/Dashboard.vue";

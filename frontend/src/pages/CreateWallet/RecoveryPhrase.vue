@@ -14,6 +14,7 @@
                         label="Mnemonic Seed"
                         v-model="seed"
                         :placeholder="seed"
+                        :disabled=true
                       />
                     </p>
                     <p-button type="primary" block @click.native="moveToLogin()">

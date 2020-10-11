@@ -20,7 +20,7 @@
                     <button
                       class="primary-btn btn-1 primary-btn-sep icon-list"
                       block
-                      @click.native="moveToRecoveryPhrase()"
+                      v-on:click="moveToImportRecoveryPhrase()"
                     >
                       12 WORD RECOVERY PHRASE
                     </button>
@@ -92,6 +92,19 @@ export default {
         onClose: () => {
           clearInterval(timerInterval);
         },
+      });
+    },
+    moveToImportRecoveryPhrase: function () {
+      Swal.close()
+      this.$store.dispatch("wallet/reset").then(() => {
+        this.$router.push({
+          name: "import recovery phrase",
+          params: {
+            message: "Enter your 12 word recovery phrase to import your Molly Wallet:",
+            title: "Import recovery phrase",
+            darkMode: this.$route.params.darkMode,
+          },
+        });
       });
     },
     moveToMigrate: function () {

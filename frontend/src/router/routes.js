@@ -1,13 +1,18 @@
 import LoginLayout from "@/layout/login/LoginLayout.vue";
 import Download from "@/pages/DownloadingScreen";
 import NewWallet from "@/pages/NewWallet";
-import CreateWallet from "@/pages/CreateWallet";
 import Login from "@/pages/Login";
-import RecoveryPhraseInfo from "@/pages/RecoveryPhraseInfo";
-import RecoveryPhrase from "@/pages/RecoveryPhrase";
 import Loading from "@/pages/LoadingScreen";
 
+import CreateWallet from "@/pages/CreateWallet/CreateWallet";
+import RecoveryPhraseInfo from "@/pages/CreateWallet/RecoveryPhraseInfo";
+import RecoveryPhrase from "@/pages/CreateWallet/RecoveryPhrase";
+
 import ImportWallet from "@/pages/ImportWallet/ImportWallet";
+
+import ImportRecoveryPhrase from "@/pages/ImportWallet/RecoveryPhrase/ImportRecoveryPhrase";
+import ImportRecoveryPhraseCreateWalletPassword from "@/pages/ImportWallet/RecoveryPhrase/ImportRecoveryPhraseCreateWalletPassword";
+import ImportRecoveryPhraseComplete from "@/pages/ImportWallet/RecoveryPhrase/ImportRecoveryPhraseComplete";
 
 import ImportKeystore from "@/pages/ImportWallet/Keystore/ImportKeystore";
 import CreateWalletPassword from "@/pages/ImportWallet/Keystore/CreateWalletPassword";
@@ -70,6 +75,21 @@ const routes = [
         path: "import-keystore",
         name: "import keystore",
         component: ImportKeystore
+      },
+      {
+        path: "import-recovery-phrase",
+        name: "import recovery phrase",
+        component: ImportRecoveryPhrase
+      },
+      {
+        path: "import-recovery-phrase-create-wallet-password",
+        name: "import recovery phrase create wallet password",
+        component: ImportRecoveryPhraseCreateWalletPassword
+      },
+      {
+        path: "import-recovery-phrase-complete",
+        name: "import recovery phrase complete",
+        component: ImportRecoveryPhraseComplete
       },
       {
         path: "import-keystore-complete",

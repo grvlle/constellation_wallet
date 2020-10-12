@@ -79,6 +79,9 @@ export default {
   methods: {
 
     completeImport: function () {
+
+      //TODO - save password KeyChain (Alex)
+
       this.$router.push({
         name: "import keystore complete",
         params: {

@@ -32,7 +32,7 @@
                       <p-button
                         type="primary"
                         block
-                        @click.native="createWalletPassword()"
+                        @click.native="loadKeyStoreFile(keystorePath, keystorePassword)"
                       >
                         <span style="display: block"> IMPORT</span>
                       </p-button>
@@ -51,6 +51,8 @@
 
 <script>
 import { mapState } from "vuex";
+import { keyStoreFile } from "@stardust-collective/dag-keystore";
+import {dagWalletAccount} from '@stardust-collective/dag-wallet-sdk';
 import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
@@ -80,7 +82,45 @@ export default {
     },
   },
   methods: {
+    loadKeyStoreFile: function (filePath, password) {
+
+      if (!filePath ||  !password) {
+        //TODO - this shouldn't happen when we have form validation. For now it means skip and continue flow
+        this.createWalletPassword()
+        return
+      }
+
+      let reader = new FileReader();
+
+      reader.readAsBinaryString(filePath);
+
+      reader.onload = () => {
+
+        let keyPair;
+
+        try {
+          keyPair = keyStoreFile.readP12(reader.result, password);
+        }
+        catch (e) {
+          //TODO - ERROR (Vito)
+          //this.errorMessage = e.message;
+        }
+
+        if (keyPair) {
+          // TODO - save seed and privKey to KeyChain (Alex)
+          dagWalletAccount.loginPrivateKey(keyPair.privateKey);
+
+          this.createWalletPassword()
+        }
+      };
+
+      reader.onerror = () => {
+        //TODO - ERROR (Vito)
+        //this.errorMessage = 'Unable to read file';
+      };
+    },
     createWalletPassword: function () {
+
       Swal.close();
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
@@ -95,6 +135,7 @@ export default {
     },
   },
 };
+
 </script>
 
 <style scoped lang="scss">

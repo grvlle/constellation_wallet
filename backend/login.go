@@ -29,6 +29,9 @@ func (a *WalletApplication) LoginKeychain(keystorePassword string) bool {
 	}
 
 	service := "molly-wallet"
+//     service := "molly-wallet-login"
+//     service := "molly-wallet-seed"
+//     service := "molly-wallet-pkey"
 	account := user.Username
 
 	secret, err := keyring.Get(service, account)

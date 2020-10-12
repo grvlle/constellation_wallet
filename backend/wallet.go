@@ -304,24 +304,12 @@ func (a *WalletApplication) initDashboardWidgets() {
 
 // SavePasswordToKeychain is for saving password to new keychain
 func (a *WalletApplication) SavePasswordToKeychain(keystorePassword string) bool {
-	user, err := user.Current()
-	if err != nil {
-		a.log.Warnln("Unable to detect your username.")
-		a.LoginError("Unable to detect your username.")
-		return false
-	}
+	return a.saveInfoToKeychain(ServiceLogin, keystorePassword)
+}
 
-	service := "molly-wallet-login"	
-	account := user.Username
-
-	err = keyring.Set(service, account, keystorePassword)
-	if (err != nil) {
-		a.log.Warnln("Unable to create your keychain.")
-		a.LoginError("Unable to create your keycahin.")
-		return false
-	}
-	
-	return true
+// SaveSeedPhraseToKeychain is for saving password to new keychain
+func (a *WalletApplication) SaveSeedPhraseToKeychain(seedPhrase string) bool {
+	return a.saveInfoToKeychain(ServiceSeed, seedPhrase)
 }
 
 // InitKeychains is for initializing of all your existing keychains
@@ -333,15 +321,32 @@ func (a *WalletApplication) InitKeychains() bool {
 		return false
 	}
 
-	servicePass := "molly-wallet-login"	
-	serviceSeed := "molly-wallet-seed"
-	servicePKey := "molly-wallet-pkey"
 	account := user.Username
 
-	a.deleteKeychain(servicePass, account)
-	a.deleteKeychain(serviceSeed, account)
-	a.deleteKeychain(servicePKey, account)
+	a.deleteKeychain(ServiceLogin, account)
+	a.deleteKeychain(ServiceSeed, account)
+	a.deleteKeychain(ServicePKey, account)
 
+	return true
+}
+
+func (a *WalletApplication) saveInfoToKeychain(service, info string) bool {
+	user, err := user.Current()
+	if err != nil {
+		a.log.Warnln("Unable to detect your username.")
+		a.LoginError("Unable to detect your username.")
+		return false
+	}
+
+	account := user.Username
+
+	err = keyring.Set(service, account, info)
+	if (err != nil) {
+		a.log.Warnln("Unable to create your keychain.")
+		a.LoginError("Unable to create your keycahin.")
+		return false
+	}
+	
 	return true
 }
 

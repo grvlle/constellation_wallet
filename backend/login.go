@@ -28,10 +28,9 @@ func (a *WalletApplication) LoginKeychain(keystorePassword string) bool {
 		return false
 	}
 
-	service := "molly-wallet-login"
 	account := user.Username
 
-	secret, err := keyring.Get(service, account)
+	secret, err := keyring.Get(ServiceLogin, account)
 
 	if err != nil {
 		a.log.Warnln("Your login keychain doesn't exist.")

@@ -14,10 +14,14 @@
                         label="Mnemonic Seed"
                         v-model="seed"
                         :placeholder="seed"
-                        :readonly=true
+                        :readonly="true"
                       />
                     </p>
-                    <p-button type="primary" block @click.native="moveToLogin()">
+                    <p-button
+                      type="primary"
+                      block
+                      @click.native="moveToLogin()"
+                    >
                       <span style="display: block">
                         I HAVE WRITTEN DOWN MY RECOVERY PHRASE</span
                       >
@@ -45,10 +49,10 @@ export default {
   data: () => ({ seed }), //"witch collapse practice feed shame open despair creek road again ice least"
   mounted() {
     this.warningNotification();
-  }, 
+  },
   methods: {
-    warningNotification: function () {
-      let timerInterval
+    warningNotification: function() {
+      let timerInterval;
       Swal.fire({
         title:
           "<p style='text-align: left; color: white; margin: auto;'>Warning</p>",
@@ -81,12 +85,11 @@ export default {
         },
       });
     },
-    moveToLogin: function () {
-
+    moveToLogin: function() {
       //TODO - save seed and privKey to KeyChain (Alex)
       //const privateKey = keyStore.getPrivateKeyFromMnemonic(seed);
-
-      Swal.close()
+      alert(seed);
+      Swal.close();
       this.$router.push({
         name: "login",
         params: {

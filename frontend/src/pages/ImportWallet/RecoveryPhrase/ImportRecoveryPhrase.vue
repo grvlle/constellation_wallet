@@ -46,6 +46,12 @@ export default {
   methods: {
  
     moveToCreatePassword: function () {
+      // var self = this;
+
+      //TODO - save seed and privKey to KeyChain (Alex)
+      //TODO - verify valid seed and valid privateKey (Frank)
+      //const privateKey = keyStore.getPrivateKeyFromMnemonic(self.seed);
+
       Swal.close()
       this.$router.push({
         name: "import recovery phrase create wallet password",

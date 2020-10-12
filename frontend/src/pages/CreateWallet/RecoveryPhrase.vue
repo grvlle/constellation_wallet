@@ -14,7 +14,7 @@
                         label="Mnemonic Seed"
                         v-model="seed"
                         :placeholder="seed"
-                        :disabled=true
+                        :readonly=true
                       />
                     </p>
                     <p-button type="primary" block @click.native="moveToLogin()">
@@ -36,13 +36,13 @@
 
 <script>
 import Swal from "sweetalert2/dist/sweetalert2";
+import { keyStore } from "@stardust-collective/dag-keystore";
+
+const seed = keyStore.generateSeedPhrase();
 
 export default {
   name: "recovery-phrase",
-  data: () => ({
-    seed:
-      "witch collapse practice feed shame open despair creek road again ice least",
-  }), 
+  data: () => ({ seed }), //"witch collapse practice feed shame open despair creek road again ice least"
   mounted() {
     this.warningNotification();
   }, 
@@ -82,6 +82,10 @@ export default {
       });
     },
     moveToLogin: function () {
+
+      //TODO - save seed and privKey to KeyChain (Alex)
+      //const privateKey = keyStore.getPrivateKeyFromMnemonic(seed);
+
       Swal.close()
       this.$router.push({
         name: "login",

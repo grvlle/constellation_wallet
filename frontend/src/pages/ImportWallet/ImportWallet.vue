@@ -55,13 +55,13 @@ import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
   name: "import-wallet",
-  data: () => ({}),
-   mounted() {
+  data: () => ({ overlay: false }),
+  mounted() {
     this.triggerNotification();
-  }, 
+  },
   methods: {
-    triggerNotification: function () {
-      let timerInterval
+    triggerNotification: function() {
+      let timerInterval;
       Swal.fire({
         title:
           "<p style='text-align: left; color: white; margin: auto;'>Note!</p>",
@@ -94,39 +94,42 @@ export default {
         },
       });
     },
-    moveToImportRecoveryPhrase: function () {
-      Swal.close()
+    moveToImportRecoveryPhrase: function() {
+      Swal.close();
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
           name: "import recovery phrase",
           params: {
-            message: "Enter your 12 word recovery phrase to import your Molly Wallet:",
+            message:
+              "Enter your 12 word recovery phrase to import your Molly Wallet:",
             title: "Import recovery phrase",
             darkMode: this.$route.params.darkMode,
           },
         });
       });
     },
-    moveToMigrate: function () {
-      Swal.close()
+    moveToMigrate: function() {
+      Swal.close();
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
           name: "migrate screen",
           params: {
-            message: "Enter your information below to migrate your Molly Wallet:",
+            message:
+              "Enter your information below to migrate your Molly Wallet:",
             title: "Molly Wallet migration wizard",
             darkMode: this.$route.params.darkMode,
           },
         });
       });
     },
-      moveToImportKeystore: function () {
-      Swal.close()
+    moveToImportKeystore: function() {
+      Swal.close();
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
           name: "import keystore",
           params: {
-            message: "Enter your information below to migrate your Molly Wallet:",
+            message:
+              "Enter your information below to migrate your Molly Wallet:",
             title: "Import keystore file",
             darkMode: this.$route.params.darkMode,
           },

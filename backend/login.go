@@ -38,7 +38,13 @@ func (a *WalletApplication) LoginKeychain(keystorePassword string) bool {
 		return false
 	}
 
-	return secret == keystorePassword
+	if secret != keystorePassword {
+		a.log.Warnln("Invalid password")
+		a.LoginError("Invalid password")
+		return false
+	}
+	
+	return true
 }
 
 // Login is called from the FE when a user logs in with a wallet object

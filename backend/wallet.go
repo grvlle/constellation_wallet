@@ -307,9 +307,9 @@ func (a *WalletApplication) SavePasswordToKeychain(keystorePassword string) bool
 	return a.saveInfoToKeychain(ServiceLogin, keystorePassword)
 }
 
-// SaveSeedPhraseToKeychain is for saving password to new keychain
-func (a *WalletApplication) SaveSeedPhraseToKeychain(seedPhrase string) bool {
-	return a.saveInfoToKeychain(ServiceSeed, seedPhrase)
+// SavePhraseandPKeyToKeychain is for saving password to new keychain
+func (a *WalletApplication) SavePhraseandPKeyToKeychain(seedPhrase, privateKey string) bool {
+	return a.saveInfoToKeychain(ServiceSeed, seedPhrase) && a.saveInfoToKeychain(ServicePKey, privateKey)
 }
 
 // InitKeychains is for initializing of all your existing keychains

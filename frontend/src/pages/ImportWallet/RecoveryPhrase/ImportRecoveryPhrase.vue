@@ -16,10 +16,12 @@
                         :placeholder="seed"
                       />
                     </p>
-                    <p-button type="primary" block @click.native="moveToCreatePassword()">
-                      <span style="display: block">
-                        IMPORT</span
-                      >
+                    <p-button
+                      type="primary"
+                      block
+                      @click.native="moveToCreatePassword()"
+                    >
+                      <span style="display: block"> IMPORT</span>
                     </p-button>
                   </div>
                 </div>
@@ -39,26 +41,24 @@ import Swal from "sweetalert2/dist/sweetalert2";
 export default {
   name: "import-recovery-phrase",
   data: () => ({
-    seed:
-      "",
-  }), 
+    seed: "",
+    overlay: false,
+  }),
 
   methods: {
- 
-    moveToCreatePassword: function () {
+    moveToCreatePassword: function() {
       // var self = this;
 
       //TODO - save seed and privKey to KeyChain (Alex)
       //TODO - verify valid seed and valid privateKey (Frank)
       //const privateKey = keyStore.getPrivateKeyFromMnemonic(self.seed);
 
-      Swal.close()
+      Swal.close();
       this.$router.push({
         name: "import recovery phrase create wallet password",
         params: {
-          message:
-            "Please enter your new Molly Wallet password below:",
-            title: "Import recovery phrase",
+          message: "Please enter your new Molly Wallet password below:",
+          title: "Import recovery phrase",
         },
       });
     },

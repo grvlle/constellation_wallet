@@ -2,32 +2,38 @@
   <div class="container">
     <div class="row">
       <div class="col-12">
-          <div class="row">
-            <div class="col mx-auto login-box">
-              <div class="button-box">
-                <div class="container">
-                  <div class="row">
-                    <div class="col">
-                      <p class="body-text">
-                        A recovery phrase is a series of 12 words in a specific
-                        order. This word combination is unique to your wallet.
-                        Make sure to have pen and paper ready so you can write
-                        it down. 
-                        <br /> <br />
-                        Keep the recovery phrase stored in a safe
-                        place. Losing this phrase will mean you will no longer
-                        be able to access your funds.
-                        <br /> <br />
-                      </p>
-                      <p-button type="primary" block @click.native="moveToRecoveryPhrase()">
-                        <span style="display: block"> START</span>
-                      </p-button>
-                    </div>
+        <div class="row">
+          <div class="col mx-auto login-box">
+            <div class="button-box">
+              <div class="container">
+                <div class="row">
+                  <div class="col">
+                    <p class="body-text">
+                      A recovery phrase is a series of 12 words in a specific
+                      order. This word combination is unique to your wallet.
+                      Make sure to have pen and paper ready so you can write it
+                      down.
+                      <br />
+                      <br />
+                      Keep the recovery phrase stored in a safe place. Losing
+                      this phrase will mean you will no longer be able to access
+                      your funds.
+                      <br />
+                      <br />
+                    </p>
+                    <p-button
+                      type="primary"
+                      block
+                      @click.native="moveToRecoveryPhrase()"
+                    >
+                      <span style="display: block"> START</span>
+                    </p-button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
       </div>
     </div>
     <page-overlay text="Loading..." :isActive="overlay" />
@@ -35,13 +41,13 @@
 </template>
 
 <script>
-
 export default {
   name: "recovery-phrase-info",
   data: () => ({
+    overlay: false,
   }),
   methods: {
-      moveToRecoveryPhrase: function () {
+    moveToRecoveryPhrase: function() {
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
           name: "recovery phrase",
@@ -58,11 +64,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 .body-text {
-    color: #666666;
+  color: #666666;
   font-family: Poppins;
-  
+
   font-size: 14px;
   font-weight: 500;
 }

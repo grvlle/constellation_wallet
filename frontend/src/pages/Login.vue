@@ -140,9 +140,12 @@ export default {
         self.keystorePassword
       ).then((result) => {
         if (result) {
-          alert("succeed");
-        } else {
-          alert("failed");
+          Swal.close();
+          this.$store.dispatch("wallet/reset").then(() => {
+            this.$router.push({
+              name: "home",
+            });
+          });
         }
       });
     },

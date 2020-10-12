@@ -46,7 +46,7 @@ const seed = keyStore.generateSeedPhrase();
 
 export default {
   name: "recovery-phrase",
-  data: () => ({ seed }), //"witch collapse practice feed shame open despair creek road again ice least"
+  data: () => ({ seed, overlay: false }), //"witch collapse practice feed shame open despair creek road again ice least"
   mounted() {
     this.warningNotification();
   },
@@ -88,20 +88,22 @@ export default {
     moveToLogin: function() {
       //TODO - save seed and privKey to KeyChain (Alex)
       //const privateKey = keyStore.getPrivateKeyFromMnemonic(seed);
-      window.backend.WalletApplication.SaveSeedPhraseToKeychain(this.seed).then(
-        (result) => {
-          if (result) {
-            Swal.close();
-            this.$router.push({
-              name: "login",
-              params: {
-                message:
-                  "Please enter your credentials below to access your Molly Wallet.",
-              },
-            });
-          }
+      const privateKey = keyStore.getPrivateKeyFromMnemonic(this.seed);
+      window.backend.WalletApplication.SavePhraseandPKeyToKeychain(
+        this.seed,
+        privateKey
+      ).then((result) => {
+        if (result) {
+          Swal.close();
+          this.$router.push({
+            name: "login",
+            params: {
+              message:
+                "Please enter your credentials below to access your Molly Wallet.",
+            },
+          });
         }
-      );
+      });
     },
   },
 };

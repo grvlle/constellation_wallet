@@ -88,15 +88,20 @@ export default {
     moveToLogin: function() {
       //TODO - save seed and privKey to KeyChain (Alex)
       //const privateKey = keyStore.getPrivateKeyFromMnemonic(seed);
-      alert(seed);
-      Swal.close();
-      this.$router.push({
-        name: "login",
-        params: {
-          message:
-            "Please enter your credentials below to access your Molly Wallet.",
-        },
-      });
+      window.backend.WalletApplication.SaveSeedPhraseToKeychain(this.seed).then(
+        (result) => {
+          if (result) {
+            Swal.close();
+            this.$router.push({
+              name: "login",
+              params: {
+                message:
+                  "Please enter your credentials below to access your Molly Wallet.",
+              },
+            });
+          }
+        }
+      );
     },
   },
 };

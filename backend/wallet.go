@@ -321,7 +321,7 @@ func (a *WalletApplication) SavePasswordToKeychain(keystorePassword string) bool
 		return false
 	}
 	
-	return false
+	return true
 }
 
 // InitKeychains is for initializing of all your existing keychains
@@ -338,22 +338,25 @@ func (a *WalletApplication) InitKeychains() bool {
 	servicePKey := "molly-wallet-pkey"
 	account := user.Username
 
-	_, err = keyring.Get(servicePass, account)
-	if (err == nil) {
-		a.deleteKeychain(servicePass, account)
-		a.deleteKeychain(serviceSeed, account)
-		a.deleteKeychain(servicePKey, account)
-	}
+	a.deleteKeychain(servicePass, account)
+	a.deleteKeychain(serviceSeed, account)
+	a.deleteKeychain(servicePKey, account)
 
 	return true
 }
 
-func (a *WalletApplication) deleteKeychain(service, account string) {
-	err := keyring.Delete(service, account)
+func (a *WalletApplication) deleteKeychain(service, account string) error {
+	_, err := keyring.Get(service, account)
+	if (err != nil) {
+		return nil
+	}
+	err = keyring.Delete(service, account)
 	if err != nil {
 		a.log.Warnln("Unable to delete your existing keychain: ", service)
 		a.LoginError("Unable to delete your existing keychain.")
+		return err
 	}
+	return nil
 }
 
 func (a *WalletApplication) createTXFiles() error {

@@ -113,16 +113,26 @@ export default {
     },
     moveToRecoveryPhraseInfo: function() {
       if (this.valid === false) return;
-      Swal.close();
-      this.$store.dispatch("wallet/reset").then(() => {
-        this.$router.push({
-          name: "recovery phrase info",
-          params: {
-            message: "Let's first create our recovery phrase!",
-            title: "Recovery Phrase",
-            darkMode: this.$route.params.darkMode,
-          },
-        });
+      window.backend.WalletApplication.InitKeychains().then((result) => {
+        if (result) {
+          window.backend.WalletApplication.SavePasswordToKeychain(
+            this.keystorePassword
+          ).then((result) => {
+            if (result) {
+              Swal.close();
+              this.$store.dispatch("wallet/reset").then(() => {
+                this.$router.push({
+                  name: "recovery phrase info",
+                  params: {
+                    message: "Let's first create our recovery phrase!",
+                    title: "Recovery Phrase",
+                    darkMode: this.$route.params.darkMode,
+                  },
+                });
+              });
+            }
+          });
+        }
       });
     },
     moveToImportWallet: function() {

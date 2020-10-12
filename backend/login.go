@@ -18,7 +18,7 @@ func (a *WalletApplication) LoginError(errMsg string) {
 	}
 }
 
-// LoginKeychain is called from the FE and to store credentials
+// LoginKeychain is for logining with the password of the existing keychain
 func (a *WalletApplication) LoginKeychain(keystorePassword string) bool {
 	user, err := user.Current()
 
@@ -28,23 +28,14 @@ func (a *WalletApplication) LoginKeychain(keystorePassword string) bool {
 		return false
 	}
 
-	service := "molly-wallet"
-//     service := "molly-wallet-login"
-//     service := "molly-wallet-seed"
-//     service := "molly-wallet-pkey"
+	service := "molly-wallet-login"
 	account := user.Username
 
 	secret, err := keyring.Get(service, account)
 
 	if err != nil {
-		err := keyring.Set(service, account, keystorePassword)
-
-		if (err != nil) {
-			a.log.Warnln("Unable to create your keychain.")
-			a.LoginError("Unable to create your keycahin.")
-			return false
-		}
-		
+		a.log.Warnln("Your login keychain doesn't exist.")
+		a.LoginError("Your login keychain doesn't exist.")
 		return false
 	}
 

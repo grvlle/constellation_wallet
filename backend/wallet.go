@@ -6,11 +6,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/user"
 	"runtime"
 	"strings"
 	"time"
 
 	"github.com/grvlle/constellation_wallet/backend/models"
+	"github.com/zalando/go-keyring"
 )
 
 // ImportWallet is triggered when a user logs into a new Molly wallet for the first time
@@ -298,6 +300,60 @@ func (a *WalletApplication) initDashboardWidgets() {
 	a.pricePoller()
 
 	a.WidgetRunning.DashboardWidgets = true
+}
+
+// SavePasswordToKeychain is for saving password to new keychain
+func (a *WalletApplication) SavePasswordToKeychain(keystorePassword string) bool {
+	user, err := user.Current()
+	if err != nil {
+		a.log.Warnln("Unable to detect your username.")
+		a.LoginError("Unable to detect your username.")
+		return false
+	}
+
+	service := "molly-wallet-login"	
+	account := user.Username
+
+	err = keyring.Set(service, account, keystorePassword)
+	if (err != nil) {
+		a.log.Warnln("Unable to create your keychain.")
+		a.LoginError("Unable to create your keycahin.")
+		return false
+	}
+	
+	return false
+}
+
+// InitKeychains is for initializing of all your existing keychains
+func (a *WalletApplication) InitKeychains() bool {
+	user, err := user.Current()
+	if err != nil {
+		a.log.Warnln("Unable to detect your username.")
+		a.LoginError("Unable to detect your username.")
+		return false
+	}
+
+	servicePass := "molly-wallet-login"	
+	serviceSeed := "molly-wallet-seed"
+	servicePKey := "molly-wallet-pkey"
+	account := user.Username
+
+	_, err = keyring.Get(servicePass, account)
+	if (err == nil) {
+		a.deleteKeychain(servicePass, account)
+		a.deleteKeychain(serviceSeed, account)
+		a.deleteKeychain(servicePKey, account)
+	}
+
+	return true
+}
+
+func (a *WalletApplication) deleteKeychain(service, account string) {
+	err := keyring.Delete(service, account)
+	if err != nil {
+		a.log.Warnln("Unable to delete your existing keychain: ", service)
+		a.LoginError("Unable to delete your existing keychain.")
+	}
 }
 
 func (a *WalletApplication) createTXFiles() error {

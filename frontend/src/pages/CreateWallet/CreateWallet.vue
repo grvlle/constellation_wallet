@@ -12,14 +12,22 @@
                     v-model="keystorePassword"
                     label="New Password"
                     :validate="true"
+                    @valid="validatePassword(true)"
+                    @invalid="validatePassword(false)"
                   />
                 </div>
                 <div>
                   <password-input
                     v-model="keyPassword"
                     label="Repeat New Password"
-                    :validate="false"
+                    @input="confirmPassword()"
                   />
+                  <div
+                    class="validate text-danger"
+                    v-if="!valid && valid_password"
+                  >
+                    Need to confirm the password
+                  </div>
                 </div>
               </div>
               <div class="button-box">
@@ -29,6 +37,7 @@
                       <p-button
                         type="primary"
                         block
+                        :disabled="!valid"
                         @click.native="moveToRecoveryPhraseInfo()"
                       >
                         <span style="display: block"> CREATE NEW ACCOUNT</span>
@@ -66,7 +75,9 @@ export default {
   name: "create-wallet",
   data: () => ({
     keystorePassword: "",
-    KeyPassword: "",
+    keyPassword: "",
+    valid_password: false,
+    valid: false,
     overlay: false,
   }),
   computed: {
@@ -92,7 +103,16 @@ export default {
     this.migrateNotification();
   },
   methods: {
-    moveToRecoveryPhraseInfo: function () {
+    confirmPassword: function() {
+      this.valid =
+        this.valid_password && this.keystorePassword === this.keyPassword;
+    },
+    validatePassword: function(is_valid) {
+      this.valid_password = is_valid;
+      this.confirmPassword();
+    },
+    moveToRecoveryPhraseInfo: function() {
+      if (this.valid === false) return;
       Swal.close();
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
@@ -105,7 +125,7 @@ export default {
         });
       });
     },
-    moveToImportWallet: function () {
+    moveToImportWallet: function() {
       Swal.close();
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
@@ -118,7 +138,7 @@ export default {
         });
       });
     },
-    migrateNotification: function () {
+    migrateNotification: function() {
       let timerInterval;
       Swal.fire({
         title:
@@ -152,7 +172,7 @@ export default {
         },
       });
     },
-    completeMigration: function () {
+    completeMigration: function() {
       this.$router.push({
         name: "password migration complete",
         params: {

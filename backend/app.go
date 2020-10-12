@@ -72,6 +72,13 @@ type WalletApplication struct {
 	}
 }
 
+// Constants of the application
+const (
+	ServiceLogin = "molly-wallet-login"
+	ServiceSeed = "molly-wallet-seed"
+	ServicePKey = "molly-wallet-pkey"
+)
+
 // WailsShutdown is called when the application is closed
 func (a *WalletApplication) WailsShutdown() {
 	a.wallet = models.Wallet{}

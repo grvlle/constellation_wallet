@@ -99,7 +99,7 @@ export default {
               message:
                 "Please enter your credentials below to access your Molly Wallet.",
             },
-          });//ec10743021abb2ac074f57f2ede14b0bb6f2296fa698b1801b9982031e908d87
+          });
         }
       });
     }

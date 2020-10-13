@@ -129,6 +129,66 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 }
 
 // CreateWallet is called when creating a new wallet in frontend component Login.vue
+func (a *WalletApplication) CreateOrInitWalletV2(address string) bool {
+
+	a.wallet = models.Wallet{
+		WalletAlias: address,     //PrimaryKey
+		Address: address}
+
+    //Check if any record with WalletAlias exist
+	if err := a.DB.Take(&a.wallet).Error; err != nil {
+
+	    //Create new record
+		if err := a.DB.Create(&a.wallet).Error; err != nil {
+			a.log.Errorln("Unable to create database object for new wallet. Reason: ", err)
+			a.LoginError("Unable to create new wallet.")
+			return false
+		}
+
+        a.KeyStoreAccess = true
+
+        if a.KeyStoreAccess {
+            a.paths.LastTXFile = a.TempFileName("tx-")
+            a.paths.PrevTXFile = a.TempFileName("tx-")
+            a.paths.EmptyTXFile = a.TempFileName("tx-")
+
+            err := a.createTXFiles()
+            if err != nil {
+                a.log.Fatalln("Unable to create TX files. Check fs permissions. Reason: ", err)
+                a.sendError("Unable to create TX files. Check fs permissions. Reason: ", err)
+            }
+
+            if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Update("Path", models.Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
+                a.log.Errorln("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
+                a.sendError("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
+            }
+
+            a.UserLoggedIn = true
+            a.FirstTX = true
+            a.NewUser = false
+
+            a.initNewWallet()
+
+            return true
+        }
+    } else if !a.UserLoggedIn {
+        a.UserLoggedIn = true
+        a.FirstTX = false
+        a.NewUser = false
+
+		err := a.initWallet("")
+		if err != nil {
+			a.UserLoggedIn = false
+		}
+
+        return true
+    }
+
+	return true
+}
+
+
+// CreateWallet is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias, label string) bool {
 
 	alias = strings.ToLower(alias)
@@ -521,8 +581,9 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 
 // PassKeysToFrontend emits the keys to the settings.Vue component on a
 // 5 second interval
+//TODO - @vito why is 5s interval necessary?
 func (a *WalletApplication) passKeysToFrontend() {
-	if a.wallet.KeyStorePath != "" && a.wallet.Address != "" {
+	if a.wallet.Address != "" {
 		go func() {
 			for {
 				a.RT.Events.Emit("wallet_keys", a.wallet.Address)

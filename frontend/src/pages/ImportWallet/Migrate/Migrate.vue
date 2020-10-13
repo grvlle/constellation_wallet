@@ -105,13 +105,36 @@ export default {
       });
     },
     migrate: function () {
-      this.$router.push({
-        name: "password migration",
-        params: {
-          title: "Molly Wallet migration wizard",
-          message: "Please enter your new Molly Wallet password below: ",
-        },
-      });
+      var self = this;
+      if (self.keystorePath) {
+        self.$Progress.start();
+        self.overlay = true;
+        window.backend.WalletApplication.Migrate(
+            self.keystorePath,
+            self.keystorePassword,
+            self.KeyPassword,
+            self.alias
+        ).then((result) => {
+          if (result) {
+            this.$router.push({
+              name: "password migration",
+              params: {
+                title: "Molly Wallet migration wizard",
+                message: "Please enter your new Molly Wallet password below: ",
+              },
+            });
+          }
+        });
+      }
+      else {  //TODO - remove after migrate feature integrated
+        this.$router.push({
+          name: "password migration",
+          params: {
+            title: "Molly Wallet migration wizard",
+            message: "Please enter your new Molly Wallet password below: ",
+          },
+        });
+      }
     },
     login: function () {
       var self = this;

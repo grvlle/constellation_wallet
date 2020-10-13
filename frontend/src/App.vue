@@ -244,7 +244,7 @@ export default {
     });
     window.wails.Events.On("tx_stats", (seriesOne, seriesTwo, labels) => {
       if (Object.entries(seriesOne).length != 0 && 
-          Object.entries(seriesTwo).length != 0 && 
+          Object.entries(seriesTwo).length != 0 &&
           Object.entries(labels).length != 0) {
         this.$store.commit({type: 'dashboard/setTransactionStatsChart', seriesOne, seriesTwo, labels});
       }

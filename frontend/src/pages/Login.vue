@@ -30,7 +30,7 @@
                   <div class="row">
                     <div class="col">
                       <p class="text-right">
-                        Don't have a wallet yet? Create one
+                        Don't have a Wallet V2 yet? Create one
                         <a class="link-text" @click="createWallet()">here!</a>
                       </p>
                     </div>
@@ -49,6 +49,7 @@
 <script>
 import { mapState } from "vuex";
 import Swal from "sweetalert2/dist/sweetalert2";
+import { keyStore } from "@stardust-collective/dag-keystore";
 
 export default {
   name: "login-screen",
@@ -85,7 +86,7 @@ export default {
       Swal.fire({
         title:
           "<p style='text-align: left; color: white; margin: auto;'>Important Update</p>",
-        html: `<br><p style='text-align: left; color: white;'>If you used to login to Molly Wallet with a file, multiple passwords and alias - you will need to create a new wallet and add your file during the import step.</p>`,
+        html: `<br><p style='text-align: left; color: white;'>If you have previously signed into Molly Wallet using a file, two passwords and alias (versions 1.x.x), then you will need to create a new Wallet 2.0 first. <br><br> You will be able import your key files later.</p>`,
         width: 300,
         padding: 20,
         backdrop: false,
@@ -95,7 +96,6 @@ export default {
         showConfirmButton: false,
         allowOutsideClick: false,
         showCloseButton: true,
-        timer: 20000,
         timerProgressBar: true,
         willOpen: () => {
           Swal.showLoading();
@@ -127,8 +127,8 @@ export default {
         this.$router.push({
           name: "create wallet",
           params: {
-            message: "Please enter your new Molly Wallet passwords below.",
-            title: "Create wallet password",
+            message: "Please enter your new password below, then choose whether to create a new DAG account or import an existing one.",
+            title: "Create Molly Wallet password",
             darkMode: this.$route.params.darkMode,
           },
         });
@@ -136,16 +136,31 @@ export default {
     },
     loginPass: function() {
       var self = this;
+      self.$Progress.start();
+      self.overlay = true;
       window.backend.WalletApplication.LoginKeychain(
         self.keystorePassword
-      ).then((result) => {
-        if (result) {
-          Swal.close();
-          this.$store.dispatch("wallet/reset").then(() => {
-            this.$router.push({
-              name: "home",
-            });
-          });
+      ).then((pkey) => {
+        // eslint-disable-next-line no-console
+        console.log("pkey: " + pkey);
+        if (pkey && pkey.length === 64) {
+          var address = keyStore.getDagAddressFromPublicKey(keyStore.getPublicKeyFromPrivate(pkey));
+          // eslint-disable-next-line no-console
+          console.log("getDagAddressFromPublicKey: " + address);
+          window.backend.WalletApplication.CreateOrInitWalletV2(
+              address
+          ).then((result) => {
+            if (result) {
+              Swal.close();
+              self.initWallet();
+            }
+          })
+
+          // this.$store.dispatch("wallet/reset").then(() => {
+          //   this.$router.push({
+          //     name: "home",
+          //   });
+          // });
         }
       });
     },
@@ -160,41 +175,45 @@ export default {
         self.alias
       ).then((result) => {
         if (result) {
-          window.backend.WalletApplication.GetUserTheme().then((darkMode) =>
-            self.$store.commit("wallet/setDarkMode", darkMode)
-          );
-          window.backend.WalletApplication.GetWalletTag().then((walletTag) =>
-            self.$store.commit("wallet/setLabel", walletTag)
-          );
-          window.backend.WalletApplication.GetImagePath().then((imagePath) =>
-            self.$store.commit("wallet/setImgPath", imagePath)
-          );
-          self.overlay = false;
-          self.$Progress.finish();
-          self.$store.commit("app/setIsLoggedIn", true);
-
-          window.backend.WalletApplication.CheckTermsOfService().then(
-            (result) => {
-              self.$store.commit("wallet/setTermsOfService", result);
-              if (result) {
-                self.$router.push({
-                  name: "loading",
-                  params: { message: "Getting your $DAG Wallet ready..." },
-                });
-              } else {
-                self.$router.push({
-                  name: "accept terms of service",
-                  params: { message: "Terms of Service" },
-                });
-              }
-            }
-          );
+          self.initWallet();
         } else {
           self.overlay = false;
           self.$Progress.fail();
         }
       });
     },
+    initWallet: function () {
+      var self = this;
+      window.backend.WalletApplication.GetUserTheme().then((darkMode) =>
+          self.$store.commit("wallet/setDarkMode", darkMode)
+      );
+      window.backend.WalletApplication.GetWalletTag().then((walletTag) =>
+          self.$store.commit("wallet/setLabel", walletTag)
+      );
+      window.backend.WalletApplication.GetImagePath().then((imagePath) =>
+          self.$store.commit("wallet/setImgPath", imagePath)
+      );
+      self.overlay = false;
+      self.$Progress.finish();
+      self.$store.commit("app/setIsLoggedIn", true);
+
+      window.backend.WalletApplication.CheckTermsOfService().then(
+          (result) => {
+            self.$store.commit("wallet/setTermsOfService", result);
+            if (result) {
+              self.$router.push({
+                name: "loading",
+                params: { message: "Getting your $DAG Wallet ready..." },
+              });
+            } else {
+              self.$router.push({
+                name: "accept terms of service",
+                params: { message: "Terms of Service" },
+              });
+            }
+          }
+      );
+    }
   },
 };
 </script>

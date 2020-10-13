@@ -56,7 +56,7 @@ export default {
       Swal.fire({
         title:
           "<p style='text-align: left; color: white; margin: auto;'>Warning</p>",
-        html: `<br><p style='text-align: left; color: white;'>Never disclose your recovery phrase. Anyone with this phrase can access your DAG funds.</p>`,
+        html: `<br><p style='text-align: left; color: white;'>Never disclose your recovery phrase. Anyone with this phrase can access your funds.</p>`,
         width: 300,
         padding: 20,
         backdrop: false,
@@ -66,7 +66,6 @@ export default {
         showConfirmButton: false,
         allowOutsideClick: false,
         showCloseButton: true,
-        timer: 20000,
         timerProgressBar: true,
         willOpen: () => {
           Swal.showLoading();
@@ -86,8 +85,7 @@ export default {
       });
     },
     moveToLogin: function() {
-      //TODO - save seed and privKey to KeyChain (Alex)
-      //const privateKey = keyStore.getPrivateKeyFromMnemonic(seed);
+
       const privateKey = keyStore.getPrivateKeyFromMnemonic(this.seed);
       window.backend.WalletApplication.SavePhraseandPKeyToKeychain(
         this.seed,
@@ -104,8 +102,8 @@ export default {
           });
         }
       });
-    },
-  },
+    }
+  }
 };
 </script>
 

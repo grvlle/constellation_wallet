@@ -82,7 +82,7 @@ export default {
         name: "password migration complete",
         params: {
           title: "Molly Wallet migration wizard",
-          message: "Congratulations! You have completed the Molly Wallet password migration!",
+          message: "Congratulations! You have completed the Molly Wallet password migration! A new file has been created for you that includes \"_v2\" in the file name. You may now use this to import using the single-password option.",
         },
       });
     },

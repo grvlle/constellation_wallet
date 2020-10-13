@@ -65,7 +65,7 @@ export default {
       Swal.fire({
         title:
           "<p style='text-align: left; color: white; margin: auto;'>Note!</p>",
-        html: `<br><p style='text-align: left; color: white;'>If you have a Keystore file that has two passwords and they are the same password, you can skip migrate and directly import it using the single password method.</p>`,
+        html: `<br><p style='text-align: left; color: white;'>If you have a Keystore file that was setup with two passwords and you used the same password for both fields, you can skip migrate and directly import it using the single password method.</p>`,
         width: 300,
         padding: 20,
         backdrop: false,
@@ -75,7 +75,6 @@ export default {
         showConfirmButton: false,
         allowOutsideClick: false,
         showCloseButton: true,
-        timer: 20000,
         timerProgressBar: true,
         willOpen: () => {
           Swal.showLoading();

@@ -47,11 +47,12 @@
                   <div class="row">
                     <div class="col">
                       <p-button
-                        type="secondary"
+                        type="primary"
                         block
-                        @click.native="moveToImportWallet()"
+                        :disabled="!valid"
+                        @click.native="moveToImportAccount()"
                       >
-                        <span style="display: block"> RESTORE ACCOUNT</span>
+                        <span style="display: block"> IMPORT ACCOUNT</span>
                       </p-button>
                     </div>
                   </div>
@@ -111,41 +112,50 @@ export default {
       this.valid_password = is_valid;
       this.confirmPassword();
     },
+    savePasswordToKeychain: function () {
+      return window.backend.WalletApplication.InitKeychains().then((result) => {
+        if (result) {
+          return window.backend.WalletApplication.SavePasswordToKeychain(
+              this.keystorePassword
+          )
+        }
+        return null;
+      })
+    },
     moveToRecoveryPhraseInfo: function() {
       if (this.valid === false) return;
-      window.backend.WalletApplication.InitKeychains().then((result) => {
+      this.savePasswordToKeychain().then((result) => {
         if (result) {
-          window.backend.WalletApplication.SavePasswordToKeychain(
-            this.keystorePassword
-          ).then((result) => {
-            if (result) {
-              Swal.close();
-              this.$store.dispatch("wallet/reset").then(() => {
-                this.$router.push({
-                  name: "recovery phrase info",
-                  params: {
-                    message: "Let's first create our recovery phrase!",
-                    title: "Recovery Phrase",
-                    darkMode: this.$route.params.darkMode,
-                  },
-                });
-              });
-            }
+          Swal.close();
+          this.$store.dispatch("wallet/reset").then(() => {
+            this.$router.push({
+              name: "recovery phrase info",
+              params: {
+                message: "Let's first create our recovery phrase!",
+                title: "Recovery Phrase",
+                darkMode: this.$route.params.darkMode,
+              },
+            });
           });
         }
       });
     },
-    moveToImportWallet: function() {
-      Swal.close();
-      this.$store.dispatch("wallet/reset").then(() => {
-        this.$router.push({
-          name: "import wallet",
-          params: {
-            message: "Please select how you would like to import your wallet:",
-            title: "Import an existing wallet",
-            darkMode: this.$route.params.darkMode,
-          },
-        });
+    moveToImportAccount: function () {
+      if (this.valid === false) return;
+      this.savePasswordToKeychain().then((result) => {
+        if (result) {
+          Swal.close();
+          this.$store.dispatch("wallet/reset").then(() => {
+            this.$router.push({
+              name: "import wallet",
+              params: {
+                message: "Please select how you would like to import an existing account:",
+                title: "Import account",
+                darkMode: this.$route.params.darkMode,
+              },
+            });
+          });
+        }
       });
     },
     migrateNotification: function() {
@@ -153,7 +163,7 @@ export default {
       Swal.fire({
         title:
           "<p style='text-align: left; color: white; margin: auto;'>Note</p>",
-        html: `<br><p style='text-align: left; color: white;'>This is the password you will use to login to your wallet each session. If you already have an existing wallet, please select the <b>restore</b> option.</p>`,
+        html: `<br><p style='text-align: left; color: white;'>This is the password you will use to login to Molly Wallet each time. If you already have an existing account, please select the <b>import</b> option.</p>`,
         width: 300,
         padding: 20,
         backdrop: false,
@@ -163,7 +173,6 @@ export default {
         showConfirmButton: false,
         allowOutsideClick: false,
         showCloseButton: true,
-        timer: 20000,
         timerProgressBar: true,
         willOpen: () => {
           Swal.showLoading();
@@ -193,6 +202,7 @@ export default {
     },
   },
 };
+
 </script>
 
 <style scoped lang="scss">

@@ -190,7 +190,7 @@ func (a *WalletApplication) pollTokenBalance() {
 					balance, err := a.GetTokenBalance()
 					if err != nil {
 						if retryCounter == 3 || retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
-							a.sendWarning("No data recieved from the Token Balance API. Trying again.")
+							a.sendWarning("No data received from the Token Balance API. Trying again.")
 						}
 						retryCounter++
 						break

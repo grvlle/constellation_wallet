@@ -120,28 +120,25 @@ func (a *WalletApplication) ImportKey() string {
 }
 
 // SelectNetwork is triggered from the login page and will change the network an loadbalancer endpoints
-func (a *WalletApplication) SelectNetwork(network string) bool {
-	a.log.Infoln("User requested network: ", network)
-	switch network {
-	case "Main Constellation Network":
-		a.Network.URL = "http://lb.constellationnetwork.io:9000"
-		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
-		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
-	case "Eros Test Network":
-		a.Network.URL = "http://cl-lb-alb-testnet-1216020584.us-west-1.elb.amazonaws.com:9000"
-		a.Network.BlockExplorer.URL = "https://8akak07rv8.execute-api.us-west-1.amazonaws.com/cl-block-explorer-testnet"
-		a.log.Infoln("Connected to: Eros Test Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
-	case "Ceres Test Network":
+func (a *WalletApplication) SelectNetwork(testnet bool) bool {
+
+	if testnet {
+		// Ceres Test Network
 		a.Network.URL = "http://cl-lb-alb-exchanges-582714291.us-west-1.elb.amazonaws.com:9000"
 		a.Network.BlockExplorer.URL = "https://pdvmh8pagf.execute-api.us-west-1.amazonaws.com/cl-block-explorer-exchanges"
 		a.log.Infoln("Connected to: Ceres Test Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
-	default:
+	}
+
+	if !testnet {
 		a.Network.URL = "http://lb.constellationnetwork.io:9000"
 		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
 		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
 	}
+	// default:
 
-	return true
+	// }
+
+	return testnet
 }
 
 // SelectDirToStoreKey is called from the FE when creating a new keyfile

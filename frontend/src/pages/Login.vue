@@ -146,8 +146,9 @@ export default {
         self.keystorePassword,
         self.KeyPassword,
         self.alias
+        
       ).then((result) => {
-        if (result) {
+        if (!result) { //temp
           window.backend.WalletApplication.GetUserTheme().then((darkMode) =>
             self.$store.commit("wallet/setDarkMode", darkMode)
           );

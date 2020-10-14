@@ -3,33 +3,67 @@
     <div class="row">
       <div class="col-md-4 d-flex">
         <stats-card class="stats-card">
-          <div class="icon-big text-center" :class="`icon-success`" slot="header">
+          <div
+            class="icon-big text-center"
+            :class="`icon-success`"
+            slot="header"
+          >
             <i class="fas fa-wallet"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>DAG</p>
-            {{normalizedAvailableBalance}}
+            {{ normalizedAvailableBalance }}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.token}} seconds
+            Updates in {{ counters.token }} seconds
           </div>
         </stats-card>
       </div>
       <div class="col-md-4 d-flex">
-        <stats-card class="stats-card">
-          <div class="icon-big text-center" :class="`icon-danger`" slot="header">
+
+        <stats-card
+          v-if="!onTestnet"
+          class="stats-card"
+        >
+          <div
+            class="icon-big text-center"
+            :class="`icon-danger`"
+            slot="header"
+          >
             <i class="fas fa-search-dollar"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
-            <p>{{currency}}</p>
-            {{valueInCurrency}}
+            <p>{{ currency }}</p>
+            {{ valueInCurrency }}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.value}} seconds
+            Updates in {{ counters.value }} seconds
           </div>
         </stats-card>
+
+                <stats-card
+          v-if="onTestnet"
+          class="stats-card"
+        >
+          <div
+            class="icon-big text-center"
+            :class="`icon-danger`"
+            slot="header"
+          >
+            <img class="test-dag" src='../assets/img/test-dag.png' />
+          </div>
+          <div class="numbers text-center text-overflow" slot="content">
+            <b><p>REQUEST TEST $DAG</p></b>
+            <p>Get a maximum of 10,000 <br />TEST DAG per day</p>
+          </div>
+          <div class="text-center test-dag-footer" slot="footer">
+            <button class="test-dag-btn">GET TEST DAG</button>
+          </div>
+          
+        </stats-card>
+
       </div>
       <div class="col-md-4 d-flex">
         <stats-card class="stats-card">
@@ -38,14 +72,14 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>Blocks</p>
-            {{stat.blocks}}
+            {{ stat.blocks }}
             <!-- {{this.$store.state.OS.windows}}
             {{this.$store.state.OS.macOS}}
             {{this.$store.state.OS.linux}} -->
           </div>
           <div class="stats" slot="footer">
             <i class="ti-reload"></i>
-            Updates in {{counters.block}} seconds
+            Updates in {{ counters.block }} seconds
           </div>
         </stats-card>
       </div>
@@ -54,19 +88,26 @@
       <div class="col">
         <card title="Wallet Address" sub-title>
           <div class="wallet-address">
-            <table style="table-layout:fixed;" class="table-noheader">
+            <table style="table-layout: fixed" class="table-noheader">
               <tr>
                 <td
                   class="text-overflow"
-                  style="word-wrap:break-word; padding-top: 20px; padding-left: 15px; width: 100%;"
+                  style="
+                    word-wrap: break-word;
+                    padding-top: 20px;
+                    padding-left: 15px;
+                    width: 100%;
+                  "
                 >
-                  <span style="width: 100%;" class="text-overflow">{{address}}</span>
+                  <span style="width: 100%" class="text-overflow">{{
+                    address
+                  }}</span>
                   <input type="hidden" id="testing-code" :value="address" />
                 </td>
-                <td style="padding-top: 10px; width: 9%;">
+                <td style="padding-top: 10px; width: 9%">
                   <p-button
                     type="info"
-                    style="margin-bottom: 5px;"
+                    style="margin-bottom: 5px"
                     icon
                     @click.native="copyTestingCode"
                   >
@@ -94,7 +135,7 @@
           </div>
           <span slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.chart}} seconds
+            Updates in {{ counters.chart }} seconds
           </span>
         </chart-card>
       </div>
@@ -111,9 +152,9 @@
             <i class="fa fa-circle text-info"></i> TX
             <i class="fa fa-circle text-success"></i> RX
           </div>
-          <span style="padding-top: 0.625em;" slot="footer">
+          <span style="padding-top: 0.625em" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.chart}} seconds
+            Updates in {{ counters.chart }} seconds
           </span>
         </chart-card>
       </div>
@@ -128,7 +169,7 @@
         >
           <span slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.chart}} seconds
+            Updates in {{ counters.chart }} seconds
           </span>
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> $DAG Tokens
@@ -141,16 +182,16 @@
 </template>
 
 <script>
-import {mapState, mapGetters} from 'vuex'
-import { StatsCard, ChartCard} from "@/components/index";
-import Chartist from 'chartist';
+import { mapState, mapGetters } from "vuex";
+import { StatsCard, ChartCard } from "@/components/index";
+import Chartist from "chartist";
 import WalletCopiedNotification from "./Notifications/WalletCopied";
 import WalletCopiedFailedNotification from "./Notifications/WalletCopiedFailed";
 
 export default {
   components: {
     StatsCard,
-    ChartCard
+    ChartCard,
   },
   methods: {
     copyTestingCode() {
@@ -183,20 +224,21 @@ export default {
         type: this.type[color],
         onClick: () => {
           this.$notifications.clear();
-        }
+        },
       });
-    }
+    },
   },
   computed: {
-    ...mapState('wallet', ['currency', 'address']),
-    ...mapGetters('wallet', ['valueInCurrency', 'normalizedAvailableBalance']),
-    ...mapState('dashboard', ['counters', 'toggle', 'stat', 'chart'])
+    ...mapState("wallet", ["currency", "address"]),
+    ...mapGetters("wallet", ["valueInCurrency", "normalizedAvailableBalance"]),
+    ...mapState("dashboard", ["counters", "toggle", "stat", "chart"]),
+    ...mapState("app", ["onTestnet"]),
   },
   data() {
     return {
       type: ["", "info", "success", "warning", "danger"],
       notifications: {
-        topCenter: false
+        topCenter: false,
       },
       transactionChart: {
         options: {
@@ -205,28 +247,27 @@ export default {
           showArea: true,
           height: "15.3125em",
           axisX: {
-            showGrid: false
+            showGrid: false,
           },
           lineSmooth: Chartist.Interpolation.simple({
-            divisor: 3	
+            divisor: 3,
           }),
           showLine: true,
-          showPoint: false
+          showPoint: false,
         },
       },
       throughputChart: {
         options: {
           seriesBarDistance: 10,
           axisX: {
-            showGrid: false
+            showGrid: false,
           },
-          height: "15.3125em"
-        }
-      }
+          height: "15.3125em",
+        },
+      },
     };
-  }
+  },
 };
-
 </script>
 
 <style scoped lang="scss">
@@ -262,8 +303,35 @@ export default {
   margin-bottom: 0em;
   font-size: 1.5625rem;
   @include themed() {
-      color: t('walletAddressColor');
+    color: t("walletAddressColor");
   }
+}
+
+.test-dag {
+    height: auto; 
+    width: auto; 
+    max-width: 60px; 
+    max-height: 60px;
+}
+
+.test-dag-btn {
+    font-family: Poppins;
+    font-weight: 500;
+    height: 2em; 
+    width: 22.7em; 
+    background: #DD8D74;
+    color: white;
+    cursor: pointer;
+    margin-top: -10px;
+    border: none;
+    border-radius: 5px;
+    
+}
+
+.test-dag-btn:hover {
+        background: #df7f62;
+        box-shadow: 0px 1px 1px #DD8D74;
+        
 }
 
 .wallet-address > p-button {

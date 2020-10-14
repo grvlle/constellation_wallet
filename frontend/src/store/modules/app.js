@@ -1,14 +1,14 @@
 const getDefaultState = () => {
   return {
     version: "v2.13.9",
-    uiVersion: "v1.4.1",
+    uiVersion: "v2.0.0",
     isLoggedIn: false,
     errorMessage: "",
     warningMessage: "",
     successMessage: "",
     loginErrorMsg: "",
     newRelease: "",
-    network: "Main Constellation Network",
+    onTestnet: false,
     displayLoginError: false,
     downloading: {
       filename: "",
@@ -28,8 +28,8 @@ const mutations = {
   resetState(state) {
     Object.assign(state, getDefaultState());
   },
-  setNetwork(state, network) {
-    state.network = network;
+  setOnTestnet(state, val) {
+    state.onTestnet = val;
   },
   setIsLoggedIn(state, isLoggedIn) {
     state.isLoggedIn = isLoggedIn;

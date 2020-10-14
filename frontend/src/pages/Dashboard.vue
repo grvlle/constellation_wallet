@@ -318,7 +318,7 @@ export default {
     font-family: Poppins;
     font-weight: 500;
     height: 2em; 
-    width: 22.7em; 
+    width: 100%; 
     background: #DD8D74;
     color: white;
     cursor: pointer;

@@ -79,7 +79,7 @@ export default {
   data() {
     return {
       activeNotifications: false,
-      switch: true,
+      switch: false,
       random: "",
     };
   },

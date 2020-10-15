@@ -5,15 +5,6 @@
         <form ref="textareaform" @submit.prevent="form" class="container">
           <div class="row">
             <div class="col mx-auto login-box">
-              <slot name="label">
-                <label class="control-label"> Select Network </label>
-              </slot>
-              <vue-select
-                class="select"
-                @input="setNetwork"
-                :value="network"
-                :options="['Main Constellation Network', 'Eros Test Network', 'Ceres Test Network']"
-              ></vue-select>
               <br />
               <div class="input-box">
                 <div>
@@ -81,13 +72,9 @@
 </template>
 
 <script>
-import VueSelect from "vue-select";
 import { mapState } from "vuex";
 
 export default {
-  components: {
-    VueSelect,
-  },
   name: "login-screen",
   data: () => ({
     keystorePassword: "",
@@ -116,15 +103,7 @@ export default {
     },
   },
   methods: {
-    setNetwork: function (value) {
-      window.backend.WalletApplication.SelectNetwork(value).then(
-        (result) => {
-          if (result) {
-            this.$store.commit("app/setNetwork", value);
-          }
-        }
-      );
-    },
+
     newWallet: function () {
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({

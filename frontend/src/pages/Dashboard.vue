@@ -59,7 +59,7 @@
             <p>Get a maximum of 10,000 <br />TEST DAG per day</p>
           </div>
           <div class="text-center test-dag-footer" slot="footer">
-            <button class="test-dag-btn">GET TEST DAG</button>
+            <button @click="getTestDag" class="test-dag-btn">GET TEST DAG</button>
           </div>
           
         </stats-card>
@@ -194,6 +194,9 @@ export default {
     ChartCard,
   },
   methods: {
+    getTestDag () {
+      window.backend.WalletApplication.GetTestDag()
+    },
     copyTestingCode() {
       let testingCodeToCopy = document.querySelector("#testing-code");
       testingCodeToCopy.setAttribute("type", "text");

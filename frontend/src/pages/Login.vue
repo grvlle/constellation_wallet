@@ -148,7 +148,7 @@ export default {
         self.alias
         
       ).then((result) => {
-        if (!result) { //temp
+        if (result) { //temp
           window.backend.WalletApplication.GetUserTheme().then((darkMode) =>
             self.$store.commit("wallet/setDarkMode", darkMode)
           );

@@ -70,9 +70,11 @@ export default {
         return this.$store.state.app.onTestnet;
       },
       set: function () {
-        this.switch = !this.switch;
-        window.backend.WalletApplication.SelectNetwork(this.switch);
-        this.$store.commit("app/setOnTestnet", this.switch);
+        this.$store.dispatch('transaction/reset').then(() => {
+          this.switch = !this.switch;
+          window.backend.WalletApplication.SelectNetwork(this.switch);
+          this.$store.commit("app/setOnTestnet", this.switch);
+        });
       },
     },
   },

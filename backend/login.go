@@ -134,9 +134,21 @@ func (a *WalletApplication) SelectNetwork(testnet bool) bool {
 		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
 		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
 	}
-	// default:
 
-	// }
+	// Clear old TX history before initialization
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Association("TXHistory").Delete(&models.TXHistory{}).Error; err != nil {
+		a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
+		a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
+	}
+
+	a.RT.Events.Emit("update_tx_history", []models.TXHistory{}) // Clear TX history
+
+	// Force re-initialization and token balance update upon network switch
+	a.initWallet(a.wallet.KeyStorePath)
+	err := a.updateTokenBalance()
+	if err != nil {
+		a.log.Errorln("unable to manually update token balance upon network switch: ", err)
+	}
 
 	return testnet
 }

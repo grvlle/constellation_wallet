@@ -5,6 +5,7 @@
         <form ref="textareaform" @submit.prevent="form" class="container">
           <div class="row">
             <div class="col mx-auto login-box">
+              <br />
               <div class="input-box">
                 <div>
                   <password-input

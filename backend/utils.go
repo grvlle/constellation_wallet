@@ -41,6 +41,19 @@ func (a *WalletApplication) newReleaseAvailable() {
 
 }
 
+func (a *WalletApplication) updateTokenBalance() error {
+	balance, err := a.GetTokenBalance()
+	if err != nil {
+		a.sendWarning("No data recieved from the Token Balance API. Will try again soon.")
+		return err
+	}
+	a.log.Infoln("Current Balance: ", balance)
+	a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance = balance, balance, balance
+	a.RT.Events.Emit("token", a.wallet.Balance, a.wallet.AvailableBalance, a.wallet.TotalBalance)
+
+	return nil
+}
+
 func (a *WalletApplication) javaInstalled() bool {
 	var javaInstalled bool
 	if a.paths.Java[len(a.paths.Java)-9:] != "javaw.exe" {

@@ -1,18 +1,25 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
-      <img class="img-fluid" v-if="darkMode"
+      <img
+        class="img-fluid"
+        v-if="darkMode"
         src="~@/assets/img/Constellation-Logo-White.png"
-        style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem;" />
-      <img class="img-fluid" v-else
+        style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem"
+      />
+      <img
+        class="img-fluid"
+        v-else
         src="~@/assets/img/Constellation-Logo-Black.png"
-        style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem;" />
+        style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem"
+      />
       <button
         class="navbar-toggler navbar-burger"
         type="button"
         @click="toggleSidebar"
         :aria-expanded="$sidebar.showSidebar"
-        aria-label="Toggle navigation" >
+        aria-label="Toggle navigation"
+      >
         <span class="navbar-toggler-bar"></span>
         <span class="navbar-toggler-bar"></span>
         <span class="navbar-toggler-bar"></span>
@@ -20,13 +27,19 @@
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
+            <div class="testnet-toggle">
+              <toggle-switch v-model="onTestnet" />
+              <p class="nav-item nav-link">MAINNET / TESTNET</p>
+            </div>
+          </li>
+          <li class="nav-item">
             <router-link class="nav-link" to="settings">
               <i class="ti-settings"></i>
               <p class="nav-item">SETTINGS</p>
             </router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" @click="logout" style="cursor: pointer;">
+            <a class="nav-link" @click="logout" style="cursor: pointer">
               <i class="ti-lock"></i>
               <p class="nav-item">LOGOUT</p>
             </a>
@@ -38,19 +51,38 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState } from "vuex";
+import ToggleSwitch from "../../components/Inputs/ToggleSwitch";
+
 export default {
+  components: {
+    ToggleSwitch,
+  },
   computed: {
     routeName() {
       const { name } = this.$route;
       return this.capitalizeFirstLetter(name);
     },
-    ...mapState('wallet', ['darkMode'])
+    ...mapState("wallet", ["darkMode"]),
+    ...mapState("app", ["onTestnet"]),
+    onTestnet: {
+      get: function () {
+        return this.$store.state.app.onTestnet;
+      },
+      set: function () {
+        this.$store.dispatch('transaction/reset').then(() => {
+          this.switch = !this.switch;
+          window.backend.WalletApplication.SelectNetwork(this.switch);
+          this.$store.commit("app/setOnTestnet", this.switch);
+        });
+      },
+    },
   },
   data() {
     return {
       activeNotifications: false,
-      random: ""
+      switch: false,
+      random: "",
     };
   },
   methods: {
@@ -68,9 +100,18 @@ export default {
     },
     hideSidebar() {
       this.$sidebar.displaySidebar(false);
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped lang="scss">
+.toggle {
+  margin: 0 0 0 0;
+}
+
+.testnet-toggle {
+  display: flex;
+  margin-top: 2%;
+  align-items: center;
+}
 </style>

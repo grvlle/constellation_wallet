@@ -91,9 +91,9 @@ export default {
   watch: {
     $route(from, to) {
       if (
-        to.name == "download" ||
-        to.name == "new wallet" ||
-        (from.name == "new wallet" && to.name == "login")
+        to.name === "download" ||
+        to.name === "new wallet" ||
+        (from.name === "new wallet" && (to.name === "login" || to.name === "login single password"))
       ) {
         this.transitionName = "";
       } else {
@@ -170,7 +170,7 @@ export default {
   right: 0;
   font-size: 0.7rem;
   display: flex;
-  align-items: bottom;
+  align-items: flex-end;
   margin-right: 1.8em;
 }
 
@@ -182,7 +182,7 @@ export default {
   left: 0;
   font-size: 2.7rem;
   display: flex;
-  align-items: bottom;
+  align-items: flex-end;
   margin-left: 0.5em;
   margin-top: 0.5em;
 }

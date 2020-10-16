@@ -34,6 +34,9 @@ import ContactDetails from "@/pages/ContactDetails";
 import TermsOfService from "@/pages/TermsOfService.vue";
 
 import NotFound from "@/pages/NotFoundPage.vue";
+import LoginSinglePassword from "@/pages/LoginSinglePassword";
+import CreateAccount from "@/pages/CreateAccount";
+import CreateAccountComplete from "@/pages/CreateAccountComplete";
 
 const routes = [
   {
@@ -55,6 +58,16 @@ const routes = [
         path: "create-wallet",
         name: "create wallet",
         component: CreateWallet
+      },
+      {
+        path: "create-account",
+        name: "create account",
+        component: CreateAccount
+      },
+      {
+        path: "create-account-complete",
+        name: "create account complete",
+        component: CreateAccountComplete
       },
       {
         path: "recovery-phrase-info",
@@ -105,6 +118,11 @@ const routes = [
         path: "login",
         name: "login",
         component: Login
+      },
+      {
+        path: "login-single-password",
+        name: "login single password",
+        component: LoginSinglePassword
       },
       {
         path: "migrate-screen",

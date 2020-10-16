@@ -8,6 +8,16 @@
               <br />
               <div class="input-box">
                 <div>
+                  <label class="control-label"
+                  >Select a folder for your KeyStore file</label
+                  >
+                  <file-selector
+                      v-model="keystorePath"
+                      :placeholder="keystorePath"
+                      action="SelectFile"
+                  />
+                </div>
+                <div>
                   <password-input
                     v-model="keystorePassword"
                     label="New Password"
@@ -38,21 +48,9 @@
                         type="primary"
                         block
                         :disabled="valid"
-                        @click.native="moveToRecoveryPhraseInfo()"
+                        @click.native="createKeyStore()"
                       >
-                        <span style="display: block"> CREATE NEW ACCOUNT</span>
-                      </p-button>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <p-button
-                        type="primary"
-                        block
-                        :disabled="valid"
-                        @click.native="moveToImportAccount()"
-                      >
-                        <span style="display: block"> IMPORT ACCOUNT</span>
+                        <span style="display: block"> CREATE KEYSTORE FILE</span>
                       </p-button>
                     </div>
                   </div>
@@ -69,11 +67,10 @@
 
 <script>
 import { mapState } from "vuex";
-import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
   components: {},
-  name: "create-wallet",
+  name: "create account",
   data: () => ({
     keystorePassword: "",
     keyPassword: "",
@@ -100,9 +97,6 @@ export default {
       },
     },
   },
-  mounted() {
-    this.migrateNotification();
-  },
   methods: {
     confirmPassword: function() {
       this.valid =
@@ -112,95 +106,25 @@ export default {
       this.valid_password = is_valid;
       this.confirmPassword();
     },
-    savePasswordToKeychain: function () {
-      return window.backend.WalletApplication.InitKeychains().then((result) => {
-        if (result) {
-          return window.backend.WalletApplication.SavePasswordToKeychain(
-              this.keystorePassword
-          )
-        }
-        return null;
-      })
-    },
-    moveToRecoveryPhraseInfo: function() {
-      // if (this.valid === false) return;
-      // this.savePasswordToKeychain().then((result) => {
+    createKeyStore: function () {
+      // const fileBin = '';
+
+      // return window.backend.WalletApplication.CreateKeyStoreFile(fileBin).then((result) => {
       //   if (result) {
-          Swal.close();
           this.$store.dispatch("wallet/reset").then(() => {
             this.$router.push({
-              name: "recovery phrase info",
+              name: "create account complete",
               params: {
-                message: "Let's first create our recovery phrase!",
-                title: "Recovery Phrase",
+                message: "Congratulations! You have created a KeyStore file for Molly Wallet!",
+                title: "Create a KeyStore File",
                 darkMode: this.$route.params.darkMode,
               },
             });
           });
       //   }
       // });
-    },
-    moveToImportAccount: function () {
-      // if (this.valid === false) return;
-      // this.savePasswordToKeychain().then((result) => {
-      //   if (result) {
-          Swal.close();
-          this.$store.dispatch("wallet/reset").then(() => {
-            this.$router.push({
-              name: "import wallet",
-              params: {
-                message: "Please select how you would like to import an existing account:",
-                title: "Import account",
-                darkMode: this.$route.params.darkMode,
-              },
-            });
-          });
-      //   }
-      // });
-    },
-    migrateNotification: function() {
-      let timerInterval;
-      Swal.fire({
-        title:
-          "<p style='text-align: left; color: white; margin: auto;'>Note</p>",
-        html: `<br><p style='text-align: left; color: white;'>This is the password you will use to login to Molly Wallet each time. If you already have an existing account, please select the <b>import</b> option.</p>`,
-        width: 300,
-        padding: 20,
-        backdrop: false,
-        toast: true,
-        background: "#2654C0",
-        position: "top-end",
-        showConfirmButton: false,
-        allowOutsideClick: false,
-        showCloseButton: true,
-        timerProgressBar: true,
-        willOpen: () => {
-          Swal.showLoading();
-          timerInterval = setInterval(() => {
-            const content = Swal.getContent();
-            if (content) {
-              const b = content.querySelector("b");
-              if (b) {
-                b.textContent = Swal.getTimerLeft();
-              }
-            }
-          }, 100);
-        },
-        onClose: () => {
-          clearInterval(timerInterval);
-        },
-      });
-    },
-    completeMigration: function() {
-      this.$router.push({
-        name: "password migration complete",
-        params: {
-          message:
-            "Congratulations! You have completed the Molly Wallet password migration!",
-        },
-      });
-    },
-  },
+    }
+  }
 };
 
 </script>

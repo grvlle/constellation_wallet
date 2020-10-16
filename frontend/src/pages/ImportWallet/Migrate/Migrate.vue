@@ -44,8 +44,8 @@
                 <div class="container">
                   <div class="row">
                     <div class="col">
-                      <p-button style="background: #DD8D74; border-color: #DD8D74;" block @click.native="migrate()">
-                        <span style="display: block"> NEXT</span>
+                      <p-button style="background: #dd8d74; border-color: #dd8d74;" block @click.native="completeMigration()">
+                        <span style="display: block"> COMPLETE MIGRATION</span>
                       </p-button>
                     </div>
                   </div>
@@ -92,16 +92,13 @@ export default {
     },
   },
   methods: {
-    newWallet: function () {
-      this.$store.dispatch("wallet/reset").then(() => {
-        this.$router.push({
-          name: "new wallet",
-          params: {
-            message:
-              "Create a new Molly wallet. Please ensure that you backup all information provided below in a safe place.",
-            darkMode: this.$route.params.darkMode,
-          },
-        });
+    completeMigration: function() {
+      this.$router.push({
+        name: "password migration complete",
+        params: {
+          title: "Molly Wallet Migration",
+          message: "Congratulations! You have completed the Molly Wallet password migration!",
+        },
       });
     },
     migrate: function () {
@@ -120,7 +117,7 @@ export default {
               name: "password migration",
               params: {
                 title: "Molly Wallet migration wizard",
-                message: "Please enter your new Molly Wallet password below: ",
+                message: "Enter the password for your new p12 file. You may use one of your previous password: ",
               },
             });
           }
@@ -131,7 +128,7 @@ export default {
           name: "password migration",
           params: {
             title: "Molly Wallet migration wizard",
-            message: "Please enter your new Molly Wallet password below: ",
+            message:  "Enter the password for your new p12 file. You may use a previous password: ",
           },
         });
       }

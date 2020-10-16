@@ -6,9 +6,7 @@
           <div class="row">
             <div class="col mx-auto login-box">
               <div>
-                <label class="control-label"
-                  >Select your private key (key.p12)</label
-                >
+                <label class="control-label">Select your private key (key.p12)</label>
                 <file-selector
                   v-model="keystorePath"
                   :placeholder="keystorePath"

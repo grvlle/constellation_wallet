@@ -187,6 +187,11 @@ func (a *WalletApplication) CreateOrInitWalletV2(address string) bool {
 	return true
 }
 
+func (a *WalletApplication) CreateKeyStoreFile(keystorePath string) bool {
+
+    return true
+}
+
 
 // CreateWallet is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias, label string) bool {

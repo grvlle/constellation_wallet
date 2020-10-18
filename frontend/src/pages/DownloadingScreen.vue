@@ -30,7 +30,7 @@ export default {
       if (exists) {
         self.$router.push({
           name: 'login single password',
-          params: {message: "Please enter the credentials to your p12 file to access your account."}
+          params: {message: "Please enter the credentials to your Private Key (.p12 file) to access your account."}
         });
       }
     });

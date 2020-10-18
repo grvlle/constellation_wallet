@@ -9,7 +9,7 @@
               <div class="input-box">
                 <div>
                   <label class="control-label"
-                  >Select a folder for your KeyStore file</label
+                  >Select a folder where you want to save your Private Key</label
                   >
                   <file-selector
                       v-model="keystorePath"

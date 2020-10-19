@@ -154,6 +154,7 @@ export default {
 
       if (!filePath ||  !password) {
         // Swal.fire('Invalid credentials', '', 'error')
+        this.loginWithKey();
         return
       }
 
@@ -173,27 +174,33 @@ export default {
         }
 
         if (keyPair) {
-          // TODO - save seed and privKey to KeyChain (Alex)
-          dagWalletAccount.loginPrivateKey(keyPair.privateKey);
-
-          var address = keyStore.getDagAddressFromPublicKey(keyStore.getPublicKeyFromPrivate(keyPair.privateKey));
-          // eslint-disable-next-line no-console
-          console.log("getDagAddressFromPublicKey: " + address);
-          window.backend.WalletApplication.CreateOrInitWalletV2(
-              address
-          ).then((result) => {
-            if (result) {
-              Swal.close();
-              this.initWallet();
-            }
-          });
+          this.loginWithKey(keyPair.privateKey);
         }
       };
 
       reader.onerror = () => {
-        //TODO - ERROR (Vito)
+        //TODO - ERROR
         //this.errorMessage = 'Unable to read file';
       };
+    },
+    loginWithKey: function (key) {
+
+      if (!key) return
+
+      // TODO - save seed and privKey to KeyChain (Alex)
+      dagWalletAccount.loginPrivateKey(key);
+
+      var address = keyStore.getDagAddressFromPublicKey(keyStore.getPublicKeyFromPrivate(key));
+      // eslint-disable-next-line no-console
+      console.log("getDagAddressFromPublicKey: " + address);
+      window.backend.WalletApplication.CreateOrInitWalletV2(
+          address
+      ).then((result) => {
+        if (result) {
+          Swal.close();
+          this.initWallet();
+        }
+      });
     },
     initWallet: function () {
       var self = this;

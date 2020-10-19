@@ -182,8 +182,8 @@ func (a *WalletApplication) initMainnetConnection() {
 
 	a.Network.BlockExplorer.URL = MainnetBlockExplorerURL
 	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"
-	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoints/"
-	a.Network.BlockExplorer.Handles.Snapshots = "/snapshots/"
+	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoint-block/"
+	a.Network.BlockExplorer.Handles.Snapshots = "/snapshot/"
 	// a.Network.BlockExplorer.Handles.CollectTX = "/transactions?sender="
 }
 

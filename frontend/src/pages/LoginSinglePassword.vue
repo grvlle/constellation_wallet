@@ -7,7 +7,7 @@
             <div class="col mx-auto login-box">
               <div>
                 <label class="control-label"
-                >Select your private key (key.p12)</label
+                >Select your Private Key (key.p12)</label
                 >
                 <file-selector
                     v-model="keystorePath"
@@ -41,7 +41,7 @@
                   <div class="row">
                     <div class="col">
                       <p class="text-right">
-                        Don't have a KeyStore file? Create one
+                        Don't have a Wallet? Create one
                         <a class="link-text" @click="createAccount()">here!</a>
                       </p>
                     </div>
@@ -89,7 +89,7 @@ export default {
       Swal.fire({
         title:
           "<p style='text-align: left; color: white; margin: auto;'>Important Update</p>",
-        html: `<br><p style='text-align: left; color: white;'>If you have previously signed into Molly Wallet using two passwords and alias (1.2.x and earlier), you will need to migrate your file before login.</p>`,
+        html: `<br><p style='text-align: left; color: white;'>If you have previously signed into Molly Wallet using an alias and two different passwords (versions 1.2.x and earlier), you will need to migrate your credentials before logging in.</p>`,
         width: 300,
         padding: 20,
         backdrop: false,
@@ -124,7 +124,7 @@ export default {
           name: "migrate screen",
           params: {
             message:
-                "Enter the information below to migrate your existing two password file to a single password:",
+                "Enter the information below to migrate your existing two password credentials to a single password.",
             title: "Molly Wallet Migration",
             darkMode: this.$route.params.darkMode,
           },
@@ -172,8 +172,8 @@ export default {
         this.$router.push({
           name: "create account",
           params: {
-            message: "Enter a location and a password for your KeyStore",
-            title: "Create a KeyStore File",
+            message: "Enter a location and a password for your Private Key.",
+            title: "Create a Private Key",
             darkMode: this.$route.params.darkMode,
           },
         });

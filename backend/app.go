@@ -77,6 +77,11 @@ const (
 	ServiceLogin = "molly-wallet-login"
 	ServiceSeed = "molly-wallet-seed"
 	ServicePKey = "molly-wallet-pkey"
+
+	MainnetBlockExplorerURL = "https://block-explorer.constellationnetwork.io"
+	TestnetBlockExplorerURL = "https://api-be.exchanges.constellationnetwork.io"
+	MainnetLoadBalancerURL = "http://lb.constellationnetwork.io:9000"
+	TestnetLoadBalancerURL = "http://lb.exchanges.constellationnetwork.io:9000"
 )
 
 // WailsShutdown is called when the application is closed
@@ -169,17 +174,17 @@ func (a *WalletApplication) initDirectoryStructure() error {
 
 // initMainnetConnection populates the WalletApplication struct with mainnet data
 func (a *WalletApplication) initMainnetConnection() {
-	a.Network.URL = "http://lb.constellationnetwork.io:9000" // Temp
+	a.Network.URL = MainnetLoadBalancerURL // Temp
 
 	a.Network.Handles.Send = "/send"
 	a.Network.Handles.Transaction = "/transaction"
 	a.Network.Handles.Balance = "/address/"
 
-	a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
+	a.Network.BlockExplorer.URL = MainnetBlockExplorerURL
 	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"
-	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoints/"
-	a.Network.BlockExplorer.Handles.Snapshots = "/snapshots/"
-	a.Network.BlockExplorer.Handles.CollectTX = "/transactions?sender="
+	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoint-block/"
+	a.Network.BlockExplorer.Handles.Snapshots = "/snapshot/"
+	// a.Network.BlockExplorer.Handles.CollectTX = "/transactions?sender="
 }
 
 // APIError reported by the blockexplerer/loadbalancer are reported in the following format

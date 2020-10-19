@@ -1,23 +1,53 @@
 <template>
   <div class="container">
     <div v-if="value.length">
-      <div class="balance text-center">{{normalizedAvailableBalance | asCurrency('DAG-short')}} $DAG</div>
+      <div class="balance text-center">
+        {{ normalizedAvailableBalance | asCurrency("DAG-short") }} $DAG
+      </div>
       <ul class="timeline">
-        <li class="timeline-inverted d-flex" v-for="tx in value" v-bind:key="tx.ID">
+        <li
+          class="timeline-inverted d-flex"
+          v-for="tx in value"
+          v-bind:key="tx.ID"
+        >
           <div class="timeline-label">
-            <div class="timeline-value" :class="[tx.status.toLowerCase(), address == tx.receiver ? 'receive' : 'send']" >
+            <div
+              class="timeline-value"
+              :class="[
+                tx.status.toLowerCase(),
+                address == tx.receiver ? 'receive' : 'send',
+              ]"
+            >
               <span v-if="address == tx.receiver">+</span>
               <span v-else>-</span>
-              {{tx.amount | normalizeDAG | asCurrency('DAG-short')}}
+              {{ tx.amount | normalizeDAG | asCurrency("DAG-short") }}
             </div>
-            <div class="timeline-badge" :class="[tx.status.toLowerCase(), address == tx.receiver ? 'receive' : 'send']">
-              <i v-if="tx.status == 'Pending'" class="fa fa-spinner fa-spin"></i>
+            <div
+              class="timeline-badge"
+              :class="[
+                tx.status.toLowerCase(),
+                address == tx.receiver ? 'receive' : 'send',
+              ]"
+            >
+              <i
+                v-if="tx.status == 'Pending'"
+                class="fa fa-spinner fa-spin"
+              ></i>
               <i v-else-if="tx.status == 'Error'" class="fa fa-times"></i>
-              <i v-else-if="address == tx.receiver" class="fa fa-hand-holding-usd"></i>
+              <i
+                v-else-if="address == tx.receiver"
+                class="fa fa-hand-holding-usd"
+              ></i>
               <i v-else class="fa fa-hand-holding-usd fa-flip-horizontal"></i>
             </div>
           </div>
-          <div class="timeline-panel" :class="[tx.status.toLowerCase(), address == tx.receiver ? 'receive' : 'send']">
+          <div
+            class="timeline-panel"
+            :class="[
+              tx.status.toLowerCase(),
+              address == tx.receiver ? 'receive' : 'send',
+            ]"
+          >
             <div class="container" style="padding: 0;">
               <div class="row">
                 <div class="col-10">
@@ -25,11 +55,16 @@
                     <div
                       class="col-md-3 text-truncate"
                       v-if="address == tx.receiver"
-                    >received:&nbsp;{{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
-                    <div
-                      class="col-md-3 text-truncate"
-                      v-else
-                    >send:&nbsp;{{tx.amount | normalizeDAG | asCurrency('DAG')}}</div>
+                    >
+                      received:&nbsp;{{
+                        tx.amount | normalizeDAG | asCurrency("DAG")
+                      }}
+                    </div>
+                    <div class="col-md-3 text-truncate" v-else>
+                      send:&nbsp;{{
+                        tx.amount | normalizeDAG | asCurrency("DAG")
+                      }}
+                    </div>
                     <div class="col-md-9 text-truncate">
                       <span v-if="address == tx.receiver">from:&nbsp;</span>
                       <span v-else>to:&nbsp;</span>
@@ -40,15 +75,18 @@
                     <div class="col text-truncate">
                       <a
                         class="text-muted"
-                        :href="'https://www.dagexplorer.io/search?term=' + tx.hash"
+                        :href="
+                          'https://www.dagexplorer.io/search?term=' + tx.hash
+                        "
                         rel="noopener noreferrer"
                         target="_blank"
-                      >{{tx.hash}}</a>
+                        >{{ tx.hash }}</a
+                      >
                     </div>
                   </div>
                 </div>
                 <div class="col-md-2 text-right">
-                  <small class="text-muted">{{tx.date}}</small>
+                  <small class="text-muted">{{ tx.date }}</small>
                 </div>
               </div>
             </div>
@@ -58,9 +96,11 @@
     </div>
     <div v-else class="text-center" style="height: 10rem;">
       <p class="card-text text-muted font-weight-bold mt-4">NO TRANSACTIONS</p>
-      <p
-        class="card-text text-muted font-italic"
-      >You have not send any transactions yet from this address. Monitoring also the received transactions will be added to the Molly wallet shortly.</p>
+      <p class="card-text text-muted font-italic">
+        You have not send any transactions yet from this address. Monitoring
+        also the received transactions will be added to the Molly wallet
+        shortly.
+      </p>
     </div>
   </div>
 </template>
@@ -84,20 +124,20 @@ export default {
   },
   computed: {
     ...mapState("wallet", ["address"]),
-    ...mapGetters('wallet', ['normalizedAvailableBalance'])
+    ...mapGetters("wallet", ["normalizedAvailableBalance"]),
   },
   methods: {
-    displayContact: function (value) {
-      let contactInfo = "<span class='text-danger'>unknown</span>";
+    displayContact: function(value) {
+      // let contactInfo = "<span class='text-danger'>unknown</span>";
       let contact = this.$store.getters["addressBook/search"](value);
       if (contact.length) {
-        contactInfo = "<span>" + contact[0].name + "</span>";
+        return "<span>" + contact[0].name + "</span>";
       }
-      return contactInfo + "<span> (" + value + ")</span>";
+      return value;
     },
   },
   filters: {
-    asCurrency: function (value, currency) {
+    asCurrency: function(value, currency) {
       if (currency == "") {
         return "";
       } else if (currency == "DAG-short") {
@@ -115,7 +155,7 @@ export default {
         return formatter.format(value);
       }
     },
-    normalizeDAG: function (value) {
+    normalizeDAG: function(value) {
       return (value / 1e8).toFixed(8).replace(/\.?0+$/, "");
     },
   },
@@ -147,8 +187,8 @@ export default {
   left: 4.8rem;
   margin-left: -0.09375rem;
   @include themed() {
-    background-color: t('borderColor');
-  } 
+    background-color: t("borderColor");
+  }
 }
 
 .timeline > li {
@@ -187,19 +227,19 @@ export default {
 
 .timeline-value.receive {
   @include themed() {
-    color: t('warningColor');
+    color: t("warningColor");
   }
 }
 
 .timeline-value.send {
   @include themed() {
-    color: t('infoColor');
+    color: t("infoColor");
   }
 }
 
 .timeline-value.error {
   @include themed() {
-    color: t('dangerColor');
+    color: t("dangerColor");
   }
 }
 
@@ -225,48 +265,48 @@ export default {
 
 .timeline-badge .fa {
   @include themed() {
-    color: t('cardBackgroundColor');
+    color: t("cardBackgroundColor");
   }
 }
 
 .timeline-badge.receive {
   @include themed() {
-    background-color: t('warningColor');
+    background-color: t("warningColor");
   }
 }
 
 .timeline-badge.send {
   @include themed() {
-    background-color: t('infoColor');
+    background-color: t("infoColor");
   }
 }
 
 .timeline-badge.error {
   @include themed() {
-    background-color: t('dangerColor');
+    background-color: t("dangerColor");
   }
 }
 
 .timeline-badge.pending {
   @include themed() {
-    background-color: t('borderColor');
+    background-color: t("borderColor");
   }
 }
 .timeline-badge.pending .fa {
   @include themed() {
-    color: t('cardTextColor'); 
+    color: t("cardTextColor");
   }
 }
 .timeline-badge.pending.send {
   border-style: solid;
   @include themed() {
-    border-color: t('infoColor');
+    border-color: t("infoColor");
   }
 }
 .timeline-badge.pending.receive {
   border-style: solid;
   @include themed() {
-    border-color: t('warningColor');
+    border-color: t("warningColor");
   }
 }
 
@@ -297,8 +337,8 @@ export default {
   border-right-width: 0;
   content: " ";
   @include themed() {
-    border-left-color: t('cardTableColor');
-    border-right-color: t('cardTableColor');
+    border-left-color: t("cardTableColor");
+    border-right-color: t("cardTableColor");
   }
 }
 
@@ -311,22 +351,22 @@ export default {
 
 .timeline-panel.send:before {
   @include themed() {
-    border-left-color: t('infoColor');
-    border-right-color: t('infoColor');
+    border-left-color: t("infoColor");
+    border-right-color: t("infoColor");
   }
 }
 
 .timeline-panel.receive:before {
   @include themed() {
-    border-left-color: t('warningColor');
-    border-right-color: t('warningColor');
+    border-left-color: t("warningColor");
+    border-right-color: t("warningColor");
   }
 }
 
 .timeline-panel.error:before {
   @include themed() {
-    border-left-color: t('dangerColor');
-    border-right-color: t('dangerColor');
+    border-left-color: t("dangerColor");
+    border-right-color: t("dangerColor");
   }
 }
 
@@ -346,26 +386,26 @@ export default {
   -webkit-box-shadow: 0 0.0625rem 0.375rem rgba(0, 0, 0, 0.175);
   box-shadow: 0 0.0625rem 0.375rem rgba(0, 0, 0, 0.175);
   @include themed() {
-    background-color: t('cardTableColor');
-    border-color: t('borderColor');
+    background-color: t("cardTableColor");
+    border-color: t("borderColor");
   }
 }
 
 .timeline-panel.send {
   @include themed() {
-    border-left-color: t('infoColor');
+    border-left-color: t("infoColor");
   }
 }
 
 .timeline-panel.receive {
   @include themed() {
-    border-left-color: t('warningColor');
+    border-left-color: t("warningColor");
   }
 }
 
 .timeline-panel.error {
   @include themed() {
-    border-left-color: t('dangerColor');
+    border-left-color: t("dangerColor");
   }
 }
 </style>

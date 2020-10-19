@@ -8,7 +8,7 @@
               <div class="input-box">
                 <div>
                   <label class="control-label"
-                    >Select your private key (key.p12)</label
+                    >Select your Private Key (key.p12)</label
                   >
                   <file-selector
                     v-model="keystorePath"

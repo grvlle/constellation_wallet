@@ -88,7 +88,7 @@ export default {
       this.$router.push({
         name: "login single password",
         params: {
-          message: "Please enter the credentials to your Private Key (.p12 file) to access your account.",
+          message: "Please enter the credentials to your Private Key (.p12 or JSON file) to access your account.",
         },
       });
     },

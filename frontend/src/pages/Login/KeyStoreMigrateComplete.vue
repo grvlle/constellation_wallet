@@ -58,7 +58,7 @@ import { mapState } from "vuex";
 
 export default {
   components: {},
-  name: "password-migration-complete",
+  name: "keystore-migration-complete",
   data: () => ({
     keystorePassword: "",
     KeyPassword: "",

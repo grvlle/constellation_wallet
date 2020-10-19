@@ -181,6 +181,20 @@ func (a *WalletApplication) produceTXObject(amount int64, fee int64, address, ne
 	time.Sleep(1 * time.Second) // Will sleep for 1 sec between TXs to prevent spamming.
 }
 
+// java -jar ~/.dag/cl-keytool.jar generate-wallet --keystore testA.p12 --alias alias --storepass test1 --keypass test2
+// java -jar ~/.dag/cl-keytool.jar migrate-to-store-password-only --keystore testA.p12 --alias alias --storepass test1 --keypass test2
+func (a *WalletApplication) produceKeystoreMigrateV2(keystorePath, alias string) bool {
+
+	err := a.runWalletCMD("keytool", "migrate-to-store-password-only", "--keystore="+keystorePath, "--alias="+alias, "--env_args=true")
+	if err != nil {
+		a.sendError("Unable to migrate Keystore file to V2. Please report this issue. Reason: ", err)
+		a.log.Errorln("Unable to migrate Keystore file. Reason: ", err)
+		return false
+	}
+
+	return true;
+}
+
 // CreateEncryptedKeyStore is called ONLY when a NEW wallet is created. This
 // will create a new password protected encrypted keypair stored in user selected location
 // java -jar cl-keytool.jar --keystore testkey.p12 --alias alias --storepass storepass --keypass keypass

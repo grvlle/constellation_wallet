@@ -13,6 +13,7 @@
                     v-model="keystorePath"
                     :placeholder="keystorePath"
                     action="SelectFile"
+                    @file="fileSelected"
                 />
               </div>
 
@@ -32,7 +33,7 @@
                       <p-button
                           type="primary"
                           block
-                          @click.native="loadKeyStoreFile(keystorePath, keystorePassword)"
+                          @click.native="loadKeyStoreFile(keystoreFile, keystorePassword)"
                       >
                         <span style="display: block">LOGIN</span>
                       </p-button>
@@ -64,12 +65,13 @@ import {dagWalletAccount} from '@stardust-collective/dag-wallet-sdk';
 import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
-  name: "login single password",
+  name: "login-single-password",
   data: () => ({
     keystorePassword: "",
     KeyPassword: "",
     overlay: false,
     valid: false,
+    keystoreFile: null
   }),
   computed: {
     keystorePath: {
@@ -82,10 +84,14 @@ export default {
     }
   },
   mounted() {
-    this.migrateNotification(this);
+    this.migrateNotification();
   },
   methods: {
-    migrateNotification: function(self) {
+    fileSelected: function(value) {
+      this.keystoreFile = value;
+      this.keystorePath = value.name;
+    },
+    migrateNotification: function() {
       Swal.fire({
         title:
           "<p style='text-align: left; color: white; margin: auto;'>Important Update</p>",
@@ -113,7 +119,7 @@ export default {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
           // Swal.fire('Saved!', '', 'success')
-          self.moveToMigrate()
+          this.moveToMigrate()
         }
       })
     },
@@ -121,11 +127,24 @@ export default {
       Swal.close();
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
-          name: "migrate screen",
+          name: "keystore migrate",
           params: {
             message:
                 "Enter the information below to migrate your existing two password file to a single password:",
             title: "Molly Wallet Migration",
+            darkMode: this.$route.params.darkMode,
+          },
+        });
+      });
+    },
+    createAccount: function() {
+      Swal.close();
+      this.$store.dispatch("wallet/reset").then(() => {
+        this.$router.push({
+          name: "create account",
+          params: {
+            message: "Enter a location and a password for your KeyStore",
+            title: "Create a KeyStore File",
             darkMode: this.$route.params.darkMode,
           },
         });
@@ -150,46 +169,14 @@ export default {
           keyPair = keyStoreFile.readP12(reader.result, password);
         }
         catch (e) {
-          //this.errorMessage = e.message;
+          this.errorMessage = e.message;
         }
 
         if (keyPair) {
           // TODO - save seed and privKey to KeyChain (Alex)
           dagWalletAccount.loginPrivateKey(keyPair.privateKey);
 
-          this.createWalletPassword()
-        }
-      };
-
-      reader.onerror = () => {
-        //TODO - ERROR (Vito)
-        //this.errorMessage = 'Unable to read file';
-      };
-    },
-    createAccount: function() {
-      Swal.close();
-      this.$store.dispatch("wallet/reset").then(() => {
-        this.$router.push({
-          name: "create account",
-          params: {
-            message: "Enter a location and a password for your KeyStore",
-            title: "Create a KeyStore File",
-            darkMode: this.$route.params.darkMode,
-          },
-        });
-      });
-    },
-    loginPass: function() {
-      var self = this;
-      self.$Progress.start();
-      self.overlay = true;
-      window.backend.WalletApplication.LoginKeychain(
-        self.keystorePassword
-      ).then((pkey) => {
-        // eslint-disable-next-line no-console
-        console.log("pkey: " + pkey);
-        if (pkey && pkey.length === 64) {
-          var address = keyStore.getDagAddressFromPublicKey(keyStore.getPublicKeyFromPrivate(pkey));
+          var address = keyStore.getDagAddressFromPublicKey(keyStore.getPublicKeyFromPrivate(keyPair.privateKey));
           // eslint-disable-next-line no-console
           console.log("getDagAddressFromPublicKey: " + address);
           window.backend.WalletApplication.CreateOrInitWalletV2(
@@ -197,17 +184,16 @@ export default {
           ).then((result) => {
             if (result) {
               Swal.close();
-              self.initWallet();
+              this.initWallet();
             }
-          })
-
-          // this.$store.dispatch("wallet/reset").then(() => {
-          //   this.$router.push({
-          //     name: "home",
-          //   });
-          // });
+          });
         }
-      });
+      };
+
+      reader.onerror = () => {
+        //TODO - ERROR (Vito)
+        //this.errorMessage = 'Unable to read file';
+      };
     },
     initWallet: function () {
       var self = this;

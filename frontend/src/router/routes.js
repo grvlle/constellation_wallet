@@ -1,7 +1,7 @@
 import LoginLayout from "@/layout/login/LoginLayout.vue";
 import Download from "@/pages/DownloadingScreen";
-import NewWallet from "@/pages/NewWallet";
-import Login from "@/pages/Login";
+import NewWallet from "@/pages/Login_v1/NewWallet";
+import Login from "@/pages/Login_v1/Login";
 import Loading from "@/pages/LoadingScreen";
 
 import CreateWallet from "@/pages/CreateWallet/CreateWallet";
@@ -18,9 +18,8 @@ import ImportKeystore from "@/pages/ImportWallet/Keystore/ImportKeystore";
 import CreateWalletPassword from "@/pages/ImportWallet/Keystore/CreateWalletPassword";
 import ImportKeystoreComplete from "@/pages/ImportWallet/Keystore/ImportKeystoreComplete";
 
-import Migrate from "@/pages/ImportWallet/Migrate/Migrate";
-import PasswordMigration from "@/pages/ImportWallet/Migrate/PasswordMigration";
-import PasswordMigrationComplete from "@/pages/ImportWallet/Migrate/PasswordMigrationComplete";
+import Migrate from "@/pages/Login/KeyStoreMigrate";
+import PasswordMigrationComplete from "@/pages/Login/KeyStoreMigrateComplete";
 
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
 import Dashboard from "@/pages/Dashboard.vue";
@@ -34,9 +33,9 @@ import ContactDetails from "@/pages/ContactDetails";
 import TermsOfService from "@/pages/TermsOfService.vue";
 
 import NotFound from "@/pages/NotFoundPage.vue";
-import LoginSinglePassword from "@/pages/LoginSinglePassword";
-import CreateAccount from "@/pages/CreateAccount";
-import CreateAccountComplete from "@/pages/CreateAccountComplete";
+import LoginSinglePassword from "@/pages/Login/LoginSinglePassword";
+import CreateAccount from "@/pages/Login/CreateAccount";
+import CreateAccountComplete from "@/pages/Login/CreateAccountComplete";
 
 const routes = [
   {
@@ -125,18 +124,13 @@ const routes = [
         component: LoginSinglePassword
       },
       {
-        path: "migrate-screen",
-        name: "migrate screen",
+        path: "keystore-migrate",
+        name: "keystore migrate",
         component: Migrate
       },
       {
-        path: "password-migration-screen",
-        name: "password migration",
-        component: PasswordMigration
-      },
-      {
-        path: "password-migration-complete",
-        name: "password migration complete",
+        path: "keystore-migration-complete",
+        name: "keystore migration complete",
         component: PasswordMigrationComplete
       },
       {

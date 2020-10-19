@@ -111,7 +111,7 @@ export default {
       Swal.close();
       this.$store.dispatch("wallet/reset").then(() => {
         this.$router.push({
-          name: "migrate screen",
+          name: "keystore migrate",
           params: {
             message:
               "Enter your information below to migrate your Molly Wallet:",

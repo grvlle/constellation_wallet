@@ -135,8 +135,8 @@ func (a *WalletApplication) LogOut() bool {
 	if a.TransactionFinished {
 		a.UserLoggedIn = false
 		a.wallet = models.Wallet{}
-		a.Network.URL = "http://lb.constellationnetwork.io:9000" // Reset to default network upon every logout
-		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
+		a.Network.URL = MainnetLoadBalancerURL // Reset to default network upon every logout
+		a.Network.BlockExplorer.URL = MainnetBlockExplorerURL
 		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
 		return true
 	}
@@ -165,14 +165,14 @@ func (a *WalletApplication) SelectNetwork(testnet bool) bool {
 
 	if testnet {
 		// Ceres Test Network
-		a.Network.URL = "http://cl-lb-alb-exchanges-582714291.us-west-1.elb.amazonaws.com:9000"
-		a.Network.BlockExplorer.URL = "https://pdvmh8pagf.execute-api.us-west-1.amazonaws.com/cl-block-explorer-exchanges"
+		a.Network.URL = TestnetLoadBalancerURL
+		a.Network.BlockExplorer.URL = TestnetBlockExplorerURL
 		a.log.Infoln("Connected to: Ceres Test Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
 	}
 
 	if !testnet {
-		a.Network.URL = "http://lb.constellationnetwork.io:9000"
-		a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
+		a.Network.URL = MainnetLoadBalancerURL
+		a.Network.BlockExplorer.URL = MainnetBlockExplorerURL
 		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
 	}
 

@@ -15,6 +15,33 @@ import (
 	"github.com/zalando/go-keyring"
 )
 
+
+func (a *WalletApplication) MigrateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
+
+    alias = strings.ToLower(alias)
+
+    if runtime.GOOS == "windows" && !a.javaInstalled() {
+        a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+        return false
+    }
+
+    if keystorePath == "" {
+        a.LoginError("Please provide a path to the KeyStore file.")
+        return false
+    }
+
+    if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
+        a.log.Warnln("One or more passwords were not provided.")
+        return false
+    }
+
+    os.Setenv("CL_STOREPASS", keystorePassword)
+    os.Setenv("CL_KEYPASS", keyPassword)
+
+    return a.produceKeystoreMigrateV2(keystorePath, alias);
+
+}
+
 // ImportWallet is triggered when a user logs into a new Molly wallet for the first time
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
 

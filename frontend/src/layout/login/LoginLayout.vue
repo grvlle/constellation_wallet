@@ -103,7 +103,7 @@ export default {
   },
   computed: {
     isMigrationWizard() {
-      return this.$route.name === "migrate screen" || this.$route.name === "password migration complete" || this.$route.name === "password migration";
+      return this.$route.name === "keystore migrate" || this.$route.name === "keystore migration complete" || this.$route.name === "password migration";
     },
     themeBG: function () {
       if (this.isDarkMode) {

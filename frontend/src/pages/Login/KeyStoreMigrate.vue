@@ -13,7 +13,7 @@
                   <file-selector
                     v-model="keystorePath"
                     :placeholder="keystorePath"
-                    action="SelectFile"
+                    action="SelectFile2"
                   />
                 </div>
                 <div>
@@ -44,7 +44,7 @@
                 <div class="container">
                   <div class="row">
                     <div class="col">
-                      <p-button style="background: #dd8d74; border-color: #dd8d74;" block @click.native="completeMigration()">
+                      <p-button style="background: #dd8d74; border-color: #dd8d74;" block @click.native="migrate()">
                         <span style="display: block"> COMPLETE MIGRATION</span>
                       </p-button>
                     </div>
@@ -67,7 +67,7 @@
 
 <script>
 export default {
-  name: "migrate-screen",
+  name: "keystore-migrate",
   data: () => ({
     keystorePassword: "",
     KeyPassword: "",
@@ -94,7 +94,7 @@ export default {
   methods: {
     completeMigration: function() {
       this.$router.push({
-        name: "password migration complete",
+        name: "keystore migration complete",
         params: {
           title: "Molly Wallet Migration",
           message: "Congratulations! You have completed the Molly Wallet password migration!",
@@ -106,18 +106,20 @@ export default {
       if (self.keystorePath) {
         self.$Progress.start();
         self.overlay = true;
-        window.backend.WalletApplication.Migrate(
-            self.keystorePath,
-            self.keystorePassword,
-            self.KeyPassword,
-            self.alias
+        window.backend.WalletApplication.MigrateWallet(
+          self.keystorePath,
+          self.keystorePassword,
+          self.KeyPassword,
+          self.alias
         ).then((result) => {
-          if (result) {
+          self.overlay = false;
+          self.$Progress.finish();
+          if (result) { //TODO handle error case?
             this.$router.push({
-              name: "password migration",
+              name: "keystore migration complete",
               params: {
-                title: "Molly Wallet migration wizard",
-                message: "Enter the password for your new p12 file. You may use one of your previous password: ",
+                title: "Molly Wallet Migration",
+                message: "Congratulations! You have completed the Molly Wallet password migration!"
               },
             });
           }
@@ -125,10 +127,10 @@ export default {
       }
       else {  //TODO - remove after migrate feature integrated
         this.$router.push({
-          name: "password migration",
+          name: "keystore migration complete",
           params: {
-            title: "Molly Wallet migration wizard",
-            message:  "Enter the password for your new p12 file. You may use a previous password: ",
+            title: "Molly Wallet Migration",
+            message: "Congratulations! You have completed the Molly Wallet password migration!"
           },
         });
       }

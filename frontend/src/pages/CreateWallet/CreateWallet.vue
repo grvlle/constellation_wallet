@@ -193,7 +193,7 @@ export default {
     },
     completeMigration: function() {
       this.$router.push({
-        name: "password migration complete",
+        name: "keystore migration complete",
         params: {
           message:
             "Congratulations! You have completed the Molly Wallet password migration!",

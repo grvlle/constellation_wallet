@@ -195,6 +195,7 @@ export default {
   },
   methods: {
     getTestDag () {
+      //TODO - monitor ipAddr of requests. https://api.ipify.org
       window.backend.WalletApplication.GetTestDag()
     },
     copyTestingCode() {

@@ -113,7 +113,7 @@
                   ></fg-input>
                 </div>
               </div>
-              <div class="row">
+              <!-- <div class="row">
                 <div class="col-12">
                   <label class="control-label" style="margin-bottom: 0;">
                     <p style="margin-bottom: 0;">Mnemonic Seed (coming soon)</p>
@@ -139,7 +139,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </form>
           </div>
         </card>

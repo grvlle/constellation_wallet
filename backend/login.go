@@ -2,10 +2,12 @@ package app
 
 import (
 	"os"
+	"os/user"
 	"runtime"
 	"strings"
 
 	"github.com/grvlle/constellation_wallet/backend/models"
+	"github.com/zalando/go-keyring"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -14,6 +16,45 @@ func (a *WalletApplication) LoginError(errMsg string) {
 	if errMsg != "" {
 		a.RT.Events.Emit("login_error", errMsg, true)
 	}
+}
+
+// LoginKeychain - login with the password of the existing keychain
+func (a *WalletApplication) LoginKeychain(keystorePassword string) string {
+	user, err := user.Current()
+
+	if err != nil {
+		a.log.Warnln("Unable to detect your username.")
+		a.LoginError("Unable to detect your username.")
+		return ""
+	}
+
+	account := user.Username
+
+	secret, err := keyring.Get(ServiceLogin, account)
+
+	a.log.Warnln("secret - " + secret);
+
+	if err != nil {
+		a.log.Warnln("Your login keychain doesn't exist.")
+		a.LoginError("Your login keychain doesn't exist.")
+		return ""
+	}
+
+	if secret != keystorePassword {
+		a.log.Warnln("Invalid password")
+		a.LoginError("Invalid password")
+		return ""
+	}
+
+	pkey, err := keyring.Get(ServicePKey, account)
+
+	a.log.Warnln("pkey - " + pkey);
+
+	if err == nil {
+	    return pkey
+	}
+
+	return "" //Unable to find a private key for this account, must import one
 }
 
 // Login is called from the FE when a user logs in with a wallet object

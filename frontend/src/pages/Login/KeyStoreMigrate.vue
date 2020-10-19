@@ -5,16 +5,15 @@
         <form ref="textareaform" @submit.prevent="form" class="container">
           <div class="row">
             <div class="col mx-auto login-box">
-              <br />
               <div class="input-box">
                 <div>
                   <label class="control-label"
-                    >Select your private key (key.p12)</label
+                    >Select your Private Key (key.p12)</label
                   >
                   <file-selector
                     v-model="keystorePath"
                     :placeholder="keystorePath"
-                    action="SelectFile"
+                    action="SelectFile2"
                   />
                 </div>
                 <div>
@@ -45,19 +44,14 @@
                 <div class="container">
                   <div class="row">
                     <div class="col">
-                      <p-button type="primary" block @click.native="login()">
-                        <span style="display: block"> LOGIN</span>
+                      <p-button style="background: #dd8d74; border-color: #dd8d74;" block @click.native="migrate()">
+                        <span style="display: block"> COMPLETE MIGRATION</span>
                       </p-button>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col">
-                      <p class="text-right">
-                        Don't have a wallet yet? Create one
-                        <a href="javascript:void(0)" @click="newWallet()"
-                          >here!</a
-                        >
-                      </p>
+                      <!-- <p class="text-right">Don't have a wallet yet? Create one <a href="javascript:void(0)" @click="newWallet()">here!</a></p> -->
                     </div>
                   </div>
                 </div>
@@ -72,19 +66,14 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
 export default {
-  name: "login-screen",
+  name: "keystore-migrate",
   data: () => ({
     keystorePassword: "",
     KeyPassword: "",
     overlay: false,
   }),
   computed: {
-    ...mapState("app", [
-      "network",
-    ]),
     keystorePath: {
       get() {
         return this.$store.state.wallet.keystorePath;
@@ -103,18 +92,48 @@ export default {
     },
   },
   methods: {
-
-    newWallet: function () {
-      this.$store.dispatch("wallet/reset").then(() => {
+    completeMigration: function() {
+      this.$router.push({
+        name: "keystore migration complete",
+        params: {
+          title: "Molly Wallet Migration",
+          message: "Congratulations! You have completed the Molly Wallet password migration!",
+        },
+      });
+    },
+    migrate: function () {
+      var self = this;
+      if (self.keystorePath) {
+        self.$Progress.start();
+        self.overlay = true;
+        window.backend.WalletApplication.MigrateWallet(
+          self.keystorePath,
+          self.keystorePassword,
+          self.KeyPassword,
+          self.alias
+        ).then((result) => {
+          self.overlay = false;
+          self.$Progress.finish();
+          if (result) { //TODO handle error case?
+            this.$router.push({
+              name: "keystore migration complete",
+              params: {
+                title: "Molly Wallet Migration",
+                message: "Congratulations! You have completed the Molly Wallet password migration!"
+              },
+            });
+          }
+        });
+      }
+      else {  //TODO - remove after migrate feature integrated
         this.$router.push({
-          name: "new wallet",
+          name: "keystore migration complete",
           params: {
-            message:
-              "Create a new Molly wallet. Please ensure that you backup all information provided below in a safe place.",
-            darkMode: this.$route.params.darkMode,
+            title: "Molly Wallet Migration",
+            message: "Congratulations! You have completed the Molly Wallet password migration!"
           },
         });
-      });
+      }
     },
     login: function () {
       var self = this;
@@ -125,9 +144,8 @@ export default {
         self.keystorePassword,
         self.KeyPassword,
         self.alias
-        
       ).then((result) => {
-        if (result) { //temp
+        if (result) {
           window.backend.WalletApplication.GetUserTheme().then((darkMode) =>
             self.$store.commit("wallet/setDarkMode", darkMode)
           );

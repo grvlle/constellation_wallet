@@ -11,20 +11,20 @@ Vue.mixin({
               this.$store.dispatch('wallet/reset').then(() => {
                 this.$store.dispatch('app/reset').then(() => {
                   this.$router.push({
-                    name: 'login',
+                    name: 'login single password',
                     params: {
-                      message: "Please enter your credentials below to access your Molly Wallet.",
+                      message: "Please enter the credentials to your Keystore file.",
                       darkMode: darkMode
                     }
                   });
-                  return;
+
                 })
               })
             })
           })
         }
       }), (this.random = "1");
-      return;
+
     }
   }
 });

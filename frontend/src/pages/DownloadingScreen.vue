@@ -29,8 +29,8 @@ export default {
     window.backend.WalletApplication.CheckAndFetchWalletCLI().then(exists => {
       if (exists) {
         self.$router.push({
-          name: 'login', 
-          params: {message: "Please enter your credentials below to access your Molly Wallet."}
+          name: 'login single password',
+          params: {message: "Please enter the credentials to your Private Key (.p12 file) to access your account."}
         });
       }
     });

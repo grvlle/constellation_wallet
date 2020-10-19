@@ -6,12 +6,41 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/user"
 	"runtime"
 	"strings"
 	"time"
 
 	"github.com/grvlle/constellation_wallet/backend/models"
+	"github.com/zalando/go-keyring"
 )
+
+
+func (a *WalletApplication) MigrateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
+
+    alias = strings.ToLower(alias)
+
+    if runtime.GOOS == "windows" && !a.javaInstalled() {
+        a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
+        return false
+    }
+
+    if keystorePath == "" {
+        a.LoginError("Please provide a path to the KeyStore file.")
+        return false
+    }
+
+    if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
+        a.log.Warnln("One or more passwords were not provided.")
+        return false
+    }
+
+    os.Setenv("CL_STOREPASS", keystorePassword)
+    os.Setenv("CL_KEYPASS", keyPassword)
+
+    return a.produceKeystoreMigrateV2(keystorePath, alias);
+
+}
 
 // ImportWallet is triggered when a user logs into a new Molly wallet for the first time
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
@@ -125,6 +154,71 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 
 	return false
 }
+
+// CreateWallet is called when creating a new wallet in frontend component Login.vue
+func (a *WalletApplication) CreateOrInitWalletV2(address string) bool {
+
+	a.wallet = models.Wallet{
+		WalletAlias: address,     //PrimaryKey
+		Address: address}
+
+    //Check if any record with WalletAlias exist
+	if err := a.DB.Take(&a.wallet).Error; err != nil {
+
+	    //Create new record
+		if err := a.DB.Create(&a.wallet).Error; err != nil {
+			a.log.Errorln("Unable to create database object for new wallet. Reason: ", err)
+			a.LoginError("Unable to create new wallet.")
+			return false
+		}
+
+        a.KeyStoreAccess = true
+
+        if a.KeyStoreAccess {
+            a.paths.LastTXFile = a.TempFileName("tx-")
+            a.paths.PrevTXFile = a.TempFileName("tx-")
+            a.paths.EmptyTXFile = a.TempFileName("tx-")
+
+            err := a.createTXFiles()
+            if err != nil {
+                a.log.Fatalln("Unable to create TX files. Check fs permissions. Reason: ", err)
+                a.sendError("Unable to create TX files. Check fs permissions. Reason: ", err)
+            }
+
+            if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Update("Path", models.Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
+                a.log.Errorln("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
+                a.sendError("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
+            }
+
+            a.UserLoggedIn = true
+            a.FirstTX = true
+            a.NewUser = false
+
+            a.initNewWallet()
+
+            return true
+        }
+    } else if !a.UserLoggedIn {
+        a.UserLoggedIn = true
+        a.FirstTX = false
+        a.NewUser = false
+
+		err := a.initWallet("")
+		if err != nil {
+			a.UserLoggedIn = false
+		}
+
+        return true
+    }
+
+	return true
+}
+
+func (a *WalletApplication) CreateKeyStoreFile(keystorePath string) bool {
+
+    return true
+}
+
 
 // CreateWallet is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias, label string) bool {
@@ -300,6 +394,68 @@ func (a *WalletApplication) initDashboardWidgets() {
 	a.WidgetRunning.DashboardWidgets = true
 }
 
+// SavePasswordToKeychain is for saving password to new keychain
+func (a *WalletApplication) SavePasswordToKeychain(keystorePassword string) bool {
+	return a.saveInfoToKeychain(ServiceLogin, keystorePassword)
+}
+
+// SavePhraseandPKeyToKeychain is for saving password to new keychain
+func (a *WalletApplication) SavePhraseandPKeyToKeychain(seedPhrase, privateKey string) bool {
+	return a.saveInfoToKeychain(ServiceSeed, seedPhrase) && a.saveInfoToKeychain(ServicePKey, privateKey)
+}
+
+// InitKeychains is for initializing of all your existing keychains
+func (a *WalletApplication) InitKeychains() bool {
+	user, err := user.Current()
+	if err != nil {
+		a.log.Warnln("Unable to detect your username.")
+		a.LoginError("Unable to detect your username.")
+		return false
+	}
+
+	account := user.Username
+
+	a.deleteKeychain(ServiceLogin, account)
+	a.deleteKeychain(ServiceSeed, account)
+	a.deleteKeychain(ServicePKey, account)
+
+	return true
+}
+
+func (a *WalletApplication) saveInfoToKeychain(service, info string) bool {
+	user, err := user.Current()
+	if err != nil {
+		a.log.Warnln("Unable to detect your username.")
+		a.LoginError("Unable to detect your username.")
+		return false
+	}
+
+	account := user.Username
+
+	err = keyring.Set(service, account, info)
+	if (err != nil) {
+		a.log.Warnln("Unable to create your keychain.")
+		a.LoginError("Unable to create your keycahin.")
+		return false
+	}
+	
+	return true
+}
+
+func (a *WalletApplication) deleteKeychain(service, account string) error {
+	_, err := keyring.Get(service, account)
+	if (err != nil) {
+		return nil
+	}
+	err = keyring.Delete(service, account)
+	if err != nil {
+		a.log.Warnln("Unable to delete your existing keychain: ", service)
+		a.LoginError("Unable to delete your existing keychain.")
+		return err
+	}
+	return nil
+}
+
 func (a *WalletApplication) createTXFiles() error {
 	files := []string{a.paths.LastTXFile, a.paths.PrevTXFile, a.paths.EmptyTXFile}
 
@@ -457,8 +613,9 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 
 // PassKeysToFrontend emits the keys to the settings.Vue component on a
 // 5 second interval
+//TODO - @vito why is 5s interval necessary?
 func (a *WalletApplication) passKeysToFrontend() {
-	if a.wallet.KeyStorePath != "" && a.wallet.Address != "" {
+	if a.wallet.Address != "" {
 		go func() {
 			for {
 				a.RT.Events.Emit("wallet_keys", a.wallet.Address)

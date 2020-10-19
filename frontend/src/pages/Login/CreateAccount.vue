@@ -9,7 +9,7 @@
               <div class="input-box">
                 <div>
                   <label class="control-label"
-                  >Select a folder where you want to save your Private Key</label
+                  >Enter a name for your Private Key file</label
                   >
                   <file-selector
                       v-model="keystorePath"
@@ -50,7 +50,7 @@
                         :disabled="valid"
                         @click.native="createKeyStore()"
                       >
-                        <span style="display: block"> CREATE KEYSTORE FILE</span>
+                        <span style="display: block"> CREATE PRIVATE KEY FILE</span>
                       </p-button>
                     </div>
                   </div>

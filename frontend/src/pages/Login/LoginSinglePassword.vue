@@ -7,7 +7,7 @@
             <div class="col mx-auto login-box">
               <div>
                 <label class="control-label"
-                >Select your Private Key (key.p12)</label
+                >Select your Private Key (.p12 or JSON file)</label
                 >
                 <file-selector
                     v-model="keystorePath"
@@ -42,8 +42,8 @@
                   <div class="row">
                     <div class="col">
                       <p class="text-right">
-                        Don't have a Wallet? Create one
-                        <a class="link-text" @click="createAccount()">here!</a>
+                        Don't have a Wallet? <b>Create one
+                        <a class="link-text" @click="createAccount()">here!</a></b>
                       </p>
                     </div>
                   </div>
@@ -143,8 +143,8 @@ export default {
         this.$router.push({
           name: "create account",
           params: {
-            message: "Enter a location and a password for your KeyStore",
-            title: "Create a KeyStore File",
+            message: "Enter a name and password for your Private Key file",
+            title: "Create a Private Key File",
             darkMode: this.$route.params.darkMode,
           },
         });

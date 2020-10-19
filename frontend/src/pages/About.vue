@@ -17,7 +17,7 @@
             <br />
 
             <b>Something is not working. What should I do?</b>
-            <br />If you receive an error message, please visit our <a href="https://t.me/mollywalletsupport"><b>Moly Wallet Support</b></a> channel in Telegram.
+            <br />If you receive an error message, please visit our <a href="https://t.me/StardustSupport"><b>Moly Wallet Support</b></a> channel in Telegram.
             <br />
             <br /> Alternatively, you can check to see if this is a known issue on the wallet’s <a href="https://github.com/StardustCollective/molly_wallet/issues"><b>Github page</b></a>. If it is not a known bug, please create an issue in the provided link with a thorough explanation of the problem. 
             <br /> 
@@ -35,7 +35,7 @@
             <br />
             <br />
             <b>How do I securely backup my wallet?</b>
-            <br />When creating a new wallet you will be required to create a <b>Private Key (.p12 file) </b>and a <b>Password</b>. 
+            <br />When creating a new wallet you will be required to create a <b>Private Key (JSON file) </b>and a <b>Password</b>. 
             <br />
             <br />It is important to make a copy of both of these two components, as backup, and keep it in a secure place.
             <br />
@@ -44,7 +44,7 @@
             <br />In summary, the two components below need to be backed up:
             <br />
             <ul>
-              <li><b>Private Key (.p12 file)</b></li>
+              <li><b>Private Key (.p12 or JSON file)</b></li>
               <li><b>Password</b></li>
             </ul>
             <!-- Simply navigate to <i>Settings</i> and there you will be presented by two means of backing up your wallet. You can <b>export</b> your keys into an encrypted file on your filesystem. This can later

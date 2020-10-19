@@ -47,13 +47,10 @@
               <li><b>Private Key (.p12 file)</b></li>
               <li><b>Password</b></li>
             </ul>
-            
             <!-- Simply navigate to <i>Settings</i> and there you will be presented by two means of backing up your wallet. You can <b>export</b> your keys into an encrypted file on your filesystem. This can later
                         be stored on a USB drive for instance. Make sure that you remove all traces on your computer once en export has been done. <br><br> The other alternative is to copy the <b>Private Key</b> string. Simply click the red button to uncover
                         it, double click to highlight it, then copy and store it somewhere safe. <br><br> The Engineering team is right now investigating means of introducing bip32 encryption which would allow us to generate a more memorable Mnemonic Seed.
             This will then be included in this wallet as well.<br><br>-->
-
-            <br />
           </p>
         </card>
       </div>

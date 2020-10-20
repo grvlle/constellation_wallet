@@ -7,7 +7,7 @@
       :value=value />
     <span class="input-group-append">
       <div v-if="action == 'SelectFile'">
-        <input type="file" name="file" id="file" class="inputfile" @change="selectFile" />
+        <input type="file" name="file" id="file" class="inputfile" @change="selectFile" accept=".p12,.json" />
         <label for="file">BROWSE</label>
       </div>
 

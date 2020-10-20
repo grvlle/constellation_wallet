@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "vue-svg-loader": "^0.16.0",
+    "vue-template-compiler": "^2.6.12"
+  }
+}

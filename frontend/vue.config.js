@@ -45,8 +45,13 @@ module.exports = {
       .loader("url-loader")
       .tap((options) => Object.assign(options, { limit: limit }));
     config.module
+      .rule("svg")
+      .test(/\.svg$/)
+      .use("vue-svg-loader")
+      .loader("vue-svg-loader");
+    config.module
       .rule("fonts")
-      .test(/\.(woff2?|eot|ttf|otf|svg)(\?.*)?$/i)
+      .test(/\.(woff2?|eot|ttf|otf)(\?.*)?$/i)
       .use("url-loader")
       .loader("url-loader")
       .options({

@@ -53,12 +53,7 @@
         src="~@/assets/img/Constellation-Logo-White.png"
         style="max-height: 2rem"
       />
-      <img
-        class="img-fluid"
-        v-else
-        src="~@/assets/img/Constellation-Logo-Black.png"
-        style="max-height: 2rem"
-      />
+      <img class="img-fluid" v-else src="~@/assets/img/logo.png" />
     </div>
     <div class="version">
       <p class="version">

@@ -8,10 +8,22 @@
               <br />
               <div class="input-box">
                 <div>
-                  <label class="control-label">Enter a name for your Private Key file</label>
-                  <input type="text" name="fileName" class="inputfile" @input="checkPassword($event.target.value)"  />
+                  <label class="control-label"
+                    >Enter a name for your Private Key file</label
+                  >
+                  <input
+                    type="text"
+                    name="fileName"
+                    class="inputfile"
+                    @input="checkPassword($event.target.value)"
+                  />
                   <div class="validate text-danger">
-                    <p v-if="!fileNameValid" style="margin-top: 2px; font-size: 0.875em ">alpha-numeric</p>
+                    <p
+                      class="error-message"
+                      v-bind:class="{ resolved: fileNameValid }"
+                    >
+                      alpha-numeric
+                    </p>
                   </div>
                 </div>
                 <div>
@@ -24,13 +36,20 @@
                   />
                 </div>
                 <div>
-                  <password-input style="margin: 0"
+                  <password-input
+                    style="margin: 0"
                     v-model="keyPassword"
                     label="Repeat Password"
                     @input="confirmPassword()"
                   />
-                  <div class="validate text-danger" v-if="!valid && valid_password">
-                    <p style="margin-top: -8px; font-size: 0.875em">Confirm the password</p>
+                  <div class="validate text-danger">
+                    <p
+                      class="error-message"
+                      style="margin-top: -7px"
+                      v-bind:class="{ resolved: valid && valid_password }"
+                    >
+                      re-password
+                    </p>
                   </div>
                 </div>
               </div>
@@ -112,24 +131,31 @@ export default {
 
       this.confirmed_password = this.keystorePassword === this.keyPassword;
 
-      this.valid = this.valid_password && this.fileNameValid && this.confirmed_password;
+      this.valid =
+        this.valid_password && this.fileNameValid && this.confirmed_password;
     },
     confirmPassword: function() {
       this.confirmed_password = this.keystorePassword === this.keyPassword;
-      this.valid = this.valid_password && this.fileNameValid && this.confirmed_password;
+      this.valid =
+        this.valid_password && this.fileNameValid && this.confirmed_password;
     },
     validatePassword: function(is_valid) {
       this.valid_password = is_valid;
       this.confirmPassword();
     },
-    createKeyStore: async function () {
+    createKeyStore: async function() {
       var self = this;
       self.$Progress.start();
       self.overlay = true;
 
-      const jsonObj = await keyStore.generateEncryptedPrivateKey(this.keyPassword);
+      const jsonObj = await keyStore.generateEncryptedPrivateKey(
+        this.keyPassword
+      );
 
-      return window.backend.WalletApplication.CreateKeyStoreFile(this.fileName, JSON.stringify(jsonObj)).then((filePath) => {
+      return window.backend.WalletApplication.CreateKeyStoreFile(
+        this.fileName,
+        JSON.stringify(jsonObj)
+      ).then((filePath) => {
         if (filePath) {
           self.overlay = false;
           self.$Progress.finish();
@@ -137,35 +163,34 @@ export default {
             this.$router.push({
               name: "create account complete",
               params: {
-                message: "Congratulations! You have created a KeyStore file for Molly Wallet!",
+                message:
+                  "Congratulations! You have created a KeyStore file for Molly Wallet!",
                 title: "Create a KeyStore File",
                 filePath: filePath,
                 darkMode: this.$route.params.darkMode,
               },
             });
           });
-        }
-        else {
+        } else {
           self.overlay = false;
           self.$Progress.fail();
         }
       });
-    }
-  }
+    },
+  },
 };
-
 </script>
 
 <style scoped lang="scss">
-
 .inputfile {
   height: 36px;
   width: 100%;
   border-radius: 0.25rem;
   //font-size: 0.75em;
   font-weight: 600;
-  border: 1px solid #DDDDDD;
+  border: 1px solid #dddddd;
   display: block;
+  background: #f9f7f7 !important;
   padding: 6px 16px;
 }
 
@@ -177,6 +202,19 @@ export default {
 
 .input-box > div {
   margin-bottom: 1.875em;
+}
+
+.error-message {
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.05em;
+  color: #eb5757;
+  &.resolved {
+    color: #219653;
+  }
 }
 
 .button-box .container {

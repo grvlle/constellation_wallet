@@ -24,11 +24,15 @@
         </p-button>
       </span>
     </div>
-    <div class="validate text-danger" v-if="validate && !valid_password">
-      <p v-if="!this.contains_eight_characters">8 characters,</p>
-      <p v-if="!this.contains_number">&nbsp;&nbsp;number,</p>
-      <p v-if="!this.contains_uppercase">&nbsp;&nbsp;uppercase,</p>
-      <p v-if="!this.contains_special_character">
+    <div
+      class="validate text-danger error-message"
+      v-if="validate"
+      v-bind:class="{ resolved: validate && valid_password }"
+    >
+      <p>8 characters,</p>
+      <p>&nbsp;&nbsp;number,</p>
+      <p>&nbsp;&nbsp;uppercase,</p>
+      <p>
         &nbsp;&nbsp;special character
       </p>
     </div>
@@ -105,6 +109,23 @@ export default {
 .validate {
   height: 0.625em;
   display: flex;
+}
+.error-message {
+  p {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 10px;
+    line-height: 15px;
+    letter-spacing: 0.05em;
+    color: #eb5757;
+  }
+
+  &.resolved {
+    p {
+      color: #219653;
+    }
+  }
 }
 .input-group-append .btn {
   border: 1px solid #666 !important;

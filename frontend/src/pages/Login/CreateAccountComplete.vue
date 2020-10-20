@@ -8,6 +8,9 @@
               <div class="input-box">
                 A KeyStore file has been created. You may use this to login to Molly Wallet 2.0.
               </div>
+              <div style="margin-top: 18px; text-align: center; font-weight: 500">
+                {{ filePath }}
+              </div>
               <br />
               <div class="input-box">
                 <svg
@@ -82,6 +85,11 @@ export default {
         this.$store.commit("wallet/setAlias", value);
       },
     },
+    filePath: {
+      get() {
+        return this.$route.params.filePath
+      }
+    }
   },
   methods: {
     moveToLogin: function () {

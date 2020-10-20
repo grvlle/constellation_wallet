@@ -72,7 +72,7 @@ export default {
     KeyPassword: "",
     overlay: false,
     valid: false,
-    keystoreFile: null,
+    keystoreFile: null
   }),
   computed: {
     keystorePath: {
@@ -82,7 +82,7 @@ export default {
       set(value) {
         this.$store.commit("wallet/setKeystorePath", value);
       },
-    },
+    }
   },
   mounted() {
     this.migrateNotification();
@@ -179,8 +179,9 @@ export default {
         //this.errorMessage = 'Unable to read file';
       };
     },
-    loginWithKey: function(key) {
-      if (!key) return;
+    loginWithKey: function (key) {
+
+      if (!key) return
 
       // TODO - save seed and privKey to KeyChain (Alex)
       dagWalletAccount.loginPrivateKey(key);

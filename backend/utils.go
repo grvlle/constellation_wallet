@@ -194,3 +194,21 @@ func WriteToFile(filename string, data []byte) error {
 	}
 	return nil
 }
+
+func WriteStringToFile(filename string, text string) error {
+    f, err := os.Create(filename)
+
+    if err != nil {
+        return err
+    }
+
+    defer f.Close()
+
+    _, err2 := f.WriteString(text)
+
+    if err2 != nil {
+        return err2
+    }
+
+    return nil
+}

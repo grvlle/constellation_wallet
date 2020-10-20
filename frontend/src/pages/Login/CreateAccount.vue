@@ -8,35 +8,29 @@
               <br />
               <div class="input-box">
                 <div>
-                  <label class="control-label"
-                  >Enter a name for your Private Key file</label
-                  >
-                  <file-selector
-                      v-model="keystorePath"
-                      :placeholder="keystorePath"
-                      action="SelectFile"
-                  />
+                  <label class="control-label">Enter a name for your Private Key file</label>
+                  <input type="text" name="fileName" class="inputfile" @input="checkPassword($event.target.value)"  />
+                  <div class="validate text-danger">
+                    <p v-if="!fileNameValid" style="margin-top: 2px; font-size: 0.875em ">alpha-numeric</p>
+                  </div>
                 </div>
                 <div>
                   <password-input
                     v-model="keystorePassword"
-                    label="New Password"
+                    label="Password"
                     :validate="true"
                     @valid="validatePassword(true)"
                     @invalid="validatePassword(false)"
                   />
                 </div>
                 <div>
-                  <password-input
+                  <password-input style="margin: 0"
                     v-model="keyPassword"
-                    label="Repeat New Password"
+                    label="Repeat Password"
                     @input="confirmPassword()"
                   />
-                  <div
-                    class="validate text-danger"
-                    v-if="!valid && valid_password"
-                  >
-                    Need to confirm the password
+                  <div class="validate text-danger" v-if="!valid && valid_password">
+                    <p style="margin-top: -8px; font-size: 0.875em">Confirm the password</p>
                   </div>
                 </div>
               </div>
@@ -47,10 +41,10 @@
                       <p-button
                         type="primary"
                         block
-                        :disabled="valid"
+                        :disabled="!valid"
                         @click.native="createKeyStore()"
                       >
-                        <span style="display: block"> CREATE PRIVATE KEY FILE</span>
+                        <span style="display: block"> CREATE</span>
                       </p-button>
                     </div>
                   </div>
@@ -67,14 +61,18 @@
 
 <script>
 import { mapState } from "vuex";
+import { keyStore } from "@stardust-collective/dag-keystore";
 
 export default {
   components: {},
-  name: "create account",
+  name: "create-account",
   data: () => ({
     keystorePassword: "",
     keyPassword: "",
+    fileName: "",
+    fileNameValid: false,
     valid_password: false,
+    confirmed_password: true,
     valid: false,
     overlay: false,
   }),
@@ -98,31 +96,60 @@ export default {
     },
   },
   methods: {
+    checkPassword: function(value) {
+      this.$emit("input", value);
+      const format = /^[0-9a-zA-Z_]+$/;
+
+      this.fileNameValid = format.test(value);
+
+      if (this.fileNameValid) {
+        this.$emit("valid");
+      } else {
+        this.$emit("invalid");
+      }
+
+      this.fileName = value;
+
+      this.confirmed_password = this.keystorePassword === this.keyPassword;
+
+      this.valid = this.valid_password && this.fileNameValid && this.confirmed_password;
+    },
     confirmPassword: function() {
-      this.valid =
-        this.valid_password && this.keystorePassword === this.keyPassword;
+      this.confirmed_password = this.keystorePassword === this.keyPassword;
+      this.valid = this.valid_password && this.fileNameValid && this.confirmed_password;
     },
     validatePassword: function(is_valid) {
       this.valid_password = is_valid;
       this.confirmPassword();
     },
-    createKeyStore: function () {
-      // const fileBin = '';
+    createKeyStore: async function () {
+      var self = this;
+      self.$Progress.start();
+      self.overlay = true;
 
-      // return window.backend.WalletApplication.CreateKeyStoreFile(fileBin).then((result) => {
-      //   if (result) {
+      const jsonObj = await keyStore.generateEncryptedPrivateKey();
+
+      return window.backend.WalletApplication.CreateKeyStoreFile(this.fileName, JSON.stringify(jsonObj)).then((filePath) => {
+        if (filePath) {
+          self.overlay = false;
+          self.$Progress.finish();
           this.$store.dispatch("wallet/reset").then(() => {
             this.$router.push({
               name: "create account complete",
               params: {
                 message: "Congratulations! You have created a KeyStore file for Molly Wallet!",
                 title: "Create a KeyStore File",
+                filePath: filePath,
                 darkMode: this.$route.params.darkMode,
               },
             });
           });
-      //   }
-      // });
+        }
+        else {
+          self.overlay = false;
+          self.$Progress.fail();
+        }
+      });
     }
   }
 };
@@ -130,6 +157,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+.inputfile {
+  height: 36px;
+  width: 100%;
+  border-radius: 0.25rem;
+  //font-size: 0.75em;
+  font-weight: 600;
+  border: 1px solid #DDDDDD;
+  display: block;
+  padding: 6px 16px;
+}
+
 .login-box {
   max-width: 29rem;
   min-width: 29rem;

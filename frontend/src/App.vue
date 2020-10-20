@@ -30,7 +30,7 @@ export default {
     };
   },
   onIdle() {
-    let timerInterval, closeInSeconds = 10
+    let timerInterval, closeInSeconds = 60
     const swalPopup = Swal.mixin({
       customClass: {
         container: this.darkMode

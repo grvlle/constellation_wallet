@@ -7,7 +7,7 @@
             <div class="col mx-auto login-box">
               <div>
                 <label class="control-label"
-                >Select your Private Key (.p12 or JSON file)</label
+                >Select your Private Key (P12 or JSON file)</label
                 >
                 <file-selector
                     v-model="keystorePath"

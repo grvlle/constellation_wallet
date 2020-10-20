@@ -4,7 +4,7 @@
       <div class="col d-flex">
         <card title="About" sub-title="Get to know the Constellation Wallet">
           <p>
-            Thank you for using Molly, the Constellation Desktop Wallet!
+            Thank you for using the Molly Wallet!
             <br />
             <br />Molly was created by our community member
             <b>Vito</b> and is an application  built on top of infrastructure that was produced by

@@ -103,7 +103,7 @@
               <div class="row">
                 <div class="col-12">
                   <label class="control-label" style="margin-bottom: 0;">
-                    <p style="margin-bottom: 0;">Path to Private Key (.p12 or JSON file)</p>
+                    <p style="margin-bottom: 0;">Path to Private Key (P12 or JSON file)</p>
                   </label>
                   <fg-input
                     type="text"

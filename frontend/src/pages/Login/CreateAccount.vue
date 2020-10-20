@@ -74,7 +74,7 @@
         </form>
       </div>
     </div>
-    <page-overlay text="Loading..." :isActive="overlay" />
+    <page-overlay text="Loading" :isActive="overlay" />
   </div>
 </template>
 

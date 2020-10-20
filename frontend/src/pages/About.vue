@@ -44,7 +44,7 @@
             <br />In summary, the two components below need to be backed up:
             <br />
             <ul>
-              <li><b>Private Key (.p12 or JSON file)</b></li>
+              <li><b>Private Key (P12 or JSON file)</b></li>
               <li><b>Password</b></li>
             </ul>
             <!-- Simply navigate to <i>Settings</i> and there you will be presented by two means of backing up your wallet. You can <b>export</b> your keys into an encrypted file on your filesystem. This can later

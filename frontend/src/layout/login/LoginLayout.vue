@@ -1,9 +1,5 @@
 <template>
-  <div
-    id="app"
-    class="login-bg vertical-center"
-    v-bind:style="{ backgroundImage: 'url(' + themeBG + ')' }"
-  >
+  <div id="app" class="login-bg vertical-center">
     <link
       href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"
       rel="stylesheet"
@@ -22,7 +18,6 @@
             v-if="this.$route.params.title && !isMigrationWizard"
           >
             {{ this.$route.params.title }}
-           
           </p>
 
           <p
@@ -31,9 +26,8 @@
             v-else-if="isMigrationWizard"
           >
             {{ this.$route.params.title }}
-        
           </p>
-          <p class="header-title" v-else>Welcome to <b>Molly Wallet</b> 2.0!</p>
+          <p class="header-title" v-else>Welcome to Molly Wallet 2.0</p>
 
           <p class="sub-title" v-if="this.$route.params.message">
             {{ this.$route.params.message }}
@@ -44,10 +38,9 @@
           <div class="page-error-box text-danger" v-if="displayLoginError">
             <p>{{ loginErrorMsg }}</p>
           </div>
-          <div class="page-error-box text-danger" v-else></div>
         </div>
       </div>
-      <div class="row" style="min-height: 32rem">
+      <div class="row">
         <transition :name="transitionName" mode="out-in">
           <router-view></router-view>
         </transition>
@@ -70,10 +63,8 @@
     <div class="version">
       <p class="version">
         Connected to:
-        <br />
-        {{ network }}
-        <br />
-        Molly Wallet version: {{ uiVersion }}
+        {{ network }}<br />
+        Molly wallet version: {{ uiVersion }}
       </p>
     </div>
   </div>
@@ -93,7 +84,8 @@ export default {
       if (
         to.name === "download" ||
         to.name === "new wallet" ||
-        (from.name === "new wallet" && (to.name === "login" || to.name === "login single password"))
+        (from.name === "new wallet" &&
+          (to.name === "login" || to.name === "login single password"))
       ) {
         this.transitionName = "";
       } else {
@@ -103,16 +95,20 @@ export default {
   },
   computed: {
     isMigrationWizard() {
-      return this.$route.name === "keystore migrate" || this.$route.name === "keystore migration complete" || this.$route.name === "password migration";
+      return (
+        this.$route.name === "keystore migrate" ||
+        this.$route.name === "keystore migration complete" ||
+        this.$route.name === "password migration"
+      );
     },
-    themeBG: function () {
+    themeBG: function() {
       if (this.isDarkMode) {
         return DarkBG;
       } else {
         return BrightBG;
       }
     },
-    isDarkMode: function () {
+    isDarkMode: function() {
       if (this.darkMode || this.$route.params.darkMode) {
         return true;
       } else {
@@ -169,9 +165,9 @@ export default {
   bottom: 0;
   right: 0;
   font-size: 0.7rem;
-  display: flex;
-  align-items: flex-end;
-  margin-right: 1.8em;
+  text-align: right;
+  margin-right: 24px;
+  margin-bottom: 24px;
 }
 
 .go-back-btn {
@@ -193,26 +189,29 @@ export default {
 }
 
 .header-title {
-  color: #1d40b3;
+  color: #2d9cdb;
   font-family: Poppins;
-
-  font-size: 28px;
   font-weight: 500;
-  margin-bottom: 5px;
+  font-size: 28px;
+  line-height: 24px;
+  margin-bottom: 48px;
 }
 
 .sub-title {
   color: #666666;
   font-family: Poppins;
-
-  font-size: 13px;
   font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+
+  &:last-child {
+    margin-bottom: 48px;
+  }
 }
 
 .header-box {
   margin: auto;
-  min-height: 15%; /* Fallback for browsers do NOT support vh unit */
-  min-height: 15vh; /* These two lines are counted as one :-)       */
+  height: fit-content;
   max-width: 27rem;
   min-width: 27rem;
 }

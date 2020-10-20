@@ -7,7 +7,7 @@
             <div class="col mx-auto login-box">
               <div>
                 <label class="control-label"
-                >Select your Private Key (P12 or JSON file)</label
+                  >Select your Private Key (P12 or JSON file)</label
                 >
                 <file-selector
                   v-model="keystorePath"
@@ -43,9 +43,11 @@
                   </div>
                   <div class="row">
                     <div class="col">
-                      <p class="text-right">
-                        Don't have a Wallet? <b>Create one
-                        <a class="link-text" @click="createAccount()">here!</a></b>
+                      <p class="text-left">
+                        Don't have a Wallet?
+                        <a class="link-text" @click="createAccount()">
+                          Create one here!
+                        </a>
                       </p>
                     </div>
                   </div>
@@ -72,7 +74,7 @@ export default {
     KeyPassword: "",
     overlay: false,
     valid: false,
-    keystoreFile: null
+    keystoreFile: null,
   }),
   computed: {
     keystorePath: {
@@ -82,7 +84,7 @@ export default {
       set(value) {
         this.$store.commit("wallet/setKeystorePath", value);
       },
-    }
+    },
   },
   mounted() {
     this.migrateNotification();
@@ -93,34 +95,45 @@ export default {
       this.keystorePath = value.name;
     },
     migrateNotification: function() {
-      Swal.fire({
-        title:
-          "<p style='text-align: left; color: white; margin: auto;'>Important Update</p>",
-        html: `<br><p style='text-align: left; color: white;'>If you have previously signed into Molly Wallet using an alias and two different passwords (versions 1.2.x and earlier), you will need to migrate your credentials before logging in.</p>`,
-        width: 300,
-        padding: 20,
-        backdrop: false,
-        toast: true,
-        borderColor: "#DD8D74",
-        background: "#DD8D74",
-        position: "top-end",
-        showConfirmButton: true,
-        confirmButtonColor: "#DD8D74",
-        confirmButtonText: '<div style="color: #B53C19;">MIGRATE</div>',
-        allowOutsideClick: false,
-        showCloseButton: true,
-        timerProgressBar: true,
-        // willOpen: () => {
-        //   Swal.showLoading();
-        // },
-        onClose: () => {},
-      }).then((result) => {
-        /* Read more about isConfirmed, isDenied below */
-        if (result.isConfirmed) {
-          // Swal.fire('Saved!', '', 'success')
-          this.moveToMigrate();
-        }
-      });
+      Swal.mixin({
+        customClass: {
+          popup: "swal2-popup-login",
+          actions: "swal2-actions-login",
+          title: "swal2-title-login",
+          confirmButton: "btn-migrate-login",
+          closeButton: "btn-close-login",
+        },
+        buttonsStyling: false,
+      })
+        .fire({
+          title: "Important Update",
+          html: `<br><p class="login-content">If you have previously signed into Molly Wallet using an alias and two different passwords (versions 1.2.x and earlier), you will need to migrate your credentials before logging in.</p>`,
+          width: 300,
+          closeButtonHtml: "&times;",
+          padding: 12,
+          backdrop: false,
+          toast: true,
+          borderColor: "#DD8D74",
+          background: "#DD8D74",
+          position: "top-end",
+          showConfirmButton: true,
+          confirmButtonColor: "#DD8D74",
+          confirmButtonText: '<div class="login-button-text">MIGRATE</div>',
+          allowOutsideClick: false,
+          showCloseButton: true,
+          timerProgressBar: true,
+          // willOpen: () => {
+          //   Swal.showLoading();
+          // },
+          onClose: () => {},
+        })
+        .then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+            // Swal.fire('Saved!', '', 'success')
+            this.moveToMigrate();
+          }
+        });
     },
     moveToMigrate: function() {
       Swal.close();
@@ -162,13 +175,15 @@ export default {
 
       let reader = new FileReader();
 
-      const ext = filePath.name.split('.').pop().toLowerCase();
-      const isJson = ext === 'json';
+      const ext = filePath.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+      const isJson = ext === "json";
 
       if (isJson) {
         reader.readAsText(filePath);
-      }
-      else {
+      } else {
         reader.readAsBinaryString(filePath);
       }
 
@@ -177,16 +192,18 @@ export default {
 
         try {
           if (isJson) {
-            privateKey = await keyStore.decryptPrivateKey(JSON.parse(reader.result), password);
+            privateKey = await keyStore.decryptPrivateKey(
+              JSON.parse(reader.result),
+              password
+            );
+          } else {
+            privateKey = keyStoreFile.readP12(reader.result, password)
+              .privateKey;
           }
-          else {
-            privateKey = keyStoreFile.readP12(reader.result, password).privateKey;
-          }
-
         } catch (e) {
           this.overlay = false;
           this.$Progress.fail();
-          Swal.fire('Unable to unlock file', '', e.message).then(() => {
+          Swal.fire("Unable to unlock file", "", e.message).then(() => {
             this.migrateNotification();
           });
         }
@@ -199,14 +216,13 @@ export default {
       reader.onerror = (e) => {
         this.overlay = false;
         this.$Progress.fail();
-        Swal.fire('Unable to read file', '', e.message).then(() => {
+        Swal.fire("Unable to read file", "", e.message).then(() => {
           this.migrateNotification();
         });
       };
     },
-    loginWithKey: function (key) {
-
-      if (!key) return
+    loginWithKey: function(key) {
+      if (!key) return;
 
       // TODO - save seed and privKey to KeyChain (Alex)
       dagWalletAccount.loginPrivateKey(key);
@@ -264,15 +280,15 @@ export default {
   max-width: 29rem;
   min-width: 29rem;
   padding-bottom: 2rem;
-  margin-top: 5.25em;
 }
 
 .link-text {
-  color: #34b4e7;
+  color: #2d9cdb;
+  transition: all 0.3s;
 }
 
 .link-text:hover {
-  color: #ce9483;
+  color: #db6e44;
   cursor: pointer;
 }
 

@@ -75,5 +75,10 @@ export default {
     border: 1px solid #1b5e83 !important;
     outline-color: #1b5e83 !important;
   }
+
+  &:disabled {
+    background: #81c4e9 !important;
+    border: 1px solid #81c4e9 !important;
+  }
 }
 </style>

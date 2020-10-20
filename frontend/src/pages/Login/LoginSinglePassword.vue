@@ -23,6 +23,7 @@
                     v-model="keystorePassword"
                     label="Password"
                     :validate="false"
+                    @input="validCheck()"
                   />
                 </div>
               </div>
@@ -33,6 +34,7 @@
                       <p-button
                         type="primary"
                         block
+                        :disabled="!valid"
                         @click.native="
                           loadKeyStoreFile(keystoreFile, keystorePassword)
                         "
@@ -43,7 +45,7 @@
                   </div>
                   <div class="row">
                     <div class="col">
-                      <p class="text-left" style="font-family:Poppins">
+                      <p class="text-left poppin-text">
                         Don't have a Wallet?
                         <a class="link-text" @click="createAccount()">
                           Create one here!
@@ -90,9 +92,15 @@ export default {
     this.migrateNotification();
   },
   methods: {
+    validCheck: function() {
+      // eslint-disable-next-line no-console
+      console.log(this.valid, this.keystoreFile, this.keystorePassword);
+      this.valid = this.keystoreFile !== null && this.keystorePassword !== "";
+    },
     fileSelected: function(value) {
       this.keystoreFile = value;
       this.keystorePath = value.name;
+      this.validCheck();
     },
     migrateNotification: function() {
       Swal.mixin({
@@ -280,6 +288,10 @@ export default {
   max-width: 29rem;
   min-width: 29rem;
   padding-bottom: 2rem;
+}
+
+.poppin-text {
+  font-family: Poppins;
 }
 
 .link-text {

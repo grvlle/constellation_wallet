@@ -110,9 +110,9 @@ export default {
         allowOutsideClick: false,
         showCloseButton: true,
         timerProgressBar: true,
-        willOpen: () => {
-          Swal.showLoading();
-        },
+        // willOpen: () => {
+        //   Swal.showLoading();
+        // },
         onClose: () => {},
       }).then((result) => {
         /* Read more about isConfirmed, isDenied below */
@@ -152,31 +152,56 @@ export default {
     loadKeyStoreFile: function(filePath, password) {
       if (!filePath || !password) {
         // Swal.fire('Invalid credentials', '', 'error')
-        this.loginWithKey();
+        // this.loginWithKey();
         return;
       }
 
+      Swal.close();
+      this.$Progress.start();
+      this.overlay = true;
+
       let reader = new FileReader();
 
-      reader.readAsBinaryString(filePath);
+      const ext = filePath.name.split('.').pop().toLowerCase();
+      const isJson = ext === 'json';
 
-      reader.onload = () => {
-        let keyPair;
+      if (isJson) {
+        reader.readAsText(filePath);
+      }
+      else {
+        reader.readAsBinaryString(filePath);
+      }
+
+      reader.onload = async () => {
+        let privateKey;
 
         try {
-          keyPair = keyStoreFile.readP12(reader.result, password);
+          if (isJson) {
+            privateKey = await keyStore.decryptPrivateKey(JSON.parse(reader.result), password);
+          }
+          else {
+            privateKey = keyStoreFile.readP12(reader.result, password).privateKey;
+          }
+
         } catch (e) {
-          this.errorMessage = e.message;
+          this.overlay = false;
+          this.$Progress.fail();
+          Swal.fire('Unable to unlock file', '', e.message).then(() => {
+            this.migrateNotification();
+          });
         }
 
-        if (keyPair) {
-          this.loginWithKey(keyPair.privateKey);
+        if (privateKey) {
+          this.loginWithKey(privateKey);
         }
       };
 
-      reader.onerror = () => {
-        //TODO - ERROR
-        //this.errorMessage = 'Unable to read file';
+      reader.onerror = (e) => {
+        this.overlay = false;
+        this.$Progress.fail();
+        Swal.fire('Unable to read file', '', e.message).then(() => {
+          this.migrateNotification();
+        });
       };
     },
     loginWithKey: function (key) {

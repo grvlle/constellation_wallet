@@ -127,7 +127,7 @@ export default {
       self.$Progress.start();
       self.overlay = true;
 
-      const jsonObj = await keyStore.generateEncryptedPrivateKey();
+      const jsonObj = await keyStore.generateEncryptedPrivateKey(this.keyPassword);
 
       return window.backend.WalletApplication.CreateKeyStoreFile(this.fileName, JSON.stringify(jsonObj)).then((filePath) => {
         if (filePath) {

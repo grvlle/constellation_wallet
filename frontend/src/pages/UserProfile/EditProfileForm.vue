@@ -39,17 +39,6 @@
           <div class="col-md-12">
             <fg-input
               type="text"
-              label="Wallet UI Version"
-              :disabled="true"
-              placeholder="0"
-              v-model="uiVersion"
-            ></fg-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
               label="Alias"
               :disabled="true"
               placeholder="0"
@@ -61,21 +50,10 @@
           <div class="col-md-12">
             <fg-input
               type="text"
-              label="Path to private key (key.p12)"
+              label="Path to Private Key (P12 or JSON file)"
               :disabled="true"
               placeholder="0"
               v-model="keystorePath"
-            ></fg-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
-              label="Terms of Service"
-              :disabled="true"
-              placeholder="0"
-              v-model="termsOfService"
             ></fg-input>
           </div>
         </div>
@@ -93,8 +71,7 @@ export default {
     ...mapState("wallet", [
       "address",
       "alias",
-      "keystorePath",
-      "termsOfService",
+      "keystorePath"
     ]),
     ...mapGetters("wallet", ["normalizedAvailableBalance"])
   },

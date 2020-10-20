@@ -103,12 +103,12 @@
               <div class="row">
                 <div class="col-12">
                   <label class="control-label" style="margin-bottom: 0;">
-                    <p style="margin-bottom: 0;">Path to private key (key.p12)</p>
+                    <p style="margin-bottom: 0;">Path to Private Key (P12 or JSON file)</p>
                   </label>
                   <fg-input
                     type="text"
                     :disabled="true"
-                    placeholder="Path to private key (key.p12)"
+                    placeholder="Path to Private Key"
                     :value="keystorePath"
                   ></fg-input>
                 </div>

@@ -13,7 +13,7 @@ Vue.mixin({
                   this.$router.push({
                     name: 'login single password',
                     params: {
-                      message: "Please enter the credentials to your Keystore file.",
+                      message: "Please enter the credentials to your Private Key file.",
                       darkMode: darkMode
                     }
                   });

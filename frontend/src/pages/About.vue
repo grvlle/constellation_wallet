@@ -4,24 +4,24 @@
       <div class="col d-flex">
         <card title="About" sub-title="Get to know the Constellation Wallet">
           <p>
-            Thank you for using the Constellation Desktop Wallet!
+            Thank you for using the Molly Wallet!
             <br />
-            <br />The Constellation Desktop Wallet was built by our community member
-            <b>@armedvito</b> and is an application overlay that integrates with the wallet binary produced by
-            the Constellation Engineering team. This means that all major aspects around the security of the wallet is managed by the team, as well as yourself - since you will be responsible for handling the wallet backup and private key (see
+            <br />Molly was created by our community member
+            <b>Vito</b> and is an application  built on top of infrastructure that was produced by
+            the Constellation Engineers. 
+            <br />
+            <br />The <b>Stardust Collective</b> development team manages all major aspects around the security and development of the wallet, while you, the user, are responsible for securing and backing up your Private Key and password (see
             the
             <b>FAQ</b> for best practices).
             <br />
             <br />
 
-            <b>Something is not working. What do I do?</b>
-            <br />No matter the bug you may run into with the application, keep in mind that
-            <b>your funds will never be jeopordized by this software</b>,
-            so don't panic if there's an error message.
+            <b>Something is not working. What should I do?</b>
+            <br />If you receive an error message, please visit our <a href="https://t.me/StardustSupport"><b>Moly Wallet Support</b></a> channel in Telegram.
             <br />
-            <br />Please create an issue on GitHub
-            <b>github.com/grvlle/constellation_wallet/issues</b> with a thorough explanation of the problem.
-            <br />
+            <br /> Alternatively, you can check to see if this is a known issue on the wallet’s <a href="https://github.com/StardustCollective/molly_wallet/issues"><b>Github page</b></a>. If it is not a known bug, please create an issue in the provided link with a thorough explanation of the problem. 
+            <br /> 
+            <br /> Regardless of what error or bug you may encounter, your funds will not be jeopardized by this software.
           </p>
         </card>
       </div>
@@ -31,43 +31,26 @@
         <card title="Frequently Asked Questions">
           <p>
             <b>I thought $DAG was free to transact, why do I need to enter a fee?</b>
-            <br />$DAG transactions are indeed free. The fee is intended for companies with higher data throughput demands.
+            <br />$DAG transactions are indeed free - you can leave this field as 0. The fee is intended for users with higher data throughput needs.
             <br />
             <br />
-            <b>How to backup my wallet?</b>
-            <br />During wallet creation, you specified the path and key name of your KeyStore File
-            <i>(key.p12)</i>. The Private Key will reside in the KeyStore and has three layers of protection. It's up to the user
-            in defining the security of this key. The wallet will allow the user to use the same
-            <i>Store Password</i> and
-            <i>Key Password</i>, but we advise against this for obvious reasons.
+            <b>How do I securely backup my wallet?</b>
+            <br />When creating a new wallet you will be required to create a <b>Private Key (JSON file) </b>and a <b>Password</b>. 
             <br />
-            <br />One can think of the KeyStore file as a database that hosts multiple private keys. The database is password protected using the (Store Password), without it, no keys inside the
-            key śtore can be accessed.
+            <br />It is important to make a copy of both of these two components, as backup, and keep it in a secure place.
             <br />
-            <br />Once the correct KeyStore Password has been provided, there will be a
-            <i>Private Key</i> identified by an
-            <i>Alias</i> inside. The Private Key will be identified by the
-            <i>Alias</i> and decrypted using the
-            <i>Private Key Password</i>.
+            <br /> If you lose your Private Key or your Password, <b>you will not be able to access your wallet</b>.
             <br />
-            <br />In summary, the four below components needs to be backed up.
-            <br />·
-            <b>KeyStore File (key.p12)</b>
-            <br />·
-            <b>Alias</b>
-            <br />·
-            <b>KeyStore Password</b>
-            <br />·
-            <b>Key Password</b>
+            <br />In summary, the two components below need to be backed up:
             <br />
-            <br />Make sure to store this file somewhere safe, and note down the Store Password, Key Password and Alias on a paper somewhere secure. This means that IF, your storage device containing the Key Store file
-            were to be jeopordized by an party with malicous intents, they wouldn't be able to access it without the passwords.
+            <ul>
+              <li><b>Private Key (P12 or JSON file)</b></li>
+              <li><b>Password</b></li>
+            </ul>
             <!-- Simply navigate to <i>Settings</i> and there you will be presented by two means of backing up your wallet. You can <b>export</b> your keys into an encrypted file on your filesystem. This can later
                         be stored on a USB drive for instance. Make sure that you remove all traces on your computer once en export has been done. <br><br> The other alternative is to copy the <b>Private Key</b> string. Simply click the red button to uncover
                         it, double click to highlight it, then copy and store it somewhere safe. <br><br> The Engineering team is right now investigating means of introducing bip32 encryption which would allow us to generate a more memorable Mnemonic Seed.
             This will then be included in this wallet as well.<br><br>-->
-
-            <br />
           </p>
         </card>
       </div>

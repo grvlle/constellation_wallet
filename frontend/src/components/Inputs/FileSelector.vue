@@ -1,30 +1,43 @@
 <template>
   <div class="input-group">
-    <input type="text"
+    <input
+      type="text"
       class="form-control"
       :disabled="true"
       aria-describedby="basic-addon2"
-      :value=value />
+      :value="value"
+    />
     <span class="input-group-append">
       <div v-if="action == 'SelectFile'">
-        <input type="file" name="file" id="file" class="inputfile" @change="selectFile" accept=".p12,.json" />
+        <input
+          type="file"
+          name="file"
+          id="file"
+          class="inputfile"
+          @change="selectFile"
+          accept=".p12,.json"
+        />
         <label for="file">BROWSE</label>
       </div>
 
-      <p-button v-if="action == 'SelectFile2'"
-        tabIndex="-1" 
-        @click.native="importKey" 
+      <p-button
+        v-if="action == 'SelectFile2'"
+        tabIndex="-1"
+        @click.native="importKey"
         class="btn"
-        type="default">
+        type="default"
+      >
         <span style="display: block;">
           BROWSE
         </span>
       </p-button>
-      <p-button v-if="action == 'SelectSaveFile'"
-        tabIndex="-1" 
-        @click.native="SelectDirToStoreKey" 
+      <p-button
+        v-if="action == 'SelectSaveFile'"
+        tabIndex="-1"
+        @click.native="SelectDirToStoreKey"
         class="btn"
-        type="default">
+        type="default"
+      >
         <span style="display: block;">
           BROWSE
         </span>
@@ -38,34 +51,34 @@ export default {
   props: {
     value: String,
     placeholder: String,
-    action: String
+    action: String,
   },
 
   methods: {
     selectFile: function(e) {
-      this.$emit('file', e.target.files[0])
+      this.$emit("file", e.target.files[0]);
     },
     importKey: function() {
-      window.backend.WalletApplication.ImportKey().then(
-        result => {
-          if (result) {
-            this.$store.commit('wallet/setKeystorePath', result);
-          }
+      window.backend.WalletApplication.ImportKey().then((result) => {
+        if (result) {
+          this.$store.commit("wallet/setKeystorePath", result);
         }
-      );
+      });
     },
     SelectDirToStoreKey: function() {
-      window.backend.WalletApplication.SelectDirToStoreKey().then(
-        result => {
-          this.$store.commit('wallet/setKeystorePath', result);
-        }
-      );
-    }
-  }
-}
+      window.backend.WalletApplication.SelectDirToStoreKey().then((result) => {
+        this.$store.commit("wallet/setKeystorePath", result);
+      });
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
+.form-control {
+  background: #f9f7f7 !important;
+  height: 36px;
+}
 .inputfile {
   width: 0.1px;
   height: 0.1px;
@@ -80,13 +93,18 @@ export default {
   height: 36px;
   border-radius: 0 0.25rem 0.25rem 0;
   font-size: 0.75em;
-  font-weight: 600;
-  border: 1px solid #DDDDDD;
+  border: 1px solid #666;
   color: white;
-  background-color: #66615B;
+  background-color: #666;
   display: inline-block;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.1em;
 }
 .inputfile + label:hover {
-  background-color: #403D39;
+  background-color: #403d39;
 }
 </style>

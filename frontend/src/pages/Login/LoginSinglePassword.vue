@@ -43,7 +43,7 @@
                   </div>
                   <div class="row">
                     <div class="col">
-                      <p class="text-left">
+                      <p class="text-left" style="font-family:Poppins">
                         Don't have a Wallet?
                         <a class="link-text" @click="createAccount()">
                           Create one here!

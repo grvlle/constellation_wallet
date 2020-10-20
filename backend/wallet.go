@@ -521,9 +521,10 @@ func (a *WalletApplication) initTXFromDB() {
 
 // initTXFromBlockExplorer is called when an existing wallet is imported.
 func (a *WalletApplication) initTXFromBlockExplorer() error {
-	a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
+	a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
 
-	resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
+	// resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
+	resp, err := http.Get(a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
 		a.LoginError("Unable to collect previous transactions from blockexplorer.")
@@ -572,12 +573,14 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 
 		for i, tx := range allTX {
 
+			t, _ := time.Parse(time.RFC3339, tx.Timestamp)
+
 			txData := &models.TXHistory{
 				Amount:   tx.Amount,
 				Receiver: tx.Receiver,
 				Fee:      tx.Fee,
 				Hash:     tx.Hash,
-				TS:       time.Now().Format("Jan _2 15:04:05") + " (imported)",
+				TS:       t.In(t.Local().Location()).Format("Jan _2 15:04:05"),
 				Status:   "Complete",
 				Failed:   false,
 			}

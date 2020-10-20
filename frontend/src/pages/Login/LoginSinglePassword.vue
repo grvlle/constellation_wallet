@@ -10,19 +10,19 @@
                 >Select your Private Key (P12 or JSON file)</label
                 >
                 <file-selector
-                    v-model="keystorePath"
-                    :placeholder="keystorePath"
-                    action="SelectFile"
-                    @file="fileSelected"
+                  v-model="keystorePath"
+                  :placeholder="keystorePath"
+                  action="SelectFile"
+                  @file="fileSelected"
                 />
               </div>
 
               <div class="input-box">
                 <div>
                   <password-input
-                      v-model="keystorePassword"
-                      label="Password"
-                      :validate="false"
+                    v-model="keystorePassword"
+                    label="Password"
+                    :validate="false"
                   />
                 </div>
               </div>
@@ -31,9 +31,11 @@
                   <div class="row">
                     <div class="col">
                       <p-button
-                          type="primary"
-                          block
-                          @click.native="loadKeyStoreFile(keystoreFile, keystorePassword)"
+                        type="primary"
+                        block
+                        @click.native="
+                          loadKeyStoreFile(keystoreFile, keystorePassword)
+                        "
                       >
                         <span style="display: block">LOGIN</span>
                       </p-button>
@@ -56,12 +58,11 @@
     </div>
     <page-overlay text="Loading..." :isActive="overlay" />
   </div>
-
 </template>
 
 <script>
 import { keyStore, keyStoreFile } from "@stardust-collective/dag-keystore";
-import {dagWalletAccount} from '@stardust-collective/dag-wallet-sdk';
+import { dagWalletAccount } from "@stardust-collective/dag-wallet-sdk";
 import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
@@ -71,7 +72,7 @@ export default {
     KeyPassword: "",
     overlay: false,
     valid: false,
-    keystoreFile: null
+    keystoreFile: null,
   }),
   computed: {
     keystorePath: {
@@ -81,7 +82,7 @@ export default {
       set(value) {
         this.$store.commit("wallet/setKeystorePath", value);
       },
-    }
+    },
   },
   mounted() {
     this.migrateNotification();
@@ -104,7 +105,7 @@ export default {
         background: "#DD8D74",
         position: "top-end",
         showConfirmButton: true,
-        confirmButtonColor: '#DD8D74',
+        confirmButtonColor: "#DD8D74",
         confirmButtonText: '<div style="color: #B53C19;">MIGRATE</div>',
         allowOutsideClick: false,
         showCloseButton: true,
@@ -112,16 +113,14 @@ export default {
         willOpen: () => {
           Swal.showLoading();
         },
-        onClose: () => {
-
-        }
+        onClose: () => {},
       }).then((result) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
           // Swal.fire('Saved!', '', 'success')
-          this.moveToMigrate()
+          this.moveToMigrate();
         }
-      })
+      });
     },
     moveToMigrate: function() {
       Swal.close();
@@ -130,7 +129,7 @@ export default {
           name: "keystore migrate",
           params: {
             message:
-                "Enter the information below to migrate your existing two password credentials to a single password.",
+              "Enter the information below to migrate your existing two password credentials to a single password.",
             title: "Molly Wallet Migration",
             darkMode: this.$route.params.darkMode,
           },
@@ -150,12 +149,11 @@ export default {
         });
       });
     },
-    loadKeyStoreFile: function (filePath, password) {
-
-      if (!filePath ||  !password) {
+    loadKeyStoreFile: function(filePath, password) {
+      if (!filePath || !password) {
         // Swal.fire('Invalid credentials', '', 'error')
         this.loginWithKey();
-        return
+        return;
       }
 
       let reader = new FileReader();
@@ -163,13 +161,11 @@ export default {
       reader.readAsBinaryString(filePath);
 
       reader.onload = () => {
-
         let keyPair;
 
         try {
           keyPair = keyStoreFile.readP12(reader.result, password);
-        }
-        catch (e) {
+        } catch (e) {
           this.errorMessage = e.message;
         }
 
@@ -183,57 +179,56 @@ export default {
         //this.errorMessage = 'Unable to read file';
       };
     },
-    loginWithKey: function (key) {
-
-      if (!key) return
+    loginWithKey: function(key) {
+      if (!key) return;
 
       // TODO - save seed and privKey to KeyChain (Alex)
       dagWalletAccount.loginPrivateKey(key);
 
-      var address = keyStore.getDagAddressFromPublicKey(keyStore.getPublicKeyFromPrivate(key));
+      var address = keyStore.getDagAddressFromPublicKey(
+        keyStore.getPublicKeyFromPrivate(key)
+      );
       // eslint-disable-next-line no-console
       console.log("getDagAddressFromPublicKey: " + address);
-      window.backend.WalletApplication.CreateOrInitWalletV2(
-          address
-      ).then((result) => {
-        if (result) {
-          Swal.close();
-          this.initWallet();
+      window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
+        (result) => {
+          if (result) {
+            Swal.close();
+            this.initWallet();
+          }
         }
-      });
+      );
     },
-    initWallet: function () {
+    initWallet: function() {
       var self = this;
       window.backend.WalletApplication.GetUserTheme().then((darkMode) =>
-          self.$store.commit("wallet/setDarkMode", darkMode)
+        self.$store.commit("wallet/setDarkMode", darkMode)
       );
       window.backend.WalletApplication.GetWalletTag().then((walletTag) =>
-          self.$store.commit("wallet/setLabel", walletTag)
+        self.$store.commit("wallet/setLabel", walletTag)
       );
       window.backend.WalletApplication.GetImagePath().then((imagePath) =>
-          self.$store.commit("wallet/setImgPath", imagePath)
+        self.$store.commit("wallet/setImgPath", imagePath)
       );
       self.overlay = false;
       self.$Progress.finish();
       self.$store.commit("app/setIsLoggedIn", true);
 
-      window.backend.WalletApplication.CheckTermsOfService().then(
-          (result) => {
-            self.$store.commit("wallet/setTermsOfService", result);
-            if (result) {
-              self.$router.push({
-                name: "loading",
-                params: { message: "Getting your $DAG Wallet ready..." },
-              });
-            } else {
-              self.$router.push({
-                name: "accept terms of service",
-                params: { message: "Terms of Service" },
-              });
-            }
-          }
-      );
-    }
+      window.backend.WalletApplication.CheckTermsOfService().then((result) => {
+        self.$store.commit("wallet/setTermsOfService", result);
+        if (result) {
+          self.$router.push({
+            name: "loading",
+            params: { message: "Getting your $DAG Wallet ready..." },
+          });
+        } else {
+          self.$router.push({
+            name: "accept terms of service",
+            params: { message: "Terms of Service" },
+          });
+        }
+      });
+    },
   },
 };
 </script>

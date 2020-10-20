@@ -83,6 +83,10 @@ func (u *UpdateWallet) GetLatestRelease() string {
 		u.app.log.Warn("Unable to get the latest release. Reason: ", err)
 		return ""
 	}
+	if bodyBytes == nil {
+        u.app.log.Warn("Unable to get the latest release. Reason: Empty response from server")
+        return ""
+    }
 
 	var result map[string]interface{}
 

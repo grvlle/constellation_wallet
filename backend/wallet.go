@@ -214,9 +214,18 @@ func (a *WalletApplication) CreateOrInitWalletV2(address string) bool {
 	return true
 }
 
-func (a *WalletApplication) CreateKeyStoreFile(keystorePath string) bool {
+func (a *WalletApplication) CreateKeyStoreFile(fileName, jsonKey string) string {
 
-    return true
+    var fullFilePath = a.paths.HomeDir + "/" + fileName + "-key.json";
+
+    err := WriteStringToFile(fullFilePath, jsonKey)
+    if err != nil {
+        a.log.Errorln("Unable to write file. Reason: ", err)
+        a.sendError("Unable to write file. Reason: ", err)
+        return ""
+    }
+
+    return fullFilePath
 }
 
 

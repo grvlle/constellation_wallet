@@ -125,15 +125,6 @@ export default {
           }
         });
       }
-      else {  //TODO - remove after migrate feature integrated
-        this.$router.push({
-          name: "keystore migration complete",
-          params: {
-            title: "Molly Wallet Migration",
-            message: "Congratulations! You have completed the Molly Wallet password migration!"
-          },
-        });
-      }
     },
     login: function () {
       var self = this;

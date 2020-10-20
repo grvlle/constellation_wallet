@@ -19,10 +19,10 @@
       </span>
     </div>
     <div class="validate text-danger" v-if="validate && !valid_password">             
-      <p v-if="!this.contains_eight_characters"> 8 Characters Long, </p> 
-      <p v-if="!this.contains_number"> Number,</p> 
-      <p v-if="!this.contains_uppercase"> Uppercase, </p> 
-      <p v-if="!this.contains_special_character"> Special Character </p>     
+      <p v-if="!this.contains_eight_characters">8 characters,</p>
+      <p v-if="!this.contains_number">&nbsp;&nbsp;number,</p>
+      <p v-if="!this.contains_uppercase">&nbsp;&nbsp;uppercase, </p>
+      <p v-if="!this.contains_special_character">&nbsp;&nbsp;special character </p>
     </div>
     <div class="validate" v-else/> 
 
@@ -54,7 +54,7 @@
         const format = /[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
 
         this.password_length = value.length;
-        if (this.password_length >= 8) {
+        if (this.password_length > 7) {
           this.contains_eight_characters = true;
         } else {
           this.contains_eight_characters = false;

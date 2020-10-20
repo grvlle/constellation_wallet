@@ -17,11 +17,14 @@ import 'vue-select/dist/vue-select.css';
 import IdleVue from 'idle-vue'
 import './plugins/globalMethods';
 
+const ONE_MINUTE = 60 * 1000;
+const FIFTEEN_MINUTES = 15 * ONE_MINUTE;
+
 const eventsHub = new Vue();
 Vue.use(IdleVue, {
   eventEmitter: eventsHub,
   store,
-  idleTime: 300000,
+  idleTime: FIFTEEN_MINUTES,
   startAtIdle: false
 })
 Vue.use(VueProgressBar, {

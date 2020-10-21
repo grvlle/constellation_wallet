@@ -173,7 +173,7 @@ export default {
     loadKeyStoreFile: function(filePath, password) {
       if (!filePath || !password) {
         // Swal.fire("Invalid credentials", "", "error");
-        this.loginWithKey();
+        // this.loginWithKey();
         return;
       }
 
@@ -230,10 +230,10 @@ export default {
       };
     },
     loginWithKey: function(key) {
-      // if (!key) return;
-      key =
-        key ||
-        "d4ace4d04e13e3441b7a34fb869dc09fa729d9b4fbf9e3377cbae3d88f75f049";
+      if (!key) return;
+      // key =
+      //   key ||
+      //   "d4ace4d04e13e3441b7a34fb869dc09fa729d9b4fbf9e3377cbae3d88f75f049";
 
       // TODO - save seed and privKey to KeyChain (Alex)
       dagWalletAccount.loginPrivateKey(key);

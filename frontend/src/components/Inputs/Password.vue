@@ -27,13 +27,11 @@
     <div
       class="validate text-danger error-message"
       v-if="validate"
-      v-bind:class="{ resolved: validate && valid_password }"
     >
-      <p>8 characters,</p>
-      <p>&nbsp;&nbsp;number,</p>
-      <p>&nbsp;&nbsp;uppercase,</p>
-      <p>
-        &nbsp;&nbsp;special character
+      <p v-bind:class="{ resolved: validate && contains_eight_characters}">8 characters,</p>
+      <p v-bind:class="{ resolved: validate && contains_number}">&nbsp;&nbsp;number,</p>
+      <p v-bind:class="{ resolved: validate && contains_uppercase}">&nbsp;&nbsp;uppercase,</p>
+      <p v-bind:class="{ resolved: validate && contains_special_character}">&nbsp;special character
       </p>
     </div>
     <div class="validate" v-else />
@@ -121,10 +119,8 @@ export default {
     color: #eb5757;
   }
 
-  &.resolved {
-    p {
-      color: #219653;
-    }
+  .resolved {
+    color: #219653;
   }
 }
 .input-group-append .btn {

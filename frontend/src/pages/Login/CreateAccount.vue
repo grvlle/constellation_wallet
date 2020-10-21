@@ -46,9 +46,9 @@
                     <p
                       class="error-message"
                       style="margin-top: -7px"
-                      v-bind:class="{ resolved: valid && valid_password }"
+                      v-bind:class="{ resolved: confirmed_password }"
                     >
-                      re-password
+                      password match
                     </p>
                   </div>
                 </div>

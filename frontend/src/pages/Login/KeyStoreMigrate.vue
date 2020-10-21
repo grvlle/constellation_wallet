@@ -107,7 +107,6 @@ export default {
         this.KeyPassword &&
         this.alias &&
         this.keystorePath;
-      this.completeMigration();
     },
     completeMigration: function() {
       this.$router.push({

@@ -97,4 +97,56 @@ button.swal2-styled.swal2-confirm:focus {
   box-shadow: none !important;
 }
 
+.swal2-popup-tos {
+  width: 96% !important;
+  height: 96% !important;
+}
+
+.swal2-content-tos {
+  height: 90%;
+  overflow: auto;
+}
+
+.swal2-actions-tos {
+  width: 58% !important;
+  display: flex !important;
+  justify-content: space-between !important;
+}
+
+.btn-confirm-tos {
+  background: #2d9cdb;
+  color: white;
+  width: 48%;
+  height: 36px;
+  border: 0px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-transform: uppercase;
+  border-radius: 4px;
+}
+
+.btn-cancel-tos {
+  background: #666666;
+  border-radius: 4px;
+  color: white;
+  width: 48%;
+  border: 0px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-transform: uppercase;
+  height: 36px;
+}
+
 @import "sweetalert2/src/sweetalert2";

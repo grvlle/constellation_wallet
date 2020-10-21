@@ -151,7 +151,7 @@ export default {
           params: {
             message:
               "Enter the information below to migrate your existing two password credentials to a single password.",
-            title: "Molly Wallet Migration",
+            title: "Molly Wallet migration wizard",
             darkMode: this.$route.params.darkMode,
           },
         });

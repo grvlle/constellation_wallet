@@ -34,7 +34,7 @@
                       <p-button
                         type="primary"
                         block
-                        :disabled="valid"
+                        :disabled="!valid"
                         @click.native="
                           loadKeyStoreFile(keystoreFile, keystorePassword)
                         "

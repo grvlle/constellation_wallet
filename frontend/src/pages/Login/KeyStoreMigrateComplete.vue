@@ -6,7 +6,9 @@
           <div class="row">
             <div class="col mx-auto login-box">
               <div class="input-box">
-                A file has been created next to your original one with "_v2" at the end of the file name. You may use this file to login to Molly Wallet 2.0.
+                A file has been created next to your original one with "_v2" at
+                the end of the file name. You may use this file to login to
+                Molly Wallet 2.0.
               </div>
               <br />
               <div class="input-box">
@@ -34,7 +36,7 @@
                   <div class="row">
                     <div class="col">
                       <p-button
-                        style="background: #dd8d74; border-color: #dd8d74;"
+                        class="btn-secondary"
                         block
                         @click.native="moveToLogin()"
                       >
@@ -84,15 +86,15 @@ export default {
     },
   },
   methods: {
-    moveToLogin: function () {
+    moveToLogin: function() {
       this.$router.push({
         name: "login single password",
         params: {
-          message: "Please enter the credentials to your Private Key (P12 or JSON file) to access your account.",
+          message:
+            "Please enter the credentials to your Private Key (P12 or JSON file) to access your account.",
         },
       });
     },
-
   },
 };
 </script>
@@ -104,8 +106,48 @@ export default {
   padding-bottom: 2rem;
 }
 
-.input-box > div {
-  margin-bottom: 1.875em;
+.btn-secondary {
+  background: #db6e44;
+  border: 1px solid #db6e44;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  color: #ffffff;
+
+  &:hover {
+    background: #af5836;
+    border: 1px solid #af5836;
+  }
+
+  &:active,
+  &:focus {
+    background: #db6e44 !important;
+    border: 1px solid #db6e44 !important;
+  }
+
+  &:active {
+    outline-color: #db6e44 !important;
+    outline-width: 0px;
+  }
+
+  &:disabled {
+    background: #e9a88f !important;
+    border: 1px solid #e9a88f !important;
+  }
+}
+
+div.input-box {
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #666666;
 }
 
 .button-box .container {
@@ -135,7 +177,7 @@ export default {
   stroke-dashoffset: 166;
   stroke-width: 2;
   stroke-miterlimit: 10;
-  stroke: #DD8D74;
+  stroke: #db6e44;
   fill: none;
   animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
 }
@@ -149,7 +191,7 @@ export default {
   stroke: #fff;
   stroke-miterlimit: 10;
   margin: 10% auto 30%;
-  box-shadow: inset 0px 0px 0px #DD8D74;
+  box-shadow: inset 0px 0px 0px #db6e44;
   animation: fill 0.4s ease-in-out 0.4s forwards,
     scale 0.3s ease-in-out 0.9s both;
 }
@@ -176,7 +218,7 @@ export default {
 }
 @keyframes fill {
   100% {
-    box-shadow: inset 0px 0px 0px 90px #DD8D74;
+    box-shadow: inset 0px 0px 0px 90px #db6e44;
   }
 }
 </style>

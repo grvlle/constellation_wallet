@@ -1,7 +1,7 @@
-@import 'sweetalert2/src/variables';
-@import '@sweetalert2/theme-bootstrap-4/bootstrap-4.scss';
+@import "sweetalert2/src/variables";
+@import "@sweetalert2/theme-bootstrap-4/bootstrap-4.scss";
 
-$swal2-font: 'Puppet', Helvetica, Arial, sans-serif;
+$swal2-font: "Puppet", Helvetica, Arial, sans-serif;
 $swal2-title-font-size: 1.5rem;
 $swal2-input-font-size: 1rem;
 $swal2-content-font-size: 0.875rem;
@@ -12,26 +12,26 @@ $swal2-confirm-button-background-color: $primary-color;
 
 .swal2-popup.swal2-modal {
   @include themed() {
-    background: t('popupBackgroundColor');
+    background: t("popupBackgroundColor");
   }
 }
 
 #swal2-title {
   @include themed() {
-    color: t('popupTextColor');
+    color: t("popupTextColor");
   }
 }
 
 #swal2-content {
   @include themed() {
-    color: t('popupTextColor');
+    color: t("popupTextColor");
   }
 }
 
 #swal2-validation-message {
   @include themed() {
-    background: t('cardTableColor');
-    border-color: t('inputBorderColor');
+    background: t("cardTableColor");
+    border-color: t("inputBorderColor");
   }
 }
 
@@ -50,4 +50,103 @@ button.swal2-styled.swal2-confirm:focus {
   box-shadow: none;
 }
 
-@import 'sweetalert2/src/sweetalert2';
+.login-button-text {
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  color: #db6e44;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.login-content {
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: left;
+  line-height: 21px;
+  color: #ffffff;
+}
+
+.swal2-actions-login {
+  min-height: initial;
+  height: 36px !important;
+  margin: 0px !important;
+}
+
+.swal2-title-login {
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  line-height: 21px;
+  margin: 0px !important;
+  color: #ffffff !important;
+}
+
+.swal2-popup-login {
+  background: #db6e44 !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+}
+
+.swal2-popup-tos {
+  width: 96% !important;
+  height: 96% !important;
+}
+
+.swal2-content-tos {
+  height: 90%;
+  overflow: auto;
+}
+
+.swal2-actions-tos {
+  width: 58% !important;
+  display: flex !important;
+  justify-content: space-between !important;
+}
+
+.btn-confirm-tos {
+  background: #2d9cdb;
+  color: white;
+  width: 48%;
+  height: 36px;
+  border: 0px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-transform: uppercase;
+  border-radius: 4px;
+}
+
+.btn-cancel-tos {
+  background: #666666;
+  border-radius: 4px;
+  color: white;
+  width: 48%;
+  border: 0px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-transform: uppercase;
+  height: 36px;
+}
+
+@import "sweetalert2/src/sweetalert2";

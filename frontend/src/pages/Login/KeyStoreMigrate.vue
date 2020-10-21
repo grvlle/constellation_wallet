@@ -23,6 +23,7 @@
                     label="Key Alias"
                     v-model="alias"
                     :placeholder="alias"
+                    @input="validCheck()"
                   />
                 </div>
                 <div>
@@ -30,6 +31,7 @@
                     v-model="keystorePassword"
                     label="Keystore Password"
                     :validate="false"
+                    @input="validCheck()"
                   />
                 </div>
                 <div>
@@ -37,6 +39,7 @@
                     v-model="KeyPassword"
                     label="Key Password"
                     :validate="false"
+                    @input="validCheck()"
                   />
                 </div>
               </div>
@@ -44,7 +47,12 @@
                 <div class="container">
                   <div class="row">
                     <div class="col">
-                      <p-button style="background: #dd8d74; border-color: #dd8d74;" block @click.native="migrate()">
+                      <p-button
+                        class="btn-secondary"
+                        block
+                        :disabled="!valid"
+                        @click.native="migrate()"
+                      >
                         <span style="display: block"> COMPLETE MIGRATION</span>
                       </p-button>
                     </div>
@@ -72,6 +80,7 @@ export default {
     keystorePassword: "",
     KeyPassword: "",
     overlay: false,
+    valid: false,
   }),
   computed: {
     keystorePath: {
@@ -92,16 +101,25 @@ export default {
     },
   },
   methods: {
+    validCheck: function() {
+      this.valid =
+        this.keystorePassword &&
+        this.KeyPassword &&
+        this.alias &&
+        this.keystorePath;
+      this.completeMigration();
+    },
     completeMigration: function() {
       this.$router.push({
         name: "keystore migration complete",
         params: {
-          title: "Molly Wallet Migration",
-          message: "Congratulations! You have completed the Molly Wallet password migration!",
+          title: "Molly Wallet migration wizard",
+          message:
+            "Congratulations! You have completed the Molly Wallet password migration!",
         },
       });
     },
-    migrate: function () {
+    migrate: function() {
       var self = this;
       if (self.keystorePath) {
         self.$Progress.start();
@@ -114,19 +132,21 @@ export default {
         ).then((result) => {
           self.overlay = false;
           self.$Progress.finish();
-          if (result) { //TODO handle error case?
+          if (result) {
+            //TODO handle error case?
             this.$router.push({
               name: "keystore migration complete",
               params: {
-                title: "Molly Wallet Migration",
-                message: "Congratulations! You have completed the Molly Wallet password migration!"
+                title: "Molly Wallet migration wizard",
+                message:
+                  "Congratulations! You have completed the Molly Wallet password migration!",
               },
             });
           }
         });
       }
     },
-    login: function () {
+    login: function() {
       var self = this;
       self.$Progress.start();
       self.overlay = true;
@@ -185,6 +205,41 @@ export default {
 
 .input-box > div {
   margin-bottom: 1.875em;
+}
+
+.btn-secondary {
+  background: #db6e44;
+  border: 1px solid #db6e44;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  color: #ffffff;
+
+  &:hover {
+    background: #af5836;
+    border: 1px solid #af5836;
+  }
+
+  &:active,
+  &:focus {
+    background: #db6e44 !important;
+    border: 1px solid #db6e44 !important;
+  }
+
+  &:active {
+    outline-color: #db6e44 !important;
+    outline-width: 0px;
+  }
+
+  &:disabled {
+    background: #e9a88f !important;
+    border: 1px solid #e9a88f !important;
+  }
 }
 
 .button-box .container {

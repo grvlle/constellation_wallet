@@ -1,0 +1,5 @@
+{
+  "main": "./index.js",
+  "name": "keccak",
+  "version": "0.0.1"
+}

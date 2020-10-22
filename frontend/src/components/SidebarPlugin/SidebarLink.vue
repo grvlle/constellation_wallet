@@ -1,10 +1,16 @@
 <template>
-  <component :is="tag" @click.native="hideSidebar" class="nav-item" v-bind="$attrs" tag="li">
+  <component
+    :is="tag"
+    @click.native="hideSidebar"
+    class="nav-item"
+    v-bind="$attrs"
+    tag="li"
+  >
     <slot>
       <p class="nav-item">
         <a class="nav-link">
           <i v-if="icon" :class="icon"></i>
-          {{name}}
+          {{ name }}
         </a>
       </p>
     </slot>
@@ -17,22 +23,22 @@ export default {
   inheritAttrs: false,
   inject: {
     autoClose: {
-      default: true
+      default: true,
     },
     addLink: {
-      default: () => {}
+      default: () => {},
     },
     removeLink: {
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   props: {
     name: String,
     icon: String,
     tag: {
       type: String,
-      default: "router-link"
-    }
+      default: "router-link",
+    },
   },
   methods: {
     hideSidebar() {
@@ -42,7 +48,7 @@ export default {
     },
     isActive() {
       return this.$el.classList.contains("active");
-    }
+    },
   },
   mounted() {
     if (this.addLink) {
@@ -56,9 +62,12 @@ export default {
     if (this.removeLink) {
       this.removeLink(this);
     }
-  }
+  },
 };
 </script>
 
 <style scoped lang="scss">
+.theme--light a {
+  color: #2d9cdb;
+}
 </style>

@@ -79,8 +79,8 @@ func (a *WalletApplication) detectJavaPath() {
 
 		err := cmd.Run()
 		if err != nil {
-			//errFormatted := fmt.Sprint(err) + ": " + stderr.String()
-			//a.log.Errorf(errFormatted)
+			errFormatted := fmt.Sprint(err) + ": " + stderr.String()
+			a.log.Errorf(errFormatted)
 			//a.LoginError("Unable to find Java Installation")
 			//a.paths.Java = "No valid path detected"
 			a.paths.Java = "javaw.exe"

@@ -10,7 +10,12 @@
               placeholder="Search a contact..."
               v-model="searchFilter"
             />
-            <button type="button" class="btn btn-primary ml-2" @click="createContact">
+            <button
+              type="button"
+              class="btn btn-primary ml-2"
+              style="background: #666666"
+              @click="createContact"
+            >
               <i class="fa fa-plus"></i>
             </button>
           </div>
@@ -18,28 +23,41 @@
       </div>
     </div>
     <div class="row" v-if="this.$store.state.addressBook.addressBook.length">
-      <div class="col-md-4 mb-4" v-for="contact in filteredAddressBook" :key="contact.id">
+      <div
+        class="col-md-4 mb-4"
+        v-for="contact in filteredAddressBook"
+        :key="contact.id"
+      >
         <div class="card h-100">
           <div class="card-body">
             <h5 class="card-title mb-2">
-              {{contact.name}}
-              <span class="badge badge-success float-right">{{contact.tag}}</span>
+              {{ contact.name }}
+              <span class="badge badge-success float-right">{{
+                contact.tag
+              }}</span>
             </h5>
-            <p class="card-text">{{contact.description}}</p>
+            <p class="card-text">{{ contact.description }}</p>
           </div>
           <div class="card-footer">
-            <small class="text-muted">{{contact.address}}</small>
+            <small class="text-muted">{{ contact.address }}</small>
           </div>
-          <a href="javascript:void(0)" @click="showContact(contact)" class="stretched-link"></a>
+          <a
+            href="javascript:void(0)"
+            @click="showContact(contact)"
+            class="stretched-link"
+          ></a>
         </div>
       </div>
     </div>
     <div v-else>
       <card class="text-center" style="height: 10rem;">
-        <p class="card-text text-muted font-weight-bold mt-4">EMPTY ADDRESS BOOK</p>
-        <p
-          class="card-text text-muted font-italic"
-        >You can start adding your contacts by clicking the '+' button at the top right of the page</p>
+        <p class="card-text text-muted font-weight-bold mt-4">
+          EMPTY ADDRESS BOOK
+        </p>
+        <p class="card-text text-muted font-italic">
+          You can start adding your contacts by clicking the '+' button at the
+          top right of the page
+        </p>
       </card>
     </div>
   </div>
@@ -48,10 +66,10 @@
 <script>
 export default {
   data: () => ({
-    searchFilter: ""
+    searchFilter: "",
   }),
   created: function() {
-    window.backend.WalletApplication.GetAddressBook().then(ab => {
+    window.backend.WalletApplication.GetAddressBook().then((ab) => {
       let addressBook;
       try {
         addressBook = JSON.parse(ab);
@@ -68,26 +86,25 @@ export default {
       } else {
         return this.$store.getters["addressBook/search"](this.searchFilter);
       }
-    }
+    },
   },
   methods: {
     createContact: function() {
       this.$router.push({
         name: "new-edit contact",
-        params: { id: "" }
+        params: { id: "" },
       });
     },
     showContact: function(contact) {
       if (contact.id != this.$route.params.id) {
         this.$router.push({
           name: "contact details",
-          params: { id: contact.id }
+          params: { id: contact.id },
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

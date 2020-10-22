@@ -22,7 +22,7 @@
 
           <p
             class="header-title"
-            style="color: #dd8d74"
+            style="color: #db6e44"
             v-else-if="isMigrationWizard"
           >
             {{ this.$route.params.title }}
@@ -161,6 +161,7 @@ export default {
   right: 0;
   font-size: 0.7rem;
   text-align: right;
+  font-family: Poppins;
   margin-right: 24px;
   margin-bottom: 24px;
 }

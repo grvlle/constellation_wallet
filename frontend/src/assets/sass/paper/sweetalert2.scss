@@ -85,7 +85,7 @@ button.swal2-styled.swal2-confirm:focus {
   font-family: Poppins;
   font-style: normal;
   font-weight: 500 !important;
-  font-size: 14px !important;
+  font-size: 18px !important;
   line-height: 21px;
   margin: 0px !important;
   color: #ffffff !important;
@@ -95,6 +95,10 @@ button.swal2-styled.swal2-confirm:focus {
   background: #db6e44 !important;
   border-radius: 6px !important;
   box-shadow: none !important;
+}
+
+.swal2-container-login {
+  padding: 24px !important;
 }
 
 .swal2-popup-tos {

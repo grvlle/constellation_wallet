@@ -191,6 +191,8 @@ export default {
   border: 1px solid #dddddd;
   display: block;
   background: #f9f7f7 !important;
+  font-family: Poppins;
+  color: #666666;
   padding: 6px 16px;
 }
 

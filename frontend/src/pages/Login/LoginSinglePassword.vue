@@ -110,6 +110,7 @@ export default {
           title: "swal2-title-login",
           confirmButton: "btn-migrate-login",
           closeButton: "btn-close-login",
+          container: "swal2-container-login",
         },
         buttonsStyling: false,
       })
@@ -117,7 +118,6 @@ export default {
           title: "Important Update",
           html: `<br><p class="login-content">If you have previously signed into Molly Wallet using an alias and two different passwords (versions 1.2.x and earlier), you will need to migrate your credentials before logging in.</p>`,
           width: 300,
-          closeButtonHtml: "&times;",
           padding: 12,
           backdrop: false,
           toast: true,

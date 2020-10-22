@@ -6,6 +6,7 @@
           <div
             class="icon-big text-center"
             :class="`icon-success`"
+            style="color: #23DBBC"
             slot="header"
           >
             <i class="fas fa-wallet"></i>
@@ -21,14 +22,11 @@
         </stats-card>
       </div>
       <div class="col-md-4 d-flex">
-
-        <stats-card
-          v-if="!onTestnet"
-          class="stats-card"
-        >
+        <stats-card v-if="!onTestnet" class="stats-card">
           <div
             class="icon-big text-center"
             :class="`icon-danger`"
+            style="color: #DB6E44"
             slot="header"
           >
             <i class="fas fa-search-dollar"></i>
@@ -43,31 +41,38 @@
           </div>
         </stats-card>
 
-                <stats-card
-          v-if="onTestnet"
-          class="stats-card"
-        >
+        <stats-card v-if="onTestnet" class="stats-card">
           <div
             class="icon-big text-center"
             :class="`icon-danger`"
+            style="color: #DB6E44"
             slot="header"
           >
-            <img class="test-dag" src='../assets/img/test-dag.png' />
+            <img class="test-dag" src="../assets/img/test-dag.png" />
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <b><p>REQUEST TEST $DAG</p></b>
             <p>Get a maximum of 10,000 <br />TEST DAG per day</p>
           </div>
           <div class="text-center test-dag-footer" slot="footer">
-            <button @click="getTestDag" class="test-dag-btn">GET TEST DAG</button>
+            <button
+              @click="getTestDag"
+              class="test-dag-btn"
+              style="background: #DB6E44"
+            >
+              GET TEST DAG
+            </button>
           </div>
-          
         </stats-card>
-
       </div>
       <div class="col-md-4 d-flex">
         <stats-card class="stats-card">
-          <div class="icon-big text-center" :class="`icon-info`" slot="header">
+          <div
+            class="icon-big text-center"
+            :class="`icon-info`"
+            style="color: #2D9CDB"
+            slot="header"
+          >
             <i class="fas fa-cube"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
@@ -107,7 +112,7 @@
                 <td style="padding-top: 10px; width: 9%">
                   <p-button
                     type="info"
-                    style="margin-bottom: 5px"
+                    style="margin-bottom: 5px; background: #2D9CDB; border-color: #2D9CDB"
                     icon
                     @click.native="copyTestingCode"
                   >
@@ -194,9 +199,9 @@ export default {
     ChartCard,
   },
   methods: {
-    getTestDag () {
+    getTestDag() {
       //TODO - monitor ipAddr of requests. https://api.ipify.org
-      window.backend.WalletApplication.GetTestDag()
+      window.backend.WalletApplication.GetTestDag();
     },
     copyTestingCode() {
       let testingCodeToCopy = document.querySelector("#testing-code");
@@ -312,30 +317,28 @@ export default {
 }
 
 .test-dag {
-    height: auto; 
-    width: auto; 
-    max-width: 60px; 
-    max-height: 60px;
+  height: auto;
+  width: auto;
+  max-width: 60px;
+  max-height: 60px;
 }
 
 .test-dag-btn {
-    font-family: Poppins;
-    font-weight: 500;
-    height: 2em; 
-    width: 100%; 
-    background: #DD8D74;
-    color: white;
-    cursor: pointer;
-    margin-top: -10px;
-    border: none;
-    border-radius: 5px;
-    
+  font-family: Poppins;
+  font-weight: 500;
+  height: 2em;
+  width: 100%;
+  background: #dd8d74;
+  color: white;
+  cursor: pointer;
+  margin-top: -10px;
+  border: none;
+  border-radius: 5px;
 }
 
 .test-dag-btn:hover {
-        background: #df7f62;
-        box-shadow: 0px 1px 1px #DD8D74;
-        
+  background: #df7f62;
+  box-shadow: 0px 1px 1px #dd8d74;
 }
 
 .wallet-address > p-button {

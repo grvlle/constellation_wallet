@@ -161,6 +161,7 @@ export default {
   right: 0;
   font-size: 0.7rem;
   text-align: right;
+  font-family: Poppins;
   margin-right: 24px;
   margin-bottom: 24px;
 }

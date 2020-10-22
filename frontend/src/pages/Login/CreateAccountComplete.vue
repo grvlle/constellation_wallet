@@ -6,9 +6,12 @@
           <div class="row">
             <div class="col mx-auto login-box">
               <div class="input-box">
-                A KeyStore file has been created. You may use this to login to Molly Wallet 2.0.
+                A KeyStore file has been created. You may use this to login to
+                Molly Wallet 2.0.
               </div>
-              <div style="margin-top: 18px; text-align: center; font-weight: 500">
+              <div
+                style="margin-top: 18px; text-align: center; font-weight: 500"
+              >
                 {{ filePath }}
               </div>
               <br />
@@ -37,7 +40,7 @@
                   <div class="row">
                     <div class="col">
                       <p-button
-                        style="background: #1d40b3; border-color: #1d40b3;"
+                        style="background: #2D9CDB; border-color: #2D9CDB;"
                         block
                         @click.native="moveToLogin()"
                       >
@@ -87,20 +90,20 @@ export default {
     },
     filePath: {
       get() {
-        return this.$route.params.filePath
-      }
-    }
+        return this.$route.params.filePath;
+      },
+    },
   },
   methods: {
-    moveToLogin: function () {
+    moveToLogin: function() {
       this.$router.push({
         name: "login single password",
         params: {
-          message: "Please enter the credentials to your Private Key (P12 or JSON file) to access your account.",
+          message:
+            "Please enter the credentials to your Private Key (P12 or JSON file) to access your account.",
         },
       });
     },
-
   },
 };
 </script>
@@ -143,21 +146,22 @@ export default {
   stroke-dashoffset: 166;
   stroke-width: 2;
   stroke-miterlimit: 10;
-  stroke: #1d40b3;
+  stroke: #2d9cdb;
   fill: none;
   animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
 }
 
 .checkmark {
-  width: 176px;
-  height: 176px;
+  width: 132px;
+  height: 132px;
   border-radius: 50%;
   display: block;
   stroke-width: 2;
   stroke: #fff;
   stroke-miterlimit: 10;
   margin: 10% auto 30%;
-  box-shadow: inset 0px 0px 0px #1d40b3;
+  margin-bottom: 70px;
+  box-shadow: inset 0px 0px 0px #2d9cdb;
   animation: fill 0.4s ease-in-out 0.4s forwards,
     scale 0.3s ease-in-out 0.9s both;
 }
@@ -184,7 +188,7 @@ export default {
 }
 @keyframes fill {
   100% {
-    box-shadow: inset 0px 0px 0px 90px #1d40b3;
+    box-shadow: inset 0px 0px 0px 90px #2d9cdb;
   }
 }
 </style>

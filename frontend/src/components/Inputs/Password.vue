@@ -24,14 +24,18 @@
         </p-button>
       </span>
     </div>
-    <div
-      class="validate text-danger error-message"
-      v-if="validate"
-    >
-      <p v-bind:class="{ resolved: validate && contains_eight_characters}">8 characters,</p>
-      <p v-bind:class="{ resolved: validate && contains_number}">&nbsp;&nbsp;number,</p>
-      <p v-bind:class="{ resolved: validate && contains_uppercase}">&nbsp;&nbsp;uppercase,</p>
-      <p v-bind:class="{ resolved: validate && contains_special_character}">&nbsp;special character
+    <div class="validate text-danger error-message" v-if="validate">
+      <p v-bind:class="{ resolved: validate && contains_eight_characters }">
+        8 characters,
+      </p>
+      <p v-bind:class="{ resolved: validate && contains_number }">
+        &nbsp;&nbsp;number,
+      </p>
+      <p v-bind:class="{ resolved: validate && contains_uppercase }">
+        &nbsp;&nbsp;uppercase,
+      </p>
+      <p v-bind:class="{ resolved: validate && contains_special_character }">
+        &nbsp;special character
       </p>
     </div>
     <div class="validate" v-else />
@@ -102,6 +106,7 @@ export default {
 <style lang="scss" scoped>
 .form-control {
   background: #f9f7f7 !important;
+  color: #666666;
   height: 36px;
 }
 .validate {

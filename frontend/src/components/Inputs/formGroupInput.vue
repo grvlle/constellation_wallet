@@ -52,5 +52,7 @@ export default {
 <style scoped lang="scss">
 .form-control {
   background: #f9f7f7 !important;
+  font-family: Poppins;
+  color: #666666;
 }
 </style>

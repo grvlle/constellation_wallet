@@ -21,21 +21,25 @@ if (process.env.NODE_ENV == "production") {
   };
 }
 
-const path = require("path");
-const PrerenderSPAPlugin = require("prerender-spa-plugin");
+// const path = require("path");
+// const PrerenderSPAPlugin = require("prerender-spa-plugin");
+
+// module.exports = {
+//
+//   plugins: [
+//     new PrerenderSPAPlugin({
+//       // Required - The path to the webpack-outputted app to prerender.
+//       staticDir: path.join(__dirname, "dist"),
+//       // Required - Routes to render.
+//       routes: ["/", "/login", "/dashboard"],
+//     }),
+//   ],
+// };
 
 module.exports = {
-  plugins: [
-    new PrerenderSPAPlugin({
-      // Required - The path to the webpack-outputted app to prerender.
-      staticDir: path.join(__dirname, "dist"),
-      // Required - Routes to render.
-      routes: ["/", "/login", "/dashboard"],
-    }),
+  transpileDependencies: [
+    "secp256k1"
   ],
-};
-
-module.exports = {
   chainWebpack: (config) => {
     let limit = 9999999999999999;
     config.module

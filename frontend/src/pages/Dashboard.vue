@@ -45,6 +45,7 @@
           <div
             class="icon-big text-center"
             :class="`icon-danger`"
+            style="color: #DB6E44"
             slot="header"
           >
             <img class="test-dag" src="../assets/img/test-dag.png" />
@@ -54,7 +55,11 @@
             <p>Get a maximum of 10,000 <br />TEST DAG per day</p>
           </div>
           <div class="text-center test-dag-footer" slot="footer">
-            <button @click="getTestDag" class="test-dag-btn">
+            <button
+              @click="getTestDag"
+              class="test-dag-btn"
+              style="background: #DB6E44"
+            >
               GET TEST DAG
             </button>
           </div>

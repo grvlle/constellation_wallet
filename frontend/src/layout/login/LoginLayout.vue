@@ -22,7 +22,7 @@
 
           <p
             class="header-title"
-            style="color: #dd8d74"
+            style="color: #db6e44"
             v-else-if="isMigrationWizard"
           >
             {{ this.$route.params.title }}

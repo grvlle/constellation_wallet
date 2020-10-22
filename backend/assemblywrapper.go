@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -187,8 +188,23 @@ func (a *WalletApplication) produceKeystoreMigrateV2(keystorePath, alias string)
 
 	err := a.runWalletCMD("keytool", "migrate-to-store-password-only", "--keystore="+keystorePath, "--alias="+alias, "--env_args=true")
 	if err != nil {
-		a.sendError("Unable to migrate Keystore file to V2. Please report this issue. Reason: ", err)
-		a.log.Errorln("Unable to migrate Keystore file. Reason: ", err)
+		s := err.Error()
+		if strings.Contains(s, "java.io.IOException: keystore password was incorrect") {
+			a.sendError("Password is incorrect.", nil)
+			a.log.Errorln("Password is incorrect. Reason: ", err)
+		} else if strings.Contains(s, "java.security.UnrecoverableKeyException:") {
+			a.sendError("Password is incorrect.", nil)
+			a.log.Errorln("Password is incorrect. Reason: ", err)
+		} else if strings.Contains(s, "java.lang.NullPointerException\n	at org.constellation.keytool.KeyStoreUtils$.$anonfun$unlockKeyPair$1") {
+			a.sendError("Alias is incorrect.", nil)
+			a.log.Errorln("Alias is incorrect. Reason: ", err)
+		} else if strings.Contains(s, "java.io.IOException: toDerInputStream rejects tag type") {
+			a.sendError("Private key file type is incorrect.", nil)
+			a.log.Errorln("Private key file type is incorrect.", err)
+		} else {
+			a.sendError("Unable to migrate Keystore file to V2. Please report this issue. Reason: ", err)
+			a.log.Errorln("Unable to migrate Keystore file. Reason: ", err)
+		}
 		return false
 	}
 

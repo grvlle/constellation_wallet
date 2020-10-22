@@ -243,7 +243,7 @@ func (a *WalletApplication) sendError(msg string, err error) {
 
 		a.RT.Events.Emit("error_handling", msg, errStr+" ...")
 	} else {
-		a.RT.Events.Emit("error_handling", msg+" ...")
+		a.RT.Events.Emit("error_handling", msg, "")
 	}
 
 }

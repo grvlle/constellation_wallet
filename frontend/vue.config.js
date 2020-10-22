@@ -21,7 +21,7 @@ if (process.env.NODE_ENV == "production") {
   };
 }
 
-// const path = require("path");
+const path = require("path");
 // const PrerenderSPAPlugin = require("prerender-spa-plugin");
 
 // module.exports = {
@@ -37,9 +37,10 @@ if (process.env.NODE_ENV == "production") {
 // };
 
 module.exports = {
-  transpileDependencies: [
-    "secp256k1"
-  ],
+  // transpileDependencies: [
+  //   "secp256k1",
+  //   "keccak"
+  // ],
   chainWebpack: (config) => {
     let limit = 9999999999999999;
     config.module
@@ -70,6 +71,12 @@ module.exports = {
     optimization: {
       splitChunks: false,
     },
+    resolve: {
+      alias: {
+        "keccak": path.resolve(__dirname, 'shim/keccak/'),
+        "secp256k1": path.resolve(__dirname, 'shim/secp256k1/')
+      }
+    }
   },
   devServer: {
     disableHostCheck: true,

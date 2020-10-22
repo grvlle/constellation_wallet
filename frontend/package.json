@@ -24,6 +24,7 @@
     "node-sass": "^4.14.1",
     "popper.js": "^1.16.1",
     "sass-loader": "^8.0.2",
+    "stream-browserify": "^3.0.0",
     "sweetalert2": "^9.17.2",
     "vue": "^2.6.12",
     "vue-clickaway": "^2.2.2",
@@ -74,8 +75,6 @@
     }
   },
   "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "ie >= 11"
+    "ie 11"
   ]
 }

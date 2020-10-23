@@ -47,11 +47,16 @@
       </div>
     </div>
     <div class="logo">
-      <img style="width: 180px"
+      <img
+        style="height: 60px;"
         v-if="isDarkMode"
         src="~@/assets/img/stardust-collective-logo-white.png"
       />
-      <img style="width: 180px"  v-else src="~@/assets/img/stardust-collective-logo-black.png" />
+      <img
+        style="height: 60px;"
+        v-else
+        src="~@/assets/img/stardust-collective-logo-black.png"
+      />
     </div>
     <div class="version">
       <p class="version">

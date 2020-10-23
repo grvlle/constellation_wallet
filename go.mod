@@ -11,7 +11,6 @@ require (
 	github.com/wailsapp/wails v1.8.0
 	github.com/zalando/go-keyring v0.1.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
-	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	google.golang.org/appengine v1.6.2 // indirect
 )
 

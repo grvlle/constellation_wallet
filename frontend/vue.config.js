@@ -73,8 +73,8 @@ module.exports = {
     },
     resolve: {
       alias: {
-        "keccak": path.resolve(__dirname, 'shim/keccak/'),
-        "secp256k1": path.resolve(__dirname, 'shim/secp256k1/')
+        "keccak": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/keccak/'),
+        "secp256k1": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/secp256k1/')
       }
     }
   },

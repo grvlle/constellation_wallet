@@ -47,13 +47,11 @@
       </div>
     </div>
     <div class="logo">
-      <img
-        class="img-fluid"
+      <img style="width: 180px"
         v-if="isDarkMode"
-        src="~@/assets/img/Constellation-Logo-White.png"
-        style="max-height: 2rem"
+        src="~@/assets/img/stardust-collective-logo-white.png"
       />
-      <img class="img-fluid" v-else src="~@/assets/img/logo.png" />
+      <img style="width: 180px"  v-else src="~@/assets/img/stardust-collective-logo-black.png" />
     </div>
     <div class="version">
       <p class="version">

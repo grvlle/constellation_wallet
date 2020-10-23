@@ -8,7 +8,7 @@ type TXHistory struct {
 	Sender             string `json:"sender"`
 	Receiver           string `json:"receiver"`
 	Fee                int64  `json:"fee"`
-	Timestamp					 string `json:"timestamp"`
+	Timestamp		   string `json:"timestamp"`
 	Hash               string `json:"hash"`
 	LastTransactionRef struct {
 		Hash    string `json:"prevHash"`

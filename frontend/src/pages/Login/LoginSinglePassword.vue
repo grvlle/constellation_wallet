@@ -94,7 +94,7 @@ export default {
   methods: {
     validCheck: function() {
       // eslint-disable-next-line no-console
-      console.log(this.valid, this.keystoreFile, this.keystorePassword);
+      // console.log(this.valid, this.keystoreFile, this.keystorePassword);
       this.valid = this.keystoreFile !== null && this.keystorePassword !== "";
     },
     fileSelected: function(value) {
@@ -119,15 +119,15 @@ export default {
           html: `<br><p class="login-content">If you have previously signed into Molly Wallet using an alias and two different passwords (versions 1.2.x and earlier), you will need to migrate your credentials before logging in.</p>`,
           width: 300,
           padding: 12,
-          backdrop: false,
+          // backdrop: false,
           toast: true,
-          borderColor: "#DD8D74",
+          // borderColor: "#DD8D74",
           background: "#DD8D74",
           position: "top-end",
           showConfirmButton: true,
           confirmButtonColor: "#DD8D74",
           confirmButtonText: '<div class="login-button-text">MIGRATE</div>',
-          allowOutsideClick: false,
+          // allowOutsideClick: false,
           showCloseButton: true,
           timerProgressBar: true,
           // willOpen: () => {
@@ -211,7 +211,7 @@ export default {
         } catch (e) {
           this.overlay = false;
           this.$Progress.fail();
-          Swal.fire("Unable to unlock file", "", e.message).then(() => {
+          Swal.fire("Unable to unlock file", e.message, "error").then(() => {
             this.migrateNotification();
           });
         }

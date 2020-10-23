@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/user"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -216,8 +217,22 @@ func (a *WalletApplication) CreateOrInitWalletV2(address string) bool {
 
 func (a *WalletApplication) CreateKeyStoreFile(fileName, jsonKey string) string {
 
-    var fullFilePath = a.paths.HomeDir + "/" + fileName + "-key.json";
+    var fullFilePath = a.paths.HomeDir + "/" + fileName;
 
+		// Check if a file with the same name exists
+		i := 0
+		suffix := ""
+		for {
+			if (i != 0) {
+				suffix = strconv.Itoa(i)
+			}
+			if _, err := os.Stat(fullFilePath + suffix + "-key.json"); os.IsNotExist(err) {
+				break
+			}
+			i ++
+		}
+
+		fullFilePath += suffix + "-key.json"
     err := WriteStringToFile(fullFilePath, jsonKey)
     if err != nil {
         a.log.Errorln("Unable to write file. Reason: ", err)

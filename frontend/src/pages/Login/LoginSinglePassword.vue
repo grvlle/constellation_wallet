@@ -93,8 +93,6 @@ export default {
   },
   methods: {
     validCheck: function() {
-      // eslint-disable-next-line no-console
-      // console.log(this.valid, this.keystoreFile, this.keystorePassword);
       this.valid = this.keystoreFile !== null && this.keystorePassword !== "";
     },
     fileSelected: function(value) {
@@ -119,15 +117,12 @@ export default {
           html: `<br><p class="login-content">If you have previously signed into Molly Wallet using an alias and two different passwords (versions 1.2.x and earlier), you will need to migrate your credentials before logging in.</p>`,
           width: 300,
           padding: 12,
-          // backdrop: false,
           toast: true,
-          // borderColor: "#DD8D74",
           background: "#DD8D74",
           position: "top-end",
           showConfirmButton: true,
           confirmButtonColor: "#DD8D74",
           confirmButtonText: '<div class="login-button-text">MIGRATE</div>',
-          // allowOutsideClick: false,
           showCloseButton: true,
           timerProgressBar: true,
           // willOpen: () => {
@@ -231,18 +226,13 @@ export default {
     },
     loginWithKey: function(key) {
       if (!key) return;
-      // key =
-      //   key ||
-      //   "d4ace4d04e13e3441b7a34fb869dc09fa729d9b4fbf9e3377cbae3d88f75f049";
 
-      // TODO - save seed and privKey to KeyChain (Alex)
       dagWalletAccount.loginPrivateKey(key);
 
       var address = keyStore.getDagAddressFromPublicKey(
         keyStore.getPublicKeyFromPrivate(key)
       );
-      // eslint-disable-next-line no-console
-      console.log("getDagAddressFromPublicKey: " + address);
+
       window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
         (result) => {
           if (result) {

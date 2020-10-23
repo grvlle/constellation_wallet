@@ -183,6 +183,7 @@
         </chart-card>
       </div>
     </div>
+    <page-overlay text="Loading..." :isActive="overlay" />
   </div>
 </template>
 
@@ -192,6 +193,8 @@ import { StatsCard, ChartCard } from "@/components/index";
 import Chartist from "chartist";
 import WalletCopiedNotification from "./Notifications/WalletCopied";
 import WalletCopiedFailedNotification from "./Notifications/WalletCopiedFailed";
+import TestDagRequestedNotification from "./Notifications/TestDagRequested";
+import TestDagRequestedFailedNotification from "./Notifications/TestDagRequestedFailed";
 
 export default {
   components: {
@@ -201,7 +204,24 @@ export default {
   methods: {
     getTestDag() {
       //TODO - monitor ipAddr of requests. https://api.ipify.org
-      window.backend.WalletApplication.GetTestDag();
+      this.overlay = true;
+      this.$Progress.start();
+      window.backend.WalletApplication.GetTestDag().then((result) => {
+        if (result) {
+          this.overlay = false;
+          this.$Progress.finish();
+          this.addNotification("top", "right", 2, TestDagRequestedNotification);
+        } else {
+          this.addNotification(
+            "top",
+            "right",
+            4,
+            TestDagRequestedFailedNotification
+          );
+          this.$Progress.fail();
+          this.overlay = false;
+        }
+      });
     },
     copyTestingCode() {
       let testingCodeToCopy = document.querySelector("#testing-code");
@@ -249,6 +269,7 @@ export default {
       notifications: {
         topCenter: false,
       },
+      overlay: false,
       transactionChart: {
         options: {
           low: 0,
@@ -330,6 +351,7 @@ export default {
   width: 100%;
   background: #dd8d74;
   color: white;
+  letter-spacing: 0.1em;
   cursor: pointer;
   margin-top: -10px;
   border: none;

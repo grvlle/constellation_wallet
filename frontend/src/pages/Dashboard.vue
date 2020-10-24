@@ -52,7 +52,7 @@
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <b><p>REQUEST TEST $DAG</p></b>
-            <p>Get a maximum of 10,000 <br />TEST DAG per day</p>
+            <p>Get a maximum of 1,000 <br />TEST DAG per day</p>
           </div>
           <div class="text-center test-dag-footer" slot="footer">
             <button

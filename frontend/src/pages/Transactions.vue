@@ -35,10 +35,11 @@
                 <i class="fa fa-chevron-circle-right icon-point-right"></i>
                 <div class="validate"></div>
               </div>
-              <div class="col-md-5">
+              <div class="col-md-5" style="padding-right: 0">
                 <div class="input-group" style="margin-bottom: 0;">
                   <input
                     type="text"
+                    style="border: 1px solid #ced4da;"
                     class="form-control"
                     aria-label="Amount (in DAGs)"
                     v-model.trim="txAddress"
@@ -46,12 +47,12 @@
                     @keypress="setName($event.target.value)"
                     placeholder="Enter Recipients Wallet Address..."
                   />
-                  <div class="input-group-append">
-                    <button type="button" class="btn" @click="toggleAddressBook">
-                      <i class="fa fa-address-book"></i>
-                      Address book
-                    </button>
-                  </div>
+<!--                  <div class="input-group-append">-->
+<!--                    <button type="button" class="btn" @click="toggleAddressBook">-->
+<!--                      <i class="fa fa-address-book"></i>-->
+<!--                      Address book-->
+<!--                    </button>-->
+<!--                  </div>-->
                 </div>
                 <div class="validate text-danger" v-if="$v.txAddress.$invalid && txAddress != ''">
                   <p>Invalid wallet address. Please verify.</p>
@@ -61,13 +62,13 @@
                 </div>
                 <div class="validate text-success" v-else-if="txAddress != ''">
                   <p v-if="txAddressInformation">{{txAddressInformation}}</p>
-                  <p
-                    v-else class="text-muted"
-                  >This DAG address is not stored in any of your address book contacts.</p>
+<!--                  <p-->
+<!--                    v-else class="text-muted"-->
+<!--                  >This DAG address is not stored in any of your address book contacts.</p>-->
                 </div>
                 <div class="validate text-danger" v-else></div>
               </div>
-              <div class="col-md-2">
+              <div class="col-md-2" style="padding-left: 0; margin-left: 0">
                 <p-button
                   type="info"
                   block
@@ -121,6 +122,8 @@ import Swal from "sweetalert2/dist/sweetalert2";
 import AddressBookSearch from "../components/AddressBookSearch";
 import Pagination from "../components/Pagination";
 import Timeline from "../components/Timeline";
+import { keyStore } from "@stardust-collective/dag-keystore";
+import { dagWalletAccount } from "@stardust-collective/dag-wallet-sdk";
 
 export default {
   components: {
@@ -169,7 +172,7 @@ export default {
   methods: {
     setTxAmount(value) {
       this.txAmount.normalized = value;
-      this.txAmount.denormalized = this.txAmount.normalized * 1e8;
+      // this.txAmount.denormalized = this.txAmount.normalized;
       this.$v.txAmount.normalized.$touch();
     },
     setName(value) {
@@ -232,7 +235,7 @@ export default {
             animation: false,
             inputValidator: value => {
               return new Promise(resolve => {
-                if (value*1e8 + self.txAmount.denormalized > self.availableBalance) {
+                if (value + self.txAmount.normalized > self.normalizedAvailableBalance) {
                   resolve("The transaction amount + fee can not exceed your balance");
                 } else if (value < 0 ||  value > 3711998690 || isNaN(parseFloat(value))) {
                   resolve("Please enter a transaction fee between 0 and 3711998690");
@@ -248,56 +251,74 @@ export default {
           if (result.value) {
             self.$Progress.start();
             self.overlay = true;
-            let fee = result.value;
+            let feeResult = result.value;
             const swalPopup = Swal.mixin({
               customClass: {
                 container: this.darkMode ? "theme--dark" : "theme--light"
               }
             });
-            window.backend.WalletApplication.TriggerTXFromFE(
-              parseFloat(self.txAmount.denormalized, 10),
-              parseFloat(fee[1] * 1e8, 10),
-              self.txAddress
-            ).then(txFailed => {
-              if (txFailed) {
-                swalPopup.fire({
-                  title: "Transaction Failed!",
-                  text: "Unable to send Transaction",
-                  type: "error"
-                });
-                self.$Progress.fail();
-                self.overlay = false;
+
+            const amount = parseFloat(self.txAmount.normalized, 10);
+            const fee = parseFloat(feeResult[1], 10);
+
+            window.backend.WalletApplication.GetLastAcceptedTransactionRef().then(result => {
+              if (!result) {
+                self.txFailure(swalPopup);
               }
-              if (!txFailed) {
-                swalPopup.fire({
-                  title: "Success!",
-                  text:
-                    "You have sent " +
-                    self.txAmount.normalized +
-                    " $DAG tokens to address " +
-                    self.txAddress +
-                    ".",
-                  icon: "success"
-                });
-                self.$Progress.finish();
-                self.overlay = false;
+              else {
+                const tokens = result.split(',');
+                const lastRef = {ordinal: parseInt(tokens[0]), prevHash: tokens[1]}
+                keyStore.generateTransaction(amount, self.txAddress, dagWalletAccount.keyTrio, lastRef, fee).then(tx => {
+                  window.backend.WalletApplication.SendTransaction2(
+                      JSON.stringify(tx)
+                  ).then(success => {
+                    if (success) {
+                      self.txSuccess(swalPopup);
+                    }
+                    else {
+                      self.txFailure(swalPopup);
+                    }
+                  });
+                })
               }
-            });
+            })
           }
         });
       }
     },
+    txSuccess (swalPopup) {
+      swalPopup.fire({
+        title: "Success!",
+        text:
+            "You have sent " +
+            self.txAmount.normalized +
+            " $DAG tokens to address " +
+            self.txAddress +
+            ".",
+        icon: "success"
+      });
+      self.$Progress.finish();
+      self.overlay = false;
+    },
+    txFailure (swalPopup) {
+      swalPopup.fire({
+        title: "Transaction Failed!",
+        text: "Unable to send Transaction",
+        type: "error"
+      });
+      self.$Progress.fail();
+      self.overlay = false;
+    },
     setMaxDAGs() {
       this.txAmount.normalized = this.normalizedAvailableBalance;
-      this.txAmount.denormalized = this.availableBalance;
+      // this.txAmount.denormalized = this.availableBalance;
     }
   },
   data() {
     return {
       txAddress: "",
       txAmount: {
-        normalized: 0,
-        denormalized: 0,
+        normalized: 0
       },
       submitStatus: null,
       amountSubmitted: null,

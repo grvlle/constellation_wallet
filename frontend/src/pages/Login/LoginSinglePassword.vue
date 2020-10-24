@@ -86,7 +86,7 @@ export default {
       set(value) {
         this.$store.commit("wallet/setKeystorePath", value);
       },
-    },
+    }
   },
   mounted() {
     this.migrateNotification();

@@ -66,9 +66,14 @@
                       }}
                     </div>
                     <div class="col-md-9 text-truncate">
-                      <span v-if="address == tx.receiver">from:&nbsp;</span>
-                      <span v-else>to:&nbsp;</span>
-                      <span v-html="displayContact(tx.receiver)" />
+                      <div v-if="address == tx.receiver">
+                        <span>from:&nbsp;</span>
+                        <span v-html="displayContact(tx.sender)" />
+                      </div>
+                      <div v-else>
+                        <span>to:&nbsp;</span>
+                        <span v-html="displayContact(tx.receiver)" />
+                      </div>
                     </div>
                   </div>
                   <div class="row">

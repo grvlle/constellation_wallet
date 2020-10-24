@@ -161,9 +161,44 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 	return false, ""
 }
 
+/* Note: used by Testnet Faucet */
+func (a *WalletApplication) savePendingTransaction(amount float64, fee float64, receiver string, hash string)  {
+
+	amountConverted := int64(amount)
+	feeConverted := int64(fee)
+
+    txData := &models.TXHistory{
+        Amount:   amountConverted,
+        Receiver: receiver,
+        Fee:      feeConverted,
+        Hash:     hash,
+        TS:       time.Now().Format("Jan _2 15:04:05"),
+        Status:   "Pending",
+        Failed:   false,
+    }
+    a.storeTX(txData)
+    a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
+    a.TransactionFinished = true
+    a.TransactionFailed = false
+}
+
+
+/* Note: Called from frontend to post a generated TX to the network */
+func (a *WalletApplication) SendTransaction2(txJson string) bool {
+
+    txData := a.postTransaction(txJson)
+
+    return !a.TransactionFailed
+}
+
 func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
 
-	txObject := a.loadTXFromFile(txFile)
+    txObject := a.loadTXFromFile(txFile)
+
+    return a.postTransaction(txObject);
+}
+
+func (a *WalletApplication) postTransaction(txObject string) *models.TXHistory {
 
 	tx := &Transaction{}
 
@@ -177,9 +212,11 @@ func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
 
 	// Put TX object on network
 	TXSuccessfullyPutOnNetwork, hash := a.putTXOnNetwork(tx)
+
 	if TXSuccessfullyPutOnNetwork {
 		txData := &models.TXHistory{
 			Amount:   tx.Edge.Data.Amount,
+			Sender: tx.Edge.ObservationEdge.Parents[0].HashReference,
 			Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 			Fee:      tx.Edge.Data.Fee,
 			Hash:     hash,
@@ -193,8 +230,10 @@ func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
 		a.TransactionFailed = false
 		return txData
 	}
+
 	txData := &models.TXHistory{
 		Amount:   tx.Edge.Data.Amount,
+		Sender: tx.Edge.ObservationEdge.Parents[0].HashReference,
 		Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 		Fee:      tx.Edge.Data.Fee,
 		Hash:     hash,
@@ -202,10 +241,12 @@ func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
 		Status:   "Error",
 		Failed:   true,
 	}
+
 	a.log.Errorln("TX Failed, storing with failed state.")
 	a.storeTX(txData)
 	a.TransactionFinished = true
 	a.TransactionFailed = true
+
 	return txData
 }
 

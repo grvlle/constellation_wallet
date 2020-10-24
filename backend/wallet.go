@@ -601,6 +601,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 
 			txData := &models.TXHistory{
 				Amount:   tx.Amount,
+				Sender:   tx.Sender,
 				Receiver: tx.Receiver,
 				Fee:      tx.Fee,
 				Hash:     tx.Hash,
@@ -614,19 +615,19 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 			a.RT.Events.Emit("new_transaction", txData)
 
 			if i+1 == len(allTX) {
-
-				err := a.rebuildTxChainState(tx.Hash)
-				if err != nil {
-					a.log.Errorln(err)
-					// If unable to import previous transactions, remove wallet from DB and logout.
-					//TODO: logout
-					if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
-						a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
-						return err
-					}
-					a.log.Panicln("Unable to import previous transactions")
-					a.LoginError("Unable to collect previous TX's from blockexplorer. Please try again later.")
-				}
+//
+// 				err := a.rebuildTxChainState(tx.Hash)
+// 				if err != nil {
+// 					a.log.Errorln(err)
+// 					// If unable to import previous transactions, remove wallet from DB and logout.
+// 					//TODO: logout
+// 					if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
+// 						a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
+// 						return err
+// 					}
+// 					a.log.Panicln("Unable to import previous transactions")
+// 					a.LoginError("Unable to collect previous TX's from blockexplorer. Please try again later.")
+// 				}
 			}
 		}
 

@@ -35,17 +35,17 @@
             ></fg-input>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
-              label="Alias"
-              :disabled="true"
-              placeholder="0"
-              v-model="alias"
-            ></fg-input>
-          </div>
-        </div>
+<!--        <div class="row">-->
+<!--          <div class="col-md-12">-->
+<!--            <fg-input-->
+<!--              type="text"-->
+<!--              label="Alias"-->
+<!--              :disabled="true"-->
+<!--              placeholder="0"-->
+<!--              v-model="alias"-->
+<!--            ></fg-input>-->
+<!--          </div>-->
+<!--        </div>-->
         <div class="row">
           <div class="col-md-12">
             <fg-input

@@ -40,7 +40,7 @@
                   <div class="row">
                     <div class="col">
                       <p-button
-                        style="background: #2D9CDB; border-color: #2D9CDB;"
+                        type="primary"
                         block
                         @click.native="moveToLogin()"
                       >

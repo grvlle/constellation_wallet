@@ -209,7 +209,7 @@ func (a *WalletApplication) pollTokenBalance() {
 // GetTestDag will send an API call to the faucet with the address included.
 // This will generate testnet tokens for said wallet. This is exposed to the FE
 // as a button in one of the widgets when on testnet
-func (a *WalletApplication) GetTestDag() {
+func (a *WalletApplication) GetTestDag() bool {
 	const url string = "https://us-central1-dag-faucet.cloudfunctions.net/main/api/v1/faucet/"
 
 	a.log.Infoln("Test DAG requested by user for address: ", a.wallet.Address)
@@ -218,9 +218,17 @@ func (a *WalletApplication) GetTestDag() {
 	if err != nil {
 		a.log.Warnln("API called failed, please send the request again. Reason: ", err)
 		a.sendWarning("API called failed, please send the request again.")
+		return false
 	}
 
-	a.updateTokenBalance()
+	err = a.updateTokenBalance()
+	if err != nil {
+		a.log.Warnln("Updating token balance has a problem. Reason: ", err)
+		a.sendWarning("Updating token balance has a problem.")
+		return false
+	}
+
+	return true
 }
 
 // pricePoller polls the min-api.cryptocompare REST API for DAG token value.

@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/user"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -16,29 +17,29 @@ import (
 )
 
 
-func (a *WalletApplication) MigrateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
+func (a *WalletApplication) MigrateWallet(keystorePath, keystorePassword, keyPassword, alias string) (bool, error) {
 
     alias = strings.ToLower(alias)
 
     if runtime.GOOS == "windows" && !a.javaInstalled() {
         a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
-        return false
+        return false, errors.New("Unable to detect your Java path. Please make sure that Java has been installed")
     }
 
     if keystorePath == "" {
         a.LoginError("Please provide a path to the KeyStore file.")
-        return false
+        return false, errors.New("Please provide a path to the KeyStore file")
     }
 
     if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
         a.log.Warnln("One or more passwords were not provided.")
-        return false
+        return false, errors.New("Unable to detect your Java path. Please make sure that Java has been installed")
     }
 
     os.Setenv("CL_STOREPASS", keystorePassword)
     os.Setenv("CL_KEYPASS", keyPassword)
 
-    return a.produceKeystoreMigrateV2(keystorePath, alias);
+    return a.produceKeystoreMigrateV2(keystorePath, alias)
 
 }
 
@@ -216,8 +217,22 @@ func (a *WalletApplication) CreateOrInitWalletV2(address string) bool {
 
 func (a *WalletApplication) CreateKeyStoreFile(fileName, jsonKey string) string {
 
-    var fullFilePath = a.paths.HomeDir + "/" + fileName + "-key.json";
+    var fullFilePath = a.paths.HomeDir + "/" + fileName;
 
+		// Check if a file with the same name exists
+		i := 0
+		suffix := ""
+		for {
+			if (i != 0) {
+				suffix = strconv.Itoa(i)
+			}
+			if _, err := os.Stat(fullFilePath + suffix + "-key.json"); os.IsNotExist(err) {
+				break
+			}
+			i ++
+		}
+
+		fullFilePath += suffix + "-key.json"
     err := WriteStringToFile(fullFilePath, jsonKey)
     if err != nil {
         a.log.Errorln("Unable to write file. Reason: ", err)

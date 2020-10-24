@@ -26,7 +26,7 @@ func (a *WalletApplication) runWalletCMD(tool string, scalaFunc string, scalaArg
 		main = "java"
 	}
 
-	cmds := []string{"-jar", a.paths.DAGDir + "/cl-" + tool + ".jar", scalaFunc}
+	cmds := []string{"-jar", a.paths.DAGDir + "/mw-" + tool + ".jar", scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
 	a.log.Infoln("Running command: ", cmd)
@@ -122,37 +122,41 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 }
 
 // CheckAndFetchWalletCLI will download the cl-wallet dependencies from
-// the official Constellation Repo
+// the official Repos
 func (a *WalletApplication) CheckAndFetchWalletCLI() bool {
-	keytoolPath := a.paths.DAGDir + "/cl-keytool.jar"
-	walletPath := a.paths.DAGDir + "/cl-wallet.jar"
+    keytoolFileName := "mw-keytool.jar"
+	keytoolPath := a.paths.DAGDir + "/" + keytoolFileName
+// 	walletFileName := "cl-wallet.jar"
+// 	walletPath := a.paths.DAGDir + "/" + walletFileName
 
 	keytoolExists := a.fileExists(keytoolPath)
-	walletExists := a.fileExists(walletPath)
+// 	walletExists := a.fileExists(walletPath)
 
-	if keytoolExists && walletExists {
+	if keytoolExists {
 		return true
 	}
 
 	if keytoolExists {
 		a.log.Info(keytoolPath + " file exists. Skipping downloading")
 	} else {
-		if err := a.fetchWalletJar("cl-keytool.jar", keytoolPath); err != nil {
-			a.log.Errorln("Unable to fetch or store cl-keytool.jar", err)
+	    url := a.KeyToolCLI.URL + "/v" + a.KeyToolCLI.Version + "/" + keytoolFileName
+		if err := a.fetchWalletJar(url, keytoolFileName, keytoolPath); err != nil {
+			a.log.Errorln("Unable to fetch or store mw-keytool.jar", err)
 			return false
 		}
 	}
 
-	if walletExists {
-		a.log.Info(walletPath + " file exists. Skipping downloading")
-	} else {
-		if err := a.fetchWalletJar("cl-wallet.jar", walletPath); err != nil {
-			a.log.Errorln("Unable to fetch or store cl-wallet.jar", err)
-			return false
-		}
-	}
+// 	if walletExists {
+// 		a.log.Info(walletPath + " file exists. Skipping downloading")
+// 	} else {
+// 	    url := a.WalletCLI.URL + "/v" + a.WalletCLI.Version + "/" + walletFileName
+// 		if err := a.fetchWalletJar(url, walletFileName, walletPath); err != nil {
+// 			a.log.Errorln("Unable to fetch or store cl-wallet.jar", err)
+// 			return false
+// 		}
+// 	}
 
-	if a.fileExists(keytoolPath) && a.fileExists(walletPath) {
+	if a.fileExists(keytoolPath) {
 		return true
 	}
 

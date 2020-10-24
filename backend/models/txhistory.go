@@ -18,3 +18,5 @@ type TXHistory struct {
 	Status string `json:"status"`
 	Failed bool
 }
+
+

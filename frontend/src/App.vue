@@ -216,7 +216,6 @@ export default {
     window.wails.Events.On("blocks", number => {
       this.$store.commit('dashboard/setBlocks', number);
     });
-
     window.wails.Events.On("tokenPrice", tokenPrice => {
       let rates = []
       rates.push({currency: "USD", tokenprice: tokenPrice.DAG.USD});

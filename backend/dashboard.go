@@ -38,6 +38,11 @@ type ChartData struct {
 	} `json:"throughput"`
 }
 
+type LastTransactionRef struct {
+    PrevHash string
+    Ordinal int
+}
+
 // ChartDataInit initializes the ChartData struct with datapoints for
 // the charts in the wallet. These are stored on the fs as chart_data.json
 func (a *WalletApplication) ChartDataInit() *ChartData {
@@ -214,12 +219,14 @@ func (a *WalletApplication) GetTestDag() bool {
 
 	a.log.Infoln("Test DAG requested by user for address: ", a.wallet.Address)
 
-	_, err := http.Get(url + a.wallet.Address)
+	resp, err := http.Get(url + a.wallet.Address)
 	if err != nil {
 		a.log.Warnln("API called failed, please send the request again. Reason: ", err)
 		a.sendWarning("API called failed, please send the request again.")
 		return false
 	}
+
+	defer resp.Body.Close()
 
 	err = a.updateTokenBalance()
 	if err != nil {
@@ -230,6 +237,56 @@ func (a *WalletApplication) GetTestDag() bool {
 
 	return true
 }
+
+func (a *WalletApplication) GetLastAcceptedTransactionRef() string {
+	const url string = "https://us-central1-dag-faucet.cloudfunctions.net/main/api/v1/faucet/"
+
+	a.log.Infoln("GetLastAcceptedTransactionRef: ", a.Network.URL + "/transaction/last-ref/" + a.wallet.Address)
+
+	resp, err := http.Get(a.Network.URL + "/transaction/last-ref" + a.wallet.Address)
+	if err != nil {
+		a.log.Warnln("API called failed, please send the request again. Reason: ", err)
+		a.sendWarning("API called failed, please send the request again.")
+	}
+
+	defer resp.Body.Close()
+
+    if resp.Body == nil {
+        return ""
+    }
+
+    bodyBytes, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return ""
+    }
+
+    // Declared an empty interface
+    var result LastTransactionRef
+
+    // Unmarshal or Decode the JSON to the interface.
+    err = json.Unmarshal(bodyBytes, &result)
+    if err != nil {
+        return ""
+    }
+
+	return strconv.Itoa(result.Ordinal) + "," + result.PrevHash
+}
+
+
+
+// func (a *WalletApplication) PostTransferTx(tx) {
+// 	const url string = a.Network.URL;
+//
+// 	a.log.Infoln("Test DAG requested by user for address: ", a.wallet.Address)
+//
+// 	_, err := http.Post(url + "/transaction", tx)
+// 	if err != nil {
+// 		a.log.Warnln("API called failed, please send the request again. Reason: ", err)
+// 		a.sendWarning("API called failed, please send the request again.")
+// 	}
+//
+// 	a.updateTokenBalance()
+// }
 
 // pricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token

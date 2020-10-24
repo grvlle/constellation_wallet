@@ -70,6 +70,10 @@ type WalletApplication struct {
 		URL     string
 		Version string
 	}
+    KeyToolCLI struct {
+        URL     string
+        Version string
+    }
 }
 
 // Constants of the application
@@ -116,7 +120,9 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.killSignal = make(chan struct{}) // Used to kill go routines and hand back system resources
 	a.wallet.Currency = "USD"          // Set default currency
 	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download"
-	a.WalletCLI.Version = "2.13.9"
+	a.WalletCLI.Version = "2.16.2"
+    a.KeyToolCLI.URL = "https://github.com/StardustCollective/molly_wallet/releases/download"
+    a.KeyToolCLI.Version = "2.0-alpha"
 	a.Version = "1.4.1"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")

@@ -17,29 +17,29 @@ import (
 )
 
 
-func (a *WalletApplication) MigrateWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
+func (a *WalletApplication) MigrateWallet(keystorePath, keystorePassword, keyPassword, alias string) (bool, error) {
 
     alias = strings.ToLower(alias)
 
     if runtime.GOOS == "windows" && !a.javaInstalled() {
         a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
-        return false
+        return false, errors.New("Unable to detect your Java path. Please make sure that Java has been installed")
     }
 
     if keystorePath == "" {
         a.LoginError("Please provide a path to the KeyStore file.")
-        return false
+        return false, errors.New("Please provide a path to the KeyStore file")
     }
 
     if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
         a.log.Warnln("One or more passwords were not provided.")
-        return false
+        return false, errors.New("Unable to detect your Java path. Please make sure that Java has been installed")
     }
 
     os.Setenv("CL_STOREPASS", keystorePassword)
     os.Setenv("CL_KEYPASS", keyPassword)
 
-    return a.produceKeystoreMigrateV2(keystorePath, alias);
+    return a.produceKeystoreMigrateV2(keystorePath, alias)
 
 }
 

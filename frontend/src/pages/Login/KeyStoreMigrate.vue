@@ -74,6 +74,8 @@
 </template>
 
 <script>
+import Swal from "sweetalert2/dist/sweetalert2";
+
 export default {
   name: "keystore-migrate",
   data: () => ({
@@ -128,21 +130,28 @@ export default {
           self.keystorePassword,
           self.KeyPassword,
           self.alias
-        ).then((result) => {
-          self.overlay = false;
-          self.$Progress.finish();
-          if (result) {
-            //TODO handle error case?
-            this.$router.push({
-              name: "keystore migration complete",
-              params: {
-                title: "Molly Wallet migration wizard",
-                message:
-                  "Congratulations! You have completed the Molly Wallet password migration!",
-              },
-            });
+        ).then(
+          (result) => {
+            self.overlay = false;
+            self.$Progress.finish();
+            if (result) {
+              //TODO handle error case?
+              this.$router.push({
+                name: "keystore migration complete",
+                params: {
+                  title: "Molly Wallet migration wizard",
+                  message:
+                    "Congratulations! You have completed the Molly Wallet password migration!",
+                },
+              });
+            }
+          },
+          (error) => {
+            self.overlay = false;
+            self.$Progress.fail();
+            Swal.fire("Unable to migrate file", error, "error");
           }
-        });
+        );
       }
     },
     login: function() {

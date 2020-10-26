@@ -244,9 +244,13 @@ func (a *WalletApplication) CreateKeyStoreFile(fileName, jsonKey string) string 
         a.log.Errorln("Unable to write file. Reason: ", err)
         a.sendError("Unable to write file. Reason: ", err)
         return ""
-    }
+		}
 
-    return fullFilePath
+		if (suffix != "") {
+			fullFilePath += "."
+		}
+
+		return fullFilePath
 }
 
 

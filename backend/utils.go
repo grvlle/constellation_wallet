@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"math/rand"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
@@ -18,6 +19,79 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/mcuadros/go-version"
 )
+
+func (a *WalletApplication) getLocalIpAndMacAddr() string {
+
+    addrs, err := net.InterfaceAddrs()
+
+    if err != nil {
+        a.log.Errorf("Unable to get InterfaceAddrs. Reason: %s", err.Error())
+        return ""
+    }
+
+    var currentIP, currentNetworkHardwareName string
+
+    for _, address := range addrs {
+
+         // check the address type and if it is not a loopback the display it
+         // = GET LOCAL IP ADDRESS
+         if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+                 if ipnet.IP.To4() != nil {
+                         a.log.Debugln("Current IP address : ", ipnet.IP.String())
+                         currentIP = ipnet.IP.String()
+                         break
+                 }
+         }
+    }
+
+//     fmt.Println("------------------------------")
+//     fmt.Println("We want the interface name that has the current IP address")
+//     // fmt.Println("MUST NOT be binded to 127.0.0.1 ")
+//     fmt.Println("------------------------------")
+
+    // get all the system's or local machine's network interfaces
+
+    interfaces, _ := net.Interfaces()
+    for _, interf := range interfaces {
+
+         if addrs, err := interf.Addrs(); err == nil {
+                 for _, addr := range addrs {
+                         // fmt.Println("[", index, "]", interf.Name, ">", addr)
+
+                         // only interested in the name with current IP address
+                         if strings.Contains(addr.String(), currentIP) {
+                                 a.log.Debugln("Use name : ", interf.Name)
+                                 currentNetworkHardwareName = interf.Name
+                         }
+                 }
+         }
+    }
+
+    // extract the hardware information base on the interface name
+    // capture above
+    netInterface, err := net.InterfaceByName(currentNetworkHardwareName)
+
+    if err != nil {
+         a.log.Errorf("Unable to get InterfaceByName. Reason: %s", err.Error())
+         return ""
+    }
+
+//     name := netInterface.Name
+    macAddress := netInterface.HardwareAddr
+
+//     fmt.Println("Hardware name : ", name)
+//     fmt.Println("MAC address : ", macAddress)
+
+    // verify if the MAC address can be parsed properly
+    hwAddr, err := net.ParseMAC(macAddress.String())
+
+    if err != nil {
+        a.log.Errorf("Not able to parse MAC address. Reason: ", err.Error())
+        return ""
+    }
+
+    return hwAddr.String()
+}
 
 // newReleaseAvailable generates a notification to FE everytime a new release on
 // GitHub doesn't match a.Version.

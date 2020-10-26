@@ -24,6 +24,7 @@
                     label="Password"
                     :validate="false"
                     @input="validCheck()"
+                    @enter="loadKeyStoreFile(keystoreFile, keystorePassword)"
                   />
                 </div>
               </div>
@@ -114,7 +115,7 @@ export default {
       })
         .fire({
           title: "Important Update",
-          html: `<br><p class="login-content">If you have previously signed into Molly Wallet using an alias and two different passwords (versions 1.2.x and earlier), you will need to migrate your credentials before logging in.</p>`,
+          html: `<br><p class="login-content">If you have previously signed in using an alias and two different passwords (versions 1.2.x and earlier), you will need to migrate your credentials before logging in.</p>`,
           width: 300,
           padding: 12,
           toast: true,
@@ -232,6 +233,8 @@ export default {
       var address = keyStore.getDagAddressFromPublicKey(
         keyStore.getPublicKeyFromPrivate(key)
       );
+
+      window.firebase.analytics().logEvent('login', { address: address});
 
       window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
         (result) => {

@@ -263,6 +263,13 @@ export default {
     window.wails.Events.On("wallet_keys", address => {
       this.$store.commit('wallet/setAddress', address);
     });
+
+
+    window.wails.Events.On("campaign_status", address => {
+      this.$store.commit('wallet/setCampaignStatus', address);
+    });
+
+
   }
 };
 </script>

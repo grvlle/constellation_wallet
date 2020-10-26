@@ -22,7 +22,7 @@
         </stats-card>
       </div>
       <div class="col-md-4 d-flex">
-        <stats-card v-if="!onTestnet" class="stats-card">
+        <stats-card v-if="!isCampaignActive" class="stats-card">
           <div
             class="icon-big text-center"
             :class="`icon-danger`"
@@ -41,7 +41,7 @@
           </div>
         </stats-card>
 
-        <stats-card v-if="onTestnet" class="stats-card">
+        <stats-card v-if="isCampaignActive" class="stats-card">
           <div
             class="icon-big text-center"
             :class="`icon-danger`"
@@ -195,6 +195,7 @@ import WalletCopiedNotification from "./Notifications/WalletCopied";
 import WalletCopiedFailedNotification from "./Notifications/WalletCopiedFailed";
 import TestDagRequestedNotification from "./Notifications/TestDagRequested";
 import TestDagRequestedFailedNotification from "./Notifications/TestDagRequestedFailed";
+import { dagWalletAccount } from "@stardust-collective/dag-wallet-sdk";
 
 export default {
   components: {
@@ -203,10 +204,10 @@ export default {
   },
   methods: {
     getTestDag() {
-      //TODO - monitor ipAddr of requests. https://api.ipify.org
       this.overlay = true;
       this.$Progress.start();
-      window.backend.WalletApplication.GetTestDag().then((result) => {
+      //RegisterCampaign, GetTestDag
+      window.backend.WalletApplication.RegisterCampaign(dagWalletAccount.keyTrio.publicKey.substring(2)).then((result) => {
         if (result) {
           this.overlay = false;
           this.$Progress.finish();
@@ -258,7 +259,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("wallet", ["currency", "address"]),
+    ...mapState("wallet", ["currency", "address", "isCampaignActive"]),
     ...mapGetters("wallet", ["valueInCurrency", "normalizedAvailableBalance"]),
     ...mapState("dashboard", ["counters", "toggle", "stat", "chart"]),
     ...mapState("app", ["onTestnet"]),

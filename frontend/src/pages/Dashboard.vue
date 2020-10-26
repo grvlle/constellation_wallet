@@ -41,29 +41,10 @@
           </div>
         </stats-card>
 
-        <stats-card v-if="isCampaignActive" class="stats-card">
-          <div
-            class="icon-big text-center"
-            :class="`icon-danger`"
-            style="color: #DB6E44"
-            slot="header"
-          >
-            <img class="test-dag" src="../assets/img/test-dag.png" />
-          </div>
-          <div class="numbers text-center text-overflow" slot="content">
-            <b><p>REQUEST TEST $DAG</p></b>
-            <p>Get a maximum of 1,000 <br />TEST DAG per day</p>
-          </div>
-          <div class="text-center test-dag-footer" slot="footer">
-            <button
-              @click="getTestDag"
-              class="test-dag-btn"
-              style="background: #DB6E44"
-            >
-              GET TEST DAG
-            </button>
-          </div>
-        </stats-card>
+        <airdrop-card
+          v-if="isCampaignActive"
+          @v-click="getTestDag"
+        ></airdrop-card>
       </div>
       <div class="col-md-4 d-flex">
         <stats-card class="stats-card">
@@ -195,6 +176,7 @@ import WalletCopiedNotification from "./Notifications/WalletCopied";
 import WalletCopiedFailedNotification from "./Notifications/WalletCopiedFailed";
 import TestDagRequestedNotification from "./Notifications/TestDagRequested";
 import TestDagRequestedFailedNotification from "./Notifications/TestDagRequestedFailed";
+import TestDagRequestedRepeatedNotification from "./Notifications/TestDagRequestedRepeated";
 import { dagWalletAccount } from "@stardust-collective/dag-wallet-sdk";
 
 export default {
@@ -204,10 +186,21 @@ export default {
   },
   methods: {
     getTestDag() {
+      if (this.campaignClaimAddr !== "") {
+        this.addNotification(
+          "top",
+          "right",
+          4,
+          TestDagRequestedRepeatedNotification
+        );
+        return;
+      }
       this.overlay = true;
       this.$Progress.start();
       //RegisterCampaign, GetTestDag
-      window.backend.WalletApplication.RegisterCampaign(dagWalletAccount.keyTrio.publicKey.substring(2)).then((result) => {
+      window.backend.WalletApplication.RegisterCampaign(
+        dagWalletAccount.keyTrio.publicKey.substring(2)
+      ).then((result) => {
         if (result) {
           this.overlay = false;
           this.$Progress.finish();
@@ -259,7 +252,12 @@ export default {
     },
   },
   computed: {
-    ...mapState("wallet", ["currency", "address", "isCampaignActive", "campaignClaimAddr"]),
+    ...mapState("wallet", [
+      "currency",
+      "address",
+      "isCampaignActive",
+      "campaignClaimAddr",
+    ]),
     ...mapGetters("wallet", ["valueInCurrency", "normalizedAvailableBalance"]),
     ...mapState("dashboard", ["counters", "toggle", "stat", "chart"]),
     ...mapState("app", ["onTestnet"]),

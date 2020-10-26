@@ -37,10 +37,10 @@ const path = require("path");
 // };
 
 module.exports = {
-  // transpileDependencies: [
-  //   "secp256k1",
-  //   "keccak"
-  // ],
+  transpileDependencies: [
+    "secp256k1",
+    "keccak"
+  ],
   chainWebpack: (config) => {
     let limit = 9999999999999999;
     config.module
@@ -76,12 +76,12 @@ module.exports = {
     optimization: {
       splitChunks: false,
     },
-    // resolve: {
-    //   alias: {
-    //     "keccak": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/keccak/'),
-    //     "secp256k1": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/secp256k1/')
-    //   }
-    // }
+    resolve: {
+      alias: {
+        "keccak": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/keccak/'),
+        "secp256k1": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/secp256k1/')
+      }
+    }
   },
   devServer: {
     disableHostCheck: true,

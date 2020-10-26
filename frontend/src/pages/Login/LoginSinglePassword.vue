@@ -10,8 +10,7 @@
                   >Select your Private Key (P12 or JSON file)</label
                 >
                 <file-selector
-                  v-model="keystorePath"
-                  :placeholder="keystorePath"
+                  v-model="keystoreFileName"
                   action="SelectFile"
                   @file="fileSelected"
                 />
@@ -74,21 +73,12 @@ export default {
   name: "login-single-password",
   data: () => ({
     keystorePassword: "",
+    keystoreFileName: "",
     KeyPassword: "",
     overlay: false,
     valid: false,
     keystoreFile: null,
   }),
-  computed: {
-    keystorePath: {
-      get() {
-        return this.$store.state.wallet.keystorePath;
-      },
-      set(value) {
-        this.$store.commit("wallet/setKeystorePath", value);
-      },
-    }
-  },
   mounted() {
     this.migrateNotification();
   },
@@ -98,7 +88,7 @@ export default {
     },
     fileSelected: function(value) {
       this.keystoreFile = value;
-      this.keystorePath = value.name;
+      this.keystoreFileName = value.name;
       this.validCheck();
     },
     migrateNotification: function() {
@@ -234,7 +224,8 @@ export default {
         keyStore.getPublicKeyFromPrivate(key)
       );
 
-      window.firebase.analytics().logEvent('login', { address: address});
+      //NOTE: window.firebase.analytics not available in desktop-mode. :shrug:
+      //window.firebase.analytics().logEvent('login', { address: address});
 
       window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
         (result) => {

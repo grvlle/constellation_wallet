@@ -143,7 +143,6 @@ export default {
             self.overlay = false;
             self.$Progress.finish();
             if (result) {
-              //TODO handle error case?
               this.$router.push({
                 name: "keystore migration complete",
                 params: {

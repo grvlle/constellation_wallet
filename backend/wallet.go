@@ -163,6 +163,12 @@ func (a *WalletApplication) CreateOrInitWalletV2(address string) bool {
 		WalletAlias: address,     //PrimaryKey
 		Address: address}
 
+    a.RT.Events.Emit("wallet_keys", a.wallet.Address)
+
+    if a.sendCampaignStatus() == true {
+        a.sendCampaignClaim()
+    }
+
     //Check if any record with WalletAlias exist
 	if err := a.DB.Take(&a.wallet).Error; err != nil {
 
@@ -362,7 +368,7 @@ func (a *WalletApplication) initNewWallet() {
 	a.StoreImagePathInDB("faces/face-0.jpg")
 
 	//a.initTransactionHistory()
-	a.passKeysToFrontend()
+    //a.passKeysToFrontend()
 
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
@@ -394,9 +400,9 @@ func (a *WalletApplication) initWallet(keystorePath string) error {
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
 	}
-	if !a.WidgetRunning.PassKeysToFrontend {
-		a.passKeysToFrontend()
-	}
+// 	if !a.WidgetRunning.PassKeysToFrontend {
+// 		a.passKeysToFrontend()
+// 	}
 
 	a.log.Infoln("User has logged into the wallet")
 
@@ -641,8 +647,8 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 
 // PassKeysToFrontend emits the keys to the settings.Vue component on a
 // 5 second interval
-//TODO - @vito why is 5s interval necessary?
 func (a *WalletApplication) passKeysToFrontend() {
+
 	if a.wallet.Address != "" {
 		go func() {
 			for {

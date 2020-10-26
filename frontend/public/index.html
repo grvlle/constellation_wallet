@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8>
+    <meta http-equiv=X-UA-Compatible content="IE=edge">
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <title>Molly Wallet</title>
+</head>
+<body>
+<div id=app></div>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-analytics.js"></script>
+
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'update', {'ad_storage': 'granted', 'analytics_storage': 'granted'});
+</script>
+
+<script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    var firebaseConfig = {
+        apiKey: "AIzaSyBeuVGuwceS6r1yr41OSvabYhemaGGxBN0",
+        authDomain: "dag-faucet.firebaseapp.com",
+        databaseURL: "https://dag-faucet.firebaseio.com",
+        projectId: "dag-faucet",
+        storageBucket: "dag-faucet.appspot.com",
+        messagingSenderId: "945495808290",
+        appId: "1:945495808290:web:6e20906196c5aae42e2d7b",
+        measurementId: "G-DRVTESXCTV"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+</script>
+</body>
+</html>

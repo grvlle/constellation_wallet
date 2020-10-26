@@ -124,6 +124,7 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 // CheckAndFetchWalletCLI will download the cl-wallet dependencies from
 // the official Repos
 func (a *WalletApplication) CheckAndFetchWalletCLI() bool {
+
     keytoolFileName := "mw-keytool.jar"
 	keytoolPath := a.paths.DAGDir + "/" + keytoolFileName
 // 	walletFileName := "cl-wallet.jar"
@@ -131,6 +132,8 @@ func (a *WalletApplication) CheckAndFetchWalletCLI() bool {
 
 	keytoolExists := a.fileExists(keytoolPath)
 // 	walletExists := a.fileExists(walletPath)
+
+
 
 	if keytoolExists {
 		return true

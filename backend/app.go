@@ -74,6 +74,7 @@ type WalletApplication struct {
         URL     string
         Version string
     }
+    HWAddr string
 }
 
 // Constants of the application
@@ -134,6 +135,11 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.detectJavaPath()
 	a.initMainnetConnection()
 	a.newReleaseAvailable()
+	a.HWAddr = a.getLocalIpAndMacAddr()
+
+    if a.HWAddr != "" {
+	    a.log.Infoln("Physical hardware address : %s ", a.HWAddr)
+	}
 
 	return nil
 }

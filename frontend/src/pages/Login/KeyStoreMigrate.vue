@@ -27,12 +27,20 @@
                   />
                 </div>
                 <div>
+                  <label class="control-label">
+                    <span>Keystore Password </span>
+                    <span style="color: #db6e44; font-size: 0.875em">
+                    (Also use for future logins)
+                  </span>
+                  </label>
+
                   <password-input
+                    style="margin: 0"
                     v-model="keystorePassword"
-                    label="Keystore Password"
                     :validate="false"
                     @input="validCheck()"
                   />
+
                 </div>
                 <div>
                   <password-input

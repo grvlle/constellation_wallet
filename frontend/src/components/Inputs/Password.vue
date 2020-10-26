@@ -11,6 +11,7 @@
         :placeholder="placeholder"
         aria-describedby="basic-addon2"
         :value="value"
+        v-on:keyup.enter="onEnter($event.target)"
         @input="checkPassword($event.target.value)"
       />
       <span class="input-group-append">
@@ -38,7 +39,7 @@
         &nbsp;special character
       </p>
     </div>
-    <div class="validate" v-else />
+    <div v-else />
   </div>
 </template>
 
@@ -62,6 +63,10 @@ export default {
     btnText: "fa fa-eye",
   }),
   methods: {
+    onEnter: function (target) {
+      target.blur();
+      this.$emit("enter");
+    },
     checkPassword: function(value) {
       this.$emit("input", value);
       const format = /[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;

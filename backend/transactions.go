@@ -186,7 +186,7 @@ func (a *WalletApplication) savePendingTransaction(amount float64, fee float64, 
 /* Note: Called from frontend to post a generated TX to the network */
 func (a *WalletApplication) SendTransaction2(txJson string) bool {
 
-    txData := a.postTransaction(txJson)
+    a.postTransaction(txJson)
 
     return !a.TransactionFailed
 }

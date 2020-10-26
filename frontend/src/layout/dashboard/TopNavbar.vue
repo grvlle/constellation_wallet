@@ -13,25 +13,25 @@
         src="~@/assets/img/Constellation-Logo-Black.png"
         style="max-height: 6.25rem; max-width: 12.5rem; margin-left: 2rem"
       />
-      <button
-        class="navbar-toggler navbar-burger"
-        type="button"
-        @click="toggleSidebar"
-        :aria-expanded="$sidebar.showSidebar"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-bar"></span>
-        <span class="navbar-toggler-bar"></span>
-        <span class="navbar-toggler-bar"></span>
-      </button>
+<!--      <button-->
+<!--        class="navbar-toggler navbar-burger"-->
+<!--        type="button"-->
+<!--        @click="toggleSidebar"-->
+<!--        :aria-expanded="$sidebar.showSidebar"-->
+<!--        aria-label="Toggle navigation"-->
+<!--      >-->
+<!--        <span class="navbar-toggler-bar"></span>-->
+<!--        <span class="navbar-toggler-bar"></span>-->
+<!--        <span class="navbar-toggler-bar"></span>-->
+<!--      </button>-->
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <div class="testnet-toggle">
-              <toggle-switch v-model="onTestnet" />
-              <p class="nav-item nav-link">MAINNET / TESTNET</p>
-            </div>
-          </li>
+<!--          <li class="nav-item">-->
+<!--            <div class="testnet-toggle">-->
+<!--              <toggle-switch v-model="onTestnet" />-->
+<!--              <p class="nav-item nav-link">MAINNET / TESTNET</p>-->
+<!--            </div>-->
+<!--          </li>-->
           <li class="nav-item">
             <router-link class="nav-link" to="settings">
               <i class="ti-settings"></i>
@@ -52,11 +52,11 @@
 
 <script>
 import { mapState } from "vuex";
-import ToggleSwitch from "../../components/Inputs/ToggleSwitch";
+// import ToggleSwitch from "../../components/Inputs/ToggleSwitch";
 
 export default {
   components: {
-    ToggleSwitch,
+    // ToggleSwitch,
   },
   computed: {
     routeName() {

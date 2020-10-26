@@ -62,6 +62,11 @@ module.exports = {
       .options({
         limit: limit,
       });
+    // config.plugin("html")
+    //   .tap(args => {
+    //     args[0].template = path.join(__dirname, "src", "index.html")
+    //     return args
+    //   })
   },
   css: cssConfig,
   configureWebpack: {

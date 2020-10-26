@@ -1,6 +1,7 @@
 package app
 
 import (
+    "bytes"
 	"encoding/json"
 	"io/ioutil"
 	"math/rand"
@@ -41,6 +42,10 @@ type ChartData struct {
 type LastTransactionRef struct {
     PrevHash string
     Ordinal int
+}
+
+type CampaignStatus struct {
+    Active bool
 }
 
 // ChartDataInit initializes the ChartData struct with datapoints for
@@ -238,8 +243,110 @@ func (a *WalletApplication) GetTestDag() bool {
 	return true
 }
 
+func (a *WalletApplication) RegisterCampaign(account string) bool {
+
+//     hwAddr := a.HWAddr
+//     method := http.MethodPut
+//
+//     if (hwAddr == "") {
+//         hwAddr = "unknown"
+//         method = http.MethodPost
+//     }
+
+	url := "https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/" + a.HWAddr + ".json"
+
+    //curl -XGET https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/8c:85:90:3b:45:c1.json
+    //curl -XGET https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/456.json
+	//curl -XPUT https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/457.json -d '{"user_id" : "jack", "text" : "Ahoy!"}'
+	//curl -XPATCH https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/456/-MKWLtUhCR4x1KWMwNAV.json -d '{"user_id" : "jill", "text" : "Ahoy!"}'
+	//curl -XDELETE https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/456/-MKWLtUhCR4x1KWMwNAV.json
+
+// 	a1 := base64.StdEncoding.EncodeToString([]byte(a.wallet.Address))
+// 	a2 := base64.StdEncoding.EncodeToString([]byte(account))
+
+    jMap := map[string]string{"a1": a.wallet.Address, "a2": account}
+    bytesRepresentation, err := json.Marshal(jMap)
+    if err != nil {
+        return false
+    }
+
+    // initialize http client
+    client := &http.Client{}
+
+    //, "application/json"
+	req, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(bytesRepresentation))
+	if err != nil {
+		a.log.Warnln("API called failed. Reason: ", err)
+		return false
+	}
+
+    // set the request header Content-Type for json
+    req.Header.Set("Content-Type", "application/json; charset=utf-8")
+    resp, err := client.Do(req)
+    if err != nil {
+        a.log.Warnln("API called failed, please send the request again. Reason: ", err)
+        return false
+    }
+
+	defer resp.Body.Close()
+
+    if resp.Body == nil {
+        return false
+    }
+
+	return true
+}
+
+func (a *WalletApplication) sendCampaignStatus() bool {
+
+	resp, err := http.Get("https://dag-faucet.firebaseio.com/campaign/tiger-lily/status.json")
+	if err != nil {
+		return false
+	}
+
+	defer resp.Body.Close()
+
+    if resp.Body == nil {
+        return false
+    }
+
+    bodyBytes, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return false
+    }
+
+    var result CampaignStatus
+
+    // Unmarshal or Decode the JSON to the interface.
+    err = json.Unmarshal(bodyBytes, &result)
+    if err != nil {
+        return false
+    }
+
+    a.RT.Events.Emit("campaign_status", result.Active)
+
+    return true
+}
+
+func (a *WalletApplication) sendCampaignClaim() {
+
+	resp, err := http.Get("https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/" + a.HWAddr + ".json")
+	if err != nil {
+	    a.RT.Events.Emit("campaign_claim", false)
+		return
+	}
+
+	defer resp.Body.Close()
+
+    if resp.Body == nil {
+        a.RT.Events.Emit("campaign_claim", false)
+        return
+    }
+
+    a.RT.Events.Emit("campaign_claim", true)
+}
+
 func (a *WalletApplication) GetLastAcceptedTransactionRef() string {
-	const url string = "https://us-central1-dag-faucet.cloudfunctions.net/main/api/v1/faucet/"
 
 	a.log.Infoln("GetLastAcceptedTransactionRef: ", a.Network.URL + "/transaction/last-ref/" + a.wallet.Address)
 
@@ -260,7 +367,6 @@ func (a *WalletApplication) GetLastAcceptedTransactionRef() string {
         return ""
     }
 
-    // Declared an empty interface
     var result LastTransactionRef
 
     // Unmarshal or Decode the JSON to the interface.

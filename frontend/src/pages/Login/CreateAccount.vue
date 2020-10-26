@@ -45,7 +45,6 @@
                   <div class="validate text-danger">
                     <p
                       class="error-message"
-                      style="margin-top: -7px"
                       v-bind:class="{ resolved: confirmed_password }"
                     >
                       password match
@@ -164,8 +163,8 @@ export default {
               name: "create account complete",
               params: {
                 message:
-                  "Congratulations! You have created a KeyStore file for Molly Wallet!",
-                title: "Create a KeyStore File",
+                  "Congratulations! You have created a Private Key file for Molly Wallet!",
+                title: "Create a Private Key File",
                 filePath: filePath,
                 darkMode: this.$route.params.darkMode,
               },

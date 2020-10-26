@@ -48,6 +48,11 @@ type CampaignStatus struct {
     Active bool
 }
 
+type CampaignRegisterInfo struct {
+    A1 string
+    A2 string
+}
+
 // ChartDataInit initializes the ChartData struct with datapoints for
 // the charts in the wallet. These are stored on the fs as chart_data.json
 func (a *WalletApplication) ChartDataInit() *ChartData {
@@ -245,14 +250,6 @@ func (a *WalletApplication) GetTestDag() bool {
 
 func (a *WalletApplication) RegisterCampaign(account string) bool {
 
-//     hwAddr := a.HWAddr
-//     method := http.MethodPut
-//
-//     if (hwAddr == "") {
-//         hwAddr = "unknown"
-//         method = http.MethodPost
-//     }
-
 	url := "https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/" + a.HWAddr + ".json"
 
     //curl -XGET https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/8c:85:90:3b:45:c1.json
@@ -260,9 +257,6 @@ func (a *WalletApplication) RegisterCampaign(account string) bool {
 	//curl -XPUT https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/457.json -d '{"user_id" : "jack", "text" : "Ahoy!"}'
 	//curl -XPATCH https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/456/-MKWLtUhCR4x1KWMwNAV.json -d '{"user_id" : "jill", "text" : "Ahoy!"}'
 	//curl -XDELETE https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/456/-MKWLtUhCR4x1KWMwNAV.json
-
-// 	a1 := base64.StdEncoding.EncodeToString([]byte(a.wallet.Address))
-// 	a2 := base64.StdEncoding.EncodeToString([]byte(account))
 
     jMap := map[string]string{"a1": a.wallet.Address, "a2": account}
     bytesRepresentation, err := json.Marshal(jMap)
@@ -290,7 +284,8 @@ func (a *WalletApplication) RegisterCampaign(account string) bool {
 
 	defer resp.Body.Close()
 
-    if resp.Body == nil {
+    //StatusUnauthorized
+    if resp.StatusCode == 401 {
         return false
     }
 
@@ -332,18 +327,29 @@ func (a *WalletApplication) sendCampaignClaim() {
 
 	resp, err := http.Get("https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/" + a.HWAddr + ".json")
 	if err != nil {
-	    a.RT.Events.Emit("campaign_claim", false)
 		return
 	}
 
 	defer resp.Body.Close()
 
     if resp.Body == nil {
-        a.RT.Events.Emit("campaign_claim", false)
         return
     }
 
-    a.RT.Events.Emit("campaign_claim", true)
+    bodyBytes, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return
+    }
+
+    var result CampaignRegisterInfo
+
+    // Unmarshal or Decode the JSON to the interface.
+    err = json.Unmarshal(bodyBytes, &result)
+    if err != nil {
+        return
+    }
+
+    a.RT.Events.Emit("campaign_claim", result.A1)
 }
 
 func (a *WalletApplication) GetLastAcceptedTransactionRef() string {

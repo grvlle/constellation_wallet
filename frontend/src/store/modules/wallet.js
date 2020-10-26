@@ -9,6 +9,7 @@ const getDefaultState = () => {
     currency: "USD",
     currencyRates: [],
     isCampaignActive: false,
+    campaignClaimAddr: "",
     address: "",
     keystorePath: "",
     alias: "",
@@ -81,6 +82,9 @@ const mutations = {
   },
   setCampaignStatus(state, status) {
     state.isCampaignActive = status;
+  },
+  setCampaignClaim(state, address) {
+    state.campaignClaimAddr = address;
   },
   setAlias(state, alias) {
     state.alias = alias;

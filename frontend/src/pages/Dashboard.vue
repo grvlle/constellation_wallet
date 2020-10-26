@@ -259,7 +259,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("wallet", ["currency", "address", "isCampaignActive"]),
+    ...mapState("wallet", ["currency", "address", "isCampaignActive", "campaignClaimAddr"]),
     ...mapGetters("wallet", ["valueInCurrency", "normalizedAvailableBalance"]),
     ...mapState("dashboard", ["counters", "toggle", "stat", "chart"]),
     ...mapState("app", ["onTestnet"]),

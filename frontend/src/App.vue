@@ -264,11 +264,13 @@ export default {
       this.$store.commit('wallet/setAddress', address);
     });
 
-
     window.wails.Events.On("campaign_status", address => {
       this.$store.commit('wallet/setCampaignStatus', address);
     });
 
+    window.wails.Events.On("campaign_claim", address => {
+      this.$store.commit('wallet/setCampaignClaim', address);
+    });
 
   }
 };

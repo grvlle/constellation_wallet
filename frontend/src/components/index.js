@@ -9,6 +9,7 @@ import Card from "./Cards/Card.vue";
 import ChartCard from "./Cards/ChartCard.vue";
 import StatsCard from "./Cards/StatsCard.vue";
 import WideCard from "./Cards/WideCard.vue";
+import AirdropCard from "./Cards/AirdropCard.vue";
 
 import Password from "./Inputs/Password.vue";
 import FileSelector from "./Inputs/FileSelector.vue";
@@ -25,8 +26,9 @@ let components = {
   FileSelector,
   PaperTable,
   DropDown,
+  AirdropCard,
   SidebarPlugin,
-  Overlay
+  Overlay,
 };
 
 export default components;
@@ -43,5 +45,6 @@ export {
   DropDown,
   Button,
   SidebarPlugin,
-  Overlay
+  Overlay,
+  AirdropCard,
 };

@@ -78,6 +78,7 @@
 </template>
 
 <script>
+import Swal from "sweetalert2/dist/sweetalert2";
 import { mapState } from "vuex";
 import { keyStore } from "@stardust-collective/dag-keystore";
 
@@ -158,6 +159,15 @@ export default {
         if (filePath) {
           self.overlay = false;
           self.$Progress.finish();
+          var path = filePath;
+          if (filePath[filePath.length - 1] === ".") {
+            path = filePath.slice(0, filePath.length - 1);
+            Swal.fire(
+              "Warning: File with that name already exists.",
+              " A new file with a similar name was created for you",
+              "error"
+            );
+          }
           this.$store.dispatch("wallet/reset").then(() => {
             this.$router.push({
               name: "create account complete",
@@ -165,7 +175,7 @@ export default {
                 message:
                   "Congratulations! You have created a Private Key file for Molly Wallet!",
                 title: "Create a Private Key File",
-                filePath: filePath,
+                filePath: path,
                 darkMode: this.$route.params.darkMode,
               },
             });

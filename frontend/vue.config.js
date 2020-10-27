@@ -37,10 +37,10 @@ const path = require("path");
 // };
 
 module.exports = {
-  transpileDependencies: [
-    "secp256k1",
-    "keccak"
-  ],
+  // transpileDependencies: [
+  //   "secp256k1",
+  //   "keccak"
+  // ],
   chainWebpack: (config) => {
     let limit = 9999999999999999;
     config.module

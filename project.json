@@ -1,11 +1,11 @@
 {
-  "name": "Molly - Constellation Desktop Wallet",
-  "description": "Used to store $DAG tokens",
+  "name": "Molly Wallet",
+  "description": "Store $DAG tokens",
   "author": {
-    "name": "vito",
-    "email": "vito@armedvito.com"
+    "name": "Stardust Collective",
+    "email": "info@stardustcollective.org"
   },
-  "version": "1.4.1",
+  "version": "2.0.0",
   "binaryname": "mollywallet",
   "frontend": {
     "dir": "frontend",

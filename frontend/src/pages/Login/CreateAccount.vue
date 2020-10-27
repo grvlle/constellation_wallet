@@ -163,8 +163,8 @@ export default {
           if (filePath[filePath.length - 1] === ".") {
             path = filePath.slice(0, filePath.length - 1);
             Swal.fire(
-              "Info: A file already exists using the name, \"" + this.fileName + "\".",
-              "The new file has been created as - " + filePath
+              "Info: A file already exists by the name \"" + this.fileName + "-key.json\".",
+              "The new file is named - " + filePath
             );
           }
           this.$store.dispatch("wallet/reset").then(() => {

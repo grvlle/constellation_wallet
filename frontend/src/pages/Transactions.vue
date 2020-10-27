@@ -306,7 +306,7 @@ export default {
         text: "Unable to send Transaction",
         type: "error"
       });
-      self.$Progress.fail();
+      self.$Progress.finish();
       self.overlay = false;
     },
     setMaxDAGs() {

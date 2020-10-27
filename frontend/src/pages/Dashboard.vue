@@ -175,8 +175,6 @@ import Chartist from "chartist";
 import WalletCopiedNotification from "./Notifications/WalletCopied";
 import WalletCopiedFailedNotification from "./Notifications/WalletCopiedFailed";
 import TestDagRequestedNotification from "./Notifications/TestDagRequested";
-import TestDagRequestedFailedNotification from "./Notifications/TestDagRequestedFailed";
-import TestDagRequestedRepeatedNotification from "./Notifications/TestDagRequestedRepeated";
 import { dagWalletAccount } from "@stardust-collective/dag-wallet-sdk";
 
 export default {
@@ -187,11 +185,12 @@ export default {
   methods: {
     getTestDag() {
       if (this.campaignClaimAddr !== "") {
-        this.addNotification(
+        this.addNotificationMessage(
           "top",
           "right",
-          4,
-          TestDagRequestedRepeatedNotification
+          1,
+          "Already Registered",
+            "You have already registered with account \"" + this.campaignClaimAddr + "\""
         );
         return;
       }
@@ -204,15 +203,17 @@ export default {
         if (result) {
           this.overlay = false;
           this.$Progress.finish();
-          this.addNotification("top", "right", 2, TestDagRequestedNotification);
+          this.campaignClaimAddr = dagWalletAccount.keyTrio.address;
+          this.addNotificationDialog("top", "right", 2, TestDagRequestedNotification);
         } else {
-          this.addNotification(
-            "top",
-            "right",
-            4,
-            TestDagRequestedFailedNotification
+          this.addNotificationMessage(
+              "top",
+              "right",
+              1,
+              "Already Registered",
+              "You have already registered with account \"" + this.campaignClaimAddr + "\""
           );
-          this.$Progress.fail();
+          this.$Progress.finish();
           this.overlay = false;
         }
       });
@@ -225,9 +226,9 @@ export default {
       try {
         var successful = document.execCommand("copy");
         successful ? "successful" : "unsuccessful";
-        this.addNotification("top", "right", 2, WalletCopiedNotification);
+        this.addNotificationDialog("top", "right", 2, WalletCopiedNotification);
       } catch (err) {
-        this.addNotification("top", "right", 4, WalletCopiedFailedNotification);
+        this.addNotificationDialog("top", "right", 4, WalletCopiedFailedNotification);
         alert("Oops, unable to copy");
       }
 
@@ -235,10 +236,24 @@ export default {
       testingCodeToCopy.setAttribute("type", "hidden");
       window.getSelection().removeAllRanges();
     },
-    addNotification(verticalAlign, horizontalAlign, color, copied) {
+    addNotificationMessage(verticalAlign, horizontalAlign, color, title, message) {
+      this.$notify({
+        title: title,
+        message: message,
+        icon: "ti-check",
+        timeout: 16000,
+        horizontalAlign: horizontalAlign,
+        verticalAlign: verticalAlign,
+        type: this.type[color],
+        onClick: () => {
+          this.$notifications.clear();
+        },
+      });
+    },
+    addNotificationDialog(verticalAlign, horizontalAlign, color, copied) {
       setTimeout(() => {
         this.$notifications.clear();
-      }, 6000);
+      }, 16000);
       this.$notify({
         component: copied,
         icon: "ti-check",
@@ -256,11 +271,18 @@ export default {
       "currency",
       "address",
       "isCampaignActive",
-      "campaignClaimAddr",
     ]),
     ...mapGetters("wallet", ["valueInCurrency", "normalizedAvailableBalance"]),
     ...mapState("dashboard", ["counters", "toggle", "stat", "chart"]),
     ...mapState("app", ["onTestnet"]),
+    campaignClaimAddr: {
+      get() {
+        return this.$store.state.wallet.campaignClaimAddr;
+      },
+      set(value) {
+        this.$store.commit("wallet/setCampaignClaim", value);
+      },
+    },
   },
   data() {
     return {

@@ -252,12 +252,6 @@ func (a *WalletApplication) RegisterCampaign(account string) bool {
 
 	url := "https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/" + a.HWAddr + ".json"
 
-    //curl -XGET https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/8c:85:90:3b:45:c1.json
-    //curl -XGET https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/456.json
-	//curl -XPUT https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/457.json -d '{"user_id" : "jack", "text" : "Ahoy!"}'
-	//curl -XPATCH https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/456/-MKWLtUhCR4x1KWMwNAV.json -d '{"user_id" : "jill", "text" : "Ahoy!"}'
-	//curl -XDELETE https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/456/-MKWLtUhCR4x1KWMwNAV.json
-
     jMap := map[string]string{"a1": a.wallet.Address, "a2": account}
     bytesRepresentation, err := json.Marshal(jMap)
     if err != nil {
@@ -354,9 +348,11 @@ func (a *WalletApplication) sendCampaignClaim() {
 
 func (a *WalletApplication) GetLastAcceptedTransactionRef() string {
 
-	a.log.Infoln("GetLastAcceptedTransactionRef: ", a.Network.URL + "/transaction/last-ref/" + a.wallet.Address)
+    url := a.Network.URL + "/transaction/last-ref/" + a.wallet.Address
 
-	resp, err := http.Get(a.Network.URL + "/transaction/last-ref" + a.wallet.Address)
+	a.log.Infoln("GetLastAcceptedTransactionRef: ", url)
+
+	resp, err := http.Get(url)
 	if err != nil {
 		a.log.Warnln("API called failed, please send the request again. Reason: ", err)
 		a.sendWarning("API called failed, please send the request again.")

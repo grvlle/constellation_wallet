@@ -101,11 +101,11 @@
     </div>
     <div v-else class="text-center" style="height: 10rem;">
       <p class="card-text text-muted font-weight-bold mt-4">NO TRANSACTIONS</p>
-      <p class="card-text text-muted font-italic">
-        You have not send any transactions yet from this address. Monitoring
-        also the received transactions will be added to the Molly wallet
-        shortly.
-      </p>
+<!--      <p class="card-text text-muted font-italic">-->
+<!--        You have not send any transactions yet from this address. Monitoring-->
+<!--        also the received transactions will be added to the Molly wallet-->
+<!--        shortly.-->
+<!--      </p>-->
     </div>
   </div>
 </template>

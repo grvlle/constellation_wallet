@@ -283,7 +283,7 @@ export default {
     font-size: 0.875rem;
   }
   .alert[data-notify="container"] {
-    width: 21.875rem;
+    width: 27.875rem;
   }
   .alert-icon {
     margin-left: -0.5em;

@@ -1,5 +1,5 @@
 <template>
-  <span>Got requested test $DAG successfully.</span>
+  <span>You have successfully registered.</span>
 </template>
 
 <script>

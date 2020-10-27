@@ -224,8 +224,14 @@ export default {
         keyStore.getPublicKeyFromPrivate(key)
       );
 
-      //NOTE: window.firebase.analytics not available in desktop-mode. :shrug:
-      //window.firebase.analytics().logEvent('login', { address: address});
+
+      try {
+        //NOTE: safely continue if window.firebase.analytics has failed to load
+        window.firebase.analytics().logEvent('login', {address: address});
+      }
+      catch(e) {
+        // Swal.fire("Unable to read window.firebase.analytics", "", e.message);
+      }
 
       window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
         (result) => {

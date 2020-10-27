@@ -374,6 +374,8 @@ func (a *WalletApplication) initNewWallet() {
 	//a.initTransactionHistory()
     //a.passKeysToFrontend()
 
+    a.initTXFromBlockExplorer()
+
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
 	}

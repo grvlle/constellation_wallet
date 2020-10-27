@@ -5,12 +5,11 @@
         <form ref="textareaform" @submit.prevent="form" class="container">
           <div class="row">
             <div class="col mx-auto login-box">
-              <div class="input-box">
-                A KeyStore file has been created. You may use this to login to
-                Molly Wallet 2.0.
-              </div>
+<!--              <div class="input-box">-->
+<!--                You may use this to login to Molly Wallet 2.0.-->
+<!--              </div>-->
               <div
-                style="margin-top: 18px; text-align: center; font-weight: 500"
+                style="margin-top: 18px; text-align: center; font-weight: 500;"
               >
                 {{ filePath }}
               </div>

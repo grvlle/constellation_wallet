@@ -70,6 +70,7 @@ module.exports = {
   },
   css: cssConfig,
   configureWebpack: {
+    target: 'web',
     output: {
       filename: "[name].js",
     },

@@ -607,7 +607,9 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 
 		a.log.Infof("Successfully collected %d previous transactions. Updating local state...", len(allTX))
 
-		for i, tx := range allTX {
+		a.RT.Events.Emit("update_tx_history", []models.TXHistory{}) // Clear TX history
+
+		for _, tx := range allTX {
 
 			t, _ := time.Parse(time.RFC3339, tx.Timestamp)
 
@@ -621,12 +623,12 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 				Status:   "Complete",
 				Failed:   false,
 			}
-			if a.NewUser {
+			//if a.NewUser {
 				a.storeTX(txData)
-			}
+			//}
 			a.RT.Events.Emit("new_transaction", txData)
 
-			if i+1 == len(allTX) {
+// 			if i+1 == len(allTX) {
 //
 // 				err := a.rebuildTxChainState(tx.Hash)
 // 				if err != nil {
@@ -640,7 +642,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 // 					a.log.Panicln("Unable to import previous transactions")
 // 					a.LoginError("Unable to collect previous TX's from blockexplorer. Please try again later.")
 // 				}
-			}
+// 			}
 		}
 
 	} else {

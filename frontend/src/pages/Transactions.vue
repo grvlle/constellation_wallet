@@ -279,6 +279,8 @@ export default {
                       self.txFailure(swalPopup);
                     }
                   });
+                }, () => {
+                  self.txFailure(swalPopup);
                 })
               }
             })
@@ -287,6 +289,9 @@ export default {
       }
     },
     txSuccess (swalPopup) {
+      this.$Progress.finish();
+      this.overlay = false;
+
       swalPopup.fire({
         title: "Success!",
         text:
@@ -297,17 +302,17 @@ export default {
             ".",
         icon: "success"
       });
-      self.$Progress.finish();
-      self.overlay = false;
+
     },
     txFailure (swalPopup) {
+      this.$Progress.finish();
+      this.overlay = false;
+
       swalPopup.fire({
         title: "Transaction Failed!",
         text: "Unable to send Transaction",
         type: "error"
       });
-      self.$Progress.finish();
-      self.overlay = false;
     },
     setMaxDAGs() {
       this.txAmount.normalized = this.normalizedAvailableBalance;

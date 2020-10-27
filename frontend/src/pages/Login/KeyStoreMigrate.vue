@@ -155,7 +155,7 @@ export default {
           },
           (error) => {
             self.overlay = false;
-            self.$Progress.fail();
+            self.$Progress.finish();
             Swal.fire("Unable to migrate file", error, "error");
           }
         );
@@ -203,7 +203,7 @@ export default {
           );
         } else {
           self.overlay = false;
-          self.$Progress.fail();
+          self.$Progress.finish();
         }
       });
     },

@@ -22,6 +22,7 @@
     "firebase": "^8.0.0",
     "idle-vue": "^2.0.5",
     "jquery": "^3.5.1",
+    "lodash": "^4.17.20",
     "node-sass": "^4.14.1",
     "popper.js": "^1.16.1",
     "sass-loader": "^8.0.2",

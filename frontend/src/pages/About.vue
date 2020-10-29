@@ -17,9 +17,9 @@
             <br />
 
             <b>Something is not working. What should I do?</b>
-            <br />If you receive an error message, please visit our <a href="https://t.me/StardustSupport"><b>Moly Wallet Support</b></a> channel in Telegram.
+            <br />If you receive an error message, please visit our <button class="link" @click="openURL('https://t.me/StardustSupport')"><b>Moly Wallet Support</b></button> channel in Telegram.
             <br />
-            <br /> Alternatively, you can check to see if this is a known issue on the wallet’s <a href="https://github.com/StardustCollective/molly_wallet/issues"><b>Github page</b></a>. If it is not a known bug, please create an issue in the provided link with a thorough explanation of the problem. 
+            <br /> Alternatively, you can check to see if this is a known issue on the wallet’s <button class="link" @click="openURL('https://github.com/StardustCollective/molly_wallet/issues')"><b>Github page</b></button>. If it is not a known bug, please create an issue in the provided link with a thorough explanation of the problem. 
             <br /> 
             <br /> Regardless of what error or bug you may encounter, your funds will not be jeopardized by this software.
           </p>
@@ -71,6 +71,9 @@ export default {
     };
   },
   methods: {
+    openURL(url) {
+      window.backend.WalletApplication.OpenBrowser(url);
+    },
     notifyVue(verticalAlign, horizontalAlign) {
       const color = Math.floor(Math.random() * 4 + 1);
       this.$notify({
@@ -117,6 +120,15 @@ $color-discord: #7289da;
 
 .social-icons {
   display: flex;
+}
+
+.link {
+  color: #2d9cdb;
+  padding: 0px;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .social-icon {

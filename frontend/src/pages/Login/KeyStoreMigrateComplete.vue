@@ -6,9 +6,8 @@
           <div class="row">
             <div class="col mx-auto login-box">
               <div class="input-box">
-                A file has been created next to your original one with "_v2" at
-                the end of the file name. You may use this file to login to
-                Molly Wallet 2.0.
+                <p>A new file has been created and ready to be used for Molly Wallet 2.0. This file is located in the same directory as the original.</p>
+                <p style="font-weight: bold">{{ filePath }}.</p>
               </div>
               <br />
               <div class="input-box">
@@ -84,6 +83,11 @@ export default {
         this.$store.commit("wallet/setAlias", value);
       },
     },
+    filePath: {
+      get() {
+        return this.$route.params.filePath;
+      },
+    },
   },
   methods: {
     moveToLogin: function() {
@@ -91,7 +95,7 @@ export default {
         name: "login single password",
         params: {
           message:
-            "Please enter the credentials to your Private Key (P12 or JSON file) to access your account.",
+            "Please enter the credentials to your Private Key file.",
         },
       });
     },

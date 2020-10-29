@@ -22,7 +22,7 @@ import './plugins/globalMethods';
 var firebaseConfig = {
   apiKey: "AIzaSyBeuVGuwceS6r1yr41OSvabYhemaGGxBN0",
   // authDomain: "dag-faucet.firebaseapp.com",
-  databaseURL: "https://dag-faucet.firebaseio.com",
+  // databaseURL: "https://dag-faucet.firebaseio.com",
   projectId: "dag-faucet",
   // storageBucket: "dag-faucet.appspot.com",
   // messagingSenderId: "945495808290",

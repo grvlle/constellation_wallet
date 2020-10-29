@@ -7,7 +7,7 @@
             <div class="col mx-auto login-box">
               <div>
                 <label class="control-label"
-                  >Select your Private Key (P12 or JSON file)</label
+                  >Select your JSON Private Key</label
                 >
                 <file-selector
                   v-model="keystoreFileName"
@@ -105,7 +105,7 @@ export default {
       })
         .fire({
           title: "Important Update",
-          html: `<br><p class="login-content">If you have previously signed in using an alias and two different passwords (versions 1.2.x and earlier), you will need to migrate your credentials before logging in.</p>`,
+          html: `<br><p class="login-content">If you have previously signed in using a P12 file (versions 1.2.x and earlier), you will need to migrate your file to the JSON format.</p>`,
           width: 300,
           padding: 12,
           toast: true,
@@ -136,7 +136,7 @@ export default {
           name: "keystore migrate",
           params: {
             message:
-              "Enter the information below to migrate your existing two password credentials to a single password.",
+              "Enter the information below to migrate your P12 file to a JSON file",
             title: "Molly Wallet migration wizard",
             darkMode: this.$route.params.darkMode,
           },
@@ -158,8 +158,6 @@ export default {
     },
     loadKeyStoreFile: function(filePath, password) {
       if (!filePath || !password) {
-        // Swal.fire("Invalid credentials", "", "error");
-        // this.loginWithKey();
         return;
       }
 

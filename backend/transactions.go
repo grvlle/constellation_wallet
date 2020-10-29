@@ -407,6 +407,7 @@ func (a *WalletApplication) TxPending(TXHash string) {
 				return false
 			}
 			a.RT.Events.Emit("tx_pending", status.Complete)
+			fmt.Println("===== TX HISTORY ====> ", []models.TXHistory{})
 			a.RT.Events.Emit("update_tx_history", []models.TXHistory{}) // Clear TX history
 			a.initTXFromDB()
 			return true

@@ -15,7 +15,7 @@
           id="file"
           class="inputfile"
           @change="selectFile"
-          accept=".p12,.json"
+          accept=".json"
         />
         <label for="file">BROWSE</label>
       </div>

@@ -99,7 +99,7 @@ export default {
         name: "login single password",
         params: {
           message:
-            "Please enter the credentials to your Private Key (P12 or JSON file) to access your account.",
+            "Please enter the credentials to your Private Key file.",
         },
       });
     },

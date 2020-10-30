@@ -18,6 +18,7 @@ import (
 
 	"github.com/dustin/go-humanize"
 	"github.com/mcuadros/go-version"
+	"github.com/pkg/browser"
 )
 
 func (a *WalletApplication) getLocalIpAndMacAddr() string {
@@ -176,6 +177,11 @@ func (a *WalletApplication) detectJavaPath() {
 		a.log.Debugln(cmd)
 		a.paths.Java = jwPath
 	}
+}
+
+// OpenBrowser opens url with default browser
+func (a *WalletApplication) OpenBrowser(url string) {
+	browser.OpenURL(url)
 }
 
 // TempFileName creates temporary file names for the transaction files

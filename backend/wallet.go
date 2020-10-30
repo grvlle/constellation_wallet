@@ -595,7 +595,25 @@ func (a *WalletApplication) initTXFromDB() {
 			a.TxPending(a.wallet.TXHistory[i].Hash)
 		}
 	}
-	a.RT.Events.Emit("update_tx_history", allTX) // Pass the tx to the frontend as a new transaction.
+	a.RT.Events.Emit("update_tx_history", a.removeDuplicates(allTX)) // Pass the tx to the frontend as a new transaction.
+}
+
+// removeDuplicates to make unique TXs Array
+func (a *WalletApplication) removeDuplicates(elements []models.TXHistory) []models.TXHistory {
+	// Use map to record duplicates as we find them.
+	encountered := map[string]bool{}
+	result := []models.TXHistory{}
+
+	for v := range elements {
+			if !encountered[elements[v].Hash] {
+					// Record this element as an encountered element.
+					encountered[elements[v].Hash] = true
+					// Append to result slice.
+					result = append(result, elements[v])
+			}
+	}
+	// Return the new slice.
+	return result
 }
 
 // initTXFromBlockExplorer is called when an existing wallet is imported.

@@ -7,6 +7,7 @@ require (
 	github.com/leaanthony/mewn v0.10.7
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/mcuadros/go-version v0.0.0-20190830083331-035f6764e8d2
+	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/sirupsen/logrus v1.4.1
 	github.com/wailsapp/wails v1.8.0
 	github.com/zalando/go-keyring v0.1.0

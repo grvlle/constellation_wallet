@@ -1,7 +1,7 @@
 package app
 
 import (
-    "bytes"
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"math/rand"
@@ -66,7 +66,7 @@ func (a *WalletApplication) ChartDataInit() *ChartData {
 		"Feb  ",
 		"Mar  ",
 		"Apr  ",
-		"Mai  ",
+		"May  ",
 		"Jun  ",
 		"Jul  ",
 		"Aug  ",

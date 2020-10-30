@@ -43,8 +43,8 @@ export default {
             focusConfirm: false,
             confirmButtonText: "I have read and I Agree to Terms",
             confirmButtonAriaLabel: "I have read and I Agree to Terms",
-            cancelButtonText: "Close Application",
-            cancelButtonAriaLabel: "Close Application",
+            cancelButtonText: "Cancel",
+            cancelButtonAriaLabel: "Cancel",
           })
           .then((result) => {
             if (result.value) {

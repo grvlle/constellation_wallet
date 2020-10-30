@@ -78,14 +78,18 @@
                   </div>
                   <div class="row">
                     <div class="col text-truncate">
-                      <a
-                        class="text-muted"
-                        :href="
-                          'https://www.dagexplorer.io/search?term=' + tx.hash
+                      <button
+                        class="link text-muted"
+                        @click="
+                          openURL(
+                            'https://www.dagexplorer.io/search?term=' + tx.hash
+                          )
                         "
                         rel="noopener noreferrer"
                         target="_blank"
-                        >{{ tx.hash }}</a
+                      >
+                        {{ tx.hash }}
+                      </button>
                       >
                     </div>
                   </div>
@@ -101,11 +105,11 @@
     </div>
     <div v-else class="text-center" style="height: 10rem;">
       <p class="card-text text-muted font-weight-bold mt-4">NO TRANSACTIONS</p>
-<!--      <p class="card-text text-muted font-italic">-->
-<!--        You have not send any transactions yet from this address. Monitoring-->
-<!--        also the received transactions will be added to the Molly wallet-->
-<!--        shortly.-->
-<!--      </p>-->
+      <!--      <p class="card-text text-muted font-italic">-->
+      <!--        You have not send any transactions yet from this address. Monitoring-->
+      <!--        also the received transactions will be added to the Molly wallet-->
+      <!--        shortly.-->
+      <!--      </p>-->
     </div>
   </div>
 </template>
@@ -121,6 +125,7 @@ const suffixRanges = [
 ];
 
 import { mapState, mapGetters } from "vuex";
+import uniqBy from "lodash/uniqBy";
 
 export default {
   name: "timeline",
@@ -139,6 +144,9 @@ export default {
         return "<span>" + contact[0].name + "</span>";
       }
       return value;
+    },
+    openURL(url) {
+      window.backend.WalletApplication.OpenBrowser(url);
     },
   },
   filters: {
@@ -163,6 +171,9 @@ export default {
     normalizeDAG: function(value) {
       return (value / 1e8).toFixed(8).replace(/\.?0+$/, "");
     },
+    uniqArray: function(value) {
+      return uniqBy(value, (obj) => obj.id);
+    },
   },
 };
 </script>
@@ -170,6 +181,14 @@ export default {
 <style scoped lang="scss">
 .timeline-label {
   width: 9.6rem;
+}
+
+.link {
+  padding: 0px;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .balance {

@@ -61,7 +61,12 @@
                   :value="walletLabel"
                 />
                 <span class="input-group-append">
-                  <p-button @click.native="submitLabel()" type="success" style="width:6rem;">Apply</p-button>
+                  <p-button
+                    @click.native="submitLabel()"
+                    type="success"
+                    style="width:6rem;"
+                    >Apply</p-button
+                  >
                 </span>
               </div>
               <div class="input-group">
@@ -73,7 +78,12 @@
                   :value="imgPath"
                 />
                 <span class="input-group-append">
-                  <p-button @click.native="uploadImage()" type="default" style="width:6rem;">Browse</p-button>
+                  <p-button
+                    @click.native="uploadImage()"
+                    type="default"
+                    style="width:6rem;"
+                    >Browse</p-button
+                  >
                 </span>
               </div>
             </form>
@@ -103,7 +113,9 @@
               <div class="row">
                 <div class="col-12">
                   <label class="control-label" style="margin-bottom: 0;">
-                    <p style="margin-bottom: 0;">Path to Private Key (P12 or JSON file)</p>
+                    <p style="margin-bottom: 0;">
+                      Path to Private Key (P12 or JSON file)
+                    </p>
                   </label>
                   <fg-input
                     type="text"
@@ -170,7 +182,10 @@
         </card>
       </div>-->
       <div class="col-md-6 d-flex">
-        <card title="Display settings" sub-title="Customize your Molly Wallet display settings">
+        <card
+          title="Display settings"
+          sub-title="Customize your Molly Wallet display settings"
+        >
           <div class="container">
             <div class="row settings">
               <div class="col-7">
@@ -213,10 +228,10 @@ export default {
     ToggleSwitch,
   },
   methods: {
-    setWalletLabel: function (value) {
+    setWalletLabel: function(value) {
       this.newLabel = value;
     },
-    submitLabel: function () {
+    submitLabel: function() {
       const swalPopup = Swal.mixin({
         customClass: {
           container: this.darkMode ? "theme--dark" : "theme--light",
@@ -256,7 +271,7 @@ export default {
           });
       }
     },
-    setCurrency: function (value) {
+    setCurrency: function(value) {
       window.backend.WalletApplication.StoreCurrencyStateDB(value).then(
         (result) => {
           if (result) {
@@ -265,7 +280,7 @@ export default {
         }
       );
     },
-    uploadImage: function () {
+    uploadImage: function() {
       window.backend.WalletApplication.UploadImage().then((path) => {
         const swalPopup = Swal.mixin({
           customClass: {
@@ -279,7 +294,7 @@ export default {
               "Unable to change wallet image. Make sure that the image resolution is not larger than 200x200",
             type: "error",
           });
-        } else {
+        } else if (path !== "Cancel") {
           swalPopup
             .fire({
               title: "Are you sure?",
@@ -318,13 +333,13 @@ export default {
         }
       });
     },
-    importKeys: function () {
+    importKeys: function() {
       window.backend.WalletApplication.ImportKeys();
     },
-    exportKeys: function () {
+    exportKeys: function() {
       window.backend.WalletApplication.ExportKeys();
     },
-    showPassword: function () {
+    showPassword: function() {
       if (this.type === "password") {
         this.type = "text";
         this.btnText = "fa fa-eye-slash";
@@ -343,10 +358,10 @@ export default {
     ]),
     ...mapState("dashboard", ["toggle"]),
     darkMode: {
-      get: function () {
+      get: function() {
         return this.$store.state.wallet.darkMode;
       },
-      set: function (dark) {
+      set: function(dark) {
         window.backend.WalletApplication.StoreDarkModeStateDB(dark).then(
           (result) => {
             if (result) {

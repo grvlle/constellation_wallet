@@ -167,6 +167,9 @@ export default {
 
       let reader = new FileReader();
 
+      //Settings and Wallet info shows the name of the file
+      this.$store.commit("wallet/setKeystorePath", filePath.name)
+
       const ext = filePath.name
         .split(".")
         .pop()
@@ -242,6 +245,7 @@ export default {
     },
     initWallet: function() {
       var self = this;
+
       window.backend.WalletApplication.GetUserTheme().then((darkMode) =>
         self.$store.commit("wallet/setDarkMode", darkMode)
       );

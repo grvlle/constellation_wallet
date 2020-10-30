@@ -172,7 +172,7 @@ export default {
               name: "create account complete",
               params: {
                 message:
-                  "Congratulations! You have created a Private Key file for Molly Wallet!",
+                  "Congratulations! You have created a Private Key for Molly Wallet!",
                 title: "Create a Private Key File",
                 filePath: path,
                 darkMode: this.$route.params.darkMode,

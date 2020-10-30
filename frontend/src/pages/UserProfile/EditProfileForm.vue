@@ -50,7 +50,7 @@
           <div class="col-md-12">
             <fg-input
               type="text"
-              label="Path to Private Key (P12 or JSON file)"
+              label="Private Key File"
               :disabled="true"
               placeholder="0"
               v-model="keystorePath"

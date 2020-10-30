@@ -21,7 +21,13 @@ const mutations = {
         state.txHistory.unshift(tx)
     },
     updateFullTxHistory(state, obj) {
-      state.txHistory = obj.txHistoryFull
+        let arr = obj.txHistoryFull || [];
+
+        arr.sort((a, b) => {
+            return new Date(b.date) - new Date(a.date);
+        });
+
+        state.txHistory = arr;
     },
     updateTxStatus(state, status) {
         state.txStatus = status

@@ -161,27 +161,6 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 	return false, ""
 }
 
-/* Note: used by Testnet Faucet */
-func (a *WalletApplication) savePendingTransaction(amount float64, fee float64, receiver string, hash string)  {
-
-	amountConverted := int64(amount)
-	feeConverted := int64(fee)
-
-    txData := &models.TXHistory{
-        Amount:   amountConverted,
-        Receiver: receiver,
-        Fee:      feeConverted,
-        Hash:     hash,
-        TS:       time.Now().Format("Jan _2 15:04:05"),
-        Status:   "Pending",
-        Failed:   false,
-    }
-    a.storeTX(txData)
-    a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
-    a.TransactionFinished = true
-    a.TransactionFailed = false
-}
-
 
 /* Note: Called from frontend to post a generated TX to the network */
 func (a *WalletApplication) SendTransaction2(txJson string) bool {

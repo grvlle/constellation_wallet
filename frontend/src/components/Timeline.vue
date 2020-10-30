@@ -120,7 +120,6 @@ const suffixRanges = [
 ];
 
 import { mapState, mapGetters } from "vuex";
-import uniqBy from "lodash/uniqBy";
 
 export default {
   name: "timeline",
@@ -165,9 +164,6 @@ export default {
     },
     normalizeDAG: function(value) {
       return (value / 1e8).toFixed(8).replace(/\.?0+$/, "");
-    },
-    uniqArray: function(value) {
-      return uniqBy(value, (obj) => obj.id);
     },
   },
 };

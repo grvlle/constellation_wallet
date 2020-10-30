@@ -18,4 +18,4 @@ sips -z 1024 1024   appicon.png --out MyIcon.iconset/icon_512x512@2x.png
 # cp appicon.png MyIcon.iconset/icon_512x512@2x.png
 iconutil -c icns MyIcon.iconset
 rm -R MyIcon.iconset
-mv MyIcon.icns appicon.icns
+mv MyIcon.icns iconfile.icns

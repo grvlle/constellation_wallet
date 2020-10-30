@@ -603,17 +603,17 @@ func (a *WalletApplication) initTXFromDB() {
 	a.RT.Events.Emit("update_tx_history", allTX)
 }
 
-func (a *WalletApplication) resyncTXHistory() map[string]bool {
+func (a *WalletApplication) resyncTXHistory() ([]models.TXHistory, map[string]bool) {
 
     walletTxHistory := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory")
 
 	if err := walletTxHistory.Find(&a.wallet.TXHistory).Error; err != nil {
 		a.log.Error("Unable to initialize historic transactions from DB. Reason: ", err)
 		a.sendError("Unable to initialize historic transactions from DB. Reason: ", err)
-		return nil
+		return nil, nil
 	}
 
-	a.log.Infof("Before Count - ", walletTxHistory.Count())
+	//a.log.Infof("Before Count - ", walletTxHistory.Count())
 
     // Use map to record duplicates as we find them.
     encountered := map[string]bool{}
@@ -624,9 +624,8 @@ func (a *WalletApplication) resyncTXHistory() map[string]bool {
         if !encountered[tx.Hash] {
             // Record this element as an encountered element.
             encountered[tx.Hash] = true
-            // Append to result slice.
-            //allTX = append(allTX, tx)
-            allTX = append([]models.TXHistory{tx}, allTX...) // prepend to reverse list for FE
+            // prepend to reverse list for FE
+            allTX = append([]models.TXHistory{tx}, allTX...)
 
             if err := walletTxHistory.Append(tx).Error; err != nil {
                 a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
@@ -636,17 +635,17 @@ func (a *WalletApplication) resyncTXHistory() map[string]bool {
             if tx.Status == "Pending" {
                 a.TxPending(tx.Hash)
             }
+
+            //a.log.Infoln("Keeping tx in db - " + tx.Hash + ", " + tx.Status)
         } else {
-            // a.log.Infoln("Duplicate tx found - " + tx.Hash)
+             a.log.Infoln("Duplicate tx found - " + tx.Hash)
             walletTxHistory.Delete(&tx)
         }
     }
 
-    a.log.Infof("After Count - ", walletTxHistory.Count())
+    //a.log.Infof("After Count - ", walletTxHistory.Count())
 
-    a.RT.Events.Emit("update_tx_history", allTX)
-
-    return encountered
+    return allTX, encountered
 }
 
 // initTXFromBlockExplorer is called when an existing wallet is imported.
@@ -662,85 +661,87 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 	}
 	defer resp.Body.Close()
 
-	if resp.Body != nil {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			a.LoginError("Unable to collect previous transactions from blockexplorer. Try again later.")
-			a.log.Errorln("Unable to collect previous transactions from blockexplorer. Reason: ", err)
-			return err
-		}
+	if resp.Body == nil {
+        a.log.Info("Unable to detect any previous transactions.")
+        return nil
+	}
 
-		ok, error := a.verifyAPIResponse(bodyBytes)
-		// Blockexplorer returns below string when no previous transactions are found
-		if !ok && error != "Cannot find transactions for sender" {
-			a.log.Errorln("API returned the following error", error)
-			a.LoginError("The wallet import failed. Please check your internet connection and try again.")
-			return errors.New(error)
-		}
+    bodyBytes, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        a.LoginError("Unable to collect previous transactions from blockexplorer. Try again later.")
+        a.log.Errorln("Unable to collect previous transactions from blockexplorer. Reason: ", err)
+        return err
+    }
 
-		// If no previous transactions for imported wallet - proceed
-		if !ok && error == "Cannot find transactions for sender" {
-			a.log.Info("Unable to detect any previous transactions.")
-			return nil
-		}
+    ok, error := a.verifyAPIResponse(bodyBytes)
+    // Blockexplorer returns below string when no previous transactions are found
+    if !ok && error != "Cannot find transactions for sender" {
+        a.log.Errorln("API returned the following error", error)
+        a.LoginError("The wallet import failed. Please check your internet connection and try again.")
+        return errors.New(error)
+    }
 
-		allTX := []models.TXHistory{}
+    // If no previous transactions for imported wallet - proceed
+    if !ok && error == "Cannot find transactions for sender" {
+        a.log.Info("Unable to detect any previous transactions.")
+        return nil
+    }
 
-		err = json.Unmarshal(bodyBytes, &allTX)
-		if err != nil {
-			a.log.Errorln("Unable to fetch TX history from block explorer. Reason: ", err)
-			a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
-			return err
-		}
+    beTxList := []models.TXHistory{}
 
-		// Reverse order
-// 		for i := len(allTX)/2 - 1; i >= 0; i-- {
-// 			opp := len(allTX) - 1 - i
-// 			allTX[i], allTX[opp] = allTX[opp], allTX[i]
+    err = json.Unmarshal(bodyBytes, &beTxList)
+    if err != nil {
+        a.log.Errorln("Unable to fetch TX history from block explorer. Reason: ", err)
+        a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
+        return err
+    }
+
+    // Reverse order
+// 		for i := len(beTxList)/2 - 1; i >= 0; i-- {
+// 			opp := len(beTxList) - 1 - i
+// 			beTxList[i], beTxList[opp] = beTxList[opp], beTxList[i]
 // 		}
 
-		a.log.Infof("Successfully collected %d previous transactions. Updating local state...", len(allTX))
+    a.log.Infof("Successfully collected %d previous transactions. Updating local state...", len(beTxList))
 
-        walletTxHistory := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory")
-        encountered := a.resyncTXHistory()
+    walletTxHistory := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory")
+    allTX, encountered := a.resyncTXHistory()
 
-		for _, tx := range allTX {
+    for _, tx := range beTxList {
 
-            if !encountered[tx.Hash] {
+        if !encountered[tx.Hash] {
 
-                t, _ := time.Parse(time.RFC3339, tx.Timestamp)
+            t, _ := time.Parse(time.RFC3339, tx.Timestamp)
 
-                txData := &models.TXHistory{
-                    Amount:   tx.Amount,
-                    Sender:   tx.Sender,
-                    Receiver: tx.Receiver,
-                    Fee:      tx.Fee,
-                    Hash:     tx.Hash,
-                    TS:       t.In(t.Local().Location()).Format("Jan _2 15:04:05"),
-                    Status:   "Complete",
-                    Failed:   false,
-                }
-
-                if err := walletTxHistory.Append(txData).Error; err != nil {
-                    a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
-                    a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
-                }
-
-                a.RT.Events.Emit("new_transaction", txData)
-
-                //a.log.Infoln("TX added to db - " + tx.Hash)
-            } else {
-                //a.log.Infoln("TX already in db - " + tx.Hash)
+            txData := &models.TXHistory{
+                Amount:   tx.Amount,
+                Sender:   tx.Sender,
+                Receiver: tx.Receiver,
+                Fee:      tx.Fee,
+                Hash:     tx.Hash,
+                TS:       t.In(t.Local().Location()).Format("Jan _2 15:04:05"),
+                Status:   "Complete",
+                Failed:   false,
             }
 
+            if err := walletTxHistory.Append(txData).Error; err != nil {
+                a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
+                a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
+            }
+
+            //a.RT.Events.Emit("new_transaction", txData)
+            allTX = append([]models.TXHistory{tx}, allTX...) // prepend to reverse list for FE
+
+            //a.log.Infoln("TX added to db - " + tx.Hash)
+        } else {
+            //a.log.Infoln("TX already in db - " + tx.Hash)
         }
 
-	} else {
-		a.log.Info("Unable to detect any previous transactions.")
-		return nil
-	}
-	return nil
+    }
 
+    a.RT.Events.Emit("update_tx_history", allTX)
+
+	return nil
 }
 
 // PassKeysToFrontend emits the keys to the settings.Vue component on a

@@ -291,6 +291,8 @@ export default {
     txSuccess (swalPopup) {
       this.$Progress.finish();
       this.overlay = false;
+      this.txAddress = "";
+      this.txAmount.normalized = 0
 
       swalPopup.fire({
         title: "Success!",
@@ -307,6 +309,8 @@ export default {
     txFailure (swalPopup) {
       this.$Progress.finish();
       this.overlay = false;
+      this.txAddress = "";
+      this.txAmount.normalized = 0
 
       swalPopup.fire({
         title: "Transaction Failed!",

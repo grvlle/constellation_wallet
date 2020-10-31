@@ -137,7 +137,7 @@ func (a *WalletApplication) LogOut() bool {
 		a.wallet = models.Wallet{}
 		a.Network.URL = MainnetLoadBalancerURL // Reset to default network upon every logout
 		a.Network.BlockExplorer.URL = MainnetBlockExplorerURL
-		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
+		//a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
 		return true
 	}
 	a.sendWarning("Cannot log out while transaction is processing. Please try again.")

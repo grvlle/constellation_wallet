@@ -5,7 +5,7 @@
     "name": "Stardust Collective",
     "email": "info@stardustcollective.org"
   },
-  "version": "2.0.0",
+  "version": "2.0.1",
   "binaryname": "mollywallet",
   "frontend": {
     "dir": "frontend",

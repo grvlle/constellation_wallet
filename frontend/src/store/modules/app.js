@@ -1,7 +1,7 @@
 const getDefaultState = () => {
   return {
     version: "v2.13.9",
-    uiVersion: "v2.0.0",
+    uiVersion: "v2.0.1",
     isLoggedIn: false,
     errorMessage: "",
     warningMessage: "",

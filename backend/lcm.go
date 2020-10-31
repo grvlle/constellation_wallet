@@ -63,7 +63,7 @@ func (u *UpdateWallet) TriggerUpdate() error {
 func (u *UpdateWallet) GetLatestRelease() string {
 
 	const (
-		url = "https://api.github.com/repos/grvlle/constellation_wallet/releases/latest"
+		url = "https://api.github.com/repos/StardustCollective/molly_wallet/releases/latest"
 	)
 
 	resp, err := http.Get(url)

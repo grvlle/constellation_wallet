@@ -248,11 +248,11 @@ func (a *WalletApplication) GetTestDag() bool {
 	return true
 }
 
-func (a *WalletApplication) RegisterCampaign(account string) bool {
+func (a *WalletApplication) RegisterCampaign(account, dateNum, dateStr string) bool {
 
 	url := "https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/" + a.HWAddr + ".json"
 
-    jMap := map[string]string{"a1": a.wallet.Address, "a2": account}
+    jMap := map[string]string{"a1": a.wallet.Address, "a2": account, "date": dateNum, "dateStr": dateStr}
     bytesRepresentation, err := json.Marshal(jMap)
     if err != nil {
         return false

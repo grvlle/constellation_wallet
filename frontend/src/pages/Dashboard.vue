@@ -196,9 +196,10 @@ export default {
       }
       this.overlay = true;
       this.$Progress.start();
-      //RegisterCampaign, GetTestDag
+      let dateNum = Date.now()
+      let dateStr = new Date(dateNum).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
       window.backend.WalletApplication.RegisterCampaign(
-        dagWalletAccount.keyTrio.publicKey.substring(2)
+        dagWalletAccount.keyTrio.publicKey.substring(2), dateNum.toString(), dateStr
       ).then((result) => {
         if (result) {
           this.overlay = false;

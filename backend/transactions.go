@@ -189,7 +189,7 @@ func (a *WalletApplication) postTransaction(txObject string) *models.TXHistory {
 		return nil
 	}
 
-	// Put TX object on network
+	// Put TX object on network time.Now().Unix(), time.Now().Format("Jan _2 15:04:05")
 	TXSuccessfullyPutOnNetwork, hash := a.putTXOnNetwork(tx)
 
 	if TXSuccessfullyPutOnNetwork {

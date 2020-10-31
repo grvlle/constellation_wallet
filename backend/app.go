@@ -124,7 +124,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.WalletCLI.Version = "2.16.2"
     a.KeyToolCLI.URL = "https://github.com/StardustCollective/molly_wallet/releases/download"
     a.KeyToolCLI.Version = "2.0-alpha"
-	a.Version = "2.0.0"
+	a.Version = "2.0.1"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {
@@ -134,11 +134,11 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.DB.AutoMigrate(&models.Wallet{}, &models.TXHistory{}, &models.Path{}, &models.Contact{})
 	a.detectJavaPath()
 	a.initMainnetConnection()
-	a.newReleaseAvailable()
+	//a.newReleaseAvailable()
 	a.HWAddr = a.getLocalIpAndMacAddr()
 
     if a.HWAddr != "" {
-	    a.log.Infoln("Physical hardware address : %s ", a.HWAddr)
+	    a.log.Infoln("Physical hardware address: ", a.HWAddr)
 	}
 
 	return nil

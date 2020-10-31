@@ -650,7 +650,7 @@ func (a *WalletApplication) resyncTXHistory() ([]models.TXHistory, map[string]bo
 
 // initTXFromBlockExplorer is called when an existing wallet is imported.
 func (a *WalletApplication) initTXFromBlockExplorer() error {
-	a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
+	//a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
 
 	// resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
 	resp, err := http.Get(a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
@@ -713,7 +713,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
 
             t, _ := time.Parse(time.RFC3339, tx.Timestamp)
 
-            txData := &models.TXHistory{
+            txData := models.TXHistory{
                 Amount:   tx.Amount,
                 Sender:   tx.Sender,
                 Receiver: tx.Receiver,
@@ -724,13 +724,13 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
                 Failed:   false,
             }
 
-            if err := walletTxHistory.Append(txData).Error; err != nil {
+            if err := walletTxHistory.Append(&txData).Error; err != nil {
                 a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
                 a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
             }
 
             //a.RT.Events.Emit("new_transaction", txData)
-            allTX = append([]models.TXHistory{tx}, allTX...) // prepend to reverse list for FE
+            allTX = append([]models.TXHistory{txData}, allTX...) // prepend to reverse list for FE
 
             //a.log.Infoln("TX added to db - " + tx.Hash)
         } else {

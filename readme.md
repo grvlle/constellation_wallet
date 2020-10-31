@@ -1,32 +1,14 @@
-# Molly Wallet ($DAG desktop wallet)  
+# Molly Wallet  
   
-![N|Solid](https://i.ibb.co/QXvTVR0/mollywallet.jpg)
+![N|Solid](https://i.ibb.co/qRK8Cj9/mollywallet.png)
   
-The Molly Wallet is the official $DAG wallet of the Constellation Network. It'll let users interact with the Hypergraph Network in various ways, not limited to producing $DAG transactions. The wallet is currently under development, the first public release has been shipped with more to come.  
+The Molly Wallet is the official $DAG desktop wallet of the Constellation Network. The wallet is supported and developed by the Stardust Collective.
   
-### Here's how the Constellation Team describes it on their website  
-  
->Created by a Constellation community member, for the best community in crypto, and named after the wallet designer’s daughter, Molly is built with a vision to set future standards in digital commerce.  
-  
->Just like your wallet that you use daily to pay for lunch, dinner, clothes, that hold your business cards, ID’s, and that lucky penny, our intention was to design something that people would use everyday. We live in an age where we have anabundance of information, from videos to blogs, that are at our fingertips. Digital commerce is molding how generationsinteract with one another, consume, and educate themselves. The nature of this wallet is digital and thus we wanted to expand the possibilities of what a wallet could be and do because of its multimedia capabilities. We wanted to make it not only user friendly, but create the space for applications to be developed by our vibrant open source community.  
-  
->A true articulation of open innovation.  
-  
->A cryptocurrency wallet is one of the most cherished pieces of technology to anyone that holds cryptocurrency. Yet many wallets are visually unappealing, have limited functionality and utility, and are treated as an afterthought. We wanted to bring it to the forefront and reimagine the wallet, the community that uses the wallet, and enable a future that will be powered by DAG.  
-  
-[- Official Source](https://constellationnetwork.io/technology/molly-wallet/)  
-  
----  
-
-### Publications  
-  
-* [Constellation’s Molly a Landmark Moment for the $DAG Ecosystem](https://thedailychain.com/constellations-molly-a-landmark-moment-for-the-dag-ecosystem/) - An article written on The Daily Chain by Anna Larsen.  
-
 ---  
 
 ### Technologies  
   
-Molly Wallet uses a number of open source projects to work properly:  
+Molly Wallet uses a number of open source projects:  
   
 * [VueJS](https://vuejs.org) - The Progressive JavaScript Framework  
 * [Go](https://golang.org) - Go is an open source programming language that makes it easy to build simple, reliable, and  
@@ -38,16 +20,13 @@ efficient software.
 
 ### Installation  
   
-#### Pre-requisits  
-Molly Wallet requires [OpenJDK v9](https://java.com/) and [JRE](https://www.oracle.com/java/technologies/javase-jre8-downloads.html) to run. If installing the MacOS version, use [Unarchiver](https://theunarchiver.com/) to unzip molly_installer.zip
-  
 #### Download Molly Wallet  
-The latest builds can be found under [releases](https://github.com/grvlle/constellation_wallet/releases).  
+The latest builds can be found under [releases](https://github.com/StardustCollective/molly_wallet/releases).  
   
 ---  
   
-### FAQ
-The Molly Wallet FAQ can be located under [docs](https://github.com/grvlle/constellation_wallet/blob/develop/docs/faq.md#molly-wallet-faq).
+### Support
+Need any help? You can visit the Stardust Support channel in Telegram [here](https://t.me/StardustSupport).
 
 ---  
 
@@ -65,7 +44,7 @@ distribution/OS and CPU architecture.
   
 #### 3. Install Wails  
   
-The Molly Wallet is build using a light-weight framework for Desktop Applications using Go and VueJS. [Wails](https://github.com/wailsapp/wails) is very similar to Electron but is not packaging the full Chromium web browser as a dependency.  
+The Molly Wallet is built using a light-weight framework for Desktop Applications using Go and VueJS. [Wails](https://github.com/wailsapp/wails) is very similar to Electron but does not packaging the full Chromium web browser as a dependency.  
   
   
 ###### MacOS  
@@ -125,7 +104,7 @@ Installation is as simple as running the following command:
   
 ##### 4. Clone this repository into your GOPATH  
   
-`git clone https://github.com/grvlle/constellation_wallet.git`  
+`git clone git@github.com:StardustCollective/molly_wallet.git`  
 
 ---
 
@@ -156,12 +135,5 @@ or for the debug version, run:
 ```sh  
 wails build -d  
 ```  
-
----
-
-### Top Contributers  
-* [digitaltwin](https://github.com/digitaltwinnn)  
-* [Marcin Wadoń](https://github.com/marcinwadon)
-* [junkai121](https://github.com/junkai121)
 
 ---

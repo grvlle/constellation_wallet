@@ -89,7 +89,7 @@ export default {
 }
 .inputfile + label {
   cursor: pointer;
-  padding: 9px 12px;
+  padding: 0.5625rem 0.75rem;
   height: 2.25rem;
   border-radius: 0 0.25rem 0.25rem 0;
   font-size: 0.75em;
@@ -100,8 +100,8 @@ export default {
   font-family: Poppins;
   font-style: normal;
   font-weight: 500;
-  font-size: 10px;
-  line-height: 15px;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
   letter-spacing: 0.1em;
 }
 .inputfile + label:hover {

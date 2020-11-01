@@ -45,16 +45,16 @@ export default {
   font-family: Poppins;
   font-style: normal;
   font-weight: 500;
-  font-size: 28px;
-  line-height: 24px;
+  font-size: 1.75rem;
+  line-height: 1.5rem;
   text-align: center;
   color: #ffffff;
-  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.25);
 }
 
 .logo-spinner {
-  width: 75px;
+  width: 4.6875rem;
   height: auto;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 </style>

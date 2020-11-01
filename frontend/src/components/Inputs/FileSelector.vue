@@ -80,8 +80,8 @@ export default {
   height: 2.25rem;
 }
 .inputfile {
-  width: 0.1px;
-  height: 0.1px;
+  width: 0.0.0625rem;
+  height: 0.0.0625rem;
   opacity: 0;
   overflow: hidden;
   position: absolute;
@@ -93,7 +93,7 @@ export default {
   height: 2.25rem;
   border-radius: 0 0.25rem 0.25rem 0;
   font-size: 0.75em;
-  border: 1px solid #666;
+  border: 0.0625rem solid #666;
   color: white;
   background-color: #666;
   display: inline-block;

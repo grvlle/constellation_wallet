@@ -123,8 +123,8 @@ export default {
     font-family: Poppins;
     font-style: normal;
     font-weight: normal;
-    font-size: 10px;
-    line-height: 15px;
+    font-size: 0.625rem;
+    line-height: 0.9375rem;
     letter-spacing: 0.05em;
     color: #eb5757;
   }
@@ -134,7 +134,7 @@ export default {
   }
 }
 .input-group-append .btn {
-  border: 1px solid #666 !important;
+  border: 0.0625rem solid #666 !important;
   color: white;
   background-color: #666;
   display: inline-block;
@@ -142,8 +142,8 @@ export default {
   width: 2.25rem;
   font-style: normal;
   font-weight: 500;
-  font-size: 10px;
-  line-height: 15px;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
   letter-spacing: 0.1em;
 }
 </style>

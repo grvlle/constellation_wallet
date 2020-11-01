@@ -54,31 +54,31 @@ export default {
 <style scoped lang="scss">
 .btn-primary {
   background: #2d9cdb;
-  border: 1px solid #2d9cdb;
+  border: 0.0625rem solid #2d9cdb;
   font-weight: 500;
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
   letter-spacing: 0.1em;
 
   &:hover {
     background: #247daf;
-    border: 1px solid #247daf;
+    border: 0.0625rem solid #247daf;
   }
 
   &:focus {
     background: #2d9cdb;
-    border: 1px solid #2d9cdb;
+    border: 0.0625rem solid #2d9cdb;
   }
 
   &:not(:disabled):active {
     background: #1b5e83 !important;
-    border: 1px solid #1b5e83 !important;
+    border: 0.0625rem solid #1b5e83 !important;
     outline-color: #1b5e83 !important;
   }
 
   &:disabled {
     background: #81c4e9 !important;
-    border: 1px solid #81c4e9 !important;
+    border: 0.0625rem solid #81c4e9 !important;
   }
 }
 </style>

@@ -22,6 +22,7 @@ if (process.env.NODE_ENV == "production") {
 }
 
 const path = require("path");
+// const RemoveStrictPlugin = require('remove-strict-webpack-plugin');
 // const PrerenderSPAPlugin = require("prerender-spa-plugin");
 
 // module.exports = {
@@ -77,12 +78,15 @@ module.exports = {
     optimization: {
       splitChunks: false,
     },
-    // resolve: {
-    //   alias: {
-    //     "keccak": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/keccak/'),
-    //     "secp256k1": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/secp256k1/')
-    //   }
-    // }
+    // plugins: [
+    //   new RemoveStrictPlugin()
+    // ],
+    resolve: {
+      alias: {
+        "keccak": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/keccak/'),
+        "secp256k1": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/secp256k1/')
+      }
+    }
   },
   devServer: {
     disableHostCheck: true,

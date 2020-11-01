@@ -54,8 +54,8 @@ button.swal2-styled.swal2-confirm:focus {
   font-family: Poppins;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
   text-align: center;
   letter-spacing: 0.1em;
   color: #db6e44;
@@ -69,36 +69,36 @@ button.swal2-styled.swal2-confirm:focus {
   font-family: Poppins;
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.875rem;
   text-align: left;
-  line-height: 21px;
+  line-height: 1.3125rem;
   color: #ffffff;
 }
 
 .swal2-actions-login {
   min-height: initial;
-  height: 36px !important;
-  margin: 0px !important;
+  height: 2.25rem !important;
+  margin: 0 !important;
 }
 
 .swal2-title-login {
   font-family: Poppins;
   font-style: normal;
   font-weight: 500 !important;
-  font-size: 18px !important;
-  line-height: 21px;
-  margin: 0px !important;
+  font-size: 1.125rem !important;
+  line-height: 1.3125rem;
+  margin: 0 !important;
   color: #ffffff !important;
 }
 
 .swal2-popup-login {
   background: #db6e44 !important;
-  border-radius: 6px !important;
+  border-radius: 0.375rem !important;
   box-shadow: none !important;
 }
 
 .swal2-container-login {
-  padding: 24px !important;
+  padding: 1.5rem !important;
 }
 
 .swal2-popup-tos {
@@ -121,36 +121,36 @@ button.swal2-styled.swal2-confirm:focus {
   background: #2d9cdb;
   color: white;
   width: 48%;
-  height: 36px;
-  border: 0px;
+  height: 2.25rem;
+  border: 0;
   font-family: Poppins;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
   text-align: center;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   text-transform: uppercase;
-  border-radius: 4px;
+  border-radius: 0.25rem;
 }
 
 .btn-cancel-tos {
   background: #666666;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   color: white;
   width: 48%;
-  border: 0px;
+  border: 0;
   font-family: Poppins;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
   text-align: center;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   text-transform: uppercase;
-  height: 36px;
+  height: 2.25rem;
 }
 
 @import "sweetalert2/src/sweetalert2";

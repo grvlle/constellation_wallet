@@ -112,36 +112,36 @@ export default {
 
 .btn-secondary {
   background: #db6e44;
-  border: 1px solid #db6e44;
+  border: 0.0625rem solid #db6e44;
   font-family: Poppins;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
   text-align: center;
   letter-spacing: 0.1em;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   color: #ffffff;
 
   &:hover {
     background: #af5836;
-    border: 1px solid #af5836;
+    border: 0.0625rem solid #af5836;
   }
 
   &:active,
   &:focus {
     background: #db6e44 !important;
-    border: 1px solid #db6e44 !important;
+    border: 0.0625rem solid #db6e44 !important;
   }
 
   &:active {
     outline-color: #db6e44 !important;
-    outline-width: 0px;
+    outline-width: 0;
   }
 
   &:disabled {
     background: #e9a88f !important;
-    border: 1px solid #e9a88f !important;
+    border: 0.0625rem solid #e9a88f !important;
   }
 }
 
@@ -149,8 +149,8 @@ div.input-box {
   font-family: Poppins;
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
-  line-height: 24px;
+  font-size: 10.25rem;
+  line-height: 20.25rem;
   color: #666666;
 }
 
@@ -187,15 +187,15 @@ div.input-box {
 }
 
 .checkmark {
-  width: 176px;
-  height: 176px;
+  width: 11rem;
+  height: 11rem;
   border-radius: 50%;
   display: block;
   stroke-width: 2;
   stroke: #fff;
   stroke-miterlimit: 10;
   margin: 10% auto 30%;
-  box-shadow: inset 0px 0px 0px #db6e44;
+  box-shadow: inset 0 0 0 #db6e44;
   animation: fill 0.4s ease-in-out 0.4s forwards,
     scale 0.3s ease-in-out 0.9s both;
 }
@@ -222,7 +222,7 @@ div.input-box {
 }
 @keyframes fill {
   100% {
-    box-shadow: inset 0px 0px 0px 90px #db6e44;
+    box-shadow: inset 0 0 0 90 #db6e44;
   }
 }
 </style>

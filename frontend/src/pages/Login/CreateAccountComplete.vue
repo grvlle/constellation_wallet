@@ -9,7 +9,7 @@
                 Your Private Key has been saved in this location:
               </div>
               <div
-                style="margin-top: 18px; text-align: center; font-weight: 500;"
+                style="margin-top: 1.125rem; text-align: center; font-weight: 500;"
               >
                 {{ filePath }}
               </div>
@@ -151,16 +151,16 @@ export default {
 }
 
 .checkmark {
-  width: 132px;
-  height: 132px;
+  width: 8.25rem;
+  height: 8.25rem;
   border-radius: 50%;
   display: block;
   stroke-width: 2;
   stroke: #fff;
   stroke-miterlimit: 10;
   margin: 10% auto 30%;
-  margin-bottom: 70px;
-  box-shadow: inset 0px 0px 0px #2d9cdb;
+  margin-bottom: 4.375rem;
+  box-shadow: inset 0 0 0 #2d9cdb;
   animation: fill 0.4s ease-in-out 0.4s forwards,
     scale 0.3s ease-in-out 0.9s both;
 }
@@ -187,7 +187,7 @@ export default {
 }
 @keyframes fill {
   100% {
-    box-shadow: inset 0px 0px 0px 90px #2d9cdb;
+    box-shadow: inset 0 0 0 5.625rem #2d9cdb;
   }
 }
 </style>

@@ -134,7 +134,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.DB.AutoMigrate(&models.Wallet{}, &models.TXHistory{}, &models.Path{}, &models.Contact{})
 	a.detectJavaPath()
 	a.initMainnetConnection()
-	//a.newReleaseAvailable()
+	a.newReleaseAvailable()
 	a.HWAddr = a.getLocalIpAndMacAddr()
 
     if a.HWAddr != "" {

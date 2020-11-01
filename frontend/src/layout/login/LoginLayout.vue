@@ -48,12 +48,12 @@
     </div>
     <div class="logo">
       <img
-        style="height: 60px;"
+        style="height: 3.75rem;"
         v-if="isDarkMode"
         src="~@/assets/img/stardust-collective-logo-white.png"
       />
       <img
-        style="height: 60px;"
+        style="height: 3.75rem;"
         v-else
         src="~@/assets/img/stardust-collective-logo-black.png"
       />
@@ -165,8 +165,8 @@ export default {
   font-size: 0.7rem;
   text-align: right;
   font-family: Poppins;
-  margin-right: 24px;
-  margin-bottom: 24px;
+  margin-right: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .go-back-btn {
@@ -191,20 +191,20 @@ export default {
   color: #2d9cdb;
   font-family: Poppins;
   font-weight: 500;
-  font-size: 28px;
-  line-height: 24px;
-  margin-bottom: 48px;
+  font-size: 1.75rem;
+  line-height: 1.5rem;
+  margin-bottom: 3rem;
 }
 
 .sub-title {
   color: #666666;
   font-family: Poppins;
   font-weight: 500;
-  font-size: 14px;
-  line-height: 24px;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
 
   &:last-child {
-    margin-bottom: 48px;
+    margin-bottom: 3rem;
   }
 }
 

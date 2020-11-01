@@ -246,36 +246,36 @@ export default {
 
 .btn-secondary {
   background: #db6e44;
-  border: 1px solid #db6e44;
+  border: 0.0625rem solid #db6e44;
   font-family: Poppins;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
   text-align: center;
   letter-spacing: 0.1em;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   color: #ffffff;
 
   &:hover {
     background: #af5836;
-    border: 1px solid #af5836;
+    border: 0.0625rem solid #af5836;
   }
 
   &:active,
   &:focus {
     background: #db6e44 !important;
-    border: 1px solid #db6e44 !important;
+    border: 0.0625rem solid #db6e44 !important;
   }
 
   &:active {
     outline-color: #db6e44 !important;
-    outline-width: 0px;
+    outline-width: 0;
   }
 
   &:disabled {
     background: #e9a88f !important;
-    border: 1px solid #e9a88f !important;
+    border: 0.0625rem solid #e9a88f !important;
   }
 }
 

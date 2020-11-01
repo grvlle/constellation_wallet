@@ -191,17 +191,17 @@ export default {
 
 <style scoped lang="scss">
 .inputfile {
-  height: 36px;
+  height: 2.25rem;
   width: 100%;
   border-radius: 0.25rem;
   //font-size: 0.75em;
   font-weight: 600;
-  border: 1px solid #dddddd;
+  border: 0.0625rem solid #dddddd;
   display: block;
   background: #f9f7f7 !important;
   font-family: Poppins;
   color: #666666;
-  padding: 6px 16px;
+  padding: 0.375rem 1rem;
 }
 
 .login-box {
@@ -218,8 +218,8 @@ export default {
   font-family: Poppins;
   font-style: normal;
   font-weight: normal;
-  font-size: 10px;
-  line-height: 15px;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
   letter-spacing: 0.05em;
   color: #eb5757;
   &.resolved {

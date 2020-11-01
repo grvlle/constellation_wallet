@@ -120,7 +120,7 @@ $color-discord: #7289da;
 
 .link {
   color: #2d9cdb;
-  padding: 0px;
+  padding: 0;
 
   &:hover {
     text-decoration: underline;

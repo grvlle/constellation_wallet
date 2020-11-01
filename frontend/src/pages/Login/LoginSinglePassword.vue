@@ -106,8 +106,8 @@ export default {
         .fire({
           title: "Important Update",
           html: `<br><p class="login-content">If you have previously signed in using a P12 file (versions 1.2.x and earlier), you will need to migrate your file to the JSON format.</p>`,
-          width: 300,
-          padding: 12,
+          width: "18.75rem",
+          padding: "0.75rem",
           toast: true,
           background: "#DD8D74",
           position: "top-end",

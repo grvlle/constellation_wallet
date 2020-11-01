@@ -77,7 +77,7 @@ export default {
 <style scoped lang="scss">
 .form-control {
   background: #f9f7f7 !important;
-  height: 36px;
+  height: 2.25rem;
 }
 .inputfile {
   width: 0.1px;
@@ -90,7 +90,7 @@ export default {
 .inputfile + label {
   cursor: pointer;
   padding: 9px 12px;
-  height: 36px;
+  height: 2.25rem;
   border-radius: 0 0.25rem 0.25rem 0;
   font-size: 0.75em;
   border: 1px solid #666;

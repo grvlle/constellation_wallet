@@ -144,7 +144,7 @@ export default {
   color: #666666;
   font-family: Poppins;
 
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
@@ -158,12 +158,12 @@ export default {
 .primary-btn {
   padding: 25px 80px;
   display: inline-block;
-  margin: 15px 0px;
+  margin: 15px 0;
   width: 100%;
   height: 90px;
   border-radius: 3px;
   background: #1d40b3;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: white;
   outline: none;
   border: none;

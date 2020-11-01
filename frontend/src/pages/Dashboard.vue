@@ -382,7 +382,7 @@ export default {
 
 .test-dag-btn:hover {
   background: #df7f62;
-  box-shadow: 0px 1px 1px #dd8d74;
+  box-shadow: 0 1px 1px #dd8d74;
 }
 
 .wallet-address > p-button {

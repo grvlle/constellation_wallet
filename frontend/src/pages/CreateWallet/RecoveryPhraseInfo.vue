@@ -68,7 +68,7 @@ export default {
   color: #666666;
   font-family: Poppins;
 
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 

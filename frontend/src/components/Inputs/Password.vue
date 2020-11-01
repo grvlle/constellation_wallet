@@ -112,7 +112,7 @@ export default {
 .form-control {
   background: #f9f7f7 !important;
   color: #666666;
-  height: 36px;
+  height: 2.25rem;
 }
 .validate {
   height: 0.625em;
@@ -139,7 +139,7 @@ export default {
   background-color: #666;
   display: inline-block;
   font-family: Poppins;
-  width: 36px;
+  width: 2.25rem;
   font-style: normal;
   font-weight: 500;
   font-size: 10px;

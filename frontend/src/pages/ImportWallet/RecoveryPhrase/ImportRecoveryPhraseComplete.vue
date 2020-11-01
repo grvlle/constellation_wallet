@@ -146,7 +146,7 @@ export default {
   stroke: #fff;
   stroke-miterlimit: 10;
   margin: 10% auto 30%;
-  box-shadow: inset 0px 0px 0px #1D40B3;
+  box-shadow: inset 0 0 0 #1D40B3;
   animation: fill 0.4s ease-in-out 0.4s forwards,
     scale 0.3s ease-in-out 0.9s both;
 }
@@ -173,7 +173,7 @@ export default {
 }
 @keyframes fill {
   100% {
-    box-shadow: inset 0px 0px 0px 90px#1D40B3;
+    box-shadow: inset 0 0 0 90px #1D40B3;
   }
 }
 </style>

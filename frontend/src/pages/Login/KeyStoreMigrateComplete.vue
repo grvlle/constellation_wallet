@@ -149,8 +149,8 @@ div.input-box {
   font-family: Poppins;
   font-style: normal;
   font-weight: 500;
-  font-size: 10.25rem;
-  line-height: 20.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
   color: #666666;
 }
 
@@ -222,7 +222,7 @@ div.input-box {
 }
 @keyframes fill {
   100% {
-    box-shadow: inset 0 0 0 90 #db6e44;
+    box-shadow: inset 0 0 0 5.625rem #db6e44;
   }
 }
 </style>

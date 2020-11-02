@@ -47,9 +47,9 @@ func (a *WalletApplication) MigrateWallet(keystorePath, keystorePassword, keyPas
         if err != nil {
             return "", errors.New("Unable to access the file system")
         }
-        pKeyFilePath = wKeyFilePath + "/id_ecdsa.hex"
+        pKeyFilePath = filepath.Join(wKeyFilePath, "id_ecdsa.hex");
     } else {
-        pKeyFilePath = filepath.Dir(keystorePath) + "/id_ecdsa.hex"
+        pKeyFilePath = filepath.Join(filepath.Dir(keystorePath), "id_ecdsa.hex")
     }
 
     a.log.Infoln("Migrate working directory - " + pKeyFilePath);

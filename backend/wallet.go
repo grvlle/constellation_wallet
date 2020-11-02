@@ -40,7 +40,19 @@ func (a *WalletApplication) MigrateWallet(keystorePath, keystorePassword, keyPas
     os.Setenv("CL_STOREPASS", keystorePassword)
     os.Setenv("CL_KEYPASS", keyPassword)
 
-    pKeyFilePath := filepath.Dir(keystorePath) + "/id_ecdsa.hex"
+    var pKeyFilePath string
+
+    if runtime.GOOS == "windows"  {
+        wKeyFilePath, err := os.Getwd()
+        if err != nil {
+            return "", errors.New("Unable to access the file system")
+        }
+        pKeyFilePath = wKeyFilePath + "/id_ecdsa.hex"
+    } else {
+        pKeyFilePath = filepath.Dir(keystorePath) + "/id_ecdsa.hex"
+    }
+
+    a.log.Infoln("Migrate working directory - " + pKeyFilePath);
 
     if a.fileExists(pKeyFilePath) {
         err := os.Remove(pKeyFilePath)

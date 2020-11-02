@@ -44,7 +44,7 @@ distribution/OS and CPU architecture.
   
 #### 3. Install Wails  
   
-The Molly Wallet is built using a light-weight framework for Desktop Applications using Go and VueJS. [Wails](https://github.com/wailsapp/wails) is very similar to Electron but does not packaging the full Chromium web browser as a dependency.  
+The Molly Wallet is built using a light-weight framework for Desktop Applications using Go and VueJS. [Wails](https://github.com/wailsapp/wails) is very similar to Electron but does not include the full Chromium web browser as a dependency.  
   
   
 ###### MacOS  

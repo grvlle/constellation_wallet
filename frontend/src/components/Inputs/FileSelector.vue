@@ -32,6 +32,17 @@
         </span>
       </p-button>
       <p-button
+          v-if="action == 'SelectFile3'"
+          tabIndex="-1"
+          @click.native="browseJsonFile"
+          class="btn"
+          type="default"
+      >
+        <span style="display: block;">
+          BROWSE
+        </span>
+      </p-button>
+      <p-button
         v-if="action == 'SelectSaveFile'"
         tabIndex="-1"
         @click.native="SelectDirToStoreKey"
@@ -65,6 +76,13 @@ export default {
         }
       });
     },
+    browseJsonFile: function() {
+      window.backend.WalletApplication.BrowseJsonFile().then((result) => {
+        if (result) {
+          this.$store.commit("wallet/setKeystorePath", result);
+        }
+      });
+    },
     SelectDirToStoreKey: function() {
       window.backend.WalletApplication.SelectDirToStoreKey().then((result) => {
         this.$store.commit("wallet/setKeystorePath", result);
@@ -80,8 +98,8 @@ export default {
   height: 2.25rem;
 }
 .inputfile {
-  width: 0.0.0625rem;
-  height: 0.0.0625rem;
+  width: 0.0625rem;
+  height: 0.0625rem;
   opacity: 0;
   overflow: hidden;
   position: absolute;

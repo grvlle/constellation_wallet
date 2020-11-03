@@ -80,7 +80,6 @@
 <script>
 import Swal from "sweetalert2/dist/sweetalert2";
 import { mapState } from "vuex";
-import { keyStore } from "@stardust-collective/dag-keystore";
 
 export default {
   components: {},
@@ -143,18 +142,18 @@ export default {
       this.valid_password = is_valid;
       this.confirmPassword();
     },
-    createKeyStore: async function() {
+    createKeyStore: function() {
       var self = this;
       self.$Progress.start();
       self.overlay = true;
 
-      const jsonObj = await keyStore.generateEncryptedPrivateKey(
-        this.keyPassword
-      );
+      // const jsonObj = await keyStore.generateEncryptedPrivateKey(
+      //   this.keyPassword
+      // );
 
       return window.backend.WalletApplication.CreateKeyStoreFile(
         this.fileName,
-        JSON.stringify(jsonObj)
+        this.keyPassword
       ).then((filePath) => {
         if (filePath) {
           self.overlay = false;

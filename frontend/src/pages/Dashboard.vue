@@ -197,7 +197,7 @@ export default {
       this.overlay = true;
       this.$Progress.start();
       let dateNum = Date.now()
-      let dateStr = new Date(dateNum).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
+      let dateStr = let dateStr = calcTime(-8);
       window.backend.WalletApplication.RegisterCampaign(
         dagWalletAccount.keyTrio.publicKey.substring(2), dateNum.toString(), dateStr
       ).then((result) => {
@@ -320,6 +320,19 @@ export default {
     };
   },
 };
+
+function calcTime(offset) {
+
+  let d = new Date();
+  let utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+
+  // create new Date object for different city
+  // using supplied offset
+  let nd = new Date(utc + (3600000*offset));
+
+  return nd.toLocaleString();
+}
+
 </script>
 
 <style scoped lang="scss">

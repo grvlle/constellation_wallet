@@ -83,7 +83,6 @@
 
 <script>
 import Swal from "sweetalert2/dist/sweetalert2";
-import {keyStore} from "@stardust-collective/dag-keystore";
 
 export default {
   name: "keystore-migrate",
@@ -139,41 +138,25 @@ export default {
           self.keystorePassword,
           self.KeyPassword,
           self.alias
-        ).then(
-          async (privateKey) => {
-
-            const jsonObj = await keyStore.generateEncryptedPrivateKey(
-                this.keystorePassword, privateKey
-            );
-
-            return window.backend.WalletApplication.SaveMigrateKeyStoreFile(
-                self.keystorePath,
-                JSON.stringify(jsonObj)
-            ).then((filePath) => {
-              if (filePath) {
-                self.overlay = false;
-                self.$Progress.finish();
-                this.$store.dispatch("wallet/reset").then(() => {
-                  this.$router.push({
-                    name: "keystore migration complete",
-                    params: {
-                      title: "Molly Wallet migration wizard",
-                      filePath: filePath,
-                      message:
-                          "Congratulations! You have completed the Molly Wallet file migration!",
-                    }
-                  });
-                });
-              } else {
-                self.overlay = false;
-                self.$Progress.fail();
-              }
-            },
-            (error) => {
+        ).then((filePath) => {
+            if (filePath) {
               self.overlay = false;
               self.$Progress.finish();
-              Swal.fire("Unable to migrate file", error, "error");
-            });
+              this.$store.dispatch("wallet/reset").then(() => {
+                this.$router.push({
+                  name: "keystore migration complete",
+                  params: {
+                    title: "Molly Wallet migration wizard",
+                    filePath: filePath,
+                    message:
+                        "Congratulations! You have completed the Molly Wallet file migration!",
+                  }
+                });
+              });
+            } else {
+              self.overlay = false;
+              self.$Progress.fail();
+            }
           },
           (error) => {
             self.overlay = false;

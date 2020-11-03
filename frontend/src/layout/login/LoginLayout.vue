@@ -10,7 +10,7 @@
       type="text/css"
     />
     <div class="container">
-      <i class="fa fa-angle-left go-back-btn" @click="$router.go(-1)"></i>
+      <i v-if="!isLoginPage" class="fa fa-angle-left go-back-btn" @click="$router.go(-1)"></i>
       <div class="row">
         <div class="header-box">
           <p
@@ -97,6 +97,11 @@ export default {
         this.$route.name === "keystore migrate" ||
         this.$route.name === "keystore migration complete" ||
         this.$route.name === "password migration"
+      );
+    },
+    isLoginPage() {
+      return (
+          this.$route.name.startsWith("login")
       );
     },
     themeBG: function() {

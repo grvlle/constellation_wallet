@@ -153,7 +153,22 @@ func (a *WalletApplication) ImportKey() string {
 	}
 
 	if keyfile[len(keyfile)-4:] != ".p12" {
-		a.LoginError("Access Denied. Not a key file.")
+		a.LoginError("Access Denied. Not a P12 file.")
+		return ""
+	}
+	a.log.Info("Path to imported key: " + keyfile)
+	return keyfile
+}
+
+func (a *WalletApplication) BrowseJsonFile() string {
+	var keyfile = a.RT.Dialog.SelectFile()
+	if keyfile == "" {
+		a.LoginError("Access Denied. No key path detected.")
+		return ""
+	}
+
+	if keyfile[len(keyfile)-5:] != ".json" {
+		a.LoginError("Access Denied. Not a JSON file.")
 		return ""
 	}
 	a.log.Info("Path to imported key: " + keyfile)

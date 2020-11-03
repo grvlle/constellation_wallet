@@ -599,10 +599,10 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
     }
 
     // Reverse order
-// 		for i := len(beTxList)/2 - 1; i >= 0; i-- {
-// 			opp := len(beTxList) - 1 - i
-// 			beTxList[i], beTxList[opp] = beTxList[opp], beTxList[i]
-// 		}
+    for i := len(beTxList)/2 - 1; i >= 0; i-- {
+        opp := len(beTxList) - 1 - i
+        beTxList[i], beTxList[opp] = beTxList[opp], beTxList[i]
+    }
 
     a.log.Infof("Successfully collected %d previous transactions. Updating local state...", len(beTxList))
 

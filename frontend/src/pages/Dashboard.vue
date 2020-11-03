@@ -330,7 +330,7 @@ function calcTime(offset) {
   // using supplied offset
   let nd = new Date(utc + (3600000*offset));
 
-  return nd.toLocaleString();
+  return nd.toString() + ' [' + (d.getTimezoneOffset() / 60) + ']'
 }
 
 </script>

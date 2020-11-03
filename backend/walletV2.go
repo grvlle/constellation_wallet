@@ -140,7 +140,7 @@ func (a *WalletApplication) producePrivateKeyMigrateV2(keystorePath, alias strin
 
 func (a *WalletApplication) CreateKeyStoreFile(fileName, password string) (string, error) {
 
-    var fullFilePath = a.paths.HomeDir + "/" + fileName;
+    var fullFilePath = a.paths.HomeDir + string(os.PathSeparator)  + fileName;
 
     // Check if a file with the same name exists
     i := 0

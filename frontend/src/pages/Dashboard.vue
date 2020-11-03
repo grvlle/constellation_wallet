@@ -197,7 +197,7 @@ export default {
       this.overlay = true;
       this.$Progress.start();
       let dateNum = Date.now()
-      let dateStr = let dateStr = calcTime(-8);
+      let dateStr = calcTime(-8);
       window.backend.WalletApplication.RegisterCampaign(
         dagWalletAccount.keyTrio.publicKey.substring(2), dateNum.toString(), dateStr
       ).then((result) => {

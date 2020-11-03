@@ -96,25 +96,25 @@ func (a *WalletApplication) getLocalIpAndMacAddr() string {
 
 // newReleaseAvailable generates a notification to FE everytime a new release on
 // GitHub doesn't match a.Version.
-func (a *WalletApplication) newReleaseAvailable() {
-	update := new(UpdateWallet)
-	update.app = a
-	currentRelease := a.Version
-
-	a.log.Infoln("Checking for new releases...")
-
-	go func() {
-		for i := 200; i > 0; i-- {
-			newRelease := update.GetLatestRelease()
-			if version.Compare(newRelease, currentRelease, ">") && newRelease != "" {
-				a.log.Infoln("There's a newer release available")
-				a.RT.Events.Emit("new_release", newRelease)
-			}
-			time.Sleep(time.Duration(i) * time.Second)
-		}
-	}()
-
-}
+// func (a *WalletApplication) newReleaseAvailable() {
+// 	update := new(UpdateWallet)
+// 	update.app = a
+// 	currentRelease := a.Version
+//
+// 	a.log.Infoln("Checking for new releases...")
+//
+// 	go func() {
+// 		for i := 200; i > 0; i-- {
+// 			newRelease := update.GetLatestRelease()
+// 			if version.Compare(newRelease, currentRelease, ">") && newRelease != "" {
+// 				a.log.Infoln("There's a newer release available")
+// 				a.RT.Events.Emit("new_release", newRelease)
+// 			}
+// 			time.Sleep(time.Duration(i) * time.Second)
+// 		}
+// 	}()
+//
+// }
 
 func (a *WalletApplication) updateTokenBalance() error {
 	balance, err := a.GetTokenBalance()

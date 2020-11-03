@@ -10,8 +10,8 @@
                   >Select your JSON Private Key</label
                 >
                 <file-selector
-                  v-model="keystoreFileName"
-                  action="SelectFile"
+                  v-model="keystorePath"
+                  action="SelectFile3"
                   @file="fileSelected"
                 />
               </div>
@@ -23,7 +23,7 @@
                     label="Password"
                     :validate="false"
                     @input="validCheck()"
-                    @enter="loadKeyStoreFile(keystoreFile, keystorePassword)"
+                    @enter="loginJsonWallet(keystorePath, keystorePassword)"
                   />
                 </div>
               </div>
@@ -36,7 +36,7 @@
                         block
                         :disabled="!valid"
                         @click.native="
-                          loadKeyStoreFile(keystoreFile, keystorePassword)
+                          loginJsonWallet(keystorePath, keystorePassword)
                         "
                       >
                         <span style="display: block">LOGIN</span>
@@ -73,22 +73,25 @@ export default {
   name: "login-single-password",
   data: () => ({
     keystorePassword: "",
-    keystoreFileName: "",
     KeyPassword: "",
     overlay: false,
-    valid: false,
-    keystoreFile: null,
+    valid: false
   }),
   mounted() {
     this.migrateNotification();
   },
+  computed: {
+    keystorePath: {
+      get() {
+        return this.$store.state.wallet.keystorePath;
+      }
+    }
+  },
   methods: {
     validCheck: function() {
-      this.valid = this.keystoreFile !== null && this.keystorePassword !== "";
+      this.valid = this.keystorePath !== null && this.keystorePassword !== "";
     },
-    fileSelected: function(value) {
-      this.keystoreFile = value;
-      this.keystoreFileName = value.name;
+    fileSelected: function() {
       this.validCheck();
     },
     migrateNotification: function() {
@@ -225,7 +228,6 @@ export default {
         keyStore.getPublicKeyFromPrivate(key)
       );
 
-
       // try {
       //   //NOTE: safely continue if window.firebase.analytics has failed to load
       //   window.firebase.analytics().logEvent('login', {address: address});
@@ -240,6 +242,41 @@ export default {
             Swal.close();
             this.initWallet();
           }
+        }
+      );
+    },
+    loginJsonWallet: function (filePath, password) {
+
+      Swal.close();
+      this.$Progress.start();
+      this.overlay = true;
+
+      window.backend.WalletApplication.LoginJsonWallet(filePath, password).then((key) => {
+          if (key) {
+            dagWalletAccount.loginPrivateKey(key);
+
+            var address = keyStore.getDagAddressFromPublicKey(
+                keyStore.getPublicKeyFromPrivate(key)
+            );
+
+            window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
+                (result) => {
+                  if (result) {
+                    this.overlay = false;
+                    this.$Progress.finish();
+                    this.initWallet();
+                  }
+                }
+            );
+          } else {
+            this.overlay = false;
+            this.$Progress.fail();
+          }
+        },
+        (error) => {
+          this.overlay = false;
+          this.$Progress.finish();
+          Swal.fire("Unable to login", error, "error");
         }
       );
     },

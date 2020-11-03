@@ -7,9 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/user"
-	"path/filepath"
 	"runtime"
-	"strconv"
 	"strings"
 	"time"
 
@@ -18,63 +16,7 @@ import (
 )
 
 
-func (a *WalletApplication) MigrateWallet(keystorePath, keystorePassword, keyPassword, alias string) (string, error) {
 
-    alias = strings.ToLower(alias)
-
-    if runtime.GOOS == "windows" && !a.javaInstalled() {
-        a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
-        return "", errors.New("Unable to detect your Java path. Please make sure that Java has been installed")
-    }
-
-    if keystorePath == "" {
-        a.LoginError("Please provide a path to the KeyStore file.")
-        return "", errors.New("Please provide a path to the KeyStore file")
-    }
-
-    if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
-        a.log.Warnln("One or more passwords were not provided.")
-        return "", errors.New("Unable to detect your Java path. Please make sure that Java has been installed")
-    }
-
-    os.Setenv("CL_STOREPASS", keystorePassword)
-    os.Setenv("CL_KEYPASS", keyPassword)
-
-    var pKeyFilePath string
-
-    if runtime.GOOS == "windows"  {
-        wKeyFilePath, err := os.Getwd()
-        if err != nil {
-            return "", errors.New("Unable to access the file system")
-        }
-        pKeyFilePath = filepath.Join(wKeyFilePath, "id_ecdsa.hex");
-    } else {
-        pKeyFilePath = filepath.Join(filepath.Dir(keystorePath), "id_ecdsa.hex")
-    }
-
-    a.log.Infoln("Migrate working directory - " + pKeyFilePath);
-
-    if a.fileExists(pKeyFilePath) {
-        err := os.Remove(pKeyFilePath)
-        if err != nil {
-            return "", errors.New("Unable to access the file system")
-        }
-    }
-
-    _, err :=  a.producePrivateKeyMigrateV2(keystorePath, alias)
-    if err != nil {
-        return "", err
-    }
-
-    content, err := ioutil.ReadFile(pKeyFilePath)
-    if err != nil {
-        return "", errors.New("Unable to extract private key")
-    }
-
-    _ = os.Remove(pKeyFilePath)
-
-    return string(content), nil
-}
 
 // ImportWallet is triggered when a user logs into a new Molly wallet for the first time
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
@@ -258,59 +200,7 @@ func (a *WalletApplication) CreateOrInitWalletV2(address string) bool {
 	return true
 }
 
-func (a *WalletApplication) SaveMigrateKeyStoreFile(p12FilePath, jsonKey string) (string, error) {
 
-    fullFilePath := filepath.Dir(p12FilePath) + string(os.PathSeparator) + strings.TrimSuffix(filepath.Base(p12FilePath),  filepath.Ext(p12FilePath)) + ".json"
-
-    a.log.Info("Saving Migrate KeyStore File to: " + fullFilePath)
-
-    if a.fileExists(fullFilePath) {
-        a.log.Errorln("Private Key file already exists: ", fullFilePath)
-        return "", errors.New("Private Key file already exists: " + fullFilePath)
-    }
-
-	message := []byte(jsonKey)
-	err := ioutil.WriteFile(fullFilePath, message, 0644)
-	if err != nil {
-        a.log.Errorln("Unable to write file. Reason: ", err)
-        return "", errors.New("Unable to write file: " + fullFilePath)
-	}
-
-    return fullFilePath, nil
-}
-
-func (a *WalletApplication) CreateKeyStoreFile(fileName, jsonKey string) string {
-
-    var fullFilePath = a.paths.HomeDir + "/" + fileName;
-
-    // Check if a file with the same name exists
-    i := 0
-    suffix := ""
-    for {
-        if (i != 0) {
-            suffix = strconv.Itoa(i)
-        }
-        if _, err := os.Stat(fullFilePath + suffix + "-key.json"); os.IsNotExist(err) {
-            break
-        }
-        i ++
-    }
-
-    fullFilePath += suffix + "-key.json"
-
-    err := WriteStringToFile(fullFilePath, jsonKey)
-    if err != nil {
-        a.log.Errorln("Unable to write file. Reason: ", err)
-        a.sendError("Unable to write file. Reason: ", err)
-        return ""
-    }
-
-    if (suffix != "") {
-        fullFilePath += "."
-    }
-
-    return fullFilePath
-}
 
 
 // CreateWallet is called when creating a new wallet in frontend component Login.vue

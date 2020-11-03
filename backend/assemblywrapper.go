@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"path/filepath"
 	"os"
 	"os/exec"
 	"runtime"
@@ -26,7 +27,7 @@ func (a *WalletApplication) runWalletCMD(tool string, scalaFunc string, scalaArg
 		main = "java"
 	}
 
-	cmds := []string{"-jar", a.paths.DAGDir + "/mw-" + tool + ".jar", scalaFunc}
+	cmds := []string{"-jar", filepath.Join(a.paths.DAGDir, "mw-" + tool + ".jar"), scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
 	a.log.Infoln("Running command: ", cmd)
@@ -189,36 +190,7 @@ func (a *WalletApplication) produceTXObject(amount int64, fee int64, address, ne
 	time.Sleep(1 * time.Second) // Will sleep for 1 sec between TXs to prevent spamming.
 }
 
-// java -jar ~/.dag/cl-keytool.jar generate-wallet --keystore testA.p12 --alias alias --storepass test1 --keypass test2
-// java -jar ~/.dag/cl-keytool.jar migrate-to-store-password-only --keystore testA.p12 --alias alias --storepass test1 --keypass test2
 
-func (a *WalletApplication) producePrivateKeyMigrateV2(keystorePath, alias string) (bool, error) {
-
-	err := a.runWalletCMD("keytool", "export-private-key-hex", "--keystore="+keystorePath, "--alias="+alias, "--env_args=true")
-	if err != nil {
-		s := err.Error()
-		if strings.Contains(s, "java.io.IOException: keystore password was incorrect") {
-			a.log.Errorln("Password is incorrect. Reason: ", err)
-			return false, errors.New("Possibly wrong KeyStore Password")
-		}
-		if strings.Contains(s, "java.security.UnrecoverableKeyException:") {
-			a.log.Errorln("Password is incorrect. Reason: ", err)
-			return false, errors.New("Possibly wrong Key Password")
-		}
-		if strings.Contains(s, "java.lang.NullPointerException\n	at org.constellation.keytool.KeyStoreUtils$.$anonfun$unlockKeyPair$1") {
-			a.log.Errorln("Alias is incorrect. Reason: ", err)
-			return false, errors.New("Unable to find alias")
-		}
-		if strings.Contains(s, "java.io.IOException: toDerInputStream rejects tag type") {
-			a.log.Errorln("Private key file type is incorrect.", err)
-			return false, errors.New("Possibly wrong Private key file type")
-		}
-		a.log.Errorln("Unable to migrate Keystore file. Reason: ", err)
-		return false, errors.New("Unable to migrate Keystore file to V2. Please report this issue")
-	}
-
-	return true, nil
-}
 
 func (a *WalletApplication) produceKeystoreMigrateV2(keystorePath, alias string) (bool, error) {
 

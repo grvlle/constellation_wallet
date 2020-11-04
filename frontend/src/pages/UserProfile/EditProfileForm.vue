@@ -4,57 +4,60 @@
       <form @submit.prevent>
         <div class="row">
           <div class="col-md-12">
-            <fg-input
+            <input
               type="text"
               label="Wallet Address"
+              class="form-control"
               :disabled="true"
               placeholder="No DAG Address found."
               v-model="address"
-            ></fg-input>
+            />
           </div>
         </div>
         <div class="row">
           <div class="col-md-12">
-            <fg-input
+            <input
               type="text"
               label="Available Balance"
+              class="form-control"
               :disabled="true"
               placeholder="0"
               v-model="normalizedAvailableBalance"
-            ></fg-input>
+            />
           </div>
         </div>
-<!--        <div class="row">-->
-<!--          <div class="col-md-12">-->
-<!--            <fg-input-->
-<!--              type="text"-->
-<!--              label="Wallet Version"-->
-<!--              :disabled="true"-->
-<!--              placeholder="0"-->
-<!--              v-model="uiVersion"-->
-<!--            ></fg-input>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="row">-->
-<!--          <div class="col-md-12">-->
-<!--            <fg-input-->
-<!--              type="text"-->
-<!--              label="Alias"-->
-<!--              :disabled="true"-->
-<!--              placeholder="0"-->
-<!--              v-model="alias"-->
-<!--            ></fg-input>-->
-<!--          </div>-->
-<!--        </div>-->
+        <!--        <div class="row">-->
+        <!--          <div class="col-md-12">-->
+        <!--            <fg-input-->
+        <!--              type="text"-->
+        <!--              label="Wallet Version"-->
+        <!--              :disabled="true"-->
+        <!--              placeholder="0"-->
+        <!--              v-model="uiVersion"-->
+        <!--            ></fg-input>-->
+        <!--          </div>-->
+        <!--        </div>-->
+        <!--        <div class="row">-->
+        <!--          <div class="col-md-12">-->
+        <!--            <fg-input-->
+        <!--              type="text"-->
+        <!--              label="Alias"-->
+        <!--              :disabled="true"-->
+        <!--              placeholder="0"-->
+        <!--              v-model="alias"-->
+        <!--            ></fg-input>-->
+        <!--          </div>-->
+        <!--        </div>-->
         <div class="row">
           <div class="col-md-12">
-            <fg-input
+            <input
               type="text"
               label="Private Key File"
               :disabled="true"
               placeholder="0"
+              class="form-control"
               v-model="keystorePath"
-            ></fg-input>
+            />
           </div>
         </div>
         <div class="clearfix"></div>
@@ -68,14 +71,9 @@ import { mapState, mapGetters } from "vuex";
 export default {
   computed: {
     ...mapState("app", ["version", "uiVersion"]),
-    ...mapState("wallet", [
-      "address",
-      "alias",
-      "keystorePath"
-    ]),
-    ...mapGetters("wallet", ["normalizedAvailableBalance"])
+    ...mapState("wallet", ["address", "alias", "keystorePath"]),
+    ...mapGetters("wallet", ["normalizedAvailableBalance"]),
   },
 };
 </script>
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

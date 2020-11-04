@@ -162,7 +162,7 @@ export default {
           if (filePath[filePath.length - 1] === ".") {
             path = filePath.slice(0, filePath.length - 1);
             Swal.fire(
-              "Info: A file already exists by the name \"" + this.fileName + "-key.json\".",
+              "Info: A file already exists by the name \"" + this.fileName + ".json\".",
               "The new file is named - " + filePath
             );
           }

@@ -24,17 +24,17 @@
             ></fg-input>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
-              label="Wallet Client Version"
-              :disabled="true"
-              placeholder="0"
-              v-model="version"
-            ></fg-input>
-          </div>
-        </div>
+<!--        <div class="row">-->
+<!--          <div class="col-md-12">-->
+<!--            <fg-input-->
+<!--              type="text"-->
+<!--              label="Wallet Version"-->
+<!--              :disabled="true"-->
+<!--              placeholder="0"-->
+<!--              v-model="uiVersion"-->
+<!--            ></fg-input>-->
+<!--          </div>-->
+<!--        </div>-->
 <!--        <div class="row">-->
 <!--          <div class="col-md-12">-->
 <!--            <fg-input-->

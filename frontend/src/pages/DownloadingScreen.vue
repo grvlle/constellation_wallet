@@ -2,9 +2,9 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6 mx-auto text-center">
-        <!-- <p v-if="downloading.filename !== ''" >
-          {{downloading.filename}}: {{downloading.size}}
-        </p> -->
+        <p v-if="downloading.filename !== ''">
+          {{ downloading.filename }}: {{ downloading.size }}
+        </p>
       </div>
     </div>
     <div class="row">

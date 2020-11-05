@@ -175,6 +175,8 @@ export default {
 }
 
 .link {
+  background: transparent;
+  border: none;
   padding: 0px;
 
   &:hover {

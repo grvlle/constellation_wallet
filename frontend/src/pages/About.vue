@@ -6,22 +6,46 @@
           <p>
             Thank you for using the Molly Wallet!
             <br />
-            <br />Molly was created by our community member
-            <b>Vito</b> and is an application  built on top of infrastructure that was produced by
-            the Constellation Engineers. 
+            <br />Molly was created by our community member <b>Vito</b> and is
+            an application built on top of infrastructure that was produced by
+            the Constellation Engineers.
             <br />
-            <br />The <b>Stardust Collective</b> development team manages all major aspects around the security and development of the wallet, while you, the user, are responsible for securing and backing up your Private Key and password (see
-            the
-            <b>FAQ</b> for best practices).
+            <br />The <b>Stardust Collective</b> development team manages all
+            major aspects around the security and development of the wallet,
+            while you, the user, are responsible for securing and backing up
+            your Private Key and password (see the <b>FAQ</b> for best
+            practices).
             <br />
             <br />
 
             <b>Something is not working. What should I do?</b>
-            <br />If you receive an error message, please visit our <button class="link" @click="openURL('https://t.me/StardustSupport')"><b>Moly Wallet Support</b></button> channel in Telegram.
+            <br />If you receive an error message, please visit our
+            <button
+              class="link"
+              @click="openURL('https://t.me/StardustSupport')"
+            >
+              <b>Molly Wallet Support</b>
+            </button>
+            channel in Telegram.
             <br />
-            <br /> Alternatively, you can check to see if this is a known issue on the wallet’s <button class="link" @click="openURL('https://github.com/StardustCollective/molly_wallet/issues')"><b>Github page</b></button>. If it is not a known bug, please create an issue in the provided link with a thorough explanation of the problem. 
-            <br /> 
-            <br /> Regardless of what error or bug you may encounter, your funds will not be jeopardized by this software.
+            <br />
+            Alternatively, you can check to see if this is a known issue on the
+            wallet’s
+            <button
+              class="link"
+              @click="
+                openURL(
+                  'https://github.com/StardustCollective/molly_wallet/issues'
+                )
+              "
+            >
+              <b>Github page</b></button
+            >. If it is not a known bug, please create an issue in the provided
+            link with a thorough explanation of the problem.
+            <br />
+            <br />
+            Regardless of what error or bug you may encounter, your funds will
+            not be jeopardized by this software.
           </p>
         </card>
       </div>
@@ -30,16 +54,25 @@
       <div class="col d-flex">
         <card title="Frequently Asked Questions">
           <div>
-            <b>I thought $DAG was free to transact, why do I need to enter a fee?</b>
-            <br />$DAG transactions are indeed free - you can leave this field as 0. The fee is intended for users with higher data throughput needs.
+            <b
+              >I thought $DAG was free to transact, why do I need to enter a
+              fee?</b
+            >
+            <br />$DAG transactions are indeed free - you can leave this field
+            as 0. The fee is intended for users with higher data throughput
+            needs.
             <br />
             <br />
             <b>How do I securely backup my wallet?</b>
-            <br />When creating a new wallet you will be required to create a <b>Private Key (JSON file) </b>and a <b>Password</b>. 
+            <br />When creating a new wallet you will be required to create a
+            <b>Private Key (JSON file) </b>and a <b>Password</b>.
             <br />
-            <br />It is important to make a copy of both of these two components, as backup, and keep it in a secure place.
+            <br />It is important to make a copy of both of these two
+            components, as backup, and keep it in a secure place.
             <br />
-            <br /> If you lose your Private Key or your Password, <b>you will not be able to access your wallet</b>.
+            <br />
+            If you lose your Private Key or your Password,
+            <b>you will not be able to access your wallet</b>.
             <br />
             <br />In summary, the two components below need to be backed up:
             <br />
@@ -62,8 +95,8 @@ export default {
     return {
       type: ["", "info", "success", "warning", "danger"],
       notifications: {
-        topCenter: false
-      }
+        topCenter: false,
+      },
     };
   },
   methods: {
@@ -77,11 +110,10 @@ export default {
         icon: "ti-gift",
         horizontalAlign: horizontalAlign,
         verticalAlign: verticalAlign,
-        type: this.type[color]
-        
+        type: this.type[color],
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -121,6 +153,8 @@ $color-discord: #7289da;
 .link {
   color: #2d9cdb;
   padding: 0;
+  background: transparent;
+  border: none;
 
   &:hover {
     text-decoration: underline;

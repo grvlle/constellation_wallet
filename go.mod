@@ -13,7 +13,7 @@ require (
 	github.com/pborman/uuid v0.0.0-20170112150404-1b00554d8222
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/sirupsen/logrus v1.4.2
-	github.com/wailsapp/wails v1.9.1
+	github.com/wailsapp/wails v1.8.0
 	github.com/zalando/go-keyring v0.1.0
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 	golang.org/x/sys v0.0.0-20201101102859-da207088b7d1 // indirect

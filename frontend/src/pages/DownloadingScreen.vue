@@ -2,8 +2,8 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6 mx-auto text-center">
-        <p v-if="downloading.filename !== ''" >
-          {{downloading.filename}}: {{downloading.size}}
+        <p v-if="downloading.filename !== ''">
+          {{ downloading.filename }}: {{ downloading.size }}
         </p>
       </div>
     </div>
@@ -17,29 +17,30 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState } from "vuex";
 import Loader from "../components/Loader";
 export default {
   name: "downloading-screen",
   components: {
-    Loader
+    Loader,
   },
   created: function() {
     var self = this;
-    window.backend.WalletApplication.CheckAndFetchWalletCLI().then(exists => {
+    window.backend.WalletApplication.CheckAndFetchWalletCLI().then((exists) => {
       if (exists) {
         self.$router.push({
-          name: 'login single password',
-          params: {message: "Please enter the credentials to your Private Key file."}
+          name: "login single password",
+          params: {
+            message: "Please enter the credentials to your Private Key file.",
+          },
         });
       }
     });
   },
   computed: {
-    ...mapState('app', ['downloading']) 
+    ...mapState("app", ["downloading"]),
   },
 };
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

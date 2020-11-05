@@ -1,7 +1,7 @@
 const getDefaultState = () => {
   return {
     walletLabel: "",
-    imgPath: 'faces/face-0.jpg',
+    imgPath: "faces/face-0.jpg",
     transactions: "",
     tokenAmount: "",
     totalBalance: "",
@@ -15,52 +15,59 @@ const getDefaultState = () => {
     alias: "",
     publicKey: "",
     darkMode: false,
-    termsOfService: false
-  }
-}
+    termsOfService: false,
+  };
+};
 
-const state = getDefaultState()
+const state = getDefaultState();
 
 const getters = {
   normalizedAvailableBalance: (state) => {
-    return (state.availableBalance / 1e8).toFixed(8).replace(/\.?0+$/, "");
+    const formatOptions = {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    };
+    let formatter = new Intl.NumberFormat(navigator.language, formatOptions);
+    return formatter.format(state.availableBalance / 1e8);
   },
   valueInCurrency: (state) => {
-    let currencyRate = state.currencyRates.find(v => v.currency === state.currency)
+    let currencyRate = state.currencyRates.find(
+      (v) => v.currency === state.currency
+    );
     if (currencyRate === undefined) {
-      return "..."
+      return "...";
     } else {
-      let formatOptions, value
-      value = state.availableBalance/1e8 * currencyRate.tokenprice
+      let formatOptions, value;
+      value = (state.availableBalance / 1e8) * currencyRate.tokenprice;
       if (state.currency == "BTC") {
         formatOptions = {
           style: "currency",
           currency: "XBT",
           minimumFractionDigits: 2,
-          maximumFractionDigits: 8
+          maximumFractionDigits: 8,
         };
       } else {
         formatOptions = {
           style: "currency",
           currency: state.currency,
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         };
-      }      
+      }
       let formatter = new Intl.NumberFormat(navigator.language, formatOptions);
-      return formatter.format(value).replace(/XBT/,'₿');
+      return formatter.format(value).replace(/XBT/, "₿");
     }
-  }
-}
+  },
+};
 
 const actions = {
   reset({ commit }) {
-    commit('resetState')
-  }
-}
+    commit("resetState");
+  },
+};
 const mutations = {
   resetState(state) {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultState());
   },
   setCurrency(state, currency) {
     state.currency = currency;
@@ -103,13 +110,13 @@ const mutations = {
   },
   setTermsOfService(state, termsOfService) {
     state.termsOfService = termsOfService;
-  }
-}
+  },
+};
 
 export default {
   namespaced: true,
   state,
   getters,
   actions,
-  mutations
-}
+  mutations,
+};

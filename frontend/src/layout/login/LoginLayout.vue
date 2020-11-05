@@ -10,7 +10,11 @@
       type="text/css"
     />
     <div class="container">
-      <i v-if="!isLoginPage" class="fa fa-angle-left go-back-btn" @click="$router.go(-1)"></i>
+      <i
+        v-if="!isLoginPage"
+        class="fa fa-angle-left go-back-btn"
+        @click="$router.go(-1)"
+      ></i>
       <div class="row">
         <div class="header-box">
           <p
@@ -27,12 +31,18 @@
           >
             {{ this.$route.params.title }}
           </p>
-          <p class="header-title" v-else>Welcome to Molly Wallet 2.0</p>
+          <p
+            class="header-title"
+            v-else
+            v-bind:class="{ 'text-center': !this.$route.params.message }"
+          >
+            Welcome to Molly Wallet 2.0
+          </p>
 
           <p class="sub-title" v-if="this.$route.params.message">
             {{ this.$route.params.message }}
           </p>
-          <p class="sub-title" v-else>
+          <p class="sub-title text-center" v-else>
             Downloading $DAG wallet dependencies...
           </p>
           <div class="page-error-box text-danger" v-if="displayLoginError">
@@ -100,9 +110,7 @@ export default {
       );
     },
     isLoginPage() {
-      return (
-          this.$route.name.startsWith("login")
-      );
+      return this.$route.name.startsWith("login");
     },
     themeBG: function() {
       if (this.isDarkMode) {

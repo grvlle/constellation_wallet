@@ -17,14 +17,14 @@
         >
           <div class="container">
             <table class="table-noheader">
-<!--              <tr>-->
-<!--                <td>-->
-<!--                  <p>Nodes Online (dummy data)</p>-->
-<!--                </td>-->
-<!--                <td align="right">-->
-<!--                  <toggle-switch v-model="toggle.nodesOnline" />-->
-<!--                </td>-->
-<!--              </tr>-->
+              <!--              <tr>-->
+              <!--                <td>-->
+              <!--                  <p>Nodes Online (dummy data)</p>-->
+              <!--                </td>-->
+              <!--                <td align="right">-->
+              <!--                  <toggle-switch v-model="toggle.nodesOnline" />-->
+              <!--                </td>-->
+              <!--              </tr>-->
               <tr>
                 <td>
                   <p>Transactions (dummy data)</p>
@@ -117,12 +117,13 @@
                       Private Key File
                     </p>
                   </label>
-                  <fg-input
+                  <input
                     type="text"
                     :disabled="true"
+                    class="form-control"
                     placeholder="Private Key File"
                     :value="keystorePath"
-                  ></fg-input>
+                  />
                 </div>
               </div>
               <!-- <div class="row">

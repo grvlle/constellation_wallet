@@ -16,7 +16,7 @@ const (
 	dummyValue             = 1000
 	updateIntervalToken    = 30 // Seconds
 	updateIntervalCurrency = 50 // Seconds
-	updateIntervalBlocks   = 5  // Seconds
+	updateIntervalBlocks   = 15  // Seconds
 	updateIntervalPieChart = 60 // Seconds
 )
 
@@ -174,15 +174,39 @@ func (a *WalletApplication) networkStats(cd *ChartData) {
 
 // BlockAmount is a temporary function
 func (a *WalletApplication) blockAmount() {
-	var randomNumber int
 	go func() {
 		for {
 			select {
 			case <-a.killSignal:
 				return
 			default:
-				randomNumber = rand.Intn(dummyValue)
-				a.RT.Events.Emit("blocks", randomNumber)
+				resp, err := http.Get(a.Network.BlockExplorer.URL + "/snapshot/latest")
+				if err != nil {
+					a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+					return
+				}
+
+				defer resp.Body.Close()
+
+				if resp.Body == nil {
+					return
+				}
+
+				bodyBytes, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					return
+				}
+
+				// Declared an empty interface
+				var result map[string]interface{}
+
+				// Unmarshal or Decode the JSON to the interface.
+				err = json.Unmarshal(bodyBytes, &result)
+				if err != nil {
+					return
+				}
+
+				a.RT.Events.Emit("blocks", result["height"])
 				UpdateCounter(updateIntervalBlocks, "block_counter", time.Second, a.RT)
 				time.Sleep(updateIntervalBlocks * time.Second)
 			}

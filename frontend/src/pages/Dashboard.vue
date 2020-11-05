@@ -57,7 +57,7 @@
             <i class="fas fa-cube"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
-            <p>Blocks</p>
+            <p>Block Height</p>
             {{ stat.blocks }}
             <!-- {{this.$store.state.OS.windows}}
             {{this.$store.state.OS.macOS}}
@@ -190,29 +190,40 @@ export default {
           "right",
           1,
           "Already Registered",
-            "You have already registered with account \"" + this.campaignClaimAddr + "\""
+          'You have already registered with account "' +
+            this.campaignClaimAddr +
+            '"'
         );
         return;
       }
       this.overlay = true;
       this.$Progress.start();
-      let dateNum = Date.now()
+      let dateNum = Date.now();
       let dateStr = calcTime(-8);
       window.backend.WalletApplication.RegisterCampaign(
-        dagWalletAccount.keyTrio.publicKey.substring(2), dateNum.toString(), dateStr
+        dagWalletAccount.keyTrio.publicKey.substring(2),
+        dateNum.toString(),
+        dateStr
       ).then((result) => {
         if (result) {
           this.overlay = false;
           this.$Progress.finish();
           this.campaignClaimAddr = dagWalletAccount.keyTrio.address;
-          this.addNotificationDialog("top", "right", 2, TestDagRequestedNotification);
+          this.addNotificationDialog(
+            "top",
+            "right",
+            2,
+            TestDagRequestedNotification
+          );
         } else {
           this.addNotificationMessage(
-              "top",
-              "right",
-              1,
-              "Already Registered",
-              "You have already registered with account \"" + this.campaignClaimAddr + "\""
+            "top",
+            "right",
+            1,
+            "Already Registered",
+            'You have already registered with account "' +
+              this.campaignClaimAddr +
+              '"'
           );
           this.$Progress.finish();
           this.overlay = false;
@@ -229,7 +240,12 @@ export default {
         successful ? "successful" : "unsuccessful";
         this.addNotificationDialog("top", "right", 2, WalletCopiedNotification);
       } catch (err) {
-        this.addNotificationDialog("top", "right", 4, WalletCopiedFailedNotification);
+        this.addNotificationDialog(
+          "top",
+          "right",
+          4,
+          WalletCopiedFailedNotification
+        );
         alert("Oops, unable to copy");
       }
 
@@ -237,7 +253,13 @@ export default {
       testingCodeToCopy.setAttribute("type", "hidden");
       window.getSelection().removeAllRanges();
     },
-    addNotificationMessage(verticalAlign, horizontalAlign, color, title, message) {
+    addNotificationMessage(
+      verticalAlign,
+      horizontalAlign,
+      color,
+      title,
+      message
+    ) {
       this.$notify({
         title: title,
         message: message,
@@ -268,11 +290,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("wallet", [
-      "currency",
-      "address",
-      "isCampaignActive",
-    ]),
+    ...mapState("wallet", ["currency", "address", "isCampaignActive"]),
     ...mapGetters("wallet", ["valueInCurrency", "normalizedAvailableBalance"]),
     ...mapState("dashboard", ["counters", "toggle", "stat", "chart"]),
     ...mapState("app", ["onTestnet"]),
@@ -322,17 +340,15 @@ export default {
 };
 
 function calcTime(offset) {
-
   let d = new Date();
-  let utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+  let utc = d.getTime() + d.getTimezoneOffset() * 60000;
 
   // create new Date object for different city
   // using supplied offset
-  let nd = new Date(utc + (3600000*offset));
+  let nd = new Date(utc + 3600000 * offset);
 
-  return nd.toString() + ' [' + (d.getTimezoneOffset() / 60) + ']'
+  return nd.toString() + " [" + d.getTimezoneOffset() / 60 + "]";
 }
-
 </script>
 
 <style scoped lang="scss">

@@ -131,8 +131,17 @@ func (a *WalletApplication) producePrivateKeyMigrateV2(keystorePath, alias strin
 			a.log.Errorln("Private key file type is incorrect.", err)
 			return false, errors.New("Possibly wrong Private key file type")
 		}
-		a.log.Errorln("Unable to migrate Keystore file. Reason: ", err)
-		return false, errors.New("Unable to migrate Keystore file to V2. Please report this issue")
+		if strings.Contains(s, "Permission denied") {
+            a.log.Errorln("Unable to write to the same directory as your P12 file", err)
+            return false, errors.New("Unable to write to the same directory as your P12 file")
+		}
+		errStr := err.Error()
+		maxLen := len(errStr)
+		if maxLen > 200 {
+		    maxLen = 200
+		}
+		a.log.Errorln("Unable to migrate Keystore file. Reason: ", maxLen, err)
+		return false, errors.New("Reason: " + errStr[0:maxLen])
 	}
 
 	return true, nil

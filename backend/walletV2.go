@@ -132,8 +132,8 @@ func (a *WalletApplication) producePrivateKeyMigrateV2(keystorePath, alias, wrkD
 			return false, errors.New("Possibly wrong Private key file type")
 		}
 		if strings.Contains(s, "Permission denied") || strings.Contains(s, "Access is denied") {
-            a.log.Errorln("Unable to write to the same directory as your P12 file", err)
-            return false, errors.New("Permission denied. Reason: Unable to write to this directory: " + wrkDir)
+            a.log.Errorln("Unable to write to the working directory", err)
+            return false, errors.New("Permission denied. Unable to write to the same directory Molly Wallet is executed from: " + wrkDir)
 		}
 		errStr := err.Error()
 		maxLen := len(errStr)

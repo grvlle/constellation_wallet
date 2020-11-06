@@ -30,7 +30,7 @@ export default {
     };
   },
   onIdle() {
-    let timerInterval, closeInSeconds = 10
+    let timerInterval, closeInSeconds = 60
     const swalPopup = Swal.mixin({
       customClass: {
         container: this.darkMode
@@ -208,10 +208,6 @@ export default {
       this.$store.commit('app/setDownloadFileSize', size);
     });
 
-    // Login.vue sockets
-    // window.wails.Events.On("registeredLogin", event => {});
-
-    // Dashboard.vue sockets
     window.wails.Events.On("token", (amount, available, total) => {
       this.$store.commit('wallet/setTokenAmount', amount);
       this.$store.commit('wallet/setAvailableBalance', available);
@@ -220,9 +216,12 @@ export default {
     window.wails.Events.On("blocks", number => {
       this.$store.commit('dashboard/setBlocks', number);
     });
-    window.wails.Events.On("totalValue", (currency, value) => {
-      this.$store.commit('wallet/setCurrency', currency);
-      this.$store.commit('wallet/setTotalValue', value);
+    window.wails.Events.On("tokenPrice", tokenPrice => {
+      let rates = []
+      rates.push({currency: "USD", tokenprice: tokenPrice.DAG.USD});
+      rates.push({currency: "EUR", tokenprice: tokenPrice.DAG.EUR});
+      rates.push({currency: "BTC", tokenprice: tokenPrice.DAG.BTC});
+      this.$store.commit('wallet/setCurrencyRates', rates);
     });
     window.wails.Events.On("token_counter", count => {
       this.$store.commit('dashboard/setTokenCounter', count);
@@ -244,7 +243,7 @@ export default {
     });
     window.wails.Events.On("tx_stats", (seriesOne, seriesTwo, labels) => {
       if (Object.entries(seriesOne).length != 0 && 
-          Object.entries(seriesTwo).length != 0 && 
+          Object.entries(seriesTwo).length != 0 &&
           Object.entries(labels).length != 0) {
         this.$store.commit({type: 'dashboard/setTransactionStatsChart', seriesOne, seriesTwo, labels});
       }
@@ -257,10 +256,22 @@ export default {
       }
     });
 
-    // Settings.vue sockets
+    window.wails.Events.On("currency", currency => {
+      this.$store.commit('wallet/setCurrency', currency);
+    });
+
     window.wails.Events.On("wallet_keys", address => {
       this.$store.commit('wallet/setAddress', address);
     });
+
+    window.wails.Events.On("campaign_status", address => {
+      this.$store.commit('wallet/setCampaignStatus', address);
+    });
+
+    window.wails.Events.On("campaign_claim", address => {
+      this.$store.commit('wallet/setCampaignClaim', address);
+    });
+
   }
 };
 </script>
@@ -272,7 +283,7 @@ export default {
     font-size: 0.875rem;
   }
   .alert[data-notify="container"] {
-    width: 21.875rem;
+    width: 27.875rem;
   }
   .alert-icon {
     margin-left: -0.5em;

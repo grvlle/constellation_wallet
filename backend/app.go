@@ -70,7 +70,24 @@ type WalletApplication struct {
 		URL     string
 		Version string
 	}
+    KeyToolCLI struct {
+        URL     string
+        Version string
+    }
+    HWAddr string
 }
+
+// Constants of the application
+const (
+	ServiceLogin = "molly-wallet-login"
+	ServiceSeed = "molly-wallet-seed"
+	ServicePKey = "molly-wallet-pkey"
+
+	MainnetBlockExplorerURL = "https://block-explorer.constellationnetwork.io"
+	TestnetBlockExplorerURL = "https://api-be.exchanges.constellationnetwork.io"
+	MainnetLoadBalancerURL = "http://lb.constellationnetwork.io:9000"
+	TestnetLoadBalancerURL = "http://lb.exchanges.constellationnetwork.io:9000"
+)
 
 // WailsShutdown is called when the application is closed
 func (a *WalletApplication) WailsShutdown() {
@@ -104,18 +121,25 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.killSignal = make(chan struct{}) // Used to kill go routines and hand back system resources
 	a.wallet.Currency = "USD"          // Set default currency
 	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download"
-	a.WalletCLI.Version = "2.6.0"
-	a.Version = "1.2.0"
+	a.WalletCLI.Version = "2.16.2"
+    a.KeyToolCLI.URL = "https://github.com/StardustCollective/molly_wallet/releases/download"
+    a.KeyToolCLI.Version = "2.0-alpha"
+	a.Version = "2.0.2"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {
 		a.log.Panicln("failed to connect database", err)
 	}
 	// Migrate the schema
-	a.DB.AutoMigrate(&models.Wallet{}, &models.TXHistory{}, &models.Path{})
+	a.DB.AutoMigrate(&models.Wallet{}, &models.TXHistory{}, &models.Path{}, &models.Contact{})
 	a.detectJavaPath()
 	a.initMainnetConnection()
-	a.newReleaseAvailable()
+	//a.newReleaseAvailable()
+	a.HWAddr = a.getLocalIpAndMacAddr()
+
+    if a.HWAddr != "" {
+	    a.log.Infoln("Physical hardware address: ", a.HWAddr)
+	}
 
 	return nil
 }
@@ -162,17 +186,17 @@ func (a *WalletApplication) initDirectoryStructure() error {
 
 // initMainnetConnection populates the WalletApplication struct with mainnet data
 func (a *WalletApplication) initMainnetConnection() {
-	a.Network.URL = "http://lb.constellationnetwork.io:9000" // Temp
+	a.Network.URL = MainnetLoadBalancerURL // Temp
 
 	a.Network.Handles.Send = "/send"
 	a.Network.Handles.Transaction = "/transaction"
 	a.Network.Handles.Balance = "/address/"
 
-	a.Network.BlockExplorer.URL = "https://xju69fets2.execute-api.us-west-1.amazonaws.com/cl-block-explorer-mainnet"
+	a.Network.BlockExplorer.URL = MainnetBlockExplorerURL
 	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"
-	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoints/"
-	a.Network.BlockExplorer.Handles.Snapshots = "/snapshots/"
-	a.Network.BlockExplorer.Handles.CollectTX = "/transactions?sender="
+	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoint-block/"
+	a.Network.BlockExplorer.Handles.Snapshots = "/snapshot/"
+	// a.Network.BlockExplorer.Handles.CollectTX = "/transactions?sender="
 }
 
 // APIError reported by the blockexplerer/loadbalancer are reported in the following format
@@ -231,7 +255,7 @@ func (a *WalletApplication) sendError(msg string, err error) {
 
 		a.RT.Events.Emit("error_handling", msg, errStr+" ...")
 	} else {
-		a.RT.Events.Emit("error_handling", msg+" ...")
+		a.RT.Events.Emit("error_handling", msg, "")
 	}
 
 }

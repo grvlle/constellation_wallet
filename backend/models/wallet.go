@@ -17,7 +17,7 @@ type Wallet struct {
 	KeyPasswordHash      string
 	KeyStorePath         string
 	WalletAlias          string      `gorm:"primary_key;unique"`
-	Addresses            []Address   `sql:"-"`
+	Contact              []Contact   `gorm:"foreignkey:Alias"`
 	TXHistory            []TXHistory `gorm:"foreignkey:Alias"`
 	ProfilePicture       string
 	WalletTag            string

@@ -2,10 +2,12 @@ package app
 
 import (
 	"os"
+	"os/user"
 	"runtime"
 	"strings"
 
 	"github.com/grvlle/constellation_wallet/backend/models"
+	"github.com/zalando/go-keyring"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,14 +18,50 @@ func (a *WalletApplication) LoginError(errMsg string) {
 	}
 }
 
+// LoginKeychain - login with the password of the existing keychain
+func (a *WalletApplication) LoginKeychain(keystorePassword string) string {
+	user, err := user.Current()
+
+	if err != nil {
+		a.log.Warnln("Unable to detect your username.")
+		a.LoginError("Unable to detect your username.")
+		return ""
+	}
+
+	account := user.Username
+
+	secret, err := keyring.Get(ServiceLogin, account)
+
+	a.log.Warnln("secret - " + secret);
+
+	if err != nil {
+		a.log.Warnln("Your login keychain doesn't exist.")
+		a.LoginError("Your login keychain doesn't exist.")
+		return ""
+	}
+
+	if secret != keystorePassword {
+		a.log.Warnln("Invalid password")
+		a.LoginError("Invalid password")
+		return ""
+	}
+
+	pkey, err := keyring.Get(ServicePKey, account)
+
+	a.log.Warnln("pkey - " + pkey);
+
+	if err == nil {
+	    return pkey
+	}
+
+	return "" //Unable to find a private key for this account, must import one
+}
+
 // Login is called from the FE when a user logs in with a wallet object
 // already in the DB
 func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, alias string) bool {
 
 	alias = strings.ToLower(alias)
-	a.wallet = models.Wallet{
-		KeyStorePath: keystorePath,
-		WalletAlias:  alias}
 
 	if runtime.GOOS == "windows" && !a.javaInstalled() {
 		a.LoginError("Unable to detect your Java path. Please make sure that Java has been installed.")
@@ -31,18 +69,20 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	}
 
 	if !a.TransactionFinished {
-		a.log.Warn("Cannot login to another wallet during a pending transaction.")
+		a.log.Warnln("Cannot login to another wallet during a pending transaction.")
 		a.LoginError("Cannot login to another wallet during a pending transaction.")
 		return false
 	}
 
 	if keystorePath == "" {
+		a.log.Warnln("The provided path to the keystore file is empty.")
 		a.LoginError("Please provide a path to the KeyStore file.")
 		return false
 	}
 
 	if !a.passwordsProvided(keystorePassword, keyPassword, alias) {
 		a.log.Warnln("One or more passwords were not provided.")
+		a.LoginError("One or more passwords were not provided.")
 		return false
 	}
 
@@ -54,7 +94,7 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 		return a.ImportWallet(keystorePath, keystorePassword, keyPassword, alias)
 	}
 
-	if !a.WalletKeystoreAccess() {
+	if !a.WalletKeystoreAccess(keystorePath, alias) {
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
 		return false
 	}
@@ -67,10 +107,6 @@ func (a *WalletApplication) Login(keystorePath, keystorePassword, keyPassword, a
 	// Check password strings against salted hashes stored in DB. Also make sure KeyStore has been accessed.
 	if a.CheckAccess(keystorePassword, a.wallet.KeystorePasswordHash) && a.CheckAccess(keyPassword, a.wallet.KeyPasswordHash) && a.KeyStoreAccess {
 		a.UserLoggedIn = true
-
-		// os.Setenv("CL_STOREPASS", keystorePassword)
-		// os.Setenv("CL_KEYPASS", keyPassword)
-
 	} else {
 		a.UserLoggedIn = false
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
@@ -99,6 +135,9 @@ func (a *WalletApplication) LogOut() bool {
 	if a.TransactionFinished {
 		a.UserLoggedIn = false
 		a.wallet = models.Wallet{}
+		a.Network.URL = MainnetLoadBalancerURL // Reset to default network upon every logout
+		a.Network.BlockExplorer.URL = MainnetBlockExplorerURL
+		//a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
 		return true
 	}
 	a.sendWarning("Cannot log out while transaction is processing. Please try again.")
@@ -114,11 +153,60 @@ func (a *WalletApplication) ImportKey() string {
 	}
 
 	if keyfile[len(keyfile)-4:] != ".p12" {
-		a.LoginError("Access Denied. Not a key file.")
+		a.LoginError("Access Denied. Not a P12 file.")
 		return ""
 	}
 	a.log.Info("Path to imported key: " + keyfile)
 	return keyfile
+}
+
+func (a *WalletApplication) BrowseJsonFile() string {
+	var keyfile = a.RT.Dialog.SelectFile()
+	if keyfile == "" {
+		a.LoginError("Access Denied. No key path detected.")
+		return ""
+	}
+
+	if keyfile[len(keyfile)-5:] != ".json" {
+		a.LoginError("Access Denied. Not a JSON file.")
+		return ""
+	}
+	a.log.Info("Path to imported key: " + keyfile)
+	return keyfile
+}
+
+// SelectNetwork is triggered from the login page and will change the network an loadbalancer endpoints
+func (a *WalletApplication) SelectNetwork(testnet bool) bool {
+
+	if testnet {
+		// Ceres Test Network
+		a.Network.URL = TestnetLoadBalancerURL
+		a.Network.BlockExplorer.URL = TestnetBlockExplorerURL
+		a.log.Infoln("Connected to: Ceres Test Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
+	}
+
+	if !testnet {
+		a.Network.URL = MainnetLoadBalancerURL
+		a.Network.BlockExplorer.URL = MainnetBlockExplorerURL
+		a.log.Infoln("Connected to: Main Constellation Network\n", a.Network.URL+"\n", a.Network.BlockExplorer.URL)
+	}
+
+	// Clear old TX history before initialization
+	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Association("TXHistory").Delete(&models.TXHistory{}).Error; err != nil {
+		a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
+		a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
+	}
+
+	a.RT.Events.Emit("update_tx_history", []models.TXHistory{}) // Clear TX history
+
+	// Force re-initialization and token balance update upon network switch
+	a.initWallet(a.wallet.KeyStorePath)
+	err := a.updateTokenBalance()
+	if err != nil {
+		a.log.Errorln("unable to manually update token balance upon network switch: ", err)
+	}
+
+	return testnet
 }
 
 // SelectDirToStoreKey is called from the FE when creating a new keyfile

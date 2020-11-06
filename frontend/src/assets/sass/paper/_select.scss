@@ -2,19 +2,19 @@
 
 .select {
   @include themed() {
-    background-color: t('inputBackgroundColor');
+    background-color: t("inputBackgroundColor");
   }
 }
 
 .select .vs__selected {
   @include themed() {
-    color: t('inputTextColor');
+    color: t("inputTextColor");
   }
 }
 
 .select ul {
   @include themed() {
-    background: t('inputBackgroundColor');
+    background: t("inputBackgroundColor");
   }
 }
 
@@ -22,33 +22,39 @@
 .select .vs__dropdown-toggle,
 .select .vs__dropdown-menu {
   @include themed() {
-    background: t('inputBackgroundColor');
+    background: t("inputBackgroundColor");
   }
 }
 
-.select .vs__dropdown-menu li:hover,li:focus,li:visited,li:active {
+.select .vs__dropdown-menu li:hover,
+li:focus,
+li:visited {
   @include themed() {
-    background-color: t('infoColor');
+    background-color: t("infoColor");
   }
 }
 
 .select .vs__dropdown-menu li.vs__dropdown-option {
   @include themed() {
-    color: t('inputDisabledTextColor');
+    color: t("inputDisabledTextColor");
   }
 }
 
 .select .vs__dropdown-menu li.vs__dropdown-option--highlight {
-    @include themed() {
-      background-color: t('infoColor');
-      color: t('inputTextColor');
-    }
+  @include themed() {
+    background-color: t("infoColor");
+    color: t("inputTextColor");
   }
+}
 
 .select .vs__clear,
 .select .vs__open-indicator {
   cursor: pointer;
   @include themed() {
-    fill: t('inputTextColor');
+    fill: t("inputTextColor");
   }
+}
+
+.v-select .vs__actions .vs__clear {
+  visibility: hidden !important;
 }

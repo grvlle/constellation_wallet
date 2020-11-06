@@ -1,33 +1,73 @@
 const getDefaultState = () => {
   return {
     walletLabel: "",
-    imgPath: 'faces/face-0.jpg',
-    transactions: 0,
-    tokenAmount: 0,
-    totalBalance: 0,
-    availableBalance: 0,
-    nonce: 0,
+    imgPath: "faces/face-0.jpg",
+    transactions: "",
+    tokenAmount: "",
+    totalBalance: "",
+    availableBalance: "",
     currency: "USD",
-    totalValue: 0.0,
-    address: "N/A",
+    currencyRates: [],
+    isCampaignActive: false,
+    campaignClaimAddr: "",
+    address: "",
     keystorePath: "",
     alias: "",
-    publicKey: "NaN",
+    publicKey: "",
     darkMode: false,
-    termsOfService: false
-  }
-}
+    termsOfService: false,
+  };
+};
 
-const state = getDefaultState()
+const state = getDefaultState();
+
+const getters = {
+  normalizedAvailableBalance: (state) => {
+    const formatOptions = {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    };
+    let formatter = new Intl.NumberFormat(navigator.language, formatOptions);
+    return formatter.format(state.availableBalance / 1e8);
+  },
+  valueInCurrency: (state) => {
+    let currencyRate = state.currencyRates.find(
+      (v) => v.currency === state.currency
+    );
+    if (currencyRate === undefined) {
+      return "...";
+    } else {
+      let formatOptions, value;
+      value = (state.availableBalance / 1e8) * currencyRate.tokenprice;
+      if (state.currency == "BTC") {
+        formatOptions = {
+          style: "currency",
+          currency: "XBT",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 8,
+        };
+      } else {
+        formatOptions = {
+          style: "currency",
+          currency: state.currency,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        };
+      }
+      let formatter = new Intl.NumberFormat(navigator.language, formatOptions);
+      return formatter.format(value).replace(/XBT/, "₿");
+    }
+  },
+};
 
 const actions = {
   reset({ commit }) {
-    commit('resetState')
-  }
-}
+    commit("resetState");
+  },
+};
 const mutations = {
   resetState(state) {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultState());
   },
   setCurrency(state, currency) {
     state.currency = currency;
@@ -41,11 +81,17 @@ const mutations = {
   setTotalBalance(state, total) {
     state.totalBalance = total;
   },
-  setTotalValue(state, value) {
-    state.totalValue = value;
+  setCurrencyRates(state, value) {
+    state.currencyRates = value;
   },
   setAddress(state, address) {
     state.address = address;
+  },
+  setCampaignStatus(state, status) {
+    state.isCampaignActive = status;
+  },
+  setCampaignClaim(state, address) {
+    state.campaignClaimAddr = address;
   },
   setAlias(state, alias) {
     state.alias = alias;
@@ -64,13 +110,13 @@ const mutations = {
   },
   setTermsOfService(state, termsOfService) {
     state.termsOfService = termsOfService;
-  }
-}
+  },
+};
 
 export default {
   namespaced: true,
   state,
-  getters: {},
+  getters,
   actions,
-  mutations
-}
+  mutations,
+};

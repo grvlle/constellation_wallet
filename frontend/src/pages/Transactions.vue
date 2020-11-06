@@ -3,9 +3,8 @@
     <div class="row">
       <div class="col">
         <card title="Transactions" subTitle="Submit a $DAG Transaction">
-          <!-- <p>Last Transaction State: {{this.txStatus}}</p> -->
-          <form @submit.prevent class="container">
-            <div class="form-row align-items-center">
+          <div class="container">
+            <div class="row align-items-center">
               <div class="col-md-4">
                 <div class="input-group" style="margin-bottom: 0;">
                   <div class="input-group-prepend">
@@ -17,55 +16,65 @@
                     type="text"
                     class="form-control"
                     aria-label="Amount (in DAGs)"
-                    v-model.number="txAmountValidation"
-                    @change="sendAmount($event.target.value)"
+                    v-model.number="txAmount.normalized"
+                    @change="setTxAmount($event.target.value)"
+                    @keypress="setTxAmount($event.target.value)"
                     pattern="[0-9]+([,\.][0-9]+)?"
                     step="0.01"
-                    placeholder="0"
                   />
                   <div class="input-group-append">
                     <button type="button" @click="setMaxDAGs()" class="btn">Max.</button>
                   </div>
                 </div>
-                <div class="validate" v-if="!$v.txAmountValidation.inBetween">
+                <div class="validate text-danger" v-if="$v.txAmount.normalized.$invalid && txAmount.normalized != 0">
                   <p>Invalid amount. Please verify.</p>
                 </div>
-                <div class="validate" v-else></div>
+                <div class="validate text-danger" v-else></div>
               </div>
               <div class="col-md-1">
                 <i class="fa fa-chevron-circle-right icon-point-right"></i>
                 <div class="validate"></div>
               </div>
-              <div class="col-md-5">
-                <input
-                  type="text"
-                  class="form-control"
-                  aria-label="Amount (in DAGs)"
-                  v-model.trim="txAddressValidation"
-                  @change="setName($event.target.value)"
-                  placeholder="Enter Recipients Wallet Address..."
-                />
-                <div
-                  class="validate"
-                  v-if="!$v.txAddressValidation.minLength || !$v.txAddressValidation.verifyPrefix || !$v.txAddressValidation.maxLength"
-                >
+              <div class="col-md-5" style="padding-right: 0">
+                <div class="input-group" style="margin-bottom: 0;">
+                  <input
+                    type="text"
+                    style="border: 1px solid #ced4da;"
+                    class="form-control"
+                    aria-label="Amount (in DAGs)"
+                    v-model.trim="txAddress"
+                    @change="setName($event.target.value)"
+                    @keypress="setName($event.target.value)"
+                    placeholder="Enter Recipients Wallet Address..."
+                  />
+<!--                  <div class="input-group-append">-->
+<!--                    <button type="button" class="btn" @click="toggleAddressBook">-->
+<!--                      <i class="fa fa-address-book"></i>-->
+<!--                      Address book-->
+<!--                    </button>-->
+<!--                  </div>-->
+                </div>
+                <div class="validate text-danger" v-if="$v.txAddress.$invalid && txAddress != ''">
                   <p>Invalid wallet address. Please verify.</p>
                 </div>
-                <div
-                  class="validate"
-                  v-else-if="txAddressValidation == address"
-                >
-                  <p>You can not send to your own wallet.</p>
+                <div class="validate text-danger" v-else-if="txAddress == address">
+                  <p>You can not send to your own wallet address.</p>
                 </div>
-                <div class="validate" v-else></div>
+                <div class="validate text-success" v-else-if="txAddress != ''">
+                  <p v-if="txAddressInformation">{{txAddressInformation}}</p>
+<!--                  <p-->
+<!--                    v-else class="text-muted"-->
+<!--                  >This DAG address is not stored in any of your address book contacts.</p>-->
+                </div>
+                <div class="validate text-danger" v-else></div>
               </div>
-              <div class="col-md-2">
+              <div class="col-md-2" style="padding-left: 0; margin-left: 0">
                 <p-button
                   type="info"
                   block
                   @click.native="submitTransaction"
                   style="max-width: 10rem; margin-left: auto;"
-                  :disabled="txInTransit || txAddressValidation == address"
+                  :disabled="txInTransit || txAddress == address"
                 >
                   <span>
                     <i class="fa fa-paper-plane"></i> SEND
@@ -74,71 +83,22 @@
                 <div class="validate"></div>
               </div>
             </div>
-          </form>
+          </div>
         </card>
+      </div>
+    </div>
+    <div class="row" v-if="showAddressBook">
+      <div class="col-md-5" />
+      <div class="col-md-5">
+        <address-book-search v-model="txAddress" v-on:input="showAddressBook = false"/>
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <card class="card" :title="transactionTable.title" :subTitle="transactionTable.subTitle">
-          <div class="table-full-width table-responsive" style="width: 100%;">
-            <table class="table" :class="tableClass">
-              <thead>
-                <slot txAddressValidation="columns">
-                  <th v-for="column in transactionTable.columns" v-bind:key="column.id">{{column}}</th>
-                </slot>
-              </thead>
-              <tbody>
-                <tr v-for="tx in paginatedData" v-bind:key="tx.ID">
-                  <slot :row="tx">
-                    <td class="columnA">
-                      <i
-                        style="color: #6DECBB;"
-                        v-if="tx.status === 'Complete'"
-                        class="fa fa-check"
-                      ></i>
-                      <center><spinner :size="15" color="#F9EC31" v-if="tx.status === 'Pending'"></spinner></center>
-                      <i style="color: firebrick;" v-if="tx.status === 'Error'" class="fa fa-times"></i>
-                    </td>
-                    <td class="columnB">
-                      <p class="description" style="font-size: 0.9375rem;">
-                        <b>{{(tx.amount / 1e8).toFixed(8).replace(/\.?0+$/,"")}}</b> DAG
-                      </p>
-                    </td>
-                    <td class="columnC">
-                      <p class="description" style="font-size: 0.9375rem;">{{tx.receiver}}</p>
-                    </td>
-                    <td class="columnD">
-                      <p class="description" style="font-size: 0.9375rem;">{{tx.fee / 1e8}}</p>
-                    </td>
-                    <td class="columnE">
-                      <a id="txhash">
-                        <p style="font-size: 0.9375rem;">{{tx.hash}}</p>
-                      </a>
-                    </td>
-                    <td class="columnF">
-                      <p class="description" style="font-size: 0.9375rem;">{{tx.date}}</p>
-                    </td>
-                  </slot>
-                </tr>
-              </tbody>
-            </table>
-            <ul v-if="this.txHistory.length > 0" class="pagination justify-content-center" >
-              <li class="page-item" :class="pageNumber == 0 ? 'disabled' : ''">
-                <a class="page-link" style="cursor: pointer;" @click="prevPage">Previous</a>
-              </li>
-              <li
-                class="page-item"
-                :class="page == pageNumber + 1 ? 'active' : ''"
-                v-for="page in pageCount"
-                :key="page"
-              >
-                <a class="page-link" style="cursor: pointer;" @click="gotoPage(page)">{{page}}</a>
-              </li>
-              <li class="page-item" :class="pageNumber >= pageCount - 1 ? 'disabled' : ''">
-                <a class="page-link" style="cursor: pointer;" @click="nextPage">Next</a>
-              </li>
-            </ul>
+        <card class="card" title="Transaction History">
+          <div>
+            <timeline v-model="txHistoryPage" />
+            <pagination :dataset="txHistory" :pageSize="10" v-model="txHistoryPage" />
           </div>
         </card>
       </div>
@@ -148,13 +108,10 @@
 </template>
 
 <script>
-
-const tableColumns = ["Status", "Amount", "Receiver", "Fee", "Hash", "Date"];
 const verifyPrefix = value =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
-import {mapState} from 'vuex'
-import Spinner from 'vue-spinner-component/src/Spinner.vue';
+import { mapState, mapGetters } from "vuex";
 import {
   required,
   minLength,
@@ -162,45 +119,68 @@ import {
   between
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2/dist/sweetalert2";
+import AddressBookSearch from "../components/AddressBookSearch";
+import Pagination from "../components/Pagination";
+import Timeline from "../components/Timeline";
+import { keyStore } from "@stardust-collective/dag-keystore";
+import { dagWalletAccount } from "@stardust-collective/dag-wallet-sdk";
 
 export default {
   components: {
-    Spinner
+    AddressBookSearch,
+    Pagination,
+    Timeline
+  },
+  created: function() {
+    if (this.txAddressParam != "") {
+      this.txAddress = this.txAddressParam;
+    }
+
+    // TODO: refactor into wallet-init instead calling from indivual pages
+    window.backend.WalletApplication.GetAddressBook().then(ab => {
+      let addressBook;
+      try {
+        addressBook = JSON.parse(ab);
+      } catch (e) {
+        addressBook = [];
+      }
+      this.$store.commit({ type: "addressBook/setAddressBook", addressBook });
+    });    
   },
   computed: {
-    tableClass() {
-      return `table-${this.type}`;
-    },
-    txInTransit() {
+    txInTransit: function() {
       return this.txStatus == "Pending";
     },
-    pageCount() {
-      let l = this.txHistory.length,
-        s = this.size;
-      return Math.ceil(l / s);
+    txAddressInformation: function() {
+      let addressInfo = "";
+      if (!this.$v.txAddress.$invalid) {        
+        let contact = this.$store.getters["addressBook/search"](this.txAddress);
+        if (contact.length) {
+          addressInfo =
+            "This DAG address belongs to your address book contact with the name " +
+            '"' +
+            contact[0].name +
+            '".';
+        }
+      }
+      return addressInfo;
     },
-    paginatedData() {
-      const start = this.pageNumber * this.size,
-        end = start + this.size;
-      return this.txHistory.slice(start, end);
-    },
-    ...mapState('wallet', ['address', 'availableBalance', 'darkMode']),
-    ...mapState('transaction', ['txHistory', 'txStatus', 'txFinished'])
+    ...mapState("wallet", ["address", "availableBalance", "darkMode"]),
+    ...mapGetters('wallet', ['normalizedAvailableBalance']),
+    ...mapState("transaction", ["txHistory", "txStatus", "txFinished"])
   },
   methods: {
-    isFloat: function(n) {
-      return n === +n && n !== (n | 0);
-    },
-    isInteger: function(n) {
-      return n === +n && n === (n | 0);
-    },
-    sendAmount(value) {
-      this.txAmountValidation = value;
-      this.$v.txAmountValidation.$touch();
+    setTxAmount(value) {
+      this.txAmount.normalized = value;
+      // this.txAmount.denormalized = this.txAmount.normalized;
+      this.$v.txAmount.normalized.$touch();
     },
     setName(value) {
-      this.txAddressValidation = value;
-      this.$v.txAddressValidation.$touch();
+      this.txAddress = value;
+      this.$v.txAddress.$touch();
+    },
+    toggleAddressBook() {
+      this.showAddressBook = !this.showAddressBook;
     },
     submitTransaction: function() {
       var self = this;
@@ -208,8 +188,6 @@ export default {
       if (self.$v.$invalid) {
         self.submitStatus = "ERROR";
       } else {
-        // do your submit logic here
-
         if (!self.txFinished) {
           self.submitStatus = "PENDING";
         }
@@ -220,170 +198,163 @@ export default {
         Swal.mixin({
           progressSteps: ["1", "2"],
           customClass: {
-            container: this.darkMode
-              ? "theme--dark"
-              : "theme--light"
+            container: this.darkMode ? "theme--dark" : "theme--light"
           }
         })
-          .queue([
-            {
-              title: "Are you sure?",
-              html:
-                "You are about to send <b>" +
-                self.txAmountValidation +
-                "</b> $DAG tokens to " +
-                self.txAddressValidation,
-              type: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#5FD1FB",
-              confirmButtonText: "Yes, please proceed!"
-            },
-            {
-              title: "Set a fee to prioritize your transaction.",
-              html: "This is <b>optional</b>, enter 0 for no fee.",
-              input: "number",
-              inputValue: 0,
-              confirmButtonText: "Send transaction",
-              confirmButtonColor: "#6DECBB",
-              showCancelButton: true,
-              inputValidator: value => {
-                return new Promise(resolve => {
-                  if (
-                    value < 0 ||
-                    value > 3711998690 ||
-                    isNaN(parseFloat(value))
-                  ) {
-                    resolve("Please enter a value between 0 and 3711998690");
-                  } else {
-                    resolve();
-                  }
-                });
+        .queue([
+          {
+            title: "Are you sure?",
+            html: 
+              "<p>You are about to send <b>" + self.txAmount.normalized + "</b> $DAG tokens to " + self.txAddress + "</p>" +
+              "<div class='border border-dark'>" + 
+                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + self.normalizedAvailableBalance + ")</p>" +              
+                "<p>Transaction amount: " + self.txAmount.normalized + "</p>" +
+                "<p>To: " + self.txAddress + "</p>" +
+              "</div>",
+            showCancelButton: true,
+            confirmButtonColor: "#5FD1FB",
+            confirmButtonText: "Yes, please proceed!"
+          },
+          {
+            title: "Set a fee to prioritize your transaction.",
+            html: 
+              "<div class='border border-dark'>" + 
+                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + self.normalizedAvailableBalance + ")</p>" +              
+                "<p>Transaction amount: " + self.txAmount.normalized + "</p>" +
+                "<p>To: " + self.txAddress + "</p>" +
+              "</div>" + 
+              "<div>" + 
+                "</br>" +                 
+                "This fee is <b>optional</b>, enter 0 for no fee." +
+            "</div>",
+            input: "number",
+            inputValue: 0,
+            confirmButtonText: "Send transaction",
+            confirmButtonColor: "#6DECBB",
+            showCancelButton: true,
+            animation: false,
+            inputValidator: value => {
+              return new Promise(resolve => {
+                if (value + self.txAmount.normalized > self.normalizedAvailableBalance) {
+                  resolve("The transaction amount + fee can not exceed your balance");
+                } else if (value < 0 ||  value > 3711998690 || isNaN(parseFloat(value))) {
+                  resolve("Please enter a transaction fee between 0 and 3711998690");
+                }
+                else {
+                  resolve();
+                }
+              });
+            }
+          }
+        ])
+        .then(result => {
+          if (result.value) {
+            self.$Progress.start();
+            self.overlay = true;
+            let feeResult = result.value;
+            const swalPopup = Swal.mixin({
+              customClass: {
+                container: this.darkMode ? "theme--dark" : "theme--light"
               }
-            }
-          ])
-          .then(result => {
-            if (result.value) {
-              self.$Progress.start();
-              self.overlay = true;
-              let amount = self.txAmountValidation;
-              let address = self.txAddressValidation;
-              let fee = result.value;
-              const swalPopup = Swal.mixin({
-                customClass: {
-                  container: this.darkMode
-                    ? "theme--dark"
-                    : "theme--light"
-                }
-              });
-              window.backend.WalletApplication.TriggerTXFromFE(
-                parseFloat(amount, 10),
-                parseFloat(fee[1], 10),
-                address
-              ).then(txFailed => {
-                if (txFailed) {
-                  swalPopup.fire({
-                    title: "Transaction Failed!",
-                    text: "Unable to send Transaction",
-                    type: "error"
+            });
+
+            const amount = parseFloat(self.txAmount.normalized, 10);
+            const fee = parseFloat(feeResult[1], 10);
+
+            window.backend.WalletApplication.GetLastAcceptedTransactionRef().then(result => {
+              if (!result) {
+                self.txFailure(swalPopup);
+              }
+              else {
+                const tokens = result.split(',');
+                const lastRef = {ordinal: parseInt(tokens[0]), prevHash: tokens[1]}
+                keyStore.generateTransaction(amount, self.txAddress, dagWalletAccount.keyTrio, lastRef, fee).then(tx => {
+                  window.backend.WalletApplication.SendTransaction2(
+                      JSON.stringify(tx)
+                  ).then(success => {
+                    if (success) {
+                      self.txSuccess(swalPopup);
+                    }
+                    else {
+                      self.txFailure(swalPopup);
+                    }
                   });
-                  self.$Progress.fail();
-                  self.overlay = false;
-                }
-                if (!txFailed) {
-                  swalPopup.fire({
-                    title: "Success!",
-                    text:
-                      "You have sent " +
-                      self.txAmountValidation +
-                      " $DAG tokens to address " +
-                      self.txAddressValidation +
-                      ".",
-                    type: "success"
-                  });
-                  self.$Progress.finish();
-                  self.overlay = false;
-                }
-              });
-            }
-          });
+                }, () => {
+                  self.txFailure(swalPopup);
+                })
+              }
+            })
+          }
+        });
       }
     },
+    txSuccess (swalPopup) {
+      this.$Progress.finish();
+      this.overlay = false;
+      this.txAddress = "";
+      this.txAmount.normalized = 0
+
+      swalPopup.fire({
+        title: "Success!",
+        text:
+            "You have sent " +
+            self.txAmount.normalized +
+            " $DAG tokens to address " +
+            self.txAddress +
+            ".",
+        icon: "success"
+      });
+
+    },
+    txFailure (swalPopup) {
+      this.$Progress.finish();
+      this.overlay = false;
+      this.txAddress = "";
+      this.txAmount.normalized = 0
+
+      swalPopup.fire({
+        title: "Transaction Failed!",
+        text: "Unable to send Transaction",
+        type: "error"
+      });
+    },
     setMaxDAGs() {
-      this.txAmountValidation = this.availableBalance;
-    },
-    nextPage() {
-      this.pageNumber++;
-    },
-    prevPage() {
-      this.pageNumber--;
-    },
-    gotoPage(page) {
-      this.pageNumber = page - 1;
+      this.txAmount.normalized = this.normalizedAvailableBalance;
+      // this.txAmount.denormalized = this.availableBalance;
     }
   },
   data() {
     return {
-      txAddressValidation: "",
-      txAmountValidation: null,
+      txAddress: "",
+      txAmount: {
+        normalized: 0
+      },
       submitStatus: null,
       amountSubmitted: null,
-      txAmount: "",
-      txAddress: "",
       notifications: {
         topCenter: false
       },
       overlay: false,
-      transactionTable: {
-        title: "Transaction History",
-        subTitle: "Table containing all previous transactions",
-        columns: [...tableColumns],
-        data: this.txHistory
-      },
-      pageNumber: 0,
-      size: 10
+      txHistoryPage: [],
+      showAddressBook: false
     };
   },
-  filters: {
-    dropzero: function(value) {
-      if (!value || value === null) return "";
-      let index;
-      value = value.toString().split("");
-      index = value.length - 8;
-      value = value.splice(0, index);
-      return value.join("");
-    },
-    truncate: function(value) {
-      if (!value || value === null) return "";
-      if (value.length > 30) {
-        value = value.substring(0, 27) + "...";
-      }
-      return value;
-    }
-  },
   validations: {
-    txAddressValidation: {
+    txAddress: {
       required,
       minLength: minLength(40),
       maxLength: maxLength(40),
       verifyPrefix
     },
-    txAmountValidation: {
-      required,
-      inBetween: between(0.00000001, 3711998690)
+    txAmount: {
+      normalized: {
+        required,
+        inBetween: between(0.00000001, 3711998690)
+      }
     }
   },
   props: {
-    columns: Array,
-    data: Array,
-    type: {
-      type: String, // striped | hover
-      default: "striped"
-    },
-    title: {
-      type: String,
-      default: ""
-    },
-    subTitle: {
+    txAddressParam: {
       type: String,
       default: ""
     }
@@ -391,47 +362,16 @@ export default {
 };
 </script>
 
-<style scoped>
-td {
-  max-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-td.columnA {
-  width: 3%;
-  padding-top: 0px;
-  text-align: center;
-}
-td.columnB {
-  width: 15%;
-}
-td.columnC {
-  width: 40%;
-}
-td.columnD {
-  width: 5%;
-}
-td.columnE {
-  width: 22%;
-}
-td.columnF {
-  width: 15%;
-}
-
-txhash a {
-  color: blue;
-}
-
-txhash a:visited {
-  color: blue;
-}
-
-txhash p {
-  font-weight: bold;
-}
-
+<style scoped lang="scss">
 .validate {
   height: 1.25em;
+}
+
+.icon-point-right {
+  @include themed() {
+    color: t('successColor');
+  }
+  font-size: 2.5rem; 
+  width:100%;
 }
 </style>

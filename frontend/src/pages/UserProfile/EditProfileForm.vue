@@ -4,101 +4,60 @@
       <form @submit.prevent>
         <div class="row">
           <div class="col-md-12">
-            <fg-input
+            <input
               type="text"
               label="Wallet Address"
+              class="form-control"
               :disabled="true"
               placeholder="No DAG Address found."
               v-model="address"
-            ></fg-input>
+            />
           </div>
         </div>
         <div class="row">
           <div class="col-md-12">
-            <fg-input
+            <input
               type="text"
               label="Available Balance"
+              class="form-control"
               :disabled="true"
               placeholder="0"
-              v-model="availableBalance"
-            ></fg-input>
+              v-model="normalizedAvailableBalance"
+            />
           </div>
         </div>
+        <!--        <div class="row">-->
+        <!--          <div class="col-md-12">-->
+        <!--            <fg-input-->
+        <!--              type="text"-->
+        <!--              label="Wallet Version"-->
+        <!--              :disabled="true"-->
+        <!--              placeholder="0"-->
+        <!--              v-model="uiVersion"-->
+        <!--            ></fg-input>-->
+        <!--          </div>-->
+        <!--        </div>-->
+        <!--        <div class="row">-->
+        <!--          <div class="col-md-12">-->
+        <!--            <fg-input-->
+        <!--              type="text"-->
+        <!--              label="Alias"-->
+        <!--              :disabled="true"-->
+        <!--              placeholder="0"-->
+        <!--              v-model="alias"-->
+        <!--            ></fg-input>-->
+        <!--          </div>-->
+        <!--        </div>-->
         <div class="row">
           <div class="col-md-12">
-            <fg-input
+            <input
               type="text"
-              label="Nonce"
+              label="Private Key File"
               :disabled="true"
               placeholder="0"
-              v-model="nonce"
-            ></fg-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
-              label="Total Balance"
-              :disabled="true"
-              placeholder="0"
-              v-model="totalBalance"
-            ></fg-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
-              label="Wallet Client Version"
-              :disabled="true"
-              placeholder="0"
-              v-model="version"
-            ></fg-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
-              label="Wallet UI Version"
-              :disabled="true"
-              placeholder="0"
-              v-model="uiVersion"
-            ></fg-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
-              label="Alias"
-              :disabled="true"
-              placeholder="0"
-              v-model="alias"
-            ></fg-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
-              label="Path to private key (key.p12)"
-              :disabled="true"
-              placeholder="0"
+              class="form-control"
               v-model="keystorePath"
-            ></fg-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <fg-input
-              type="text"
-              label="Terms of Service"
-              :disabled="true"
-              placeholder="0"
-              v-model="termsOfService"
-            ></fg-input>
+            />
           </div>
         </div>
         <div class="clearfix"></div>
@@ -108,20 +67,13 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState, mapGetters } from "vuex";
 export default {
-  data() {
-    return {};
-  },
   computed: {
-    ...mapState('app', ['version', 'uiVersion']),
-    ...mapState('wallet', [
-      'address', 'availableBalance', 'nonce', 'totalBalance', 
-      'alias', 'keystorePath', 'termsOfService'])
-
-  }
+    ...mapState("app", ["version", "uiVersion"]),
+    ...mapState("wallet", ["address", "alias", "keystorePath"]),
+    ...mapGetters("wallet", ["normalizedAvailableBalance"]),
+  },
 };
 </script>
-
-<style>
-</style>
+<style scoped lang="scss"></style>

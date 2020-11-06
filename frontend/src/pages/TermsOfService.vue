@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-9 mx-auto">
         <card>
-          <div v-html="termsOfServiceHTML" style="margin: 3rem;"/>
+          <div v-html="termsOfServiceHTML" style="margin: 3rem;" />
         </card>
       </div>
     </div>
@@ -11,56 +11,66 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState } from "vuex";
 import Swal from "sweetalert2/dist/sweetalert2";
 export default {
   name: "terms-of-service",
   computed: {
-    ...mapState('wallet', ['termsOfService'])
+    ...mapState("wallet", ["termsOfService"]),
   },
   created() {
     var self = this;
     if (!this.termsOfService) {
       setTimeout(() => {
-        Swal.fire({
-          html:
-            '<div style="overflow-y: scroll; padding: 1.25em; height: 34rem; margin-top: 1.2rem;">' +
+        Swal.mixin({
+          customClass: {
+            confirmButton: "btn-confirm-tos",
+            cancelButton: "btn-cancel-tos",
+            content: "swal2-content-tos",
+            popup: "swal2-popup-tos",
+            actions: "swal2-actions-tos",
+          },
+          buttonsStyling: false,
+        })
+          .fire({
+            html:
+              '<div style="padding: 1.25em; height: 90%; margin-top: 1.2rem; width: 60%; margin: 0% 20%;">' +
               self.termsOfServiceHTML +
-            "</div>",
-          showCloseButton: true,
-          showCancelButton: true,
-          width: "62.5em",
-          focusConfirm: false,
-          confirmButtonText:
-            '<i class="fa fa-thumbs-up"></i> I have read and I Agree to Terms!',
-          confirmButtonAriaLabel: "I have read and I Agree to Terms",
-          cancelButtonText:
-            '<i class="fa fa-thumbs-down"></i> Close Application',
-          cancelButtonAriaLabel: "Close Application"
-        }).then(result => {
-          if (result.value) {            
-            window.backend.WalletApplication.StoreTermsOfServiceStateDB(true)
-            .then(result => {
-              if (result) {
-                self.$store.commit('wallet/setTermsOfService', result)
-                self.$router.push({
-                  name: 'loading', 
-                  params: {message: "Getting your $DAG Wallet ready..."}
-                });
-              } else {
-                self.$router.go(-1);
-              }
-            });
-          } else {
-            Swal.fire({
-              title: "Terms of Service Rejected!",
-              text:
-                "You need to accept the Terms of Service to use this product.",
-              type: "error"
-            });
-            self.$router.go(-1);
-          }
-        });
+              "</div>",
+            showCloseButton: true,
+            showCancelButton: true,
+            width: "62.5em",
+            focusConfirm: false,
+            confirmButtonText: "I have read and I Agree to Terms",
+            confirmButtonAriaLabel: "I have read and I Agree to Terms",
+            cancelButtonText: "Cancel",
+            cancelButtonAriaLabel: "Cancel",
+          })
+          .then((result) => {
+            if (result.value) {
+              window.backend.WalletApplication.StoreTermsOfServiceStateDB(
+                true
+              ).then((result) => {
+                if (result) {
+                  self.$store.commit("wallet/setTermsOfService", result);
+                  self.$router.push({
+                    name: "loading",
+                    params: { message: "Getting your $DAG Wallet ready..." },
+                  });
+                } else {
+                  self.$router.go(-1);
+                }
+              });
+            } else {
+              Swal.fire({
+                title: "Terms of Service Rejected!",
+                text:
+                  "You need to accept the Terms of Service to use this product.",
+                type: "error",
+              });
+              self.$router.go(-1);
+            }
+          });
       }, 200);
     }
   },
@@ -140,8 +150,10 @@ export default {
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;"><strong>12.&nbsp;</strong><u><strong>Entire Agreement</strong></u></p>' +
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">This Agreement any other legal notices published by the Company on the Site shall constitute the entire agreement between you and the Company concerning the Services. If any provision of this Agreement is deemed invalid by a court of competent jurisdiction, the invalidity of such provision shall not affect the validity of the remaining provisions of this Agreement, which shall remain in full force and effect. No waiver of any term of this Agreement shall be deemed a further or continuing waiver of such term or any other term, and the Company’s failure to assert any right or provision under this Agreement shall not constitute a waiver of such right or provision.</p>' +
         '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">Contact information</p>' +
-        '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">We welcome your comments or questions about this Agreement. You may contact us at legal@constellationnetwork.io</p>'
+        '<p style="text-align: justify;background: transparent;margin-bottom: 0.11in;line-height: 108%;">We welcome your comments or questions about this Agreement. You may contact us at legal@constellationnetwork.io</p>',
     };
-  }
+  },
 };
 </script>
+
+<style scoped lang="scss"></style>

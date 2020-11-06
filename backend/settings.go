@@ -11,6 +11,10 @@ import (
 // UploadImage will forward the image path of the selected image.
 func (a *WalletApplication) UploadImage() string {
 	filePath := a.RT.Dialog.SelectFile()
+	if (filePath == "") {
+		return "Cancel"
+	}
+
 	splitPath := strings.Split(filePath, "/")
 	filename := splitPath[len(splitPath)-1]
 
@@ -124,15 +128,7 @@ func (a *WalletApplication) StoreCurrencyStateDB(currency string) bool {
 		a.sendError("Unable to store currency state persistently. Reason: ", err)
 		return false
 	}
-	totalCurrencyBalance := 0.0
-	if a.wallet.Currency == "USD" {
-		totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD
-	} else if a.wallet.Currency == "EUR" {
-		totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.EUR
-	} else if a.wallet.Currency == "BTC" {
-		totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.BTC
-	}
-	a.RT.Events.Emit("totalValue", a.wallet.Currency, totalCurrencyBalance)
+	a.RT.Events.Emit("currency", currency)
 	return true
 }
 

@@ -59,29 +59,6 @@ h1 small, h2 small, h3 small, h1 .small, h2 .small, h3 .small {
   font-size: 60%;
 }
 
-.version {
-  position:absolute;
-  bottom:0;
-  right:0;
-  font-size: $font-paragraph;
-  line-height: $line-height-general;
-  font-size: 0.6rem;
-}
-
-.wallet-address {
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding-top: 0em;
-  margin-bottom: 0em;
-  font-size: 1.5625rem;
-  font-weight: 100;
-  @include themed() {
-      color: t('walletAddressColor');
-  }
-}
-
 .title-uppercase {
   text-transform: uppercase;
 }
@@ -175,38 +152,5 @@ strong {
 .icon-danger {
   @include themed() {
     color: t('dangerColor');
-  }
-}
-
-.chart-legend {
-  .text-primary, .text-primary:hover {
-    @include themed() {
-      color: t('primaryColor');
-    }
-  }
-  .text-secondary, .text-secondary:hover {
-    @include themed() {
-      color: t('secondaryColor');
-    }
-  }
-  .text-info, .text-info:hover {
-    @include themed() {
-      color: t('infoColor');
-    }
-  }
-  .text-success, .text-success:hover {
-    @include themed() {
-      color: t('successColor');
-    }
-  }
-  .text-warning, .text-warning:hover {
-    @include themed() {
-      color: t('warningColor');
-    }
-  }
-  .text-danger, .text-danger:hover {
-    @include themed() {
-      color: t('dangerColor');
-    }
   }
 }

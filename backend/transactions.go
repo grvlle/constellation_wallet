@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -60,8 +61,8 @@ type Transaction struct {
 
 // TriggerTXFromFE will initate a new transaction triggered from the frontend.
 func (a *WalletApplication) TriggerTXFromFE(amount float64, fee float64, address string) bool {
-	amountConverted := int64(amount * 1e8)
-	feeConverted := int64(fee * 1e8)
+	amountConverted := int64(amount)
+	feeConverted := int64(fee)
 
 	a.PrepareTransaction(amountConverted, feeConverted, address)
 	for !a.TransactionFinished {
@@ -82,9 +83,9 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address 
 		return
 	}
 
-	if amount+fee > int64(balance*1e8) {
+	if amount+fee > int64(balance) {
 		a.log.Warnf("Trying to send: %d", amount+fee)
-		a.log.Warnf("Insufficient Balance: %d", int64(balance*1e8))
+		a.log.Warnf("Insufficient Balance: %d", int64(balance))
 		a.sendWarning("Insufficent Balance.")
 		a.TransactionFailed = true
 		return
@@ -155,14 +156,28 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 	}
 	bodyString := string(bodyBytes)
 	a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
-	a.log.Errorln("Unable to put TX on the network. HTTP Code: " + string(resp.StatusCode) + " - " + bodyString)
+	a.log.Errorln(fmt.Sprintf("Unable to put TX on the network. HTTP Code: %d - %s", resp.StatusCode, bodyString))
 
 	return false, ""
 }
 
+
+/* Note: Called from frontend to post a generated TX to the network */
+func (a *WalletApplication) SendTransaction2(txJson string) bool {
+
+    a.postTransaction(txJson)
+
+    return !a.TransactionFailed
+}
+
 func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
 
-	txObject := a.loadTXFromFile(txFile)
+    txObject := a.loadTXFromFile(txFile)
+
+    return a.postTransaction(txObject);
+}
+
+func (a *WalletApplication) postTransaction(txObject string) *models.TXHistory {
 
 	tx := &Transaction{}
 
@@ -174,11 +189,13 @@ func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
 		return nil
 	}
 
-	// Put TX object on network
+	// Put TX object on network time.Now().Unix(), time.Now().Format("Jan _2 15:04:05")
 	TXSuccessfullyPutOnNetwork, hash := a.putTXOnNetwork(tx)
+
 	if TXSuccessfullyPutOnNetwork {
 		txData := &models.TXHistory{
 			Amount:   tx.Edge.Data.Amount,
+			Sender: tx.Edge.ObservationEdge.Parents[0].HashReference,
 			Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 			Fee:      tx.Edge.Data.Fee,
 			Hash:     hash,
@@ -192,8 +209,10 @@ func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
 		a.TransactionFailed = false
 		return txData
 	}
+
 	txData := &models.TXHistory{
 		Amount:   tx.Edge.Data.Amount,
+		Sender: tx.Edge.ObservationEdge.Parents[0].HashReference,
 		Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 		Fee:      tx.Edge.Data.Fee,
 		Hash:     hash,
@@ -201,10 +220,12 @@ func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
 		Status:   "Error",
 		Failed:   true,
 	}
+
 	a.log.Errorln("TX Failed, storing with failed state.")
 	a.storeTX(txData)
 	a.TransactionFinished = true
 	a.TransactionFailed = true
+
 	return txData
 }
 

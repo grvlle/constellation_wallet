@@ -3,49 +3,69 @@
     <div class="row">
       <div class="col-md-4 d-flex">
         <stats-card class="stats-card">
-          <div class="icon-big text-center" :class="`icon-success`" slot="header">
+          <div
+            class="icon-big text-center"
+            :class="`icon-success`"
+            style="color: #23DBBC"
+            slot="header"
+          >
             <i class="fas fa-wallet"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
             <p>DAG</p>
-            {{tokenAmount | asCurrency('DAG')}}
+            {{ normalizedAvailableBalance }}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.token}} seconds
+            Updates in {{ counters.token }} seconds
           </div>
         </stats-card>
       </div>
       <div class="col-md-4 d-flex">
-        <stats-card class="stats-card">
-          <div class="icon-big text-center" :class="`icon-danger`" slot="header">
+        <stats-card v-if="!isCampaignActive" class="stats-card">
+          <div
+            class="icon-big text-center"
+            :class="`icon-danger`"
+            style="color: #DB6E44"
+            slot="header"
+          >
             <i class="fas fa-search-dollar"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
-            <p>{{currency}}</p>
-            {{totalValue | asCurrency(currency)}}
+            <p>{{ currency }}</p>
+            {{ valueInCurrency }}
           </div>
           <div class="stats" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.value}} seconds
+            Updates in {{ counters.value }} seconds
           </div>
         </stats-card>
+
+        <airdrop-card
+          v-if="isCampaignActive"
+          @v-click="getTestDag"
+        ></airdrop-card>
       </div>
       <div class="col-md-4 d-flex">
         <stats-card class="stats-card">
-          <div class="icon-big text-center" :class="`icon-info`" slot="header">
+          <div
+            class="icon-big text-center"
+            :class="`icon-info`"
+            style="color: #2D9CDB"
+            slot="header"
+          >
             <i class="fas fa-cube"></i>
           </div>
           <div class="numbers text-center text-overflow" slot="content">
-            <p>Blocks</p>
-            {{stat.blocks}}
+            <p>Block Height</p>
+            {{ stat.blocks }}
             <!-- {{this.$store.state.OS.windows}}
             {{this.$store.state.OS.macOS}}
             {{this.$store.state.OS.linux}} -->
           </div>
           <div class="stats" slot="footer">
             <i class="ti-reload"></i>
-            Updates in {{counters.block}} seconds
+            Updates in {{ counters.block }} seconds
           </div>
         </stats-card>
       </div>
@@ -54,19 +74,26 @@
       <div class="col">
         <card title="Wallet Address" sub-title>
           <div class="wallet-address">
-            <table style="table-layout:fixed;" class="table-noheader">
+            <table style="table-layout: fixed" class="table-noheader">
               <tr>
                 <td
                   class="text-overflow"
-                  style="word-wrap:break-word; padding-top: 20px; padding-left: 15px; width: 100%;"
+                  style="
+                    word-wrap: break-word;
+                    padding-top: 20px;
+                    padding-left: 15px;
+                    width: 100%;
+                  "
                 >
-                  <span style="width: 100%;" class="text-overflow">{{address}}</span>
+                  <span style="width: 100%" class="text-overflow">{{
+                    address
+                  }}</span>
                   <input type="hidden" id="testing-code" :value="address" />
                 </td>
-                <td style="padding-top: 10px; width: 9%;">
+                <td style="padding-top: 10px; width: 9%">
                   <p-button
                     type="info"
-                    style="margin-bottom: 5px;"
+                    style="margin-bottom: 5px; background: #2D9CDB; border-color: #2D9CDB"
                     icon
                     @click.native="copyTestingCode"
                   >
@@ -94,7 +121,7 @@
           </div>
           <span slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.chart}} seconds
+            Updates in {{ counters.chart }} seconds
           </span>
         </chart-card>
       </div>
@@ -111,9 +138,9 @@
             <i class="fa fa-circle text-info"></i> TX
             <i class="fa fa-circle text-success"></i> RX
           </div>
-          <span style="padding-top: 0.625em;" slot="footer">
+          <span style="padding-top: 0.625em" slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.chart}} seconds
+            Updates in {{ counters.chart }} seconds
           </span>
         </chart-card>
       </div>
@@ -128,7 +155,7 @@
         >
           <span slot="footer">
             <i class="ti-timer"></i>
-            Updates in {{counters.chart}} seconds
+            Updates in {{ counters.chart }} seconds
           </span>
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> $DAG Tokens
@@ -137,22 +164,72 @@
         </chart-card>
       </div>
     </div>
+    <page-overlay text="Loading..." :isActive="overlay" />
   </div>
 </template>
 
 <script>
-import {mapState} from 'vuex'
-import { StatsCard, ChartCard} from "@/components/index";
-import Chartist from 'chartist';
+import { mapState, mapGetters } from "vuex";
+import { StatsCard, ChartCard } from "@/components/index";
+import Chartist from "chartist";
 import WalletCopiedNotification from "./Notifications/WalletCopied";
 import WalletCopiedFailedNotification from "./Notifications/WalletCopiedFailed";
+import TestDagRequestedNotification from "./Notifications/TestDagRequested";
+import { dagWalletAccount } from "@stardust-collective/dag-wallet-sdk";
 
 export default {
   components: {
     StatsCard,
-    ChartCard
+    ChartCard,
   },
   methods: {
+    getTestDag() {
+      if (this.campaignClaimAddr !== "") {
+        this.addNotificationMessage(
+          "top",
+          "right",
+          1,
+          "Already Registered",
+          'You have already registered with account "' +
+            this.campaignClaimAddr +
+            '"'
+        );
+        return;
+      }
+      this.overlay = true;
+      this.$Progress.start();
+      let dateNum = Date.now();
+      let dateStr = calcTime(-8);
+      window.backend.WalletApplication.RegisterCampaign(
+        dagWalletAccount.keyTrio.publicKey.substring(2),
+        dateNum.toString(),
+        dateStr
+      ).then((result) => {
+        if (result) {
+          this.overlay = false;
+          this.$Progress.finish();
+          this.campaignClaimAddr = dagWalletAccount.keyTrio.address;
+          this.addNotificationDialog(
+            "top",
+            "right",
+            2,
+            TestDagRequestedNotification
+          );
+        } else {
+          this.addNotificationMessage(
+            "top",
+            "right",
+            1,
+            "Already Registered",
+            'You have already registered with account "' +
+              this.campaignClaimAddr +
+              '"'
+          );
+          this.$Progress.finish();
+          this.overlay = false;
+        }
+      });
+    },
     copyTestingCode() {
       let testingCodeToCopy = document.querySelector("#testing-code");
       testingCodeToCopy.setAttribute("type", "text");
@@ -161,9 +238,14 @@ export default {
       try {
         var successful = document.execCommand("copy");
         successful ? "successful" : "unsuccessful";
-        this.addNotification("top", "right", 2, WalletCopiedNotification);
+        this.addNotificationDialog("top", "right", 2, WalletCopiedNotification);
       } catch (err) {
-        this.addNotification("top", "right", 4, WalletCopiedFailedNotification);
+        this.addNotificationDialog(
+          "top",
+          "right",
+          4,
+          WalletCopiedFailedNotification
+        );
         alert("Oops, unable to copy");
       }
 
@@ -171,16 +253,30 @@ export default {
       testingCodeToCopy.setAttribute("type", "hidden");
       window.getSelection().removeAllRanges();
     },
-    getTokens: function() {
-      var self = this;
-      window.backend.retrieveTokenAmount().then(result => {
-        self.tokenAmount = result;
+    addNotificationMessage(
+      verticalAlign,
+      horizontalAlign,
+      color,
+      title,
+      message
+    ) {
+      this.$notify({
+        title: title,
+        message: message,
+        icon: "ti-check",
+        timeout: 16000,
+        horizontalAlign: horizontalAlign,
+        verticalAlign: verticalAlign,
+        type: this.type[color],
+        onClick: () => {
+          this.$notifications.clear();
+        },
       });
     },
-    addNotification(verticalAlign, horizontalAlign, color, copied) {
+    addNotificationDialog(verticalAlign, horizontalAlign, color, copied) {
       setTimeout(() => {
         this.$notifications.clear();
-      }, 6000);
+      }, 16000);
       this.$notify({
         component: copied,
         icon: "ti-check",
@@ -189,51 +285,31 @@ export default {
         type: this.type[color],
         onClick: () => {
           this.$notifications.clear();
-        }
+        },
       });
-    }
+    },
   },
   computed: {
-    ...mapState('wallet', ['tokenAmount', 'currency', 'totalValue', 'address']),
-    ...mapState('dashboard', ['counters', 'toggle', 'stat', 'chart']) 
+    ...mapState("wallet", ["currency", "address", "isCampaignActive"]),
+    ...mapGetters("wallet", ["valueInCurrency", "normalizedAvailableBalance"]),
+    ...mapState("dashboard", ["counters", "toggle", "stat", "chart"]),
+    ...mapState("app", ["onTestnet"]),
+    campaignClaimAddr: {
+      get() {
+        return this.$store.state.wallet.campaignClaimAddr;
+      },
+      set(value) {
+        this.$store.commit("wallet/setCampaignClaim", value);
+      },
+    },
   },
-  filters: {
-    asCurrency: function(value, currency) {
-
-      if (currency == "") return "";
-
-      var formatter
-      if (currency == "DAG") {
-        formatter = new Intl.NumberFormat(navigator.language);
-      } else if (currency == "BTC") {
-        formatter = new Intl.NumberFormat(navigator.language, {
-          style: "currency",
-          currency: "XBT",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 8
-        });
-      } else {
-        formatter = new Intl.NumberFormat(navigator.language, {
-          style: "currency",
-          currency: currency,
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-      }
-      return formatter.format(value).replace(/XBT/,'₿');
-    }
-  },
-
-  /**
-   * Chart data used to render stats, charts. Should be replaced with server data
-   */
-
   data() {
     return {
       type: ["", "info", "success", "warning", "danger"],
       notifications: {
-        topCenter: false
+        topCenter: false,
       },
+      overlay: false,
       transactionChart: {
         options: {
           low: 0,
@@ -241,31 +317,41 @@ export default {
           showArea: true,
           height: "15.3125em",
           axisX: {
-            showGrid: false
+            showGrid: false,
           },
           lineSmooth: Chartist.Interpolation.simple({
-            divisor: 3	
+            divisor: 3,
           }),
           showLine: true,
-          showPoint: false
+          showPoint: false,
         },
       },
       throughputChart: {
         options: {
           seriesBarDistance: 10,
           axisX: {
-            showGrid: false
+            showGrid: false,
           },
-          height: "15.3125em"
-        }
-      }
+          height: "15.3125em",
+        },
+      },
     };
-  }
+  },
 };
 
+function calcTime(offset) {
+  let d = new Date();
+  let utc = d.getTime() + d.getTimezoneOffset() * 60000;
+
+  // create new Date object for different city
+  // using supplied offset
+  let nd = new Date(utc + 3600000 * offset);
+
+  return nd.toString() + " [" + d.getTimezoneOffset() / 60 + "]";
+}
 </script>
 
-<style>
+<style scoped lang="scss">
 .text-overflow {
   display: block;
   overflow: hidden;
@@ -286,6 +372,46 @@ export default {
 
 .card-footer {
   margin-top: auto;
+}
+
+.wallet-address {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-radius: 0.313rem;
+  text-overflow: ellipsis;
+  padding-top: 0em;
+  margin-bottom: 0em;
+  font-size: 1.5625rem;
+  @include themed() {
+    color: t("walletAddressColor");
+  }
+}
+
+.test-dag {
+  height: auto;
+  width: auto;
+  max-width: 60px;
+  max-height: 60px;
+}
+
+.test-dag-btn {
+  font-family: Poppins;
+  font-weight: 500;
+  height: 2em;
+  width: 100%;
+  background: #dd8d74;
+  color: white;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  margin-top: -10px;
+  border: none;
+  border-radius: 5px;
+}
+
+.test-dag-btn:hover {
+  background: #df7f62;
+  box-shadow: 0 1px 1px #dd8d74;
 }
 
 .wallet-address > p-button {

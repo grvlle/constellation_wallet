@@ -71,24 +71,12 @@ export default {
       chartId: "no-id",
       chartSelected: "",
       chartUpdated: false,
-      count: 0,
-      onWindows: false,
-      onMacOS: false,
-      onLinux: false,
+      count: 0
     };
   },
   computed: {
     counter() {
       return this.$store.state.dashboard.counters.nodesOnlineCounter;
-    },
-    UserRunningOnWindows() {
-      return this.$store.state.OS.windows;
-    },
-    UserRunningOnMacOS() {
-      return this.$store.state.OS.macOS;
-    },
-    UserRunningOnLinux() {
-      return this.$store.state.OS.linux;
     }
   },
   watch: {
@@ -97,15 +85,6 @@ export default {
       if (this.count == 1) {
         this.chartSelected.update();
       }
-    },
-    UserRunningOnWindows(val) {
-        this.onWindows = val;
-    },
-    UserRunningOnMacOS(val) {
-        this.onMacOS = val;
-    },
-    UserRunningOnLinux(val) {
-        this.onLinux = val;
     }
   },
 
@@ -226,5 +205,81 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
+</style>
+
+<style lang="scss">
+// removed scoped for 'Chartist' elements, didn't work with ::v-deep, >>>, //deep//
+.ct-series-a .ct-line,
+.ct-series-a .ct-point {
+  @include themed() {
+    stroke: t('chartSeriesALineColor');
+  }
+}
+
+.ct-series-a .ct-slice-pie, 
+.ct-series-a .ct-area {
+  @include themed() {
+    fill: t('chartSeriesAFIllColor');
+  }
+}
+
+.ct-series-b .ct-line, 
+.ct-series-b .ct-point {
+  @include themed() {
+    stroke: t('chartSeriesBLineColor');
+  }
+}
+
+.ct-series-b .ct-slice-pie, 
+.ct-series-b .ct-area {
+  @include themed() {
+    fill: t('chartSeriesBFIllColor');
+  }
+}
+
+.ct-series-c .ct-line,
+.ct-series-c .ct-point {
+  @include themed() {
+    stroke: t('chartSeriesCLineColor');
+  }
+}
+
+.ct-series-c .ct-slice-pie, 
+.ct-series-c .ct-area {
+  @include themed() {
+    fill: t('chartSeriesCFIllColor');
+  }
+}
+
+.ct-series-a .ct-slice-pie {
+  @include themed() {
+    fill: t('pieSeriesAFillColor');
+  }
+}
+
+.ct-series-b .ct-slice-pie {
+  @include themed() {
+    fill: t('pieSeriesBFillColor');
+  }
+}
+
+.ct-series-c .ct-slice-pie {
+  @include themed() {
+    fill: t('pieSeriesCFillColor');
+  }
+}
+
+.ct-label {
+  @include themed() {
+    fill: t('chartTextColor');
+    color: t('chartTextColor');
+  }
+}
+
+.ct-grid {
+  @include themed() {
+    stroke: t('chartGridColor');
+  }
+}
 </style>

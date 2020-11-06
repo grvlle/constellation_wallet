@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"path/filepath"
 	"os"
 	"os/exec"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -25,7 +27,7 @@ func (a *WalletApplication) runWalletCMD(tool string, scalaFunc string, scalaArg
 		main = "java"
 	}
 
-	cmds := []string{"-jar", a.paths.DAGDir + "/cl-" + tool + ".jar", scalaFunc}
+	cmds := []string{"-jar", filepath.Join(a.paths.DAGDir, "mw-" + tool + ".jar"), scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
 	a.log.Infoln("Running command: ", cmd)
@@ -49,7 +51,7 @@ func (a *WalletApplication) runWalletCMD(tool string, scalaFunc string, scalaArg
 
 // WalletKeystoreAccess is true if the user can unlock the .p12 keystore
 // and key using storepass and keypass
-func (a *WalletApplication) WalletKeystoreAccess() bool {
+func (a *WalletApplication) WalletKeystoreAccess(keyStorePath, alias string) bool {
 	a.log.Infoln("Checking Keystore Access...")
 
 	rescueStdout := os.Stdout
@@ -59,7 +61,7 @@ func (a *WalletApplication) WalletKeystoreAccess() bool {
 		a.sendError("Unable to pipe STDOUT, Reason: ", err)
 	}
 	os.Stdout = w
-	err = a.runWalletCMD("wallet", "show-address", "--keystore="+a.wallet.KeyStorePath, "--alias="+a.wallet.WalletAlias, "--env_args=true")
+	err = a.runWalletCMD("wallet", "show-address", "--keystore="+keyStorePath, "--alias="+alias, "--env_args=true")
 	if err != nil {
 		a.log.Warn("KeyStore Access Rejected!")
 		a.LoginError("Access Denied. Please make sure that you have typed in the correct credentials.")
@@ -99,15 +101,13 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	r, w, err := os.Pipe()
 	if err != nil {
 		a.log.Errorln("Unable to pipe STDOUT, Reason: ", err)
-		a.sendError("Unable to pipe STDOUT, Reason: ", err)
 		return ""
 	}
 	os.Stdout = w
 
 	err = a.runWalletCMD("wallet", "show-address", "--keystore="+a.wallet.KeyStorePath, "--alias="+a.wallet.WalletAlias, "--env_args=true")
 	if err != nil {
-		a.sendError("Unable to generate wallet address. Reason:", err)
-		a.log.Errorf("Unable to generate wallet address. Reason: %s", err.Error())
+		a.log.Errorf("Unable to get wallet address. Reason: %s", err.Error())
 		return ""
 	}
 
@@ -115,7 +115,6 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	dagAddress, err := ioutil.ReadAll(r)
 	if err != nil {
 		a.log.Errorln("Unable to read address from STDOUT", err)
-		a.sendError("Unable to read address from STDOUT", err)
 	}
 	os.Stdout = rescueStdout
 	a.wallet.Address = string(dagAddress[:40])
@@ -124,41 +123,49 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 }
 
 // CheckAndFetchWalletCLI will download the cl-wallet dependencies from
-// the official Constellation Repo
+// the official Repos
 func (a *WalletApplication) CheckAndFetchWalletCLI() bool {
-	keytoolPath := a.paths.DAGDir + "/cl-keytool.jar"
-	walletPath := a.paths.DAGDir + "/cl-wallet.jar"
+
+    keytoolFileName := "mw-keytool.jar"
+	keytoolPath := a.paths.DAGDir + "/" + keytoolFileName
+// 	walletFileName := "cl-wallet.jar"
+// 	walletPath := a.paths.DAGDir + "/" + walletFileName
 
 	keytoolExists := a.fileExists(keytoolPath)
-	walletExists := a.fileExists(walletPath)
+// 	walletExists := a.fileExists(walletPath)
 
-	if keytoolExists && walletExists {
+
+
+	if keytoolExists {
 		return true
 	}
 
 	if keytoolExists {
 		a.log.Info(keytoolPath + " file exists. Skipping downloading")
 	} else {
-		if err := a.fetchWalletJar("cl-keytool.jar", keytoolPath); err != nil {
-			a.log.Errorln("Unable to fetch or store cl-keytool.jar", err)
+	    url := a.KeyToolCLI.URL + "/v" + a.KeyToolCLI.Version + "/" + keytoolFileName
+		if err := a.fetchWalletJar(url, keytoolFileName, keytoolPath); err != nil {
+			a.log.Errorln("Unable to fetch or store mw-keytool.jar", err)
 			return false
 		}
 	}
 
-	if walletExists {
-		a.log.Info(walletPath + " file exists. Skipping downloading")
-	} else {
-		if err := a.fetchWalletJar("cl-wallet.jar", walletPath); err != nil {
-			a.log.Errorln("Unable to fetch or store cl-wallet.jar", err)
-			return false
-		}
-	}
+// 	if walletExists {
+// 		a.log.Info(walletPath + " file exists. Skipping downloading")
+// 	} else {
+// 	    url := a.WalletCLI.URL + "/v" + a.WalletCLI.Version + "/" + walletFileName
+// 		if err := a.fetchWalletJar(url, walletFileName, walletPath); err != nil {
+// 			a.log.Errorln("Unable to fetch or store cl-wallet.jar", err)
+// 			return false
+// 		}
+// 	}
 
-	if a.fileExists(keytoolPath) && a.fileExists(walletPath) {
+	if a.fileExists(keytoolPath) {
 		return true
-	} else {
-		return false
 	}
+
+	return false
+
 }
 
 // produceTXObject will put an actual transaction on the network. This is called from the
@@ -171,29 +178,46 @@ func (a *WalletApplication) produceTXObject(amount int64, fee int64, address, ne
 
 	// Convert to string
 	amountStr := strconv.FormatInt(amount, 10)
-	// feeStr := strconv.FormatInt(fee, 10)
-
-	// amountNorm, err := normalizeAmounts(amount)
-	// if err != nil {
-	// 	a.log.Errorln("Unable to normalize amounts when producing tx object. Reason: ", err)
-	// 	a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
-	// 	return
-	// }
-	feeNorm, err := normalizeAmounts(fee)
-	if err != nil {
-		a.log.Errorln("Unable to normalize amounts when producing tx object. Reason: ", err)
-		a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
-		return
-	}
+	feeStr := strconv.FormatInt(fee, 10)
 
 	// newTX is the full command to sign a new transaction
-	err = a.runWalletCMD("wallet", "create-transaction", "--keystore="+a.wallet.KeyStorePath, "--normalized", "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeNorm, "-d="+address, "-f="+newTX, "-p="+prevTX, "--env_args=true")
+	err := a.runWalletCMD("wallet", "create-transaction", "--keystore="+a.wallet.KeyStorePath, "--normalized", "--alias="+a.wallet.WalletAlias, "--amount="+amountStr, "--fee="+feeStr, "-d="+address, "-f="+newTX, "-p="+prevTX, "--env_args=true")
 	if err != nil {
 		a.sendError("Unable to send transaction. Don't worry, your funds are safe. Please report this issue. Reason: ", err)
 		a.log.Errorln("Unable to send transaction. Reason: ", err)
 		return
 	}
 	time.Sleep(1 * time.Second) // Will sleep for 1 sec between TXs to prevent spamming.
+}
+
+
+
+func (a *WalletApplication) produceKeystoreMigrateV2(keystorePath, alias string) (bool, error) {
+
+	err := a.runWalletCMD("keytool", "migrate-to-store-password-only", "--keystore="+keystorePath, "--alias="+alias, "--env_args=true")
+	if err != nil {
+		s := err.Error()
+		if strings.Contains(s, "java.io.IOException: keystore password was incorrect") {
+			a.log.Errorln("Password is incorrect. Reason: ", err)
+			return false, errors.New("Possibly wrong KeyStore Password")
+		}
+		if strings.Contains(s, "java.security.UnrecoverableKeyException:") {
+			a.log.Errorln("Password is incorrect. Reason: ", err)
+			return false, errors.New("Possibly wrong Key Password")
+		}
+		if strings.Contains(s, "java.lang.NullPointerException\n	at org.constellation.keytool.KeyStoreUtils$.$anonfun$unlockKeyPair$1") {
+			a.log.Errorln("Alias is incorrect. Reason: ", err)
+			return false, errors.New("Unable to find alias")
+		}
+		if strings.Contains(s, "java.io.IOException: toDerInputStream rejects tag type") {
+			a.log.Errorln("Private key file type is incorrect.", err)
+			return false, errors.New("Possibly wrong Private key file type")
+		}
+		a.log.Errorln("Unable to migrate Keystore file. Reason: ", err)
+		return false, errors.New("Unable to migrate Keystore file to V2. Please report this issue")
+	}
+
+	return true, nil
 }
 
 // CreateEncryptedKeyStore is called ONLY when a NEW wallet is created. This

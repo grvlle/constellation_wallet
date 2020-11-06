@@ -1,7 +1,7 @@
-@import 'sweetalert2/src/variables';
-@import '@sweetalert2/theme-bootstrap-4/bootstrap-4.scss';
+@import "sweetalert2/src/variables";
+@import "@sweetalert2/theme-bootstrap-4/bootstrap-4.scss";
 
-$swal2-font: 'Puppet', Helvetica, Arial, sans-serif;
+$swal2-font: "Puppet", Helvetica, Arial, sans-serif;
 $swal2-title-font-size: 1.5rem;
 $swal2-input-font-size: 1rem;
 $swal2-content-font-size: 0.875rem;
@@ -10,9 +10,28 @@ $swal2-confirm-button-font-size: 0.75rem;
 $swal2-cancel-button-font-size: 0.75rem;
 $swal2-confirm-button-background-color: $primary-color;
 
-.swal2-popup.swal2-modal.swal2-show {
+.swal2-popup.swal2-modal {
   @include themed() {
-    background: t('popupBackgroundColor');
+    background: t("popupBackgroundColor");
+  }
+}
+
+#swal2-title {
+  @include themed() {
+    color: t("popupTextColor");
+  }
+}
+
+#swal2-content {
+  @include themed() {
+    color: t("popupTextColor");
+  }
+}
+
+#swal2-validation-message {
+  @include themed() {
+    background: t("cardTableColor");
+    border-color: t("inputBorderColor");
   }
 }
 
@@ -31,4 +50,107 @@ button.swal2-styled.swal2-confirm:focus {
   box-shadow: none;
 }
 
-@import 'sweetalert2/src/sweetalert2';
+.login-button-text {
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  text-align: center;
+  letter-spacing: 0.1em;
+  color: #db6e44;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.login-content {
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-align: left;
+  line-height: 1.3125rem;
+  color: #ffffff;
+}
+
+.swal2-actions-login {
+  min-height: initial;
+  height: 2.25rem !important;
+  margin: 0 !important;
+}
+
+.swal2-title-login {
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500 !important;
+  font-size: 1.125rem !important;
+  line-height: 1.3125rem;
+  margin: 0 !important;
+  color: #ffffff !important;
+}
+
+.swal2-popup-login {
+  background: #db6e44 !important;
+  border-radius: 0.375rem !important;
+  box-shadow: none !important;
+}
+
+.swal2-container-login {
+  padding: 1.5rem !important;
+}
+
+.swal2-popup-tos {
+  width: 96% !important;
+  height: 96% !important;
+}
+
+.swal2-content-tos {
+  height: 90%;
+  overflow: auto;
+}
+
+.swal2-actions-tos {
+  width: 58% !important;
+  display: flex !important;
+  justify-content: space-between !important;
+}
+
+.btn-confirm-tos {
+  background: #2d9cdb;
+  color: white;
+  width: 48%;
+  height: 2.25rem;
+  border: 0;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-transform: uppercase;
+  border-radius: 0.25rem;
+}
+
+.btn-cancel-tos {
+  background: #666666;
+  border-radius: 0.25rem;
+  color: white;
+  width: 48%;
+  border: 0;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-transform: uppercase;
+  height: 2.25rem;
+}
+
+@import "sweetalert2/src/sweetalert2";

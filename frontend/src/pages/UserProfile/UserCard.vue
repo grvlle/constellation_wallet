@@ -26,13 +26,13 @@
           </h5>
         </div>
         <div class="col-4">
-          <h5>{{tokenAmount | asCurrency('DAG')}}
+          <h5>{{normalizedAvailableBalance}}
             <br>
             <small>DAG</small>
           </h5>
         </div>
         <div class="col-4">
-          <h5>{{totalValue | asCurrency(currency)}}
+          <h5>{{valueInCurrency}}
             <br>
             <small>{{currency}}</small>
           </h5>
@@ -43,40 +43,13 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState, mapGetters} from 'vuex'
 export default {
   computed: {
-    ...mapState('wallet', 
-      ['imgPath', 'walletLabel', 'address', 'transactions', 'tokenAmount', 'totalValue', 'currency'])
-  },
-  filters: {
-    asCurrency: function(value, currency) {
-
-      if (currency == "") return "";
-      
-      var formatter
-      if (currency == "DAG") {
-        formatter = new Intl.NumberFormat(navigator.language);
-      } else if (currency == "BTC") {
-        formatter = new Intl.NumberFormat(navigator.language, {
-          style: "currency",
-          currency: "XBT",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 8
-        });
-      } else {
-        formatter = new Intl.NumberFormat(navigator.language, {
-          style: "currency",
-          currency: currency,
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-      }
-      return formatter.format(value).replace(/XBT/,'₿');
-    }
-  },
+    ...mapState('wallet', ['imgPath', 'walletLabel', 'address', 'transactions', 'currency']),
+    ...mapGetters('wallet', ['valueInCurrency', 'normalizedAvailableBalance'])
+  }
 };
 </script>
-
-<style>
+<style scoped lang="scss">
 </style>

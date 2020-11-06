@@ -1,8 +1,8 @@
 package app
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -16,7 +16,7 @@ const (
 	dummyValue             = 1000
 	updateIntervalToken    = 30 // Seconds
 	updateIntervalCurrency = 50 // Seconds
-	updateIntervalBlocks   = 5  // Seconds
+	updateIntervalBlocks   = 15  // Seconds
 	updateIntervalPieChart = 60 // Seconds
 )
 
@@ -39,6 +39,20 @@ type ChartData struct {
 	} `json:"throughput"`
 }
 
+type LastTransactionRef struct {
+    PrevHash string
+    Ordinal int
+}
+
+type CampaignStatus struct {
+    Active bool
+}
+
+type CampaignRegisterInfo struct {
+    A1 string
+    A2 string
+}
+
 // ChartDataInit initializes the ChartData struct with datapoints for
 // the charts in the wallet. These are stored on the fs as chart_data.json
 func (a *WalletApplication) ChartDataInit() *ChartData {
@@ -52,7 +66,7 @@ func (a *WalletApplication) ChartDataInit() *ChartData {
 		"Feb  ",
 		"Mar  ",
 		"Apr  ",
-		"Mai  ",
+		"May  ",
 		"Jun  ",
 		"Jul  ",
 		"Aug  ",
@@ -160,15 +174,39 @@ func (a *WalletApplication) networkStats(cd *ChartData) {
 
 // BlockAmount is a temporary function
 func (a *WalletApplication) blockAmount() {
-	var randomNumber int
 	go func() {
 		for {
 			select {
 			case <-a.killSignal:
 				return
 			default:
-				randomNumber = rand.Intn(dummyValue)
-				a.RT.Events.Emit("blocks", randomNumber)
+				resp, err := http.Get(a.Network.BlockExplorer.URL + "/snapshot/latest")
+				if err != nil {
+					a.log.Errorln("Failed to send HTTP request. Reason: ", err)
+					return
+				}
+
+				defer resp.Body.Close()
+
+				if resp.Body == nil {
+					return
+				}
+
+				bodyBytes, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					return
+				}
+
+				// Declared an empty interface
+				var result map[string]interface{}
+
+				// Unmarshal or Decode the JSON to the interface.
+				err = json.Unmarshal(bodyBytes, &result)
+				if err != nil {
+					return
+				}
+
+				a.RT.Events.Emit("blocks", result["height"])
 				UpdateCounter(updateIntervalBlocks, "block_counter", time.Second, a.RT)
 				time.Sleep(updateIntervalBlocks * time.Second)
 			}
@@ -179,6 +217,7 @@ func (a *WalletApplication) blockAmount() {
 func (a *WalletApplication) pollTokenBalance() {
 	go func() {
 		retryCounter := 1
+		time.Sleep(3 * time.Second) // Give some space to pollTokenBalance
 		for {
 			select {
 			case <-a.killSignal:
@@ -189,6 +228,9 @@ func (a *WalletApplication) pollTokenBalance() {
 
 					balance, err := a.GetTokenBalance()
 					if err != nil {
+						if retryCounter == 3 || retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
+							a.sendWarning("No data received from the Token Balance API. Trying again.")
+						}
 						retryCounter++
 						break
 					}
@@ -203,6 +245,181 @@ func (a *WalletApplication) pollTokenBalance() {
 	}()
 }
 
+// GetTestDag will send an API call to the faucet with the address included.
+// This will generate testnet tokens for said wallet. This is exposed to the FE
+// as a button in one of the widgets when on testnet
+func (a *WalletApplication) GetTestDag() bool {
+	const url string = "https://us-central1-dag-faucet.cloudfunctions.net/main/api/v1/faucet/"
+
+	a.log.Infoln("Test DAG requested by user for address: ", a.wallet.Address)
+
+	resp, err := http.Get(url + a.wallet.Address)
+	if err != nil {
+		a.log.Warnln("API called failed, please send the request again. Reason: ", err)
+		a.sendWarning("API called failed, please send the request again.")
+		return false
+	}
+
+	defer resp.Body.Close()
+
+	err = a.updateTokenBalance()
+	if err != nil {
+		a.log.Warnln("Updating token balance has a problem. Reason: ", err)
+		a.sendWarning("Updating token balance has a problem.")
+		return false
+	}
+
+	return true
+}
+
+func (a *WalletApplication) RegisterCampaign(account, dateNum, dateStr string) bool {
+
+	url := "https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/" + a.HWAddr + ".json"
+
+    jMap := map[string]string{"a1": a.wallet.Address, "a2": account, "date": dateNum, "dateStr": dateStr}
+    bytesRepresentation, err := json.Marshal(jMap)
+    if err != nil {
+        return false
+    }
+
+    // initialize http client
+    client := &http.Client{}
+
+    //, "application/json"
+	req, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(bytesRepresentation))
+	if err != nil {
+		a.log.Warnln("API called failed. Reason: ", err)
+		return false
+	}
+
+    // set the request header Content-Type for json
+    req.Header.Set("Content-Type", "application/json; charset=utf-8")
+    resp, err := client.Do(req)
+    if err != nil {
+        a.log.Warnln("API called failed, please send the request again. Reason: ", err)
+        return false
+    }
+
+	defer resp.Body.Close()
+
+    //StatusUnauthorized
+    if resp.StatusCode == 401 {
+        return false
+    }
+
+	return true
+}
+
+func (a *WalletApplication) sendCampaignStatus() bool {
+
+	resp, err := http.Get("https://dag-faucet.firebaseio.com/campaign/tiger-lily/status.json")
+	if err != nil {
+		return false
+	}
+
+	defer resp.Body.Close()
+
+    if resp.Body == nil {
+        return false
+    }
+
+    bodyBytes, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return false
+    }
+
+    var result CampaignStatus
+
+    // Unmarshal or Decode the JSON to the interface.
+    err = json.Unmarshal(bodyBytes, &result)
+    if err != nil {
+        return false
+    }
+
+    a.RT.Events.Emit("campaign_status", result.Active)
+
+    return true
+}
+
+func (a *WalletApplication) sendCampaignClaim() {
+
+	resp, err := http.Get("https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/" + a.HWAddr + ".json")
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+
+    if resp.Body == nil {
+        return
+    }
+
+    bodyBytes, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return
+    }
+
+    var result CampaignRegisterInfo
+
+    // Unmarshal or Decode the JSON to the interface.
+    err = json.Unmarshal(bodyBytes, &result)
+    if err != nil {
+        return
+    }
+
+    a.RT.Events.Emit("campaign_claim", result.A1)
+}
+
+func (a *WalletApplication) GetLastAcceptedTransactionRef() string {
+
+    url := a.Network.URL + "/transaction/last-ref/" + a.wallet.Address
+
+	a.log.Infoln("GetLastAcceptedTransactionRef: ", url)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		a.log.Warnln("API called failed, please send the request again. Reason: ", err)
+		a.sendWarning("API called failed, please send the request again.")
+	}
+
+	defer resp.Body.Close()
+
+    if resp.Body == nil {
+        return ""
+    }
+
+    bodyBytes, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return ""
+    }
+
+    var result LastTransactionRef
+
+    // Unmarshal or Decode the JSON to the interface.
+    err = json.Unmarshal(bodyBytes, &result)
+    if err != nil {
+        return ""
+    }
+
+	return strconv.Itoa(result.Ordinal) + "," + result.PrevHash
+}
+
+
+
+// func (a *WalletApplication) PostTransferTx(tx) {
+// 	const url string = a.Network.URL;
+//
+// 	a.log.Infoln("Test DAG requested by user for address: ", a.wallet.Address)
+//
+// 	_, err := http.Post(url + "/transaction", tx)
+// 	if err != nil {
+// 		a.log.Warnln("API called failed, please send the request again. Reason: ", err)
+// 		a.sendWarning("API called failed, please send the request again.")
+// 	}
+//
+// 	a.updateTokenBalance()
+// }
+
 // pricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token
 // balance evaluation against USD.
@@ -216,7 +433,7 @@ func (a *WalletApplication) pricePoller() {
 
 	go func() {
 		retryCounter := 1
-		time.Sleep(3 * time.Second) // Give some space to pollTokenBalance
+		time.Sleep(3 * time.Second) // Give some space to pricePoller
 
 		for {
 			select {
@@ -226,51 +443,52 @@ func (a *WalletApplication) pricePoller() {
 				a.wallet.TokenPrice.DAG.USD = 0
 				a.wallet.TokenPrice.DAG.EUR = 0
 				a.wallet.TokenPrice.DAG.BTC = 0
+
 				time.Sleep(time.Duration(retryCounter) * time.Second) // Incremental backoff
 				for retryCounter <= 20 && a.wallet.Balance != 0 {
-					a.log.Infoln("Contacting token evaluation API on: " + url + ticker)
+
+					if retryCounter == 3 || retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
+						warn := "No data recieved from the Token Price API. Trying again."
+						a.log.Errorln(warn)
+						a.sendWarning(warn)
+					}
+
+					a.log.Infoln("Contacting the the Token Price API on: " + url + ticker)
 
 					resp, err := http.Get(url)
 					if err != nil {
-						a.log.Warnln("Unable to poll token evaluation. Reason: ", err) // Log this
 						retryCounter++
+						a.log.Warnln("Unable to poll the Token Price API. Reason: ", err) // Log this
 						break
 					}
 
 					if resp == nil {
 						retryCounter++
-						a.log.Errorln("Killing pollTokenBalance after 10 failed attempts to get balance from mainnet, Reason: ", err)
-						a.sendWarning("Unable to showcase token USD evaluation. Please check your internet connectivity and restart the wallet application.")
+						a.log.Warnln("Received empty response from the Token Price API.")
 						break
 					}
 
 					body, err := ioutil.ReadAll(resp.Body)
 					if err != nil {
 						retryCounter++
-						a.sendError("Unable to read HTTP resonse from Token API. Reason: ", err)
-						a.log.Warnln("Unable to read HTTP resonse from Token API. Reason: ", err)
+						a.log.Warnln("Unable to read the HTTP response from the Token Price API. Reason: ", err)
 						break
 					}
 					err = json.Unmarshal([]byte(body), &a.wallet.TokenPrice)
 					if err != nil {
 						retryCounter++
-						a.sendError("Unable to display token price. Reason: ", err)
-						a.log.Warnln("Unable to display token price. Reason:", err)
+						a.log.Warnln("Unable to unmarshal the HTTP response from the Token Price API. Reason: ", err)
 						break
 					}
 
 					if a.wallet.Balance != 0 && a.wallet.TokenPrice.DAG.USD == 0 {
 
-						a.log.Infoln("Contacting alternate token evaluation API")
+						a.log.Infoln("Contacting alternate Token Price API")
 						a.wallet.TokenPrice.DAG.USD, a.wallet.TokenPrice.DAG.BTC, err = getTokenPriceAlternateRoute()
 
 						if err != nil {
-							a.log.Errorln("Failed to fetch token metrics using alternate endpoint. Reason: ", err)
-							if retryCounter == 10 || retryCounter == 15 || retryCounter == 20 {
-								warn := fmt.Sprintf("No data recieved from Token Price API. Will try again in %v seconds.", retryCounter)
-								a.sendWarning(warn)
-							}
 							retryCounter++
+							a.log.Warnln("Failed to fetch token price using alternate endpoint. Reason: ", err)
 							break
 						}
 					}
@@ -278,16 +496,7 @@ func (a *WalletApplication) pricePoller() {
 					a.log.Infof("Collected token price in USD: %v", a.wallet.TokenPrice.DAG.USD)
 					a.log.Infof("Collected token price in EUR: %v", a.wallet.TokenPrice.DAG.EUR)
 					a.log.Infof("Collected token price in BTC: %v", a.wallet.TokenPrice.DAG.BTC)
-
-					totalCurrencyBalance := 0.0
-					if a.wallet.Currency == "USD" {
-						totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.USD
-					} else if a.wallet.Currency == "EUR" {
-						totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.EUR
-					} else if a.wallet.Currency == "BTC" {
-						totalCurrencyBalance = float64(a.wallet.Balance) * a.wallet.TokenPrice.DAG.BTC
-					}
-					a.RT.Events.Emit("totalValue", a.wallet.Currency, totalCurrencyBalance)
+					a.RT.Events.Emit("tokenPrice", a.wallet.TokenPrice)
 
 					UpdateCounter(updateIntervalCurrency, "value_counter", time.Second, a.RT)
 					time.Sleep(updateIntervalCurrency * time.Second)

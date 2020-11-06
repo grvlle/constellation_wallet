@@ -63,7 +63,7 @@ func (a *WalletApplication) MigrateWallet(keystorePath, keystorePassword, keyPas
         }
     }
 
-    _, err :=  a.producePrivateKeyMigrateV2(keystorePath, alias)
+    _, err :=  a.producePrivateKeyMigrateV2(keystorePath, alias, filepath.Dir(pKeyFilePath))
     if err != nil {
         return "", err
     }
@@ -110,7 +110,7 @@ func (a *WalletApplication) saveMigrateKeyStoreFile(p12FilePath string, jsonKey 
 
 // java -jar ~/.dag/cl-keytool.jar generate-wallet --keystore testA.p12 --alias alias --storepass test1 --keypass test2
 // java -jar ~/.dag/cl-keytool.jar migrate-to-store-password-only --keystore testA.p12 --alias alias --storepass test1 --keypass test2
-func (a *WalletApplication) producePrivateKeyMigrateV2(keystorePath, alias string) (bool, error) {
+func (a *WalletApplication) producePrivateKeyMigrateV2(keystorePath, alias, wrkDir string) (bool, error) {
 
 	err := a.runWalletCMD("keytool", "export-private-key-hex", "--keystore="+keystorePath, "--alias="+alias, "--env_args=true")
 	if err != nil {
@@ -133,7 +133,7 @@ func (a *WalletApplication) producePrivateKeyMigrateV2(keystorePath, alias strin
 		}
 		if strings.Contains(s, "Permission denied") || strings.Contains(s, "Access is denied") {
             a.log.Errorln("Unable to write to the same directory as your P12 file", err)
-            return false, errors.New("Unable to write to the same directory as your P12 file")
+            return false, errors.New("Permission denied. Reason: Unable to write to this directory: " + wrkDir)
 		}
 		errStr := err.Error()
 		maxLen := len(errStr)

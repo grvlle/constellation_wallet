@@ -23,7 +23,7 @@
                     step="0.01"
                   />
                   <div class="input-group-append">
-                    <button type="button" @click="setMaxDAGs()" class="btn">Max.</button>
+                    <button type="button" @click="setMaxDAGs()" class="btn">Max</button>
                   </div>
                 </div>
                 <div class="validate text-danger" v-if="$v.txAmount.normalized.$invalid && txAmount.normalized != 0">
@@ -207,7 +207,7 @@ export default {
             html: 
               "<p>You are about to send <b>" + self.txAmount.normalized + "</b> $DAG tokens to " + self.txAddress + "</p>" +
               "<div class='border border-dark'>" + 
-                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + self.normalizedAvailableBalance + ")</p>" +              
+                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + (self.availableBalance / 1e8) + ")</p>" +
                 "<p>Transaction amount: " + self.txAmount.normalized + "</p>" +
                 "<p>To: " + self.txAddress + "</p>" +
               "</div>",
@@ -218,8 +218,8 @@ export default {
           {
             title: "Set a fee to prioritize your transaction.",
             html: 
-              "<div class='border border-dark'>" + 
-                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + self.normalizedAvailableBalance + ")</p>" +              
+              "<div class='border border-dark'>" +
+                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + (self.availableBalance / 1e8) + ")</p>" +
                 "<p>Transaction amount: " + self.txAmount.normalized + "</p>" +
                 "<p>To: " + self.txAddress + "</p>" +
               "</div>" + 
@@ -235,7 +235,7 @@ export default {
             animation: false,
             inputValidator: value => {
               return new Promise(resolve => {
-                if (value + self.txAmount.normalized > self.normalizedAvailableBalance) {
+                if (value + self.txAmount.normalized > (self.availableBalance / 1e8)) {
                   resolve("The transaction amount + fee can not exceed your balance");
                 } else if (value < 0 ||  value > 3711998690 || isNaN(parseFloat(value))) {
                   resolve("Please enter a transaction fee between 0 and 3711998690");
@@ -319,7 +319,7 @@ export default {
       });
     },
     setMaxDAGs() {
-      this.txAmount.normalized = this.normalizedAvailableBalance;
+      this.txAmount.normalized = this.availableBalance / 1e8;
       // this.txAmount.denormalized = this.availableBalance;
     }
   },

@@ -16,12 +16,16 @@ import UserCard from "./UserProfile/UserCard.vue";
 export default {
   components: {
     EditProfileForm,
-    UserCard
-  }
+    UserCard,
+  },
 };
 </script>
 
 <style scoped lang="scss">
+.container {
+  padding: 0px;
+}
+
 .card {
   width: 100%;
   display: flex;

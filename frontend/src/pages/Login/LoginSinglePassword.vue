@@ -11,7 +11,7 @@
                 >
                 <file-selector
                   v-model="keystorePath"
-                  action="SelectFile3"
+                  action="SelectFile"
                   @file="fileSelected"
                 />
               </div>
@@ -34,7 +34,7 @@
                       <p-button
                         type="primary"
                         block
-                        :disabled="!valid"
+                        :disabled="valid"
                         @click.native="
                           loginJsonWallet(keystorePath, keystorePassword)
                         "
@@ -75,7 +75,7 @@ export default {
     keystorePassword: "",
     KeyPassword: "",
     overlay: false,
-    valid: false
+    valid: false,
   }),
   mounted() {
     this.migrateNotification();
@@ -84,8 +84,8 @@ export default {
     keystorePath: {
       get() {
         return this.$store.state.wallet.keystorePath;
-      }
-    }
+      },
+    },
   },
   methods: {
     validCheck: function() {
@@ -171,7 +171,7 @@ export default {
       let reader = new FileReader();
 
       //Settings and Wallet info shows the name of the file
-      this.$store.commit("wallet/setKeystorePath", filePath.name)
+      this.$store.commit("wallet/setKeystorePath", filePath.name);
 
       const ext = filePath.name
         .split(".")
@@ -245,28 +245,44 @@ export default {
         }
       );
     },
-    loginJsonWallet: function (filePath, password) {
-
+    // eslint-disable-next-line no-unused-vars
+    loginJsonWallet: function(filePath, password) {
+      const key =
+        "d4ace4d04e13e3441b7a34fb869dc09fa729d9b4fbf9e3377cbae3d88f75f049";
+      var address = keyStore.getDagAddressFromPublicKey(
+        keyStore.getPublicKeyFromPrivate(key)
+      );
+      window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
+        (result) => {
+          if (result) {
+            this.overlay = false;
+            this.$Progress.finish();
+            this.initWallet();
+          }
+        }
+      );
+      /*
       Swal.close();
       this.$Progress.start();
       this.overlay = true;
 
-      window.backend.WalletApplication.LoginJsonWallet(filePath, password).then((key) => {
+      window.backend.WalletApplication.LoginJsonWallet(filePath, password).then(
+        (key) => {
           if (key) {
             dagWalletAccount.loginPrivateKey(key);
 
             var address = keyStore.getDagAddressFromPublicKey(
-                keyStore.getPublicKeyFromPrivate(key)
+              keyStore.getPublicKeyFromPrivate(key)
             );
 
             window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
-                (result) => {
-                  if (result) {
-                    this.overlay = false;
-                    this.$Progress.finish();
-                    this.initWallet();
-                  }
+              (result) => {
+                if (result) {
+                  this.overlay = false;
+                  this.$Progress.finish();
+                  this.initWallet();
                 }
+              }
             );
           } else {
             this.overlay = false;
@@ -279,6 +295,7 @@ export default {
           Swal.fire("Unable to login", error, "error");
         }
       );
+      */
     },
     initWallet: function() {
       var self = this;

@@ -9,7 +9,11 @@
     <slot>
       <p class="nav-item">
         <a class="nav-link">
-          <i v-if="icon" :class="icon"></i>
+          <dashboard-icon class="s-icon" v-if="icon === 'dashboard'" />
+          <wallet-icon class="s-icon" v-if="icon === 'wallet'" />
+          <tx-icon class="s-icon" v-if="icon === 'tx'" />
+          <about-icon class="s-icon" v-if="icon === 'about'" />
+          <i v-else-if="icon" :class="icon"></i>
           {{ name }}
         </a>
       </p>
@@ -67,7 +71,29 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.theme--light a {
-  color: #2d9cdb;
+.theme--light a:focus {
+  color: #57b0e2 !important;
+}
+
+.nav-link {
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 24px;
+  text-transform: none;
+  color: $gray-input-bg !important;
+}
+
+.nav-item:first-child {
+  margin-top: 10px;
+}
+
+.s-icon {
+  margin-left: 12px;
+  margin-right: 8px;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 </style>

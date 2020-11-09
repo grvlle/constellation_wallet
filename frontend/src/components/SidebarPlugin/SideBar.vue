@@ -14,8 +14,8 @@
           <div class="logo-img">
             <center><img src="@/assets/img/spots.png" alt /></center>
           </div>
-          <div class="small" style="text-align:center;">
-            MOLLY WALLET V2
+          <div class="small welcome-text" style="text-align:center;">
+            Welcome to Molly Wallet
           </div>
         </a>
       </div>
@@ -100,7 +100,7 @@ export default {
   },
   data() {
     return {
-      linkHeight: 4.2,
+      linkHeight: 4.1,
       activeLinkIndex: 0,
       windowWidth: 0,
       isWindows: false,
@@ -138,5 +138,14 @@ export default {
 <style scoped lang="scss">
 .simple-text:hover {
   text-decoration: none;
+}
+
+.welcome-text {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 21px;
+  color: $gray-input-bg;
+  margin-top: 18px;
+  margin-bottom: 2px;
 }
 </style>

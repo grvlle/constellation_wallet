@@ -2,27 +2,43 @@
   <div id="app" class="wrapper">
     <side-bar>
       <template slot="links">
-        <sidebar-link to="dashboard" name="Dashboard" icon="fa fa-columns" />
-        <sidebar-link to="wallet-info" name="Wallet Info" icon="fa fa-wallet" />
-        <sidebar-link to="submit-transaction" name="Transactions" icon="fa fa-paper-plane" />
-        <sidebar-link to="about" name="About" icon="fa fa-question-circle" />
-<!--        <sidebar-link to="address-book" name="Address Book" icon="fa fa-address-book" />-->
-        <p class="nav-item">
-          <a @click="notifyVue2('top', 'right')" class="nav-link" style="cursor: pointer; color: #6c757d;">
+        <sidebar-link to="dashboard" name="Dashboard" icon="dashboard" />
+        <sidebar-link to="wallet-info" name="Wallet Info" icon="wallet" />
+        <sidebar-link to="submit-transaction" name="Transactions" icon="tx" />
+        <sidebar-link to="about" name="About" icon="about" />
+        <!--        <sidebar-link to="address-book" name="Address Book" icon="fa fa-address-book" />-->
+        <!-- <p class="nav-item">
+          <a
+            @click="notifyVue2('top', 'right')"
+            class="nav-link"
+            style="cursor: pointer; color: #6c757d;"
+          >
             <i class="fa fa-trophy"></i>Team
           </a>
         </p>
         <p class="nav-item">
-          <a @click="notifyVue2('top', 'right')" class="nav-link" style="cursor: pointer; color: #6c757d;">
+          <a
+            @click="notifyVue2('top', 'right')"
+            class="nav-link"
+            style="cursor: pointer; color: #6c757d;"
+          >
             <i class="fa fa-gavel"></i>Governance
           </a>
-        </p>
+        </p> -->
       </template>
-      <ul class="nav text-center" style="width: 100%; bottom: 0;position: absolute;">
-        <hr class="divider"/>
+      <ul
+        class="nav text-center"
+        style="width: 100%; bottom: 0;position: absolute;"
+      >
+        <hr class="divider" />
         <li class="nav-item">
           <p class="nav-item" style="font-size: 0.6rem;">
-            <a href="javascript:void(0)" @click="toTermsofService" class="nav-link" style="cursor: pointer;">
+            <a
+              href="javascript:void(0)"
+              @click="toTermsofService"
+              class="nav-link"
+              style="cursor: pointer;"
+            >
               Terms of Service
             </a>
           </p>
@@ -52,6 +68,21 @@
 </template>
 
 <style scoped lang="scss">
+.nav-link {
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 12px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f2f2f2 !important;
+  height: 44px;
+  box-sizing: border-box;
+  margin: 0px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>
 
 <script>
@@ -64,7 +95,7 @@ export default {
   components: {
     TopNavbar,
     DashboardContent,
-    MobileMenu
+    MobileMenu,
   },
   methods: {
     notifyVue2(verticalAlign, horizontalAlign) {
@@ -79,7 +110,7 @@ export default {
         type: "danger",
         onClick: () => {
           this.$notification.close();
-        }
+        },
       });
     },
     toggleSidebar() {
@@ -89,9 +120,9 @@ export default {
     },
     toTermsofService() {
       this.$router.push({
-        name: 'terms of service'
+        name: "terms of service",
       });
-    }
-  }
+    },
+  },
 };
 </script>

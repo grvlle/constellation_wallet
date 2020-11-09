@@ -51,8 +51,18 @@ export default {
 
 <style scoped lang="scss">
 .form-control {
-  background: #f9f7f7 !important;
+  background: #f2f2f2 !important;
   font-family: Poppins;
   color: #666666;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 1px solid #c4c4c4 !important;
+}
+
+.control-label {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 21px;
+  color: #979797;
 }
 </style>

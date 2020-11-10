@@ -9,14 +9,17 @@
             style="color: #23DBBC"
             slot="header"
           >
-            <i class="fas fa-wallet"></i>
+            <wallet-icon :size="52" />
           </div>
-          <div class="numbers text-center text-overflow" slot="content">
-            <p>DAG</p>
+          <div
+            class="numbers text-left text-overflow card-label"
+            slot="content"
+          >
+            <p>$DAG</p>
             {{ normalizedAvailableBalance }}
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-timer"></i>
+            <clock-icon class="clock-icon" />
             Updates in {{ counters.token }} seconds
           </div>
         </stats-card>
@@ -29,14 +32,17 @@
             style="color: #DB6E44"
             slot="header"
           >
-            <i class="fas fa-search-dollar"></i>
+            <fiat-icon :size="52" />
           </div>
-          <div class="numbers text-center text-overflow" slot="content">
+          <div
+            class="numbers text-left text-overflow card-label"
+            slot="content"
+          >
             <p>{{ currency }}</p>
             {{ valueInCurrency }}
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-timer"></i>
+            <clock-icon class="clock-icon" />
             Updates in {{ counters.value }} seconds
           </div>
         </stats-card>
@@ -56,7 +62,10 @@
           >
             <i class="fas fa-cube"></i>
           </div>
-          <div class="numbers text-center text-overflow" slot="content">
+          <div
+            class="numbers text-left text-overflow card-label"
+            slot="content"
+          >
             <p>Block Height</p>
             {{ stat.blocks }}
             <!-- {{this.$store.state.OS.windows}}
@@ -64,7 +73,7 @@
             {{this.$store.state.OS.linux}} -->
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-reload"></i>
+            <clock-icon class="clock-icon" />
             Updates in {{ counters.block }} seconds
           </div>
         </stats-card>
@@ -74,34 +83,18 @@
       <div class="col">
         <card title="Wallet Address" sub-title>
           <div class="wallet-address">
-            <table style="table-layout: fixed" class="table-noheader">
-              <tr>
-                <td
-                  class="text-overflow"
-                  style="
-                    word-wrap: break-word;
-                    padding-top: 20px;
-                    padding-left: 15px;
-                    width: 100%;
-                  "
-                >
-                  <span style="width: 100%" class="text-overflow">{{
-                    address
-                  }}</span>
-                  <input type="hidden" id="testing-code" :value="address" />
-                </td>
-                <td style="padding-top: 10px; width: 9%">
-                  <p-button
-                    type="info"
-                    style="margin-bottom: 5px; background: #2D9CDB; border-color: #2D9CDB"
-                    icon
-                    @click.native="copyTestingCode"
-                  >
-                    <i class="fa fa-copy"></i>
-                  </p-button>
-                </td>
-              </tr>
-            </table>
+            <div class="address-wrapper">
+              <span class="text-overflow address-part">{{ address }}</span>
+              <input type="hidden" id="testing-code" :value="address" />
+              <p-button
+                type="info"
+                class="address-btn"
+                icon
+                @click.native="copyTestingCode"
+              >
+                <i class="fa fa-copy"></i>
+              </p-button>
+            </div>
           </div>
         </card>
       </div>
@@ -138,8 +131,8 @@
             <i class="fa fa-circle text-info"></i> TX
             <i class="fa fa-circle text-success"></i> RX
           </div>
-          <span style="padding-top: 0.625em" slot="footer">
-            <i class="ti-timer"></i>
+          <span style="padding-top: 0.625em" class="stats" slot="footer">
+            <clock-icon class="clock-icon" />
             Updates in {{ counters.chart }} seconds
           </span>
         </chart-card>
@@ -153,8 +146,8 @@
           :chart-options="this.throughputChart.options"
           chart-type="Line"
         >
-          <span slot="footer">
-            <i class="ti-timer"></i>
+          <span slot="footer" class="stats">
+            <clock-icon class="clock-icon" />
             Updates in {{ counters.chart }} seconds
           </span>
           <div slot="legend">
@@ -352,11 +345,44 @@ function calcTime(offset) {
 </script>
 
 <style scoped lang="scss">
+.clock-icon {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  margin-right: 8px;
+
+  svg {
+    width: 16px;
+  }
+}
+
 .text-overflow {
   display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.stats {
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.stats-card .card-label {
+  p {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 28px;
+    color: #979797;
+  }
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 28px;
+  color: #666666;
 }
 
 .stats-card .card-body .row [class^="col"] {
@@ -416,5 +442,33 @@ function calcTime(offset) {
 
 .wallet-address > p-button {
   margin-bottom: 10em;
+}
+
+.address-wrapper {
+  background: #f2f2f2;
+  border: 1px solid #c4c4c4;
+  box-sizing: border-box;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 8px;
+  height: 60px;
+
+  .address-part {
+    font-weight: normal;
+    font-size: 20px;
+    line-height: 30px;
+    color: #666;
+  }
+
+  .address-btn {
+    margin-bottom: 5px;
+    background: #979797;
+    border-radius: 4px;
+    border: none;
+    margin-bottom: 12px;
+  }
 }
 </style>

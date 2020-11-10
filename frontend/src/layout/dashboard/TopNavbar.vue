@@ -16,7 +16,7 @@
       <div class="logo">
         <img
           style="height: 54.23px;"
-          v-if="isDarkMode"
+          v-if="darkMode"
           src="~@/assets/img/stardust-collective-logo-white.png"
         />
         <img

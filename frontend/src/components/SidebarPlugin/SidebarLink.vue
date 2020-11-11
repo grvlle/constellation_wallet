@@ -71,8 +71,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.theme--light a:focus {
+.theme--light a:focus,
+a:hover {
   color: #57b0e2 !important;
+}
+
+li.active {
+  a {
+    color: #57b0e2 !important;
+  }
 }
 
 .nav-link {

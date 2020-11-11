@@ -39,7 +39,9 @@
                 <div class="validate text-danger" v-else></div>
               </div>
               <div class="col-md-1">
-                <i class="fa fa-chevron-circle-right icon-point-right"></i>
+                <div class="circle-badge">
+                  <arrow-r-icon :size="16" fillColor="#ffffff" />
+                </div>
                 <div class="validate"></div>
               </div>
               <div class="col-md-5" style="padding-right: 0">
@@ -430,5 +432,18 @@ export default {
   }
   font-size: 2.5rem;
   width: 100%;
+}
+
+.circle-badge {
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 0.875rem;
+  text-align: center;
+  z-index: 100;
+  background: #2d9cdb;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

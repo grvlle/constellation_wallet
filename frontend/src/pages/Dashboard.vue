@@ -9,14 +9,17 @@
             style="color: #23DBBC"
             slot="header"
           >
-            <i class="fas fa-wallet"></i>
+            <wallet-icon :size="52" />
           </div>
-          <div class="numbers text-center text-overflow" slot="content">
-            <p>DAG</p>
+          <div
+            class="numbers text-left text-overflow card-label"
+            slot="content"
+          >
+            <p>$DAG</p>
             {{ normalizedAvailableBalance }}
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-timer"></i>
+            <clock-icon class="clock-icon" />
             Updates in {{ counters.token }} seconds
           </div>
         </stats-card>
@@ -29,14 +32,17 @@
             style="color: #DB6E44"
             slot="header"
           >
-            <i class="fas fa-search-dollar"></i>
+            <img src="~@/assets/img/money.png" height="36" />
           </div>
-          <div class="numbers text-center text-overflow" slot="content">
+          <div
+            class="numbers text-left text-overflow card-label"
+            slot="content"
+          >
             <p>{{ currency }}</p>
             {{ valueInCurrency }}
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-timer"></i>
+            <clock-icon class="clock-icon" />
             Updates in {{ counters.value }} seconds
           </div>
         </stats-card>
@@ -54,9 +60,12 @@
             style="color: #2D9CDB"
             slot="header"
           >
-            <i class="fas fa-cube"></i>
+            <img src="~@/assets/img/blocks.png" height="40" />
           </div>
-          <div class="numbers text-center text-overflow" slot="content">
+          <div
+            class="numbers text-left text-overflow card-label"
+            slot="content"
+          >
             <p>Block Height</p>
             {{ stat.blocks }}
             <!-- {{this.$store.state.OS.windows}}
@@ -64,7 +73,7 @@
             {{this.$store.state.OS.linux}} -->
           </div>
           <div class="stats" slot="footer">
-            <i class="ti-reload"></i>
+            <clock-icon class="clock-icon" />
             Updates in {{ counters.block }} seconds
           </div>
         </stats-card>
@@ -74,34 +83,18 @@
       <div class="col">
         <card title="Wallet Address" sub-title>
           <div class="wallet-address">
-            <table style="table-layout: fixed" class="table-noheader">
-              <tr>
-                <td
-                  class="text-overflow"
-                  style="
-                    word-wrap: break-word;
-                    padding-top: 20px;
-                    padding-left: 15px;
-                    width: 100%;
-                  "
-                >
-                  <span style="width: 100%" class="text-overflow">{{
-                    address
-                  }}</span>
-                  <input type="hidden" id="testing-code" :value="address" />
-                </td>
-                <td style="padding-top: 10px; width: 9%">
-                  <p-button
-                    type="info"
-                    style="margin-bottom: 5px; background: #2D9CDB; border-color: #2D9CDB"
-                    icon
-                    @click.native="copyTestingCode"
-                  >
-                    <i class="fa fa-copy"></i>
-                  </p-button>
-                </td>
-              </tr>
-            </table>
+            <div class="address-wrapper">
+              <span class="text-overflow address-part">{{ address }}</span>
+              <input type="hidden" id="testing-code" :value="address" />
+              <p-button
+                type="info"
+                class="address-btn"
+                icon
+                @click.native="copyTestingCode"
+              >
+                <i class="fa fa-copy"></i>
+              </p-button>
+            </div>
           </div>
         </card>
       </div>
@@ -138,8 +131,8 @@
             <i class="fa fa-circle text-info"></i> TX
             <i class="fa fa-circle text-success"></i> RX
           </div>
-          <span style="padding-top: 0.625em" slot="footer">
-            <i class="ti-timer"></i>
+          <span style="padding-top: 0.625em" class="stats" slot="footer">
+            <clock-icon class="clock-icon" />
             Updates in {{ counters.chart }} seconds
           </span>
         </chart-card>
@@ -153,8 +146,8 @@
           :chart-options="this.throughputChart.options"
           chart-type="Line"
         >
-          <span slot="footer">
-            <i class="ti-timer"></i>
+          <span slot="footer" class="stats">
+            <clock-icon class="clock-icon" />
             Updates in {{ counters.chart }} seconds
           </span>
           <div slot="legend">
@@ -352,11 +345,44 @@ function calcTime(offset) {
 </script>
 
 <style scoped lang="scss">
+.clock-icon {
+  display: flex;
+  align-items: center;
+  height: 1.5rem;
+  margin-right: 0.5rem;
+
+  svg {
+    width: 1rem;
+  }
+}
+
 .text-overflow {
   display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.stats {
+  font-weight: normal;
+  font-size: 0.75rem;
+  line-height: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.stats-card .card-label {
+  p {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.75rem;
+    line-height: 1.75rem;
+    color: #979797;
+  }
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: #666666;
 }
 
 .stats-card .card-body .row [class^="col"] {
@@ -391,8 +417,8 @@ function calcTime(offset) {
 .test-dag {
   height: auto;
   width: auto;
-  max-width: 60px;
-  max-height: 60px;
+  max-width: 3.75rem;
+  max-height: 3.75rem;
 }
 
 .test-dag-btn {
@@ -404,17 +430,75 @@ function calcTime(offset) {
   color: white;
   letter-spacing: 0.1em;
   cursor: pointer;
-  margin-top: -10px;
+  margin-top: -0.625rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 0.3125rem;
 }
 
 .test-dag-btn:hover {
   background: #df7f62;
-  box-shadow: 0 1px 1px #dd8d74;
+  box-shadow: 0 0.0625rem 0.0625rem #dd8d74;
 }
 
 .wallet-address > p-button {
   margin-bottom: 10em;
+}
+
+.address-wrapper {
+  background: #f2f2f2;
+  border: 0.0625rem solid #c4c4c4;
+  box-sizing: border-box;
+  border-radius: 0.25rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 0.5rem;
+  height: 3.75rem;
+
+  .address-part {
+    font-weight: normal;
+    font-size: 1.25rem;
+    line-height: 1.875rem;
+    color: #666;
+  }
+
+  .address-btn {
+    margin-bottom: 0.3125rem;
+    background: #979797;
+    border-radius: 0.25rem;
+    border: none;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.theme--dark {
+  .stats-card .card-label {
+    p {
+      color: #f2f2f2;
+    }
+    color: #f2f2f2;
+  }
+
+  .address-wrapper {
+    background: #666666;
+    border-color: #979797;
+
+    .address-part {
+      color: #f2f2f2;
+    }
+
+    .address-btn {
+      background: #f2f2f2;
+
+      .fa-copy {
+        color: #666666;
+      }
+    }
+  }
+
+  .stats {
+    color: #f2f2f2;
+  }
 }
 </style>

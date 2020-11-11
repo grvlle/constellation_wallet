@@ -34,11 +34,12 @@
                 class="fa fa-spinner fa-spin"
               ></i>
               <i v-else-if="tx.status == 'Error'" class="fa fa-times"></i>
-              <i
+              <arrow-l-icon
                 v-else-if="address == tx.receiver"
-                class="fa fa-hand-holding-usd"
-              ></i>
-              <i v-else class="fa fa-hand-holding-usd fa-flip-horizontal"></i>
+                :size="16"
+                fillColor="#ffffff"
+              />
+              <arrow-r-icon v-else :size="16" fillColor="#ffffff" />
             </div>
           </div>
           <div
@@ -177,7 +178,7 @@ export default {
 .link {
   background: transparent;
   border: none;
-  padding: 0px;
+  padding: 0;
 
   &:hover {
     text-decoration: underline;
@@ -200,11 +201,12 @@ export default {
   bottom: 0;
   position: absolute;
   content: " ";
-  width: 0.1875rem;
+  width: 0.0625rem;
+  border-left: 0.0625rem dashed;
   left: 4.8rem;
   margin-left: -0.09375rem;
   @include themed() {
-    background-color: t("borderColor");
+    border-color: #c4c4c4;
   }
 }
 
@@ -244,13 +246,13 @@ export default {
 
 .timeline-value.receive {
   @include themed() {
-    color: t("warningColor");
+    color: #dbb018;
   }
 }
 
 .timeline-value.send {
   @include themed() {
-    color: t("infoColor");
+    color: #2d9cdb;
   }
 }
 
@@ -288,13 +290,13 @@ export default {
 
 .timeline-badge.receive {
   @include themed() {
-    background-color: t("warningColor");
+    background-color: #dbb018;
   }
 }
 
 .timeline-badge.send {
   @include themed() {
-    background-color: t("infoColor");
+    background-color: #2d9cdb;
   }
 }
 
@@ -317,47 +319,47 @@ export default {
 .timeline-badge.pending.send {
   border-style: solid;
   @include themed() {
-    border-color: t("infoColor");
+    border-color: #2d9cdb;
   }
 }
 .timeline-badge.pending.receive {
   border-style: solid;
   @include themed() {
-    border-color: t("warningColor");
+    border-color: #dbb018;
   }
 }
 
 .timeline-panel:before {
   position: absolute;
-  top: 0.875rem;
-  right: -0.9375rem;
+  top: 1.175rem;
+  right: -0.75rem;
   display: inline-block;
-  border-top: 0.9375rem solid transparent;
-  border-bottom: 0.9375rem solid transparent;
+  border-top: 0.75rem solid transparent;
+  border-bottom: 0.75rem solid transparent;
   border-left-style: solid;
-  border-left-width: 0.9375rem;
+  border-left-width: 0.75rem;
   border-right-style: solid;
   border-right-width: 0;
   content: " ";
 }
 
-.timeline-panel:after {
-  position: absolute;
-  top: 1rem;
-  right: -0.875rem;
-  display: inline-block;
-  border-top: 0.875rem solid transparent;
-  border-bottom: 0.875rem solid transparent;
-  border-left-style: solid;
-  border-left-width: 0.875rem;
-  border-right-style: solid;
-  border-right-width: 0;
-  content: " ";
-  @include themed() {
-    border-left-color: t("cardTableColor");
-    border-right-color: t("cardTableColor");
-  }
-}
+// .timeline-panel:after {
+//   position: absolute;
+//   top: 1rem;
+//   right: -0.875rem;
+//   display: inline-block;
+//   border-top: 0.875rem solid transparent;
+//   border-bottom: 0.875rem solid transparent;
+//   border-left-style: solid;
+//   border-left-width: 0.875rem;
+//   border-right-style: solid;
+//   border-right-width: 0;
+//   content: " ";
+//   @include themed() {
+//     border-left-color: t("cardTableColor");
+//     border-right-color: t("cardTableColor");
+//   }
+// }
 
 .timeline-inverted .timeline-panel:before {
   border-left-width: 0;
@@ -368,15 +370,15 @@ export default {
 
 .timeline-panel.send:before {
   @include themed() {
-    border-left-color: t("infoColor");
-    border-right-color: t("infoColor");
+    border-left-color: #2d9cdb;
+    border-right-color: #2d9cdb;
   }
 }
 
 .timeline-panel.receive:before {
   @include themed() {
-    border-left-color: t("warningColor");
-    border-right-color: t("warningColor");
+    border-left-color: #dbb018;
+    border-right-color: #dbb018;
   }
 }
 
@@ -396,33 +398,39 @@ export default {
 
 .timeline-panel {
   width: 100%;
-  border-left-style: solid;
-  border-radius: 0.125rem;
-  padding: 0.3125rem 1.25rem 0.625rem 1.25rem;
+  padding: 0.75rem;
   position: relative;
-  -webkit-box-shadow: 0 0.0625rem 0.375rem rgba(0, 0, 0, 0.175);
-  box-shadow: 0 0.0625rem 0.375rem rgba(0, 0, 0, 0.175);
-  @include themed() {
-    background-color: t("cardTableColor");
-    border-color: t("borderColor");
-  }
+  background: #f2f2f2;
+  border: 0.0625rem solid #c4c4c4;
+  box-sizing: border-box;
+  box-shadow: 0 0 0.3125rem rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 0 0 0.3125rem rgba(0, 0, 0, 0.25);
+  border-radius: 0.375rem;
 }
 
-.timeline-panel.send {
-  @include themed() {
-    border-left-color: t("infoColor");
-  }
-}
+// .timeline-panel.send {
+//   @include themed() {
+//     border-left-color: #2d9cdb;
+//   }
+// }
 
-.timeline-panel.receive {
-  @include themed() {
-    border-left-color: t("warningColor");
-  }
-}
+// .timeline-panel.receive {
+//   @include themed() {
+//     border-left-color: #dbb018;
+//   }
+// }
 
-.timeline-panel.error {
-  @include themed() {
-    border-left-color: t("dangerColor");
+// .timeline-panel.error {
+//   @include themed() {
+//     border-left-color: t("dangerColor");
+//   }
+// }
+
+.theme--dark {
+  .timeline-panel {
+    background: #000000;
+    border-color: #666666;
+    box-shadow: 0 0 0.3125rem rgba(0, 0, 0, 0.25);
   }
 }
 </style>

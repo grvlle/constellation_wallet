@@ -1,28 +1,27 @@
 <template>
-  <card>
+  <card tightPadding>
     <div slot="header">
       <h4 v-if="$slots.title || title" class="card-title">
-        <slot name="title">{{title}}</slot>
+        <slot name="title">{{ title }}</slot>
       </h4>
       <p class="card-category">
-        <slot name="subTitle">{{subTitle}}</slot>
+        <slot name="subTitle">{{ subTitle }}</slot>
       </p>
-  </div>
-  
+    </div>
 
-      <div>
-        <div :id="chartId" class="ct-chart"></div>
-        <div class="footer">
-          <div class="chart-legend">
-            <slot name="legend"></slot>
-          </div>
-          <hr />
-          <div class="stats">
-            <slot name="footer"></slot>
-          </div>
-          <div class="pull-right"></div>
+    <div>
+      <div :id="chartId" class="ct-chart"></div>
+      <div class="footer">
+        <div class="chart-legend">
+          <slot name="legend"></slot>
         </div>
+        <hr />
+        <div class="stats">
+          <slot name="footer"></slot>
+        </div>
+        <div class="pull-right"></div>
       </div>
+    </div>
   </card>
 </template>
 
@@ -31,53 +30,53 @@ import Card from "./Card.vue";
 export default {
   name: "chart-card",
   components: {
-    Card
+    Card,
   },
   props: {
     footerText: {
       type: String,
-      default: ""
+      default: "",
     },
     title: {
       type: String,
-      default: ""
+      default: "",
     },
     subTitle: {
       type: String,
-      default: ""
+      default: "",
     },
     chartType: {
       type: String,
-      default: "Line" // Line | Pie | Bar
+      default: "Line", // Line | Pie | Bar
     },
     chartOptions: {
       type: Object,
       default: () => {
         return {};
-      }
+      },
     },
     chartData: {
       type: Object,
       default: () => {
         return {
           labels: [],
-          series: []
+          series: [],
         };
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       chartId: "no-id",
       chartSelected: "",
       chartUpdated: false,
-      count: 0
+      count: 0,
     };
   },
   computed: {
     counter() {
       return this.$store.state.dashboard.counters.nodesOnlineCounter;
-    }
+    },
   },
   watch: {
     counter(val) {
@@ -85,7 +84,7 @@ export default {
       if (this.count == 1) {
         this.chartSelected.update();
       }
-    }
+    },
   },
 
   methods: {
@@ -100,7 +99,7 @@ export default {
       chart = Chartist[this.chartType](
         chartIdQuery,
         this.chartData,
-        this.chartOptions,
+        this.chartOptions
       );
 
       /* eslint-disable no-console */
@@ -109,8 +108,6 @@ export default {
       // if (this.onWindows == false && this.onLinux == true || this.onMacOS == true) {
       // console.log("asfg", chart.Svg.isSupported("http://www.w3.org/TR/SVG11/feature#SVG-animation"))
       // }
-
-
 
       return chart;
     },
@@ -131,8 +128,8 @@ export default {
                 .translate(0, data.chartRect.height())
                 .stringify(),
               to: data.path.clone().stringify(),
-              easing: "easeOutQuart"
-            }
+              easing: "easeOutQuart",
+            },
           });
           data.element.animate({
             opacity: {
@@ -143,11 +140,11 @@ export default {
               // The value where the animation should start
               from: 0,
               // The value where it should end
-              to: 1
-            }
+              to: 1,
+            },
           });
         }
-        
+
         if (data.type === "point") {
           data.element.animate({
             x1: {
@@ -155,26 +152,25 @@ export default {
               dur: durations,
               from: data.x - 10,
               to: data.x,
-              easing: "easeOutQuart"
+              easing: "easeOutQuart",
             },
             x2: {
               begin: delays,
               dur: durations,
               from: data.x - 10,
               to: data.x,
-              easing: "easeOutQuart"
+              easing: "easeOutQuart",
             },
             opacity: {
               begin: 4000,
               dur: durations,
               from: 0,
               to: 1,
-              easing: "easeOutQuart"
-            }
+              easing: "easeOutQuart",
+            },
           });
         }
       });
-      
     },
     /***
      * Assigns a random id to the chart
@@ -186,100 +182,99 @@ export default {
     },
     getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    },
   },
   mounted() {
     this.updateChartId();
 
-    import("chartist").then(Chartist => {
+    import("chartist").then((Chartist) => {
       let ChartistLib = Chartist.default || Chartist;
       this.$nextTick(() => {
         this.chartSelected = this.initChart(ChartistLib);
-              // Animations are not yet supported on Windows
-      if (Chartist.Svg.isSupported("AnimationEventsAttribute")) {
-        this.includeAnimations(this.chartSelected)
-      }
+        // Animations are not yet supported on Windows
+        if (Chartist.Svg.isSupported("AnimationEventsAttribute")) {
+          this.includeAnimations(this.chartSelected);
+        }
       });
     });
-  }
+  },
 };
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>
 
 <style lang="scss">
 // removed scoped for 'Chartist' elements, didn't work with ::v-deep, >>>, //deep//
 .ct-series-a .ct-line,
 .ct-series-a .ct-point {
   @include themed() {
-    stroke: t('chartSeriesALineColor');
+    stroke: t("chartSeriesALineColor");
   }
 }
 
-.ct-series-a .ct-slice-pie, 
+.ct-series-a .ct-slice-pie,
 .ct-series-a .ct-area {
   @include themed() {
-    fill: t('chartSeriesAFIllColor');
+    fill: t("chartSeriesAFIllColor");
   }
 }
 
-.ct-series-b .ct-line, 
+.ct-series-b .ct-line,
 .ct-series-b .ct-point {
   @include themed() {
-    stroke: t('chartSeriesBLineColor');
+    stroke: t("chartSeriesBLineColor");
   }
 }
 
-.ct-series-b .ct-slice-pie, 
+.ct-series-b .ct-slice-pie,
 .ct-series-b .ct-area {
   @include themed() {
-    fill: t('chartSeriesBFIllColor');
+    fill: t("chartSeriesBFIllColor");
   }
 }
 
 .ct-series-c .ct-line,
 .ct-series-c .ct-point {
   @include themed() {
-    stroke: t('chartSeriesCLineColor');
+    stroke: t("chartSeriesCLineColor");
   }
 }
 
-.ct-series-c .ct-slice-pie, 
+.ct-series-c .ct-slice-pie,
 .ct-series-c .ct-area {
   @include themed() {
-    fill: t('chartSeriesCFIllColor');
+    fill: t("chartSeriesCFIllColor");
   }
 }
 
 .ct-series-a .ct-slice-pie {
   @include themed() {
-    fill: t('pieSeriesAFillColor');
+    fill: t("pieSeriesAFillColor");
   }
 }
 
 .ct-series-b .ct-slice-pie {
   @include themed() {
-    fill: t('pieSeriesBFillColor');
+    fill: t("pieSeriesBFillColor");
   }
 }
 
 .ct-series-c .ct-slice-pie {
   @include themed() {
-    fill: t('pieSeriesCFillColor');
+    fill: t("pieSeriesCFillColor");
   }
 }
 
 .ct-label {
   @include themed() {
-    fill: t('chartTextColor');
-    color: t('chartTextColor');
+    fill: t("chartTextColor");
+    color: t("chartTextColor");
   }
 }
 
 .ct-grid {
   @include themed() {
-    stroke: t('chartGridColor');
+    stroke: t("chartGridColor");
   }
 }
 </style>

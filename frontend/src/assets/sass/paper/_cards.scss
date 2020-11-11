@@ -2,14 +2,16 @@
 
 .card {
   border-radius: $border-radius-extreme;
-  box-shadow: 0em 0.125em 0.125em rgba(204, 197, 185, 0.5);
+  background: #ffffff;
+  box-shadow: 0 0 0.3125em rgba(0, 0, 0, 0.25);
+  border-radius: 0.375rem;
   margin-bottom: 1.25em;
   position: relative;
   z-index: 1;
   border: none;
   @include themed() {
-    background-color: t('cardBackgroundColor');
-    color: t('cardTextColor');
+    background-color: t("cardBackgroundColor");
+    color: t("cardTextColor");
   }
 
   .card-image {
@@ -27,7 +29,7 @@
     }
   }
   .card-body {
-    padding: 0.9375em 0.9375em 0.625em 0.9375em;
+    padding: 1.5rem;
   }
   .card-header {
     padding: 1.25em 1.25em 0em;
@@ -37,7 +39,7 @@
   .description {
     font-size: $font-paragraph;
     @include themed() {
-      color: t('cardTextColor');
+      color: t("cardTextColor");
     }
   }
 
@@ -54,7 +56,7 @@
       font-size: $font-paragraph;
     }
     @include themed() {
-      color: t('cardLabelColor');
+      color: t("cardLabelColor");
     }
   }
 
@@ -65,15 +67,15 @@
 
   strong {
     @include themed() {
-      color: t('cardTitleColor');
+      color: t("cardTitleColor");
     }
   }
-  
+
   .card-title {
     margin: $none;
     font-weight: $font-weight-light;
     @include themed() {
-      color: t('cardTitleColor');
+      color: t("cardTitleColor");
     }
   }
   .avatar {
@@ -136,18 +138,22 @@
   }
 
   .table {
-		tbody td:first-child,
-		tfoot th:first-child, tfoot td:first-child,
-		thead th:first-child, thead td:first-child, {
-			padding-left: 0.9375em;
-		}
+    tbody td:first-child,
+    tfoot th:first-child,
+    tfoot td:first-child,
+    thead th:first-child,
+    thead td:first-child {
+      padding-left: 0.9375em;
+    }
 
-		tbody td:last-child,
-		tfoot th:last-child, tfoot td:last-child,
-		thead th:last-child, thead td:last-child, {
-			padding-right: 0.9375em;
-		}
-	}
+    tbody td:last-child,
+    tfoot th:last-child,
+    tfoot td:last-child,
+    thead th:last-child,
+    thead td:last-child {
+      padding-right: 0.9375em;
+    }
+  }
 
   .alert {
     border-radius: $border-radius-base;
@@ -255,7 +261,7 @@
     padding: 0.3125em 0.9375em 0.625em;
   }
   hr {
-    margin: 0.3125em 0.9375em;
+    margin: 0;
   }
 }
 

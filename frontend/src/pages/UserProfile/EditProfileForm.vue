@@ -4,10 +4,9 @@
       <form @submit.prevent>
         <div class="row">
           <div class="col-md-12">
-            <input
+            <fg-input
               type="text"
               label="Wallet Address"
-              class="form-control"
               :disabled="true"
               placeholder="No DAG Address found."
               v-model="address"
@@ -16,10 +15,9 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <input
+            <fg-input
               type="text"
               label="Available Balance"
-              class="form-control"
               :disabled="true"
               placeholder="0"
               v-model="normalizedAvailableBalance"
@@ -50,12 +48,11 @@
         <!--        </div>-->
         <div class="row">
           <div class="col-md-12">
-            <input
+            <fg-input
               type="text"
               label="Private Key File"
               :disabled="true"
               placeholder="0"
-              class="form-control"
               v-model="keystorePath"
             />
           </div>

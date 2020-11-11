@@ -2,19 +2,18 @@
   <div id="app" class="container">
     <div class="row">
       <div class="col d-flex">
-        <card title="About" sub-title="Get to know the Constellation Wallet">
+        <card title="About">
           <p>
-            Thank you for using the Molly Wallet!
+            <b>Thank you for using the Molly Wallet!</b>
             <br />
-            <br />Molly was created by our community member <b>Vito</b> and is
-            an application built on top of infrastructure that was produced by
-            the Constellation Engineers.
+            <br />Molly was created by our community member Vito and is an
+            application built on top of infrastructure that was produced by the
+            Constellation Engineers.
             <br />
-            <br />The <b>Stardust Collective</b> development team manages all
-            major aspects around the security and development of the wallet,
-            while you, the user, are responsible for securing and backing up
-            your Private Key and password (see the <b>FAQ</b> for best
-            practices).
+            <br />The Stardust Collective development team manages all major
+            aspects around the security and development of the wallet, while
+            you, the user, are responsible for securing and backing up your
+            Private Key and password (see the FAQ for best practices).
             <br />
             <br />
 
@@ -49,37 +48,39 @@
           </p>
         </card>
       </div>
-    </div>
-    <div class="row">
       <div class="col d-flex">
         <card title="Frequently Asked Questions">
           <div>
-            <b
-              >I thought $DAG was free to transact, why do I need to enter a
-              fee?</b
-            >
-            <br />$DAG transactions are indeed free - you can leave this field
-            as 0. The fee is intended for users with higher data throughput
-            needs.
+            <li>
+              <b>Why do I need to enter a fee?</b>
+              <span style="padding-left:1.25em;display:block;">
+                $DAG transactions are indeed free - you can leave this field as
+                0. The fee is intended for users with higher data throughput
+                needs.
+              </span>
+            </li>
+
             <br />
             <br />
-            <b>How do I securely backup my wallet?</b>
-            <br />When creating a new wallet you will be required to create a
-            <b>Private Key (JSON file) </b>and a <b>Password</b>.
-            <br />
-            <br />It is important to make a copy of both of these two
-            components, as backup, and keep it in a secure place.
-            <br />
-            <br />
-            If you lose your Private Key or your Password,
-            <b>you will not be able to access your wallet</b>.
-            <br />
-            <br />In summary, the two components below need to be backed up:
-            <br />
-            <ul>
-              <li><b>Private Key (P12 or JSON file)</b></li>
-              <li><b>Password</b></li>
-            </ul>
+            <li>
+              <b>How do I securely backup my wallet?</b>
+              <span style="padding-left:1.25em;display:block;">
+                When creating a new wallet you will be required to create a
+                <b>Private Key (JSON file) </b>and a <b>Password</b>. <br />It
+                is important to make a copy of both of these two components, as
+                backup, and keep it in a secure place.
+                <br />
+                <br />
+                If you lose your Private Key or your Password,
+                <b>you will not be able to access your wallet</b>.
+                <br />
+                <br />In summary, the two components below need to be backed up:
+                <br />
+                <br />
+                - Private Key (P12 or JSON file)<br />
+                - Password
+              </span>
+            </li>
           </div>
         </card>
       </div>
@@ -155,6 +156,7 @@ $color-discord: #7289da;
   padding: 0;
   background: transparent;
   border: none;
+  font-weight: normal;
 
   &:hover {
     text-decoration: underline;

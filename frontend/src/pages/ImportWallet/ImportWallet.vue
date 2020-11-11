@@ -156,12 +156,12 @@ export default {
 }
 
 .primary-btn {
-  padding: 25px 80px;
+  padding: 1.5625em 5em;
   display: inline-block;
-  margin: 15px 0;
+  margin: 0.9375em 0;
   width: 100%;
-  height: 90px;
-  border-radius: 3px;
+  height: 5.625em;
+  border-radius: 0.1875em;
   background: #1d40b3;
   font-size: 0.875rem;
   color: white;
@@ -196,7 +196,7 @@ export default {
 
 /* Icon separator */
 .primary-btn-sep {
-  padding: 25px 60px 25px 120px;
+  padding: 1.5625em 3.75em 1.5625em 7.5em;
 }
 
 .primary-btn-sep:before {
@@ -215,7 +215,7 @@ export default {
 
 .btn-1:active {
   background: #284bbe;
-  top: 2px;
+  top: 0.125em;
 }
 
 .btn-1:before {
@@ -225,7 +225,7 @@ export default {
   top: 0;
   line-height: 3;
   font-size: 140%;
-  width: 60px;
+  width: 3.75em;
 }
 
 /* Button 2 */
@@ -240,7 +240,7 @@ export default {
 
 .btn-2:active {
   background: #ce9483;
-  top: 2px;
+  top: 0.125em;
 }
 
 .btn-2:before {
@@ -250,7 +250,7 @@ export default {
   top: 0;
   line-height: 3;
   font-size: 140%;
-  width: 60px;
+  width: 3.75em;
 }
 
 /* Icons */

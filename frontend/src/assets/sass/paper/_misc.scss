@@ -4,7 +4,7 @@
 body {
   color: $font-color;
   font-size: $font-size-base;
-  font-family: 'Poppins', Arial, sans-serif;
+  font-family: "Poppins", Arial, sans-serif !important;
   .wrapper {
     min-height: 100vh;
     position: relative;
@@ -13,18 +13,20 @@ body {
 
 a {
   @include themed() {
-    color: t('infoColor');
+    color: t("infoColor");
   }
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     @include themed() {
-      color: t('infoStatesColor');
-    }    
+      color: t("infoStatesColor");
+    }
     text-decoration: underline;
   }
 }
 
-a:focus, a:active,
+a:focus,
+a:active,
 button::-moz-focus-inner,
 input::-moz-focus-inner,
 select::-moz-focus-inner,
@@ -76,7 +78,7 @@ button:focus {
 
 hr {
   @include themed() {
-    border-color: t('borderColor');
+    border-color: t("borderColor");
   }
 }
 
@@ -109,7 +111,7 @@ hr {
 
 .icon-container {
   width: 15em;
-  padding: .7em 0;
+  padding: 0.7em 0;
   float: left;
   position: relative;
   text-align: left;
@@ -120,7 +122,7 @@ hr {
   color: #000;
   position: absolute;
   margin-top: 0.1875em;
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .icon-container:hover [class^="ti-"],
@@ -136,8 +138,8 @@ hr {
 .icon-name {
   color: #aaa;
   margin-left: 2.1875em;
-  font-size: .8em;
-  transition: .3s;
+  font-size: 0.8em;
+  transition: 0.3s;
 }
 
 .icon-container:hover .icon-name {
@@ -145,7 +147,7 @@ hr {
 }
 
 .places-buttons .btn {
-  margin-bottom: 1.875em
+  margin-bottom: 1.875em;
 }
 
 .sidebar .nav > li.active-pro {
@@ -157,11 +159,10 @@ hr {
 .sidebar .nav > li.active-pro a {
   background: rgba(255, 255, 255, 0.14);
   opacity: 1;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .table-upgrade td:nth-child(2),
 .table-upgrade td:nth-child(3) {
   text-align: center;
 }
-

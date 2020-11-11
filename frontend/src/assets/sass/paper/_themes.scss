@@ -2,47 +2,39 @@ $themes: (
   light: (
     backgroundColor: $bg-nude,
     borderColor: $medium-gray,
-
     cardBackgroundColor: $white-bg,
     cardTitleColor: $black-color,
     cardLabelColor: $dark-gray,
     cardTextColor: $font-color,
     cardTableColor: $smoke-bg,
-
     navbarBackgroundColor: $bg-nude,
-    navbarBorderColor: $medium-gray,
+    navbarBorderColor: $navbar-bd-color,
     navbarTextColor: $black-color,
     navbarIconColor: $black-color,
-
     sidebarBackgroundColor: #212529,
     sidebarTextColor: $medium-gray,
     sidebarArrowColor: $bg-nude,
-
-    inputBackgroundColor:$gray-input-bg,
+    inputBackgroundColor: $gray-input-bg,
     inputBorderColor: $medium-gray,
     inputAppendBorderColor: $medium-gray,
     inputPlaceholderColor: $light-gray,
     inputTextColor: $font-color,
     inputDisabledBackgroundColor: $light-gray,
     inputDisabledTextColor: $medium-dark-gray,
-
     chartTextColor: $black-color,
     chartGridColor: $dark-gray,
     chartSeriesALineColor: $info-color,
-    chartSeriesAFIllColor: rgba($info-color, .8),
+    chartSeriesAFIllColor: rgba($info-color, 0.8),
     chartSeriesBLineColor: $success-color,
-    chartSeriesBFIllColor: rgba($success-color, .8),
+    chartSeriesBFIllColor: rgba($success-color, 0.8),
     chartSeriesCLineColor: $secondary-color,
-    chartSeriesCFIllColor: rgba($secondary-color, .8),
+    chartSeriesCFIllColor: rgba($secondary-color, 0.8),
     pieSeriesAFillColor: $info-color,
     pieSeriesBFillColor: $success-color,
     pieSeriesCFillolor: $secondary-color,
-
     walletAddressColor: $medium-dark-gray,
-
     popupBackgroundColor: $bg-nude,
     popupTextColor: #272727,
-
     primaryColor: $primary-color,
     primaryStatesColor: $primary-states-color,
     secondaryColor: $secondary-color,
@@ -54,52 +46,44 @@ $themes: (
     warningColor: $warning-color,
     warningStatesColor: $warning-states-color,
     dangerColor: $danger-color,
-    dangerStatesColor: $danger-states-color
+    dangerStatesColor: $danger-states-color,
   ),
   dark: (
     backgroundColor: #121212,
-    borderColor: #2E2E2E,
-
+    borderColor: #2e2e2e,
     cardBackgroundColor: #181818,
     cardTitleColor: $light-gray,
-    cardLabelColor: #AFAFAF,
-    cardTextColor: #BCBCBC,
+    cardLabelColor: #afafaf,
+    cardTextColor: #bcbcbc,
     cardTableColor: #202020,
-
     navbarBackgroundColor: #1d1d1d,
     navbarBorderColor: #272727,
-    navbarTextColor: #BCBCBC,
+    navbarTextColor: #bcbcbc,
     navbarIconColor: $info-color,
-
     sidebarBackgroundColor: #181818,
-    sidebarTextColor: #BCBCBC,
+    sidebarTextColor: #bcbcbc,
     sidebarArrowColor: #121212,
-
-    inputBackgroundColor:#343434,
+    inputBackgroundColor: #343434,
     inputBorderColor: #272727,
     inputAppendBorderColor: #343434,
-    inputPlaceholderColor: #2E2E2E,
-    inputTextColor: #F2F2F2,
+    inputPlaceholderColor: #2e2e2e,
+    inputTextColor: #f2f2f2,
     inputDisabledBackgroundColor: #212121,
     inputDisabledTextColor: $medium-dark-gray,
-
-    chartTextColor: #BCBCBC,
-    chartGridColor: #2E2E2E,
+    chartTextColor: #bcbcbc,
+    chartGridColor: #2e2e2e,
     chartSeriesALineColor: $info-color-dark,
-    chartSeriesAFIllColor: rgba($info-color-dark, .2),
-    chartSeriesBLineColor: rgba($success-color-dark, .5),
-    chartSeriesBFIllColor: rgba($success-color-dark, .2),
-    chartSeriesCLineColor: rgba($secondary-color-dark, .5),
-    chartSeriesCFIllColor: rgba($secondary-color-dark, .2),
+    chartSeriesAFIllColor: rgba($info-color-dark, 0.2),
+    chartSeriesBLineColor: rgba($success-color-dark, 0.5),
+    chartSeriesBFIllColor: rgba($success-color-dark, 0.2),
+    chartSeriesCLineColor: rgba($secondary-color-dark, 0.5),
+    chartSeriesCFIllColor: rgba($secondary-color-dark, 0.2),
     pieSeriesAFillColor: $info-color-dark,
     pieSeriesBFillColor: $success-color-dark,
     pieSeriesCFillColor: $secondary-color-dark,
-
-    walletAddressColor: #BCBCBC,
-
+    walletAddressColor: #bcbcbc,
     popupBackgroundColor: #272727,
     popupTextColor: $dark-gray,
-
     primaryColor: $primary-color-dark,
     primaryStatesColor: $primary-states-color-dark,
     secondaryColor: $secondary-color-dark,
@@ -111,24 +95,29 @@ $themes: (
     warningColor: $warning-color-dark,
     warningStatesColor: $warning-states-color-dark,
     dangerColor: $danger-color-dark,
-    dangerStatesColor: $danger-states-color-dark
+    dangerStatesColor: $danger-states-color-dark,
   ),
 );
 
 @mixin themed() {
-    @each $theme, $map in $themes {
-      .theme--#{$theme} & {
-        $theme-map: () !global;
-        @each $key, $submap in $map {
-          $value: map-get(map-get($themes, $theme), '#{$key}');
-          $theme-map: map-merge($theme-map, ($key: $value)) !global;
-        }
-        @content;
-        $theme-map: null !global;
+  @each $theme, $map in $themes {
+    .theme--#{$theme} & {
+      $theme-map: () !global;
+      @each $key, $submap in $map {
+        $value: map-get(map-get($themes, $theme), "#{$key}");
+        $theme-map: map-merge(
+          $theme-map,
+          (
+            $key: $value,
+          )
+        ) !global;
       }
+      @content;
+      $theme-map: null !global;
     }
   }
-  
-  @function t($key) {
-    @return map-get($theme-map, $key);
-  }
+}
+
+@function t($key) {
+  @return map-get($theme-map, $key);
+}

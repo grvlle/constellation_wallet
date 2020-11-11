@@ -36,27 +36,27 @@ export default {
 
 <style scoped lang="scss">
 .tight-card-body {
-  padding: 12px !important;
+  padding: 0.75rem !important;
 }
 .card-header {
-  margin: 0px 24px;
-  margin-top: 18px;
-  padding: 0px !important;
+  margin: 0 1.5rem;
+  margin-top: 1.125rem;
+  padding: 0 !important;
 
   .card-title {
     font-style: normal;
     font-weight: normal;
-    font-size: 24px;
-    line-height: 20px;
+    font-size: 1.5rem;
+    line-height: 1.25rem;
     color: #666666 !important;
   }
 
   .card-category {
     font-style: normal;
     font-weight: normal;
-    font-size: 12px;
-    line-height: 20px;
-    margin-top: 5px;
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+    margin-top: 0.3125rem;
     color: #979797 !important;
   }
 }

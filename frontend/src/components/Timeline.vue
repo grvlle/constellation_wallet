@@ -178,7 +178,7 @@ export default {
 .link {
   background: transparent;
   border: none;
-  padding: 0px;
+  padding: 0;
 
   &:hover {
     text-decoration: underline;
@@ -403,8 +403,8 @@ export default {
   background: #f2f2f2;
   border: 0.0625rem solid #c4c4c4;
   box-sizing: border-box;
-  box-shadow: 0px 0px 0.3125rem rgba(0, 0, 0, 0.25);
-  -webkit-box-shadow: 0px 0px 0.3125rem rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 0.3125rem rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 0 0 0.3125rem rgba(0, 0, 0, 0.25);
   border-radius: 0.375rem;
 }
 

@@ -71,20 +71,20 @@ export default {
 </script>
 <style scoped lang="scss">
 hr {
-  border-top: 1px solid #c4c4c4;
+  border-top: 0.0625rem solid #c4c4c4;
 }
 
 .card-user {
   h5 {
     font-weight: 500;
-    font-size: 14px;
-    line-height: 24px;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
     color: #666666;
 
     small {
       font-weight: normal;
-      font-size: 12px;
-      line-height: 24px;
+      font-size: 0.75rem;
+      line-height: 1.5rem;
       color: #979797;
     }
   }
@@ -92,16 +92,16 @@ hr {
   .author {
     .title {
       font-weight: 500;
-      font-size: 18px;
-      line-height: 36px;
+      font-size: 1.125rem;
+      line-height: 2.25rem;
       color: #666666;
       display: flex;
       flex-direction: column;
 
       small {
         font-weight: normal;
-        font-size: 12px;
-        line-height: 36px;
+        font-size: 0.75rem;
+        line-height: 2.25rem;
         color: #979797;
       }
     }

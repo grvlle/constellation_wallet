@@ -81,15 +81,15 @@ export default {
     },
   },
   methods: {
-    moveToLogin: function () {
+    moveToLogin: function() {
       this.$router.push({
         name: "login",
         params: {
-          message: "Please enter your credentials below to access your Molly Wallet.",
+          message:
+            "Please enter your credentials below to access your Molly Wallet.",
         },
       });
     },
-
   },
 };
 </script>
@@ -132,21 +132,21 @@ export default {
   stroke-dashoffset: 166;
   stroke-width: 2;
   stroke-miterlimit: 10;
-  stroke: #1D40B3;
+  stroke: #1d40b3;
   fill: none;
   animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
 }
 
 .checkmark {
-  width: 176px;
-  height: 176px;
+  width: 11rem;
+  height: 11rem;
   border-radius: 50%;
   display: block;
   stroke-width: 2;
   stroke: #fff;
   stroke-miterlimit: 10;
   margin: 10% auto 30%;
-  box-shadow: inset 0 0 0 #1D40B3;
+  box-shadow: inset 0 0 0 #1d40b3;
   animation: fill 0.4s ease-in-out 0.4s forwards,
     scale 0.3s ease-in-out 0.9s both;
 }
@@ -173,7 +173,7 @@ export default {
 }
 @keyframes fill {
   100% {
-    box-shadow: inset 0 0 0 90px #1D40B3;
+    box-shadow: inset 0 0 0 90px #1d40b3;
   }
 }
 </style>

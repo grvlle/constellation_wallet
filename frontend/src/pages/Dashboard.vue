@@ -348,11 +348,11 @@ function calcTime(offset) {
 .clock-icon {
   display: flex;
   align-items: center;
-  height: 24px;
-  margin-right: 8px;
+  height: 1.5rem;
+  margin-right: 0.5rem;
 
   svg {
-    width: 16px;
+    width: 1rem;
   }
 }
 
@@ -365,8 +365,8 @@ function calcTime(offset) {
 
 .stats {
   font-weight: normal;
-  font-size: 12px;
-  line-height: 24px;
+  font-size: 0.75rem;
+  line-height: 1.5rem;
   display: flex;
   align-items: center;
 }
@@ -375,13 +375,13 @@ function calcTime(offset) {
   p {
     font-style: normal;
     font-weight: normal;
-    font-size: 12px;
-    line-height: 28px;
+    font-size: 0.75rem;
+    line-height: 1.75rem;
     color: #979797;
   }
   font-weight: 500;
-  font-size: 20px;
-  line-height: 28px;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
   color: #666666;
 }
 
@@ -417,8 +417,8 @@ function calcTime(offset) {
 .test-dag {
   height: auto;
   width: auto;
-  max-width: 60px;
-  max-height: 60px;
+  max-width: 3.75rem;
+  max-height: 3.75rem;
 }
 
 .test-dag-btn {
@@ -430,14 +430,14 @@ function calcTime(offset) {
   color: white;
   letter-spacing: 0.1em;
   cursor: pointer;
-  margin-top: -10px;
+  margin-top: -0.625rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 0.3125rem;
 }
 
 .test-dag-btn:hover {
   background: #df7f62;
-  box-shadow: 0 1px 1px #dd8d74;
+  box-shadow: 0 0.0625rem 0.0625rem #dd8d74;
 }
 
 .wallet-address > p-button {
@@ -446,29 +446,29 @@ function calcTime(offset) {
 
 .address-wrapper {
   background: #f2f2f2;
-  border: 1px solid #c4c4c4;
+  border: 0.0625rem solid #c4c4c4;
   box-sizing: border-box;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0px 8px;
-  height: 60px;
+  padding: 0px 0.5rem;
+  height: 3.75rem;
 
   .address-part {
     font-weight: normal;
-    font-size: 20px;
-    line-height: 30px;
+    font-size: 1.25rem;
+    line-height: 1.875rem;
     color: #666;
   }
 
   .address-btn {
-    margin-bottom: 5px;
+    margin-bottom: 0.3125rem;
     background: #979797;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     border: none;
-    margin-bottom: 12px;
+    margin-bottom: 0.75rem;
   }
 }
 </style>

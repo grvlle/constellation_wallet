@@ -177,7 +177,7 @@ export default {
 .link {
   background: transparent;
   border: none;
-  padding: 0px;
+  padding: 0em;
 
   &:hover {
     text-decoration: underline;

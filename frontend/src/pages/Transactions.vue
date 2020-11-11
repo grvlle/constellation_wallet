@@ -23,10 +23,17 @@
                     step="0.01"
                   />
                   <div class="input-group-append">
-                    <button type="button" @click="setMaxDAGs()" class="btn">Max</button>
+                    <button type="button" @click="setMaxDAGs()" class="btn">
+                      Max
+                    </button>
                   </div>
                 </div>
-                <div class="validate text-danger" v-if="$v.txAmount.normalized.$invalid && txAmount.normalized != 0">
+                <div
+                  class="validate text-danger"
+                  v-if="
+                    $v.txAmount.normalized.$invalid && txAmount.normalized != 0
+                  "
+                >
                   <p>Invalid amount. Please verify.</p>
                 </div>
                 <div class="validate text-danger" v-else></div>
@@ -39,7 +46,7 @@
                 <div class="input-group" style="margin-bottom: 0;">
                   <input
                     type="text"
-                    style="border: 1px solid #ced4da;"
+                    style="border: 0.0625em solid #ced4da;"
                     class="form-control"
                     aria-label="Amount (in DAGs)"
                     v-model.trim="txAddress"
@@ -47,24 +54,30 @@
                     @keypress="setName($event.target.value)"
                     placeholder="Enter Recipients Wallet Address..."
                   />
-<!--                  <div class="input-group-append">-->
-<!--                    <button type="button" class="btn" @click="toggleAddressBook">-->
-<!--                      <i class="fa fa-address-book"></i>-->
-<!--                      Address book-->
-<!--                    </button>-->
-<!--                  </div>-->
+                  <!--                  <div class="input-group-append">-->
+                  <!--                    <button type="button" class="btn" @click="toggleAddressBook">-->
+                  <!--                      <i class="fa fa-address-book"></i>-->
+                  <!--                      Address book-->
+                  <!--                    </button>-->
+                  <!--                  </div>-->
                 </div>
-                <div class="validate text-danger" v-if="$v.txAddress.$invalid && txAddress != ''">
+                <div
+                  class="validate text-danger"
+                  v-if="$v.txAddress.$invalid && txAddress != ''"
+                >
                   <p>Invalid wallet address. Please verify.</p>
                 </div>
-                <div class="validate text-danger" v-else-if="txAddress == address">
+                <div
+                  class="validate text-danger"
+                  v-else-if="txAddress == address"
+                >
                   <p>You can not send to your own wallet address.</p>
                 </div>
                 <div class="validate text-success" v-else-if="txAddress != ''">
-                  <p v-if="txAddressInformation">{{txAddressInformation}}</p>
-<!--                  <p-->
-<!--                    v-else class="text-muted"-->
-<!--                  >This DAG address is not stored in any of your address book contacts.</p>-->
+                  <p v-if="txAddressInformation">{{ txAddressInformation }}</p>
+                  <!--                  <p-->
+                  <!--                    v-else class="text-muted"-->
+                  <!--                  >This DAG address is not stored in any of your address book contacts.</p>-->
                 </div>
                 <div class="validate text-danger" v-else></div>
               </div>
@@ -76,9 +89,7 @@
                   style="max-width: 10rem; margin-left: auto;"
                   :disabled="txInTransit || txAddress == address"
                 >
-                  <span>
-                    <i class="fa fa-paper-plane"></i> SEND
-                  </span>
+                  <span> <i class="fa fa-paper-plane"></i> SEND </span>
                 </p-button>
                 <div class="validate"></div>
               </div>
@@ -90,7 +101,10 @@
     <div class="row" v-if="showAddressBook">
       <div class="col-md-5" />
       <div class="col-md-5">
-        <address-book-search v-model="txAddress" v-on:input="showAddressBook = false"/>
+        <address-book-search
+          v-model="txAddress"
+          v-on:input="showAddressBook = false"
+        />
       </div>
     </div>
     <div class="row">
@@ -98,7 +112,11 @@
         <card class="card" title="Transaction History">
           <div>
             <timeline v-model="txHistoryPage" />
-            <pagination :dataset="txHistory" :pageSize="10" v-model="txHistoryPage" />
+            <pagination
+              :dataset="txHistory"
+              :pageSize="10"
+              v-model="txHistoryPage"
+            />
           </div>
         </card>
       </div>
@@ -108,7 +126,7 @@
 </template>
 
 <script>
-const verifyPrefix = value =>
+const verifyPrefix = (value) =>
   value.substring(0, 3) === "DAG" || value.substring(0, 3) === "";
 
 import { mapState, mapGetters } from "vuex";
@@ -116,7 +134,7 @@ import {
   required,
   minLength,
   maxLength,
-  between
+  between,
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2/dist/sweetalert2";
 import AddressBookSearch from "../components/AddressBookSearch";
@@ -129,7 +147,7 @@ export default {
   components: {
     AddressBookSearch,
     Pagination,
-    Timeline
+    Timeline,
   },
   created: function() {
     if (this.txAddressParam != "") {
@@ -137,7 +155,7 @@ export default {
     }
 
     // TODO: refactor into wallet-init instead calling from indivual pages
-    window.backend.WalletApplication.GetAddressBook().then(ab => {
+    window.backend.WalletApplication.GetAddressBook().then((ab) => {
       let addressBook;
       try {
         addressBook = JSON.parse(ab);
@@ -145,7 +163,7 @@ export default {
         addressBook = [];
       }
       this.$store.commit({ type: "addressBook/setAddressBook", addressBook });
-    });    
+    });
   },
   computed: {
     txInTransit: function() {
@@ -153,7 +171,7 @@ export default {
     },
     txAddressInformation: function() {
       let addressInfo = "";
-      if (!this.$v.txAddress.$invalid) {        
+      if (!this.$v.txAddress.$invalid) {
         let contact = this.$store.getters["addressBook/search"](this.txAddress);
         if (contact.length) {
           addressInfo =
@@ -166,8 +184,8 @@ export default {
       return addressInfo;
     },
     ...mapState("wallet", ["address", "availableBalance", "darkMode"]),
-    ...mapGetters('wallet', ['normalizedAvailableBalance']),
-    ...mapState("transaction", ["txHistory", "txStatus", "txFinished"])
+    ...mapGetters("wallet", ["normalizedAvailableBalance"]),
+    ...mapState("transaction", ["txHistory", "txStatus", "txFinished"]),
   },
   methods: {
     setTxAmount(value) {
@@ -198,145 +216,184 @@ export default {
         Swal.mixin({
           progressSteps: ["1", "2"],
           customClass: {
-            container: this.darkMode ? "theme--dark" : "theme--light"
-          }
-        })
-        .queue([
-          {
-            title: "Are you sure?",
-            html: 
-              "<p>You are about to send <b>" + self.txAmount.normalized + "</b> $DAG tokens to " + self.txAddress + "</p>" +
-              "<div class='border border-dark'>" + 
-                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + (self.availableBalance / 1e8) + ")</p>" +
-                "<p>Transaction amount: " + self.txAmount.normalized + "</p>" +
-                "<p>To: " + self.txAddress + "</p>" +
-              "</div>",
-            showCancelButton: true,
-            confirmButtonColor: "#5FD1FB",
-            confirmButtonText: "Yes, please proceed!"
+            container: this.darkMode ? "theme--dark" : "theme--light",
           },
-          {
-            title: "Set a fee to prioritize your transaction.",
-            html: 
-              "<div class='border border-dark'>" +
-                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " + (self.availableBalance / 1e8) + ")</p>" +
-                "<p>Transaction amount: " + self.txAmount.normalized + "</p>" +
-                "<p>To: " + self.txAddress + "</p>" +
-              "</div>" + 
-              "<div>" + 
-                "</br>" +                 
+        })
+          .queue([
+            {
+              title: "Are you sure?",
+              html:
+                "<p>You are about to send <b>" +
+                self.txAmount.normalized +
+                "</b> $DAG tokens to " +
+                self.txAddress +
+                "</p>" +
+                "<div class='border border-dark'>" +
+                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " +
+                self.availableBalance / 1e8 +
+                ")</p>" +
+                "<p>Transaction amount: " +
+                self.txAmount.normalized +
+                "</p>" +
+                "<p>To: " +
+                self.txAddress +
+                "</p>" +
+                "</div>",
+              showCancelButton: true,
+              confirmButtonColor: "#5FD1FB",
+              confirmButtonText: "Yes, please proceed!",
+            },
+            {
+              title: "Set a fee to prioritize your transaction.",
+              html:
+                "<div class='border border-dark'>" +
+                "<p class='mt-3 font-weight-light text-muted font-italic'>(Available balance: " +
+                self.availableBalance / 1e8 +
+                ")</p>" +
+                "<p>Transaction amount: " +
+                self.txAmount.normalized +
+                "</p>" +
+                "<p>To: " +
+                self.txAddress +
+                "</p>" +
+                "</div>" +
+                "<div>" +
+                "</br>" +
                 "This fee is <b>optional</b>, enter 0 for no fee." +
-            "</div>",
-            input: "number",
-            inputValue: 0,
-            confirmButtonText: "Send transaction",
-            confirmButtonColor: "#6DECBB",
-            showCancelButton: true,
-            animation: false,
-            inputValidator: value => {
-              return new Promise(resolve => {
-                if (value + self.txAmount.normalized > (self.availableBalance / 1e8)) {
-                  resolve("The transaction amount + fee can not exceed your balance");
-                } else if (value < 0 ||  value > 3711998690 || isNaN(parseFloat(value))) {
-                  resolve("Please enter a transaction fee between 0 and 3711998690");
-                }
-                else {
-                  resolve();
-                }
+                "</div>",
+              input: "number",
+              inputValue: 0,
+              confirmButtonText: "Send transaction",
+              confirmButtonColor: "#6DECBB",
+              showCancelButton: true,
+              animation: false,
+              inputValidator: (value) => {
+                return new Promise((resolve) => {
+                  if (
+                    value + self.txAmount.normalized >
+                    self.availableBalance / 1e8
+                  ) {
+                    resolve(
+                      "The transaction amount + fee can not exceed your balance"
+                    );
+                  } else if (
+                    value < 0 ||
+                    value > 3711998690 ||
+                    isNaN(parseFloat(value))
+                  ) {
+                    resolve(
+                      "Please enter a transaction fee between 0 and 3711998690"
+                    );
+                  } else {
+                    resolve();
+                  }
+                });
+              },
+            },
+          ])
+          .then((result) => {
+            if (result.value) {
+              self.$Progress.start();
+              self.overlay = true;
+              let feeResult = result.value;
+              const swalPopup = Swal.mixin({
+                customClass: {
+                  container: this.darkMode ? "theme--dark" : "theme--light",
+                },
               });
+
+              const amount = parseFloat(self.txAmount.normalized, 10);
+              const fee = parseFloat(feeResult[1], 10);
+
+              window.backend.WalletApplication.GetLastAcceptedTransactionRef().then(
+                (result) => {
+                  if (!result) {
+                    self.txFailure(swalPopup);
+                  } else {
+                    const tokens = result.split(",");
+                    const lastRef = {
+                      ordinal: parseInt(tokens[0]),
+                      prevHash: tokens[1],
+                    };
+                    keyStore
+                      .generateTransaction(
+                        amount,
+                        self.txAddress,
+                        dagWalletAccount.keyTrio,
+                        lastRef,
+                        fee
+                      )
+                      .then(
+                        (tx) => {
+                          window.backend.WalletApplication.SendTransaction2(
+                            JSON.stringify(tx)
+                          ).then((success) => {
+                            if (success) {
+                              self.txSuccess(swalPopup);
+                            } else {
+                              self.txFailure(swalPopup);
+                            }
+                          });
+                        },
+                        () => {
+                          self.txFailure(swalPopup);
+                        }
+                      );
+                  }
+                }
+              );
             }
-          }
-        ])
-        .then(result => {
-          if (result.value) {
-            self.$Progress.start();
-            self.overlay = true;
-            let feeResult = result.value;
-            const swalPopup = Swal.mixin({
-              customClass: {
-                container: this.darkMode ? "theme--dark" : "theme--light"
-              }
-            });
-
-            const amount = parseFloat(self.txAmount.normalized, 10);
-            const fee = parseFloat(feeResult[1], 10);
-
-            window.backend.WalletApplication.GetLastAcceptedTransactionRef().then(result => {
-              if (!result) {
-                self.txFailure(swalPopup);
-              }
-              else {
-                const tokens = result.split(',');
-                const lastRef = {ordinal: parseInt(tokens[0]), prevHash: tokens[1]}
-                keyStore.generateTransaction(amount, self.txAddress, dagWalletAccount.keyTrio, lastRef, fee).then(tx => {
-                  window.backend.WalletApplication.SendTransaction2(
-                      JSON.stringify(tx)
-                  ).then(success => {
-                    if (success) {
-                      self.txSuccess(swalPopup);
-                    }
-                    else {
-                      self.txFailure(swalPopup);
-                    }
-                  });
-                }, () => {
-                  self.txFailure(swalPopup);
-                })
-              }
-            })
-          }
-        });
+          });
       }
     },
-    txSuccess (swalPopup) {
+    txSuccess(swalPopup) {
       this.$Progress.finish();
       this.overlay = false;
       this.txAddress = "";
-      this.txAmount.normalized = 0
+      this.txAmount.normalized = 0;
 
       swalPopup.fire({
         title: "Success!",
         text:
-            "You have sent " +
-            self.txAmount.normalized +
-            " $DAG tokens to address " +
-            self.txAddress +
-            ".",
-        icon: "success"
+          "You have sent " +
+          self.txAmount.normalized +
+          " $DAG tokens to address " +
+          self.txAddress +
+          ".",
+        icon: "success",
       });
-
     },
-    txFailure (swalPopup) {
+    txFailure(swalPopup) {
       this.$Progress.finish();
       this.overlay = false;
       this.txAddress = "";
-      this.txAmount.normalized = 0
+      this.txAmount.normalized = 0;
 
       swalPopup.fire({
         title: "Transaction Failed!",
         text: "Unable to send Transaction",
-        type: "error"
+        type: "error",
       });
     },
     setMaxDAGs() {
       this.txAmount.normalized = this.availableBalance / 1e8;
       // this.txAmount.denormalized = this.availableBalance;
-    }
+    },
   },
   data() {
     return {
       txAddress: "",
       txAmount: {
-        normalized: 0
+        normalized: 0,
       },
       submitStatus: null,
       amountSubmitted: null,
       notifications: {
-        topCenter: false
+        topCenter: false,
       },
       overlay: false,
       txHistoryPage: [],
-      showAddressBook: false
+      showAddressBook: false,
     };
   },
   validations: {
@@ -344,21 +401,21 @@ export default {
       required,
       minLength: minLength(40),
       maxLength: maxLength(40),
-      verifyPrefix
+      verifyPrefix,
     },
     txAmount: {
       normalized: {
         required,
-        inBetween: between(0.00000001, 3711998690)
-      }
-    }
+        inBetween: between(0.00000001, 3711998690),
+      },
+    },
   },
   props: {
     txAddressParam: {
       type: String,
-      default: ""
-    }
-  }
+      default: "",
+    },
+  },
 };
 </script>
 
@@ -369,9 +426,9 @@ export default {
 
 .icon-point-right {
   @include themed() {
-    color: t('successColor');
+    color: t("successColor");
   }
-  font-size: 2.5rem; 
-  width:100%;
+  font-size: 2.5rem;
+  width: 100%;
 }
 </style>

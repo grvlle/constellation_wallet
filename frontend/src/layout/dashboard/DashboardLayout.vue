@@ -70,15 +70,15 @@
 <style scoped lang="scss">
 .nav-link {
   font-weight: 500;
-  font-size: 10px;
-  line-height: 12px;
+  font-size: 0.625em;
+  line-height: 0.75em;
   text-align: center;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #f2f2f2 !important;
-  height: 44px;
+  height: 2.75em;
   box-sizing: border-box;
-  margin: 0px !important;
+  margin: 0em !important;
   display: flex;
   align-items: center;
   justify-content: center;

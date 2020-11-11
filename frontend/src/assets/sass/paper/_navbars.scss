@@ -548,13 +548,13 @@
   @include themed() {
     border-right-color: t("sidebarArrowColor");
   }
-  border-right: 12px solid;
-  border-top: 12px solid transparent;
-  border-bottom: 12px solid transparent;
+  border-right: 0.75em solid;
+  border-top: 0.75em solid transparent;
+  border-bottom: 0.75em solid transparent;
   display: inline-block;
   position: absolute;
-  left: 215.58px;
-  top: 239.7px;
+  left: 13.47375em;
+  top: 14.98125em;
   transition: all 0.5s cubic-bezier(0.19, 1.42, 0.79, 1);
 }
 @media (max-width: 992px) {

@@ -15,12 +15,12 @@
       /> -->
       <div class="logo">
         <img
-          style="height: 54.23px;"
+          style="height: 3.389375em;"
           v-if="darkMode"
           src="~@/assets/img/stardust-collective-logo-white.png"
         />
         <img
-          style="height: 54.23px;"
+          style="height: 3.389375em;"
           v-else
           src="~@/assets/img/stardust-collective-logo-black.png"
         />
@@ -118,7 +118,7 @@ export default {
 </script>
 <style scoped lang="scss">
 .logo {
-  margin-left: 24px;
+  margin-left: 1.5em;
 }
 
 .toggle {
@@ -135,11 +135,11 @@ export default {
   opacity: 1 !important;
   p {
     font-weight: 500;
-    font-size: 12px;
-    line-height: 12px;
+    font-size: 0.75em;
+    line-height: 0.75em;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-left: 6px;
+    margin-left: 0.375em;
   }
   color: #666666 !important;
   display: flex;

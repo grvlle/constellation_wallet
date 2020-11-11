@@ -77,23 +77,23 @@ export default {
 
 .nav-link {
   font-weight: normal;
-  font-size: 14px;
-  line-height: 24px;
+  font-size: 0.875em;
+  line-height: 1.5em;
   text-transform: none;
   color: $gray-input-bg !important;
 }
 
 .nav-item:first-child {
-  margin-top: 10px;
+  margin-top: 0.625em;
 }
 
 .s-icon {
-  margin-left: 12px;
-  margin-right: 8px;
+  margin-left: 0.75em;
+  margin-right: 0.5em;
 
   svg {
-    width: 18px;
-    height: 18px;
+    width: 1.125em;
+    height: 1.125em;
   }
 }
 </style>

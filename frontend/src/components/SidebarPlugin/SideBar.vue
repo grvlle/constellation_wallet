@@ -142,10 +142,10 @@ export default {
 
 .welcome-text {
   font-weight: 500;
-  font-size: 14px;
-  line-height: 21px;
+  font-size: 0.875em;
+  line-height: 1.3125em;
   color: $gray-input-bg;
-  margin-top: 18px;
-  margin-bottom: 2px;
+  margin-top: 1.125em;
+  margin-bottom: 0.125em;
 }
 </style>

@@ -55,14 +55,14 @@ export default {
   font-family: Poppins;
   color: #666666;
   box-sizing: border-box;
-  border-radius: 4px;
-  border: 1px solid #c4c4c4 !important;
+  border-radius: 0.25em;
+  border: 0.0625em solid #c4c4c4 !important;
 }
 
 .control-label {
   font-weight: 500;
-  font-size: 14px;
-  line-height: 21px;
+  font-size: 0.875em;
+  line-height: 1.3125em;
   color: #979797;
 }
 </style>

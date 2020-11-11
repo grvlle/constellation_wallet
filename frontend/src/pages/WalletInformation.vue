@@ -23,7 +23,7 @@ export default {
 
 <style scoped lang="scss">
 .container {
-  padding: 0px;
+  padding: 0em;
 }
 
 .card {

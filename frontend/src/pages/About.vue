@@ -53,7 +53,7 @@
           <div>
             <li>
               <b>Why do I need to enter a fee?</b>
-              <span style="padding-left:20px;display:block;">
+              <span style="padding-left:1.25em;display:block;">
                 $DAG transactions are indeed free - you can leave this field as
                 0. The fee is intended for users with higher data throughput
                 needs.
@@ -64,7 +64,7 @@
             <br />
             <li>
               <b>How do I securely backup my wallet?</b>
-              <span style="padding-left:20px;display:block;">
+              <span style="padding-left:1.25em;display:block;">
                 When creating a new wallet you will be required to create a
                 <b>Private Key (JSON file) </b>and a <b>Password</b>. <br />It
                 is important to make a copy of both of these two components, as

@@ -11,7 +11,7 @@
                 >
                 <file-selector
                   v-model="keystorePath"
-                  action="SelectFile"
+                  action="SelectFile3"
                   @file="fileSelected"
                 />
               </div>
@@ -34,7 +34,7 @@
                       <p-button
                         type="primary"
                         block
-                        :disabled="valid"
+                        :disabled="!valid"
                         @click.native="
                           loginJsonWallet(keystorePath, keystorePassword)
                         "
@@ -247,21 +247,20 @@ export default {
     },
     // eslint-disable-next-line no-unused-vars
     loginJsonWallet: function(filePath, password) {
-      const key =
-        "d4ace4d04e13e3441b7a34fb869dc09fa729d9b4fbf9e3377cbae3d88f75f049";
-      var address = keyStore.getDagAddressFromPublicKey(
-        keyStore.getPublicKeyFromPrivate(key)
-      );
-      window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
-        (result) => {
-          if (result) {
-            this.overlay = false;
-            this.$Progress.finish();
-            this.initWallet();
-          }
-        }
-      );
-      /*
+      // const key =
+      //   "d4ace4d04e13e3441b7a34fb869dc09fa729d9b4fbf9e3377cbae3d88f75f049";
+      // var address = keyStore.getDagAddressFromPublicKey(
+      //   keyStore.getPublicKeyFromPrivate(key)
+      // );
+      // window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
+      //   (result) => {
+      //     if (result) {
+      //       this.overlay = false;
+      //       this.$Progress.finish();
+      //       this.initWallet();
+      //     }
+      //   }
+      // );
       Swal.close();
       this.$Progress.start();
       this.overlay = true;
@@ -295,7 +294,6 @@ export default {
           Swal.fire("Unable to login", error, "error");
         }
       );
-      */
     },
     initWallet: function() {
       var self = this;

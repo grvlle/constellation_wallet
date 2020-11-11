@@ -425,4 +425,12 @@ export default {
 //     border-left-color: t("dangerColor");
 //   }
 // }
+
+.theme--dark {
+  .timeline-panel {
+    background: #000000;
+    border-color: #666666;
+    box-shadow: 0 0 0.3125rem rgba(0, 0, 0, 0.25);
+  }
+}
 </style>

@@ -60,4 +60,15 @@ export default {
     color: #979797 !important;
   }
 }
+
+.theme--dark {
+  .card {
+    background: #181818;
+
+    .card-title,
+    .card-category {
+      color: #f2f2f2 !important;
+    }
+  }
+}
 </style>

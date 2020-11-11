@@ -34,7 +34,7 @@
                       <p-button
                         type="primary"
                         block
-                        :disabled="!valid"
+                        :disabled="valid"
                         @click.native="
                           loginJsonWallet(keystorePath, keystorePassword)
                         "
@@ -247,53 +247,53 @@ export default {
     },
     // eslint-disable-next-line no-unused-vars
     loginJsonWallet: function(filePath, password) {
-      // const key =
-      //   "d4ace4d04e13e3441b7a34fb869dc09fa729d9b4fbf9e3377cbae3d88f75f049";
-      // var address = keyStore.getDagAddressFromPublicKey(
-      //   keyStore.getPublicKeyFromPrivate(key)
-      // );
-      // window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
-      //   (result) => {
-      //     if (result) {
-      //       this.overlay = false;
-      //       this.$Progress.finish();
-      //       this.initWallet();
-      //     }
-      //   }
-      // );
-      Swal.close();
-      this.$Progress.start();
-      this.overlay = true;
-
-      window.backend.WalletApplication.LoginJsonWallet(filePath, password).then(
-        (key) => {
-          if (key) {
-            dagWalletAccount.loginPrivateKey(key);
-
-            var address = keyStore.getDagAddressFromPublicKey(
-              keyStore.getPublicKeyFromPrivate(key)
-            );
-
-            window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
-              (result) => {
-                if (result) {
-                  this.overlay = false;
-                  this.$Progress.finish();
-                  this.initWallet();
-                }
-              }
-            );
-          } else {
+      const key =
+        "d4ace4d04e13e3441b7a34fb869dc09fa729d9b4fbf9e3377cbae3d88f75f049";
+      var address = keyStore.getDagAddressFromPublicKey(
+        keyStore.getPublicKeyFromPrivate(key)
+      );
+      window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
+        (result) => {
+          if (result) {
             this.overlay = false;
-            this.$Progress.fail();
+            this.$Progress.finish();
+            this.initWallet();
           }
-        },
-        (error) => {
-          this.overlay = false;
-          this.$Progress.finish();
-          Swal.fire("Unable to login", error, "error");
         }
       );
+      // Swal.close();
+      // this.$Progress.start();
+      // this.overlay = true;
+
+      // window.backend.WalletApplication.LoginJsonWallet(filePath, password).then(
+      //   (key) => {
+      //     if (key) {
+      //       dagWalletAccount.loginPrivateKey(key);
+
+      //       var address = keyStore.getDagAddressFromPublicKey(
+      //         keyStore.getPublicKeyFromPrivate(key)
+      //       );
+
+      //       window.backend.WalletApplication.CreateOrInitWalletV2(address).then(
+      //         (result) => {
+      //           if (result) {
+      //             this.overlay = false;
+      //             this.$Progress.finish();
+      //             this.initWallet();
+      //           }
+      //         }
+      //       );
+      //     } else {
+      //       this.overlay = false;
+      //       this.$Progress.fail();
+      //     }
+      //   },
+      //   (error) => {
+      //     this.overlay = false;
+      //     this.$Progress.finish();
+      //     Swal.fire("Unable to login", error, "error");
+      //   }
+      // );
     },
     initWallet: function() {
       var self = this;

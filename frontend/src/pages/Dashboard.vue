@@ -32,7 +32,7 @@
             style="color: #DB6E44"
             slot="header"
           >
-            <fiat-icon :size="52" />
+            <img src="~@/assets/img/money.png" height="36" />
           </div>
           <div
             class="numbers text-left text-overflow card-label"
@@ -60,7 +60,7 @@
             style="color: #2D9CDB"
             slot="header"
           >
-            <i class="fas fa-cube"></i>
+            <img src="~@/assets/img/blocks.png" height="40" />
           </div>
           <div
             class="numbers text-left text-overflow card-label"
@@ -469,6 +469,36 @@ function calcTime(offset) {
     border-radius: 0.25rem;
     border: none;
     margin-bottom: 0.75rem;
+  }
+}
+
+.theme--dark {
+  .stats-card .card-label {
+    p {
+      color: #f2f2f2;
+    }
+    color: #f2f2f2;
+  }
+
+  .address-wrapper {
+    background: #666666;
+    border-color: #979797;
+
+    .address-part {
+      color: #f2f2f2;
+    }
+
+    .address-btn {
+      background: #f2f2f2;
+
+      .fa-copy {
+        color: #666666;
+      }
+    }
+  }
+
+  .stats {
+    color: #f2f2f2;
   }
 }
 </style>

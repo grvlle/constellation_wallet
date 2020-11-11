@@ -146,4 +146,10 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
+.theme--dark {
+  .navbar .nav-link {
+    color: #f2f2f2 !important;
+  }
+}
 </style>

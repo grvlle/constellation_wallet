@@ -107,4 +107,24 @@ hr {
     }
   }
 }
+
+.theme--dark {
+  .author {
+    .title {
+      color: #f2f2f2;
+
+      small {
+        color: #f2f2f2;
+      }
+    }
+  }
+
+  h5 {
+    color: #f2f2f2;
+
+    small {
+      color: #f2f2f2;
+    }
+  }
+}
 </style>

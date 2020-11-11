@@ -65,4 +65,16 @@ export default {
   line-height: 1.3125rem;
   color: #979797;
 }
+
+.theme--dark {
+  .form-control {
+    border-color: #979797 !important;
+    background: #666666 !important;
+    color: #fff;
+  }
+
+  .control-label {
+    color: #fff;
+  }
+}
 </style>

@@ -6,6 +6,8 @@ import CogIcon from "vue-material-design-icons/Cog.vue";
 import LockIcon from "vue-material-design-icons/Lock.vue";
 import ClockOutlineIcon from "vue-material-design-icons/ClockOutline";
 import Cash100Icon from "vue-material-design-icons/Cash100";
+import ArrowRightIcon from "vue-material-design-icons/ArrowRight";
+import ArrowLeftIcon from "vue-material-design-icons/ArrowLeft";
 
 const MaterialIcons = {
   install(Vue) {
@@ -17,6 +19,8 @@ const MaterialIcons = {
     Vue.component("logout-icon", LockIcon);
     Vue.component("clock-icon", ClockOutlineIcon);
     Vue.component("fiat-icon", Cash100Icon);
+    Vue.component("arrow-r-icon", ArrowRightIcon);
+    Vue.component("arrow-l-icon", ArrowLeftIcon);
   },
 };
 

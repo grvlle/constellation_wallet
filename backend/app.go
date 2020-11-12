@@ -124,7 +124,7 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.WalletCLI.Version = "2.16.2"
     a.KeyToolCLI.URL = "https://github.com/StardustCollective/molly_wallet/releases/download"
     a.KeyToolCLI.Version = "2.0-alpha"
-	a.Version = "2.0.3"
+	a.Version = "2.1.0"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
 	if err != nil {

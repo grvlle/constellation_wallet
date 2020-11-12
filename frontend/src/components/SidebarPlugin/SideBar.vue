@@ -15,7 +15,7 @@
             <center><img src="@/assets/img/spots.png" alt /></center>
           </div>
           <div class="small welcome-text" style="text-align:center;">
-            Molly Wallet Version 2.0
+            Molly Wallet V2
           </div>
         </a>
       </div>

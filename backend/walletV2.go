@@ -133,6 +133,9 @@ func (a *WalletApplication) producePrivateKeyMigrateV2(keystorePath, alias, wrkD
 		}
 		if strings.Contains(s, "Permission denied") || strings.Contains(s, "Access is denied") {
             a.log.Errorln("Unable to write to the working directory", err)
+            if strings.Contains(wrkDir, "system32") {
+                return false, errors.New("Reason: Unable to run inside a ZIP folder. Please exit and extract/unzip the .EXE file before running again.")
+            }
             return false, errors.New("Permission denied. Unable to write to the same directory Molly Wallet is executed from: " + wrkDir)
 		}
 		errStr := err.Error()

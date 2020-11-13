@@ -336,16 +336,10 @@ func (a *WalletApplication) initNewWallet() {
 func (a *WalletApplication) initWallet(keystorePath string) error {
 
 	if a.NewUser {
-		err := a.initTXFromBlockExplorer()
-		if err != nil {
-			return err
-		}
+		a.initTXFromBlockExplorer()
 		a.StoreImagePathInDB("faces/face-0.jpg")
 	} else if !a.NewUser {
-		err := a.initTXFromBlockExplorer()
-		if err != nil {
-			return err
-		}
+		a.initTXFromBlockExplorer()
 		// a.initTXFromDB()   // Disregard upon import
 		a.initTXFilePath() // Update paths from DB.
 	}
@@ -550,52 +544,63 @@ func (a *WalletApplication) resyncTXHistory() ([]models.TXHistory, map[string]bo
     return allTX, encountered
 }
 
-// initTXFromBlockExplorer is called when an existing wallet is imported.
-func (a *WalletApplication) initTXFromBlockExplorer() error {
-	//a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
+func (a *WalletApplication) initTXFromBlockExplorer() {
 
-	// resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.CollectTX + a.wallet.Address)
-	resp, err := http.Get(a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
-	if err != nil {
-		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
-		a.LoginError("Unable to collect previous transactions from blockexplorer.")
-		return err
-	}
-	defer resp.Body.Close()
+	hasError := true;
+	beTxList := []models.TXHistory{}
 
-	if resp.Body == nil {
-        a.log.Info("Unable to detect any previous transactions.")
-        return nil
-	}
+    for i := 0; i < 10 && hasError; i++ {
 
-    bodyBytes, err := ioutil.ReadAll(resp.Body)
-    if err != nil {
-        a.LoginError("Unable to collect previous transactions from blockexplorer. Try again later.")
-        a.log.Errorln("Unable to collect previous transactions from blockexplorer. Reason: ", err)
-        return err
+        if ( i > 0) {
+            time.Sleep(2 * time.Second)
+        }
+
+        hasError = false
+
+        a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
+
+        resp, err := http.Get(a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
+        if err != nil {
+            hasError = true
+            continue
+        }
+        defer resp.Body.Close()
+
+        if resp.Body == nil {
+            a.log.Info("Unable to detect any previous transactions.")
+            return
+        }
+
+        bodyBytes, err := ioutil.ReadAll(resp.Body)
+        if err != nil {
+            hasError = true
+            continue
+        }
+
+        ok, error := a.verifyAPIResponse(bodyBytes)
+        // Blockexplorer returns below string when no previous transactions are found
+        if !ok && error != "Cannot find transactions for sender" {
+            a.log.Errorln("API returned the following error", error)
+            hasError = true
+            continue
+        }
+
+        // If no previous transactions for imported wallet - proceed
+        if !ok && error == "Cannot find transactions for sender" {
+            a.log.Info("Unable to detect any previous transactions.")
+            return
+        }
+
+        err = json.Unmarshal(bodyBytes, &beTxList)
+        if err != nil {
+            hasError = true
+        }
     }
 
-    ok, error := a.verifyAPIResponse(bodyBytes)
-    // Blockexplorer returns below string when no previous transactions are found
-    if !ok && error != "Cannot find transactions for sender" {
-        a.log.Errorln("API returned the following error", error)
-        a.LoginError("The wallet import failed. Please check your internet connection and try again.")
-        return errors.New(error)
-    }
-
-    // If no previous transactions for imported wallet - proceed
-    if !ok && error == "Cannot find transactions for sender" {
-        a.log.Info("Unable to detect any previous transactions.")
-        return nil
-    }
-
-    beTxList := []models.TXHistory{}
-
-    err = json.Unmarshal(bodyBytes, &beTxList)
-    if err != nil {
-        a.log.Errorln("Unable to fetch TX history from block explorer. Reason: ", err)
-        a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
-        return err
+    if hasError {
+        a.log.Errorln("Unable to fetch TX history from block explorer.")
+        a.sendError("Unable to fetch TX history from block explorer.", errors.New("Unreachable Block Explorer"))
+        return
     }
 
     // Reverse order
@@ -642,8 +647,6 @@ func (a *WalletApplication) initTXFromBlockExplorer() error {
     }
 
     a.RT.Events.Emit("update_tx_history", allTX)
-
-	return nil
 }
 
 // PassKeysToFrontend emits the keys to the settings.Vue component on a

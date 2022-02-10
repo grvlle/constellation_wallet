@@ -16,7 +16,7 @@
     "core-js": "^2.6.11",
     "es6-promise": "^4.2.8",
     "jquery": "^3.5.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "popper.js": "^1.16.1",
     "sass-loader": "^8.0.2",
     "serialize-javascript": "^2.1.2",

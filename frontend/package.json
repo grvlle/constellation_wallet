@@ -50,7 +50,7 @@
     "eventsource-polyfill": "^0.9.6",
     "json-loader": "^0.5.7",
     "kind-of": "^6.0.3",
-    "minimist": "^1.2.3",
+    "minimist": "^1.2.6",
     "prerender-spa-plugin": "^3.4.0",
     "vue-template-compiler": "^2.6.11",
     "webpack-hot-middleware": "^2.24.3"

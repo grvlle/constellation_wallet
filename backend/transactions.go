@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"time"
@@ -130,7 +130,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			a.log.Errorln(string(bodyBytes))
 			a.log.Errorln("Failed to read the response body. Reason: ", err)
@@ -150,7 +150,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 		return false, ""
 	}
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		a.log.Errorln(err)
 	}
@@ -161,20 +161,19 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 	return false, ""
 }
 
-
 /* Note: Called from frontend to post a generated TX to the network */
 func (a *WalletApplication) SendTransaction2(txJson string) bool {
 
-    a.postTransaction(txJson)
+	a.postTransaction(txJson)
 
-    return !a.TransactionFailed
+	return !a.TransactionFailed
 }
 
 func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
 
-    txObject := a.loadTXFromFile(txFile)
+	txObject := a.loadTXFromFile(txFile)
 
-    return a.postTransaction(txObject);
+	return a.postTransaction(txObject)
 }
 
 func (a *WalletApplication) postTransaction(txObject string) *models.TXHistory {
@@ -195,7 +194,7 @@ func (a *WalletApplication) postTransaction(txObject string) *models.TXHistory {
 	if TXSuccessfullyPutOnNetwork {
 		txData := &models.TXHistory{
 			Amount:   tx.Edge.Data.Amount,
-			Sender: tx.Edge.ObservationEdge.Parents[0].HashReference,
+			Sender:   tx.Edge.ObservationEdge.Parents[0].HashReference,
 			Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 			Fee:      tx.Edge.Data.Fee,
 			Hash:     hash,
@@ -212,7 +211,7 @@ func (a *WalletApplication) postTransaction(txObject string) *models.TXHistory {
 
 	txData := &models.TXHistory{
 		Amount:   tx.Edge.Data.Amount,
-		Sender: tx.Edge.ObservationEdge.Parents[0].HashReference,
+		Sender:   tx.Edge.ObservationEdge.Parents[0].HashReference,
 		Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
 		Fee:      tx.Edge.Data.Fee,
 		Hash:     hash,
@@ -298,7 +297,7 @@ func (a *WalletApplication) TxProcessed(TXHash string) bool {
 		return false
 	}
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return false
 	}

@@ -2,7 +2,7 @@ package app
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/grvlle/constellation_wallet/backend/models"
@@ -191,7 +191,7 @@ func (a *WalletApplication) rebuildTxChainState(lastTXHash string) error {
 	defer resp.Body.Close()
 
 	if resp.Body != nil {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			a.LoginError("Unable to collect previous TX's from blockexplorer. Please try again later.")
 			a.log.Errorln("Unable to collect previous TX's from blockexplorer. Reason: ", err)

@@ -30,14 +30,12 @@ func (a *WalletApplication) CreateContact(address string, name string, tag strin
 		Description: description,
 	}
 
-	if contact == nil {
-		return false
-	}
 	if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Association("Contact").Append(contact).Error; err != nil {
 		a.log.Errorln("Unable to update the DB record with the new contact. Reason: ", err)
 		a.sendError("Unable to update the DB record with the new contact. Reason: ", err)
 		return false
 	}
+
 	a.log.Infoln("Successfully stored contact in DB")
 	return true
 }

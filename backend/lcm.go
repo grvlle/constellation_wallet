@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -78,15 +78,15 @@ func (u *UpdateWallet) GetLatestRelease() string {
 	}
 	defer resp.Body.Close()
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		u.app.log.Warn("Unable to get the latest release. Reason: ", err)
 		return ""
 	}
 	if bodyBytes == nil {
-        u.app.log.Warn("Unable to get the latest release. Reason: Empty response from server")
-        return ""
-    }
+		u.app.log.Warn("Unable to get the latest release. Reason: Empty response from server")
+		return ""
+	}
 
 	var result map[string]interface{}
 

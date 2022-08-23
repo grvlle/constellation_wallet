@@ -40,11 +40,16 @@ The Go distribution and tooling is available as an installer for all common oper
 #### 2. Download and install NPM.  
   
 NPM and Node.js can be downloaded from their [official website](https://nodejs.org/en/download/). Simply select your  
-distribution/OS and CPU architecture.  
+distribution/OS and CPU architecture.
+
+Note: node12 should be used. (It's recommended to use nvm and switch to node12)
   
 #### 3. Install Wails  
   
 The Molly Wallet is built using a light-weight framework for Desktop Applications using Go and VueJS. [Wails](https://github.com/wailsapp/wails) is very similar to Electron but does not include the full Chromium web browser as a dependency.  
+
+Note: don't use the latest wails version, instead install an older version:
+`go install github.com/wailsapp/wails/cmd/wails@v1.8.0`
   
   
 ###### MacOS  
@@ -121,7 +126,8 @@ In the constellation_wallet directory, run:
 $ wails serve  
 ```  
   
-In the frontend directory, run:  
+In the frontend directory, run: 
+
 ```sh  
 $ npm run serve  
 ```  

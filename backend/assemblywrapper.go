@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"path/filepath"
+	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
@@ -27,7 +27,7 @@ func (a *WalletApplication) runWalletCMD(tool string, scalaFunc string, scalaArg
 		main = "java"
 	}
 
-	cmds := []string{"-jar", filepath.Join(a.paths.DAGDir, "mw-" + tool + ".jar"), scalaFunc}
+	cmds := []string{"-jar", filepath.Join(a.paths.DAGDir, "mw-"+tool+".jar"), scalaFunc}
 	args := append(cmds, scalaArgs...)
 	cmd := exec.Command(main, args...)
 	a.log.Infoln("Running command: ", cmd)
@@ -72,7 +72,7 @@ func (a *WalletApplication) WalletKeystoreAccess(keyStorePath, alias string) boo
 	// STDOUT is captured here
 
 	w.Close()
-	dagAddress, err := ioutil.ReadAll(r)
+	dagAddress, err := io.ReadAll(r)
 	if err != nil {
 		a.log.Errorln("Unable to read address from STDOUT", err)
 		a.sendError("Unable to read address from STDOUT", err)
@@ -112,7 +112,7 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 	}
 
 	w.Close()
-	dagAddress, err := ioutil.ReadAll(r)
+	dagAddress, err := io.ReadAll(r)
 	if err != nil {
 		a.log.Errorln("Unable to read address from STDOUT", err)
 	}
@@ -126,15 +126,13 @@ func (a *WalletApplication) GenerateDAGAddress() string {
 // the official Repos
 func (a *WalletApplication) CheckAndFetchWalletCLI() bool {
 
-    keytoolFileName := "mw-keytool.jar"
+	keytoolFileName := "mw-keytool.jar"
 	keytoolPath := a.paths.DAGDir + "/" + keytoolFileName
-// 	walletFileName := "cl-wallet.jar"
-// 	walletPath := a.paths.DAGDir + "/" + walletFileName
+	// 	walletFileName := "cl-wallet.jar"
+	// 	walletPath := a.paths.DAGDir + "/" + walletFileName
 
 	keytoolExists := a.fileExists(keytoolPath)
-// 	walletExists := a.fileExists(walletPath)
-
-
+	// 	walletExists := a.fileExists(walletPath)
 
 	if keytoolExists {
 		return true
@@ -143,22 +141,22 @@ func (a *WalletApplication) CheckAndFetchWalletCLI() bool {
 	if keytoolExists {
 		a.log.Info(keytoolPath + " file exists. Skipping downloading")
 	} else {
-	    url := a.KeyToolCLI.URL + "/v" + a.KeyToolCLI.Version + "/" + keytoolFileName
+		url := a.KeyToolCLI.URL + "/v" + a.KeyToolCLI.Version + "/" + keytoolFileName
 		if err := a.fetchWalletJar(url, keytoolFileName, keytoolPath); err != nil {
 			a.log.Errorln("Unable to fetch or store mw-keytool.jar", err)
 			return false
 		}
 	}
 
-// 	if walletExists {
-// 		a.log.Info(walletPath + " file exists. Skipping downloading")
-// 	} else {
-// 	    url := a.WalletCLI.URL + "/v" + a.WalletCLI.Version + "/" + walletFileName
-// 		if err := a.fetchWalletJar(url, walletFileName, walletPath); err != nil {
-// 			a.log.Errorln("Unable to fetch or store cl-wallet.jar", err)
-// 			return false
-// 		}
-// 	}
+	// 	if walletExists {
+	// 		a.log.Info(walletPath + " file exists. Skipping downloading")
+	// 	} else {
+	// 	    url := a.WalletCLI.URL + "/v" + a.WalletCLI.Version + "/" + walletFileName
+	// 		if err := a.fetchWalletJar(url, walletFileName, walletPath); err != nil {
+	// 			a.log.Errorln("Unable to fetch or store cl-wallet.jar", err)
+	// 			return false
+	// 		}
+	// 	}
 
 	if a.fileExists(keytoolPath) {
 		return true
@@ -190,8 +188,6 @@ func (a *WalletApplication) produceTXObject(amount int64, fee int64, address, ne
 	time.Sleep(1 * time.Second) // Will sleep for 1 sec between TXs to prevent spamming.
 }
 
-
-
 func (a *WalletApplication) produceKeystoreMigrateV2(keystorePath, alias string) (bool, error) {
 
 	err := a.runWalletCMD("keytool", "migrate-to-store-password-only", "--keystore="+keystorePath, "--alias="+alias, "--env_args=true")
@@ -199,22 +195,22 @@ func (a *WalletApplication) produceKeystoreMigrateV2(keystorePath, alias string)
 		s := err.Error()
 		if strings.Contains(s, "java.io.IOException: keystore password was incorrect") {
 			a.log.Errorln("Password is incorrect. Reason: ", err)
-			return false, errors.New("Possibly wrong KeyStore Password")
+			return false, errors.New("possibly wrong KeyStore Password")
 		}
 		if strings.Contains(s, "java.security.UnrecoverableKeyException:") {
 			a.log.Errorln("Password is incorrect. Reason: ", err)
-			return false, errors.New("Possibly wrong Key Password")
+			return false, errors.New("possibly wrong Key Password")
 		}
 		if strings.Contains(s, "java.lang.NullPointerException\n	at org.constellation.keytool.KeyStoreUtils$.$anonfun$unlockKeyPair$1") {
 			a.log.Errorln("Alias is incorrect. Reason: ", err)
-			return false, errors.New("Unable to find alias")
+			return false, errors.New("unable to find alias")
 		}
 		if strings.Contains(s, "java.io.IOException: toDerInputStream rejects tag type") {
 			a.log.Errorln("Private key file type is incorrect.", err)
-			return false, errors.New("Possibly wrong Private key file type")
+			return false, errors.New("possibly wrong Private key file type")
 		}
 		a.log.Errorln("Unable to migrate Keystore file. Reason: ", err)
-		return false, errors.New("Unable to migrate Keystore file to V2. Please report this issue")
+		return false, errors.New("unable to migrate Keystore file to V2. Please report this issue")
 	}
 
 	return true, nil

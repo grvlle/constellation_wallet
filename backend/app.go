@@ -8,7 +8,6 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
-	log "github.com/sirupsen/logrus"
 	"github.com/wailsapp/wails"
 
 	"github.com/grvlle/constellation_wallet/backend/api"
@@ -70,23 +69,23 @@ type WalletApplication struct {
 		URL     string
 		Version string
 	}
-    KeyToolCLI struct {
-        URL     string
-        Version string
-    }
-    HWAddr string
+	KeyToolCLI struct {
+		URL     string
+		Version string
+	}
+	HWAddr string
 }
 
 // Constants of the application
 const (
 	ServiceLogin = "molly-wallet-login"
-	ServiceSeed = "molly-wallet-seed"
-	ServicePKey = "molly-wallet-pkey"
+	ServiceSeed  = "molly-wallet-seed"
+	ServicePKey  = "molly-wallet-pkey"
 
 	MainnetBlockExplorerURL = "https://block-explorer.constellationnetwork.io"
 	TestnetBlockExplorerURL = "https://api-be.exchanges.constellationnetwork.io"
-	MainnetLoadBalancerURL = "http://lb.constellationnetwork.io:9000"
-	TestnetLoadBalancerURL = "http://lb.exchanges.constellationnetwork.io:9000"
+	MainnetLoadBalancerURL  = "http://lb.constellationnetwork.io:9000"
+	TestnetLoadBalancerURL  = "http://lb.exchanges.constellationnetwork.io:9000"
 )
 
 // WailsShutdown is called when the application is closed
@@ -122,8 +121,8 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	a.wallet.Currency = "USD"          // Set default currency
 	a.WalletCLI.URL = "https://github.com/Constellation-Labs/constellation/releases/download"
 	a.WalletCLI.Version = "2.16.2"
-    a.KeyToolCLI.URL = "https://github.com/StardustCollective/molly_wallet/releases/download"
-    a.KeyToolCLI.Version = "2.0-alpha"
+	a.KeyToolCLI.URL = "https://github.com/StardustCollective/molly_wallet/releases/download"
+	a.KeyToolCLI.Version = "2.0-alpha"
 	a.Version = "2.1.0"
 
 	a.DB, err = gorm.Open("sqlite3", a.paths.DAGDir+"/store.db")
@@ -137,8 +136,8 @@ func (a *WalletApplication) WailsInit(runtime *wails.Runtime) error {
 	//a.newReleaseAvailable()
 	a.HWAddr = a.getLocalIpAndMacAddr()
 
-    if a.HWAddr != "" {
-	    a.log.Infoln("Physical hardware address: ", a.HWAddr)
+	if a.HWAddr != "" {
+		a.log.Infoln("Physical hardware address: ", a.HWAddr)
 	}
 
 	return nil
@@ -152,7 +151,7 @@ func (a *WalletApplication) initLogger() {
 	}
 	mw := io.MultiWriter(os.Stdout, logFile)
 	a.log.SetOutput(mw)
-	a.log.SetFormatter(&log.TextFormatter{
+	a.log.SetFormatter(&logrus.TextFormatter{
 		ForceColors:   true,
 		FullTimestamp: true,
 	})

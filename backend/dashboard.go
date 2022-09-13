@@ -3,7 +3,7 @@ package app
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -16,7 +16,7 @@ const (
 	dummyValue             = 1000
 	updateIntervalToken    = 30 // Seconds
 	updateIntervalCurrency = 50 // Seconds
-	updateIntervalBlocks   = 15  // Seconds
+	updateIntervalBlocks   = 15 // Seconds
 	updateIntervalPieChart = 60 // Seconds
 )
 
@@ -40,17 +40,17 @@ type ChartData struct {
 }
 
 type LastTransactionRef struct {
-    PrevHash string
-    Ordinal int
+	PrevHash string
+	Ordinal  int
 }
 
 type CampaignStatus struct {
-    Active bool
+	Active bool
 }
 
 type CampaignRegisterInfo struct {
-    A1 string
-    A2 string
+	A1 string
+	A2 string
 }
 
 // ChartDataInit initializes the ChartData struct with datapoints for
@@ -192,7 +192,7 @@ func (a *WalletApplication) blockAmount() {
 					return
 				}
 
-				bodyBytes, err := ioutil.ReadAll(resp.Body)
+				bodyBytes, err := io.ReadAll(resp.Body)
 				if err != nil {
 					return
 				}
@@ -276,38 +276,34 @@ func (a *WalletApplication) RegisterCampaign(account, dateNum, dateStr string) b
 
 	url := "https://dag-faucet.firebaseio.com/campaign/tiger-lily/register/" + a.HWAddr + ".json"
 
-    jMap := map[string]string{"a1": a.wallet.Address, "a2": account, "date": dateNum, "dateStr": dateStr}
-    bytesRepresentation, err := json.Marshal(jMap)
-    if err != nil {
-        return false
-    }
+	jMap := map[string]string{"a1": a.wallet.Address, "a2": account, "date": dateNum, "dateStr": dateStr}
+	bytesRepresentation, err := json.Marshal(jMap)
+	if err != nil {
+		return false
+	}
 
-    // initialize http client
-    client := &http.Client{}
+	// initialize http client
+	client := &http.Client{}
 
-    //, "application/json"
+	//, "application/json"
 	req, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		a.log.Warnln("API called failed. Reason: ", err)
 		return false
 	}
 
-    // set the request header Content-Type for json
-    req.Header.Set("Content-Type", "application/json; charset=utf-8")
-    resp, err := client.Do(req)
-    if err != nil {
-        a.log.Warnln("API called failed, please send the request again. Reason: ", err)
-        return false
-    }
+	// set the request header Content-Type for json
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	resp, err := client.Do(req)
+	if err != nil {
+		a.log.Warnln("API called failed, please send the request again. Reason: ", err)
+		return false
+	}
 
 	defer resp.Body.Close()
 
-    //StatusUnauthorized
-    if resp.StatusCode == 401 {
-        return false
-    }
-
-	return true
+	//StatusUnauthorized
+	return resp.StatusCode != 401
 }
 
 func (a *WalletApplication) sendCampaignStatus() bool {
@@ -319,26 +315,26 @@ func (a *WalletApplication) sendCampaignStatus() bool {
 
 	defer resp.Body.Close()
 
-    if resp.Body == nil {
-        return false
-    }
+	if resp.Body == nil {
+		return false
+	}
 
-    bodyBytes, err := ioutil.ReadAll(resp.Body)
-    if err != nil {
-        return false
-    }
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return false
+	}
 
-    var result CampaignStatus
+	var result CampaignStatus
 
-    // Unmarshal or Decode the JSON to the interface.
-    err = json.Unmarshal(bodyBytes, &result)
-    if err != nil {
-        return false
-    }
+	// Unmarshal or Decode the JSON to the interface.
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		return false
+	}
 
-    a.RT.Events.Emit("campaign_status", result.Active)
+	a.RT.Events.Emit("campaign_status", result.Active)
 
-    return true
+	return true
 }
 
 func (a *WalletApplication) sendCampaignClaim() {
@@ -350,29 +346,29 @@ func (a *WalletApplication) sendCampaignClaim() {
 
 	defer resp.Body.Close()
 
-    if resp.Body == nil {
-        return
-    }
+	if resp.Body == nil {
+		return
+	}
 
-    bodyBytes, err := ioutil.ReadAll(resp.Body)
-    if err != nil {
-        return
-    }
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
 
-    var result CampaignRegisterInfo
+	var result CampaignRegisterInfo
 
-    // Unmarshal or Decode the JSON to the interface.
-    err = json.Unmarshal(bodyBytes, &result)
-    if err != nil {
-        return
-    }
+	// Unmarshal or Decode the JSON to the interface.
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		return
+	}
 
-    a.RT.Events.Emit("campaign_claim", result.A1)
+	a.RT.Events.Emit("campaign_claim", result.A1)
 }
 
 func (a *WalletApplication) GetLastAcceptedTransactionRef() string {
 
-    url := a.Network.URL + "/transaction/last-ref/" + a.wallet.Address
+	url := a.Network.URL + "/transaction/last-ref/" + a.wallet.Address
 
 	a.log.Infoln("GetLastAcceptedTransactionRef: ", url)
 
@@ -384,27 +380,25 @@ func (a *WalletApplication) GetLastAcceptedTransactionRef() string {
 
 	defer resp.Body.Close()
 
-    if resp.Body == nil {
-        return ""
-    }
+	if resp.Body == nil {
+		return ""
+	}
 
-    bodyBytes, err := ioutil.ReadAll(resp.Body)
-    if err != nil {
-        return ""
-    }
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ""
+	}
 
-    var result LastTransactionRef
+	var result LastTransactionRef
 
-    // Unmarshal or Decode the JSON to the interface.
-    err = json.Unmarshal(bodyBytes, &result)
-    if err != nil {
-        return ""
-    }
+	// Unmarshal or Decode the JSON to the interface.
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		return ""
+	}
 
 	return strconv.Itoa(result.Ordinal) + "," + result.PrevHash
 }
-
-
 
 // func (a *WalletApplication) PostTransferTx(tx) {
 // 	const url string = a.Network.URL;
@@ -468,7 +462,7 @@ func (a *WalletApplication) pricePoller() {
 						break
 					}
 
-					body, err := ioutil.ReadAll(resp.Body)
+					body, err := io.ReadAll(resp.Body)
 					if err != nil {
 						retryCounter++
 						a.log.Warnln("Unable to read the HTTP response from the Token Price API. Reason: ", err)
@@ -564,7 +558,7 @@ func getTokenPriceAlternateRoute() (float64, float64, error) {
 		}
 		defer resp.Body.Close()
 
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return 0, 0, err
 		}

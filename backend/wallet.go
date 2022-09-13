@@ -3,7 +3,7 @@ package app
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"os/user"
@@ -14,9 +14,6 @@ import (
 	"github.com/grvlle/constellation_wallet/backend/models"
 	"github.com/zalando/go-keyring"
 )
-
-
-
 
 // ImportWallet is triggered when a user logs into a new Molly wallet for the first time
 func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPassword, alias string) bool {
@@ -134,74 +131,71 @@ func (a *WalletApplication) ImportWallet(keystorePath, keystorePassword, keyPass
 // CreateWallet is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateOrInitWalletV2(address string) bool {
 
-    //If user comes back to login page, make sure to reset everything
+	//If user comes back to login page, make sure to reset everything
 	a.UserLoggedIn = false
 	a.NewUser = false
 
 	a.wallet = models.Wallet{
-		WalletAlias: address,     //PrimaryKey
-		Address: address}
+		WalletAlias: address, //PrimaryKey
+		Address:     address}
 
-    a.RT.Events.Emit("wallet_keys", a.wallet.Address)
+	a.RT.Events.Emit("wallet_keys", a.wallet.Address)
 
-    if a.sendCampaignStatus() == true {
-        a.sendCampaignClaim()
-    }
+	if a.sendCampaignStatus() {
+		a.sendCampaignClaim()
+	}
 
-    //Check if any record with WalletAlias exist
+	//Check if any record with WalletAlias exist
 	if err := a.DB.Take(&a.wallet).Error; err != nil {
 
-	    //Create new record
+		//Create new record
 		if err := a.DB.Create(&a.wallet).Error; err != nil {
 			a.log.Errorln("Unable to create database object for new wallet. Reason: ", err)
 			a.LoginError("Unable to create new wallet.")
 			return false
 		}
 
-        a.KeyStoreAccess = true
+		a.KeyStoreAccess = true
 
-        if a.KeyStoreAccess {
-            a.paths.LastTXFile = a.TempFileName("tx-")
-            a.paths.PrevTXFile = a.TempFileName("tx-")
-            a.paths.EmptyTXFile = a.TempFileName("tx-")
+		if a.KeyStoreAccess {
+			a.paths.LastTXFile = a.TempFileName("tx-")
+			a.paths.PrevTXFile = a.TempFileName("tx-")
+			a.paths.EmptyTXFile = a.TempFileName("tx-")
 
-            err := a.createTXFiles()
-            if err != nil {
-                a.log.Fatalln("Unable to create TX files. Check fs permissions. Reason: ", err)
-                a.sendError("Unable to create TX files. Check fs permissions. Reason: ", err)
-            }
+			err := a.createTXFiles()
+			if err != nil {
+				a.log.Fatalln("Unable to create TX files. Check fs permissions. Reason: ", err)
+				a.sendError("Unable to create TX files. Check fs permissions. Reason: ", err)
+			}
 
-            if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Update("Path", models.Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
-                a.log.Errorln("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
-                a.sendError("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
-            }
+			if err := a.DB.Where("wallet_alias = ?", a.wallet.WalletAlias).First(&a.wallet).Update("Path", models.Path{LastTXFile: a.paths.LastTXFile, PrevTXFile: a.paths.PrevTXFile, EmptyTXFile: a.paths.EmptyTXFile}).Error; err != nil {
+				a.log.Errorln("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
+				a.sendError("Unable to update the DB record with the tmp tx-paths. Reason: ", err)
+			}
 
-            a.UserLoggedIn = true
-            a.FirstTX = true
-            a.NewUser = false
+			a.UserLoggedIn = true
+			a.FirstTX = true
+			a.NewUser = false
 
-            a.initNewWallet()
+			a.initNewWallet()
 
-            return true
-        }
-    } else if !a.UserLoggedIn {
-        a.UserLoggedIn = true
-        a.FirstTX = false
-        a.NewUser = false
+			return true
+		}
+	} else if !a.UserLoggedIn {
+		a.UserLoggedIn = true
+		a.FirstTX = false
+		a.NewUser = false
 
 		err := a.initWallet("")
 		if err != nil {
 			a.UserLoggedIn = false
 		}
 
-        return true
-    }
+		return true
+	}
 
 	return true
 }
-
-
-
 
 // CreateWallet is called when creating a new wallet in frontend component Login.vue
 func (a *WalletApplication) CreateWallet(keystorePath, keystorePassword, keyPassword, alias, label string) bool {
@@ -321,9 +315,9 @@ func (a *WalletApplication) initNewWallet() {
 	a.StoreImagePathInDB("faces/face-0.jpg")
 
 	//a.initTransactionHistory()
-    //a.passKeysToFrontend()
+	//a.passKeysToFrontend()
 
-    a.initTXFromBlockExplorer()
+	a.initTXFromBlockExplorer()
 
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
@@ -349,9 +343,9 @@ func (a *WalletApplication) initWallet(keystorePath string) error {
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
 	}
-// 	if !a.WidgetRunning.PassKeysToFrontend {
-// 		a.passKeysToFrontend()
-// 	}
+	// 	if !a.WidgetRunning.PassKeysToFrontend {
+	// 		a.passKeysToFrontend()
+	// 	}
 
 	a.log.Infoln("User has logged into the wallet")
 
@@ -412,18 +406,18 @@ func (a *WalletApplication) saveInfoToKeychain(service, info string) bool {
 	account := user.Username
 
 	err = keyring.Set(service, account, info)
-	if (err != nil) {
+	if err != nil {
 		a.log.Warnln("Unable to create your keychain.")
 		a.LoginError("Unable to create your keycahin.")
 		return false
 	}
-	
+
 	return true
 }
 
 func (a *WalletApplication) deleteKeychain(service, account string) error {
 	_, err := keyring.Get(service, account)
-	if (err != nil) {
+	if err != nil {
 		return nil
 	}
 	err = keyring.Delete(service, account)
@@ -501,7 +495,7 @@ func (a *WalletApplication) initTXFromDB() {
 
 func (a *WalletApplication) resyncTXHistory() ([]models.TXHistory, map[string]bool) {
 
-    walletTxHistory := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory")
+	walletTxHistory := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory")
 
 	if err := walletTxHistory.Find(&a.wallet.TXHistory).Error; err != nil {
 		a.log.Error("Unable to initialize historic transactions from DB. Reason: ", err)
@@ -511,142 +505,142 @@ func (a *WalletApplication) resyncTXHistory() ([]models.TXHistory, map[string]bo
 
 	//a.log.Infof("Before Count - ", walletTxHistory.Count())
 
-    // Use map to record duplicates as we find them.
-    encountered := map[string]bool{}
-    allTX := []models.TXHistory{}
-    TXHistory := a.wallet.TXHistory
+	// Use map to record duplicates as we find them.
+	encountered := map[string]bool{}
+	allTX := []models.TXHistory{}
+	TXHistory := a.wallet.TXHistory
 
-    for _, tx := range TXHistory {
-        if !encountered[tx.Hash] {
-            // Record this element as an encountered element.
-            encountered[tx.Hash] = true
-            // prepend to reverse list for FE
-            allTX = append([]models.TXHistory{tx}, allTX...)
+	for _, tx := range TXHistory {
+		if !encountered[tx.Hash] {
+			// Record this element as an encountered element.
+			encountered[tx.Hash] = true
+			// prepend to reverse list for FE
+			allTX = append([]models.TXHistory{tx}, allTX...)
 
-            if err := walletTxHistory.Append(tx).Error; err != nil {
-                a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
-                a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
-            }
+			if err := walletTxHistory.Append(tx).Error; err != nil {
+				a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
+				a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
+			}
 
-            if tx.Status == "Pending" {
-                a.TxPending(tx.Hash)
-            }
+			if tx.Status == "Pending" {
+				a.TxPending(tx.Hash)
+			}
 
-            //a.log.Infoln("Keeping tx in db - " + tx.Hash + ", " + tx.Status)
-        } else {
-             a.log.Infoln("Duplicate tx found - " + tx.Hash)
-            walletTxHistory.Delete(&tx)
-        }
-    }
+			//a.log.Infoln("Keeping tx in db - " + tx.Hash + ", " + tx.Status)
+		} else {
+			a.log.Infoln("Duplicate tx found - " + tx.Hash)
+			walletTxHistory.Delete(&tx)
+		}
+	}
 
-    //a.log.Infof("After Count - ", walletTxHistory.Count())
+	//a.log.Infof("After Count - ", walletTxHistory.Count())
 
-    return allTX, encountered
+	return allTX, encountered
 }
 
 func (a *WalletApplication) initTXFromBlockExplorer() {
 
-	hasError := true;
+	hasError := true
 	beTxList := []models.TXHistory{}
 
-    for i := 0; i < 10 && hasError; i++ {
+	for i := 0; i < 10 && hasError; i++ {
 
-        if ( i > 0) {
-            time.Sleep(2 * time.Second)
-        }
+		if i > 0 {
+			time.Sleep(2 * time.Second)
+		}
 
-        hasError = false
+		hasError = false
 
-        a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
+		a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
 
-        resp, err := http.Get(a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
-        if err != nil {
-            hasError = true
-            continue
-        }
-        defer resp.Body.Close()
+		resp, err := http.Get(a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
+		if err != nil {
+			hasError = true
+			continue
+		}
+		defer resp.Body.Close()
 
-        if resp.Body == nil {
-            a.log.Info("Unable to detect any previous transactions.")
-            return
-        }
+		if resp.Body == nil {
+			a.log.Info("Unable to detect any previous transactions.")
+			return
+		}
 
-        bodyBytes, err := ioutil.ReadAll(resp.Body)
-        if err != nil {
-            hasError = true
-            continue
-        }
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			hasError = true
+			continue
+		}
 
-        ok, error := a.verifyAPIResponse(bodyBytes)
-        // Blockexplorer returns below string when no previous transactions are found
-        if !ok && error != "Cannot find transactions for sender" {
-            a.log.Errorln("API returned the following error", error)
-            hasError = true
-            continue
-        }
+		ok, error := a.verifyAPIResponse(bodyBytes)
+		// Blockexplorer returns below string when no previous transactions are found
+		if !ok && error != "Cannot find transactions for sender" {
+			a.log.Errorln("API returned the following error", error)
+			hasError = true
+			continue
+		}
 
-        // If no previous transactions for imported wallet - proceed
-        if !ok && error == "Cannot find transactions for sender" {
-            a.log.Info("Unable to detect any previous transactions.")
-            return
-        }
+		// If no previous transactions for imported wallet - proceed
+		if !ok && error == "Cannot find transactions for sender" {
+			a.log.Info("Unable to detect any previous transactions.")
+			return
+		}
 
-        err = json.Unmarshal(bodyBytes, &beTxList)
-        if err != nil {
-            hasError = true
-        }
-    }
+		err = json.Unmarshal(bodyBytes, &beTxList)
+		if err != nil {
+			hasError = true
+		}
+	}
 
-    if hasError {
-        a.log.Errorln("Unable to fetch TX history from block explorer.")
-        a.sendError("Unable to fetch TX history from block explorer.", errors.New("Unreachable Block Explorer"))
-        return
-    }
+	if hasError {
+		a.log.Errorln("Unable to fetch TX history from block explorer.")
+		a.sendError("Unable to fetch TX history from block explorer.", errors.New("unreachable Block Explorer"))
+		return
+	}
 
-    // Reverse order
-    for i := len(beTxList)/2 - 1; i >= 0; i-- {
-        opp := len(beTxList) - 1 - i
-        beTxList[i], beTxList[opp] = beTxList[opp], beTxList[i]
-    }
+	// Reverse order
+	for i := len(beTxList)/2 - 1; i >= 0; i-- {
+		opp := len(beTxList) - 1 - i
+		beTxList[i], beTxList[opp] = beTxList[opp], beTxList[i]
+	}
 
-    a.log.Infof("Successfully collected %d previous transactions. Updating local state...", len(beTxList))
+	a.log.Infof("Successfully collected %d previous transactions. Updating local state...", len(beTxList))
 
-    walletTxHistory := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory")
-    allTX, encountered := a.resyncTXHistory()
+	walletTxHistory := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory")
+	allTX, encountered := a.resyncTXHistory()
 
-    for _, tx := range beTxList {
+	for _, tx := range beTxList {
 
-        if !encountered[tx.Hash] {
+		if !encountered[tx.Hash] {
 
-            t, _ := time.Parse(time.RFC3339, tx.Timestamp)
+			t, _ := time.Parse(time.RFC3339, tx.Timestamp)
 
-            txData := models.TXHistory{
-                Amount:   tx.Amount,
-                Sender:   tx.Sender,
-                Receiver: tx.Receiver,
-                Fee:      tx.Fee,
-                Hash:     tx.Hash,
-                TS:       t.In(t.Local().Location()).Format("Jan _2 15:04:05"),
-                Status:   "Complete",
-                Failed:   false,
-            }
+			txData := models.TXHistory{
+				Amount:   tx.Amount,
+				Sender:   tx.Sender,
+				Receiver: tx.Receiver,
+				Fee:      tx.Fee,
+				Hash:     tx.Hash,
+				TS:       t.In(t.Local().Location()).Format("Jan _2 15:04:05"),
+				Status:   "Complete",
+				Failed:   false,
+			}
 
-            if err := walletTxHistory.Append(&txData).Error; err != nil {
-                a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
-                a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
-            }
+			if err := walletTxHistory.Append(&txData).Error; err != nil {
+				a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
+				a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
+			}
 
-            //a.RT.Events.Emit("new_transaction", txData)
-            allTX = append([]models.TXHistory{txData}, allTX...) // prepend to reverse list for FE
+			//a.RT.Events.Emit("new_transaction", txData)
+			allTX = append([]models.TXHistory{txData}, allTX...) // prepend to reverse list for FE
 
-            //a.log.Infoln("TX added to db - " + tx.Hash)
-        } else {
-            //a.log.Infoln("TX already in db - " + tx.Hash)
-        }
+			//a.log.Infoln("TX added to db - " + tx.Hash)
+		} else {
+			//a.log.Infoln("TX already in db - " + tx.Hash)
+		}
 
-    }
+	}
 
-    a.RT.Events.Emit("update_tx_history", allTX)
+	a.RT.Events.Emit("update_tx_history", allTX)
 }
 
 // PassKeysToFrontend emits the keys to the settings.Vue component on a
@@ -690,13 +684,13 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		return 0, err
 	}
 	if resp == nil {
-		err = errors.New("Received empty response from the Token Balance API")
+		err = errors.New("received empty response from the Token Balance API")
 		a.log.Warnln("Unable to update token balance. Reason: ", err)
 		return 0, err
 	}
 	defer resp.Body.Close()
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		a.log.Warnln("Unable to update token balance. Reason: ", err)
 		return 0, err
@@ -723,7 +717,7 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 
 	b, ok := s.(float64)
 	if !ok {
-		err = errors.New("Unable to parse balance")
+		err = errors.New("unable to parse balance")
 		a.log.Warnln("Unable to update token balance. Reason: ", err)
 		return 0, err
 	}

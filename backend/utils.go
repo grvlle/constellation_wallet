@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"net"
 	"net/http"
@@ -270,7 +269,7 @@ func (a *WalletApplication) fileExists(path string) bool {
 // checking for errors and syncing at the end.
 func WriteToFile(filename string, data []byte) error {
 
-	err := ioutil.WriteFile(filename, data, 0666)
+	err := os.WriteFile(filename, data, 0666)
 	if err != nil {
 		return err
 	}

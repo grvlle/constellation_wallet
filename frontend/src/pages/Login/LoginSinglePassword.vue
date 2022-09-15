@@ -65,8 +65,9 @@
 </template>
 
 <script>
-import { keyStore, keyStoreFile } from "@stardust-collective/dag-keystore";
-import { dagWalletAccount } from "@stardust-collective/dag-wallet-sdk";
+  import { keyStore } from '@stardust-collective/dag4-keystore';
+import { keyStoreFile } from "../../p12";
+import { dag4 } from '@stardust-collective/dag4';
 import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
@@ -222,7 +223,7 @@ export default {
     loginWithKey: function(key) {
       if (!key) return;
 
-      dagWalletAccount.loginPrivateKey(key);
+      dag4.account.loginPrivateKey(key);
 
       var address = keyStore.getDagAddressFromPublicKey(
         keyStore.getPublicKeyFromPrivate(key)
@@ -268,7 +269,7 @@ export default {
       window.backend.WalletApplication.LoginJsonWallet(filePath, password).then(
         (key) => {
           if (key) {
-            dagWalletAccount.loginPrivateKey(key);
+            dag4.account.loginPrivateKey(key);
 
             var address = keyStore.getDagAddressFromPublicKey(
               keyStore.getPublicKeyFromPrivate(key)

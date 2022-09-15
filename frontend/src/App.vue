@@ -16,6 +16,7 @@ import WarningNotification from "./pages/Notifications/Warning";
 import SuccessNotification from "./pages/Notifications/Success";
 import NewRelease from "./pages/Notifications/NewRelease";
 import Swal from "sweetalert2/dist/sweetalert2";
+import { dag4 } from '@stardust-collective/dag4';
 
 export default {
   components: {
@@ -272,6 +273,10 @@ export default {
       this.$store.commit('wallet/setCampaignClaim', address);
     });
 
+    dag4.account.connect({
+      networkVersion: '2.0',
+      testnet: true,
+    });
   }
 };
 </script>

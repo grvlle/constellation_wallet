@@ -1,7 +1,7 @@
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 
-import 'babel-polyfill'
+// import 'babel-polyfill'
 // import firebase from 'firebase/app';
 // import 'firebase/analytics';
 import Vue from "vue";

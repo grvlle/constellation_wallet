@@ -21,27 +21,7 @@ if (process.env.NODE_ENV == "production") {
   };
 }
 
-const path = require("path");
-// const RemoveStrictPlugin = require('remove-strict-webpack-plugin');
-// const PrerenderSPAPlugin = require("prerender-spa-plugin");
-
-// module.exports = {
-//
-//   plugins: [
-//     new PrerenderSPAPlugin({
-//       // Required - The path to the webpack-outputted app to prerender.
-//       staticDir: path.join(__dirname, "dist"),
-//       // Required - Routes to render.
-//       routes: ["/", "/login", "/dashboard"],
-//     }),
-//   ],
-// };
-
 module.exports = {
-  // transpileDependencies: [
-  //   "secp256k1",
-  //   "keccak"
-  // ],
   chainWebpack: (config) => {
     let limit = 9999999999999999;
     config.module
@@ -63,11 +43,6 @@ module.exports = {
       .options({
         limit: limit,
       });
-    // config.plugin("html")
-    //   .tap(args => {
-    //     args[0].template = path.join(__dirname, "src", "index.html")
-    //     return args
-    //   })
   },
   css: cssConfig,
   configureWebpack: {
@@ -78,15 +53,6 @@ module.exports = {
     optimization: {
       splitChunks: false,
     },
-    // plugins: [
-    //   new RemoveStrictPlugin()
-    // ],
-    resolve: {
-      alias: {
-        "keccak": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/keccak/'),
-        "secp256k1": path.resolve(__dirname, 'node_modules/@stardust-collective/dag-keystore/shim/secp256k1/')
-      }
-    }
   },
   devServer: {
     disableHostCheck: true,

@@ -49,8 +49,8 @@
 
 <script>
 import { mapState } from "vuex";
-import { keyStoreFile } from "@stardust-collective/dag-keystore";
-import {dagWalletAccount} from '@stardust-collective/dag-wallet-sdk';
+import { keyStoreFile } from "../../../p12";
+import { dag4 } from '@stardust-collective/dag4';
 import Swal from "sweetalert2/dist/sweetalert2";
 
 export default {
@@ -106,7 +106,7 @@ export default {
 
         if (keyPair) {
           // TODO - save seed and privKey to KeyChain (Alex)
-          dagWalletAccount.loginPrivateKey(keyPair.privateKey);
+          dag4.account.loginPrivateKey(keyPair.privateKey);
 
           this.createWalletPassword()
         }

@@ -50,7 +50,8 @@
 <script>
 import { mapState } from "vuex";
 import Swal from "sweetalert2/dist/sweetalert2";
-import { keyStore } from "@stardust-collective/dag-keystore";
+import { keyStore } from '@stardust-collective/dag4-keystore';
+// import { keyStore } from "@stardust-collective/dag-keystore";
 
 export default {
   name: "login-screen",

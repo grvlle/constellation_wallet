@@ -142,8 +142,8 @@ import Swal from "sweetalert2/dist/sweetalert2";
 import AddressBookSearch from "../components/AddressBookSearch";
 import Pagination from "../components/Pagination";
 import Timeline from "../components/Timeline";
-import { keyStore } from "@stardust-collective/dag-keystore";
-import { dagWalletAccount } from "@stardust-collective/dag-wallet-sdk";
+import { keyStore } from "@stardust-collective/dag4-keystore";
+import { dag4 } from '@stardust-collective/dag4';
 
 export default {
   components: {
@@ -321,7 +321,7 @@ export default {
                       .generateTransaction(
                         amount,
                         self.txAddress,
-                        dagWalletAccount.keyTrio,
+                        dag4.account.keyTrio,
                         lastRef,
                         fee
                       )

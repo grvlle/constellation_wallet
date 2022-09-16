@@ -15,10 +15,10 @@
               class="timeline-value"
               :class="[
                 tx.status.toLowerCase(),
-                address == tx.receiver ? 'receive' : 'send',
+                address == tx.destination ? 'receive' : 'send',
               ]"
             >
-              <span v-if="address == tx.receiver">+</span>
+              <span v-if="address == tx.destination">+</span>
               <span v-else>-</span>
               {{ tx.amount | normalizeDAG | asCurrency("DAG-short") }}
             </div>
@@ -26,7 +26,7 @@
               class="timeline-badge"
               :class="[
                 tx.status.toLowerCase(),
-                address == tx.receiver ? 'receive' : 'send',
+                address == tx.destination ? 'receive' : 'send',
               ]"
             >
               <i
@@ -35,7 +35,7 @@
               ></i>
               <i v-else-if="tx.status == 'Error'" class="fa fa-times"></i>
               <arrow-l-icon
-                v-else-if="address == tx.receiver"
+                v-else-if="address == tx.destination"
                 :size="16"
                 fillColor="#ffffff"
               />
@@ -46,7 +46,7 @@
             class="timeline-panel"
             :class="[
               tx.status.toLowerCase(),
-              address == tx.receiver ? 'receive' : 'send',
+              address == tx.destination ? 'receive' : 'send',
             ]"
           >
             <div class="container" style="padding: 0;">
@@ -55,7 +55,7 @@
                   <div class="row">
                     <div
                       class="col-md-3 text-truncate"
-                      v-if="address == tx.receiver"
+                      v-if="address == tx.destination"
                     >
                       received:&nbsp;{{
                         tx.amount | normalizeDAG | asCurrency("DAG")
@@ -67,13 +67,13 @@
                       }}
                     </div>
                     <div class="col-md-9 text-truncate">
-                      <div v-if="address == tx.receiver">
+                      <div v-if="address == tx.destination">
                         <span>from:&nbsp;</span>
-                        <span v-html="displayContact(tx.sender)" />
+                        <span v-html="displayContact(tx.source)" />
                       </div>
                       <div v-else>
                         <span>to:&nbsp;</span>
-                        <span v-html="displayContact(tx.receiver)" />
+                        <span v-html="displayContact(tx.destination)" />
                       </div>
                     </div>
                   </div>

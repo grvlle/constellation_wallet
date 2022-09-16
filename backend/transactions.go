@@ -112,7 +112,9 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address 
 }
 
 func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
-	a.log.Info("Attempting to communicate with mainnet on: " + a.Network.URL + a.Network.Handles.Transaction)
+	todo := "TODO"
+
+	a.log.Info("Attempting to communicate with mainnet on: " + todo)
 	/* TEMPORARILY COMMENTED OUT */
 	a.log.Warnln("TX Ordinal:", tx.Edge.Data.LastTxRef.Ordinal)
 	bytesRepresentation, err := json.Marshal(tx)
@@ -121,7 +123,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 		a.sendError("Unable to parse JSON data for transaction", err)
 		return false, ""
 	}
-	resp, err := http.Post(a.Network.URL+a.Network.Handles.Transaction, "application/json", bytes.NewBuffer(bytesRepresentation))
+	resp, err := http.Post(todo, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
 		a.sendError("Unable to send request to mainnet. Please check your internet connection. Reason: ", err)
@@ -193,14 +195,14 @@ func (a *WalletApplication) postTransaction(txObject string) *models.TXHistory {
 
 	if TXSuccessfullyPutOnNetwork {
 		txData := &models.TXHistory{
-			Amount:   tx.Edge.Data.Amount,
-			Sender:   tx.Edge.ObservationEdge.Parents[0].HashReference,
-			Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
-			Fee:      tx.Edge.Data.Fee,
-			Hash:     hash,
-			TS:       time.Now().Format("Jan _2 15:04:05"),
-			Status:   "Pending",
-			Failed:   false,
+			Amount:      tx.Edge.Data.Amount,
+			Source:      tx.Edge.ObservationEdge.Parents[0].HashReference,
+			Destination: tx.Edge.ObservationEdge.Parents[1].HashReference,
+			Fee:         tx.Edge.Data.Fee,
+			Hash:        hash,
+			Timestamp:   time.Now().Format(time.RFC3339),
+			Status:      "Pending",
+			Failed:      false,
 		}
 		a.storeTX(txData)
 		a.RT.Events.Emit("new_transaction", txData) // Pass the tx to the frontend as a new transaction.
@@ -210,14 +212,14 @@ func (a *WalletApplication) postTransaction(txObject string) *models.TXHistory {
 	}
 
 	txData := &models.TXHistory{
-		Amount:   tx.Edge.Data.Amount,
-		Sender:   tx.Edge.ObservationEdge.Parents[0].HashReference,
-		Receiver: tx.Edge.ObservationEdge.Parents[1].HashReference,
-		Fee:      tx.Edge.Data.Fee,
-		Hash:     hash,
-		TS:       time.Now().Format("Jan _2 15:04:05"),
-		Status:   "Error",
-		Failed:   true,
+		Amount:      tx.Edge.Data.Amount,
+		Source:      tx.Edge.ObservationEdge.Parents[0].HashReference,
+		Destination: tx.Edge.ObservationEdge.Parents[1].HashReference,
+		Fee:         tx.Edge.Data.Fee,
+		Hash:        hash,
+		Timestamp:   time.Now().Format(time.RFC3339),
+		Status:      "Error",
+		Failed:      true,
 	}
 
 	a.log.Errorln("TX Failed, storing with failed state.")
@@ -279,9 +281,11 @@ func (a *WalletApplication) loadTXFromFile(txFile string) string {
 // TxProcessed will query the last transaction. If no answer is returned, it means it's processed and the
 // method will return true.
 func (a *WalletApplication) TxProcessed(TXHash string) bool {
-	a.log.Info("Communicating with mainnet on: " + a.Network.URL + a.Network.Handles.Transaction + "/" + TXHash)
+	todo := "TODO"
 
-	resp, err := http.Get(a.Network.URL + a.Network.Handles.Transaction + "/" + TXHash)
+	a.log.Info("Communicating with mainnet on: " + todo)
+
+	resp, err := http.Get(todo)
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
 		if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {

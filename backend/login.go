@@ -32,7 +32,7 @@ func (a *WalletApplication) LoginKeychain(keystorePassword string) string {
 
 	secret, err := keyring.Get(ServiceLogin, account)
 
-	a.log.Warnln("secret - " + secret);
+	a.log.Warnln("secret - " + secret)
 
 	if err != nil {
 		a.log.Warnln("Your login keychain doesn't exist.")
@@ -48,10 +48,10 @@ func (a *WalletApplication) LoginKeychain(keystorePassword string) string {
 
 	pkey, err := keyring.Get(ServicePKey, account)
 
-	a.log.Warnln("pkey - " + pkey);
+	a.log.Warnln("pkey - " + pkey)
 
 	if err == nil {
-	    return pkey
+		return pkey
 	}
 
 	return "" //Unable to find a private key for this account, must import one
@@ -177,7 +177,6 @@ func (a *WalletApplication) BrowseJsonFile() string {
 
 // SelectNetwork is triggered from the login page and will change the network an loadbalancer endpoints
 func (a *WalletApplication) SelectNetwork(testnet bool) bool {
-
 	if testnet {
 		// Ceres Test Network
 		a.Network.URL = TestnetLoadBalancerURL

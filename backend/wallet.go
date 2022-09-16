@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -314,9 +315,6 @@ func (a *WalletApplication) initNewWallet() {
 
 	a.StoreImagePathInDB("faces/face-0.jpg")
 
-	//a.initTransactionHistory()
-	//a.passKeysToFrontend()
-
 	a.initTXFromBlockExplorer()
 
 	if !a.WidgetRunning.DashboardWidgets {
@@ -343,9 +341,6 @@ func (a *WalletApplication) initWallet(keystorePath string) error {
 	if !a.WidgetRunning.DashboardWidgets {
 		a.initDashboardWidgets()
 	}
-	// 	if !a.WidgetRunning.PassKeysToFrontend {
-	// 		a.passKeysToFrontend()
-	// 	}
 
 	a.log.Infoln("User has logged into the wallet")
 
@@ -494,7 +489,6 @@ func (a *WalletApplication) initTXFromDB() {
 }
 
 func (a *WalletApplication) resyncTXHistory() ([]models.TXHistory, map[string]bool) {
-
 	walletTxHistory := a.DB.Model(&a.wallet).Where("alias = ?", a.wallet.WalletAlias).Association("TXHistory")
 
 	if err := walletTxHistory.Find(&a.wallet.TXHistory).Error; err != nil {
@@ -502,8 +496,6 @@ func (a *WalletApplication) resyncTXHistory() ([]models.TXHistory, map[string]bo
 		a.sendError("Unable to initialize historic transactions from DB. Reason: ", err)
 		return nil, nil
 	}
-
-	//a.log.Infof("Before Count - ", walletTxHistory.Count())
 
 	// Use map to record duplicates as we find them.
 	encountered := map[string]bool{}
@@ -525,44 +517,44 @@ func (a *WalletApplication) resyncTXHistory() ([]models.TXHistory, map[string]bo
 			if tx.Status == "Pending" {
 				a.TxPending(tx.Hash)
 			}
-
-			//a.log.Infoln("Keeping tx in db - " + tx.Hash + ", " + tx.Status)
 		} else {
 			a.log.Infoln("Duplicate tx found - " + tx.Hash)
 			walletTxHistory.Delete(&tx)
 		}
 	}
 
-	//a.log.Infof("After Count - ", walletTxHistory.Count())
-
 	return allTX, encountered
 }
 
 func (a *WalletApplication) initTXFromBlockExplorer() {
-
 	hasError := true
-	beTxList := []models.TXHistory{}
+
+	var payload struct {
+		Data []models.TXHistory `json:"data"`
+	}
 
 	for i := 0; i < 10 && hasError; i++ {
-
 		if i > 0 {
 			time.Sleep(2 * time.Second)
 		}
 
 		hasError = false
 
-		a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
+		url := a.Network.BlockExplorer.URL + "/addresses/" + a.wallet.Address + "/transactions"
 
-		resp, err := http.Get(a.Network.BlockExplorer.URL + "/address/" + a.wallet.Address + "/transaction")
+		a.log.Info("Sending API call to block explorer on: " + url)
+
+		resp, err := http.Get(url)
 		if err != nil {
 			hasError = true
 			continue
 		}
 		defer resp.Body.Close()
 
-		if resp.Body == nil {
-			a.log.Info("Unable to detect any previous transactions.")
-			return
+		if resp.StatusCode != http.StatusOK {
+			a.log.Warnln("Request failed with status code:", resp.StatusCode)
+			hasError = true
+			continue
 		}
 
 		bodyBytes, err := io.ReadAll(resp.Body)
@@ -571,21 +563,7 @@ func (a *WalletApplication) initTXFromBlockExplorer() {
 			continue
 		}
 
-		ok, error := a.verifyAPIResponse(bodyBytes)
-		// Blockexplorer returns below string when no previous transactions are found
-		if !ok && error != "Cannot find transactions for sender" {
-			a.log.Errorln("API returned the following error", error)
-			hasError = true
-			continue
-		}
-
-		// If no previous transactions for imported wallet - proceed
-		if !ok && error == "Cannot find transactions for sender" {
-			a.log.Info("Unable to detect any previous transactions.")
-			return
-		}
-
-		err = json.Unmarshal(bodyBytes, &beTxList)
+		err = json.Unmarshal(bodyBytes, &payload)
 		if err != nil {
 			hasError = true
 		}
@@ -596,6 +574,8 @@ func (a *WalletApplication) initTXFromBlockExplorer() {
 		a.sendError("Unable to fetch TX history from block explorer.", errors.New("unreachable Block Explorer"))
 		return
 	}
+
+	beTxList := payload.Data
 
 	// Reverse order
 	for i := len(beTxList)/2 - 1; i >= 0; i-- {
@@ -609,55 +589,23 @@ func (a *WalletApplication) initTXFromBlockExplorer() {
 	allTX, encountered := a.resyncTXHistory()
 
 	for _, tx := range beTxList {
-
 		if !encountered[tx.Hash] {
+			txData := tx
 
-			t, _ := time.Parse(time.RFC3339, tx.Timestamp)
-
-			txData := models.TXHistory{
-				Amount:   tx.Amount,
-				Sender:   tx.Sender,
-				Receiver: tx.Receiver,
-				Fee:      tx.Fee,
-				Hash:     tx.Hash,
-				TS:       t.In(t.Local().Location()).Format("Jan _2 15:04:05"),
-				Status:   "Complete",
-				Failed:   false,
-			}
+			txData.Status = "Complete"
+			txData.Failed = false
+			txData.Alias = a.wallet.WalletAlias
 
 			if err := walletTxHistory.Append(&txData).Error; err != nil {
 				a.log.Errorln("Unable to update the DB record with the new TX. Reason: ", err)
 				a.sendError("Unable to update the DB record with the new TX. Reason: ", err)
 			}
 
-			//a.RT.Events.Emit("new_transaction", txData)
 			allTX = append([]models.TXHistory{txData}, allTX...) // prepend to reverse list for FE
-
-			//a.log.Infoln("TX added to db - " + tx.Hash)
-		} else {
-			//a.log.Infoln("TX already in db - " + tx.Hash)
 		}
-
 	}
 
 	a.RT.Events.Emit("update_tx_history", allTX)
-}
-
-// PassKeysToFrontend emits the keys to the settings.Vue component on a
-// 5 second interval
-func (a *WalletApplication) passKeysToFrontend() {
-
-	if a.wallet.Address != "" {
-		go func() {
-			for {
-				a.RT.Events.Emit("wallet_keys", a.wallet.Address)
-				time.Sleep(5 * time.Second)
-			}
-		}()
-		a.WidgetRunning.PassKeysToFrontend = true
-	} else {
-		a.WidgetRunning.PassKeysToFrontend = false
-	}
 }
 
 func (a *WalletApplication) passwordsProvided(keystorePassword, keyPassword, alias string) bool {
@@ -676,13 +624,21 @@ func (a *WalletApplication) passwordsProvided(keystorePassword, keyPassword, ali
 
 // GetTokenBalance polls and parses the token balance of a wallet and returns it as a float64.
 func (a *WalletApplication) GetTokenBalance() (float64, error) {
-	a.log.Debug("Contacting mainnet on: " + a.Network.URL + a.Network.Handles.Balance + " Sending the following payload: " + a.wallet.Address)
+	url := a.Network.BlockExplorer.URL + "/addresses/" + a.wallet.Address + "/balance"
 
-	resp, err := http.Get(a.Network.URL + a.Network.Handles.Balance + a.wallet.Address)
+	a.log.Debug("Requesting balance by calling: ", url)
+
+	resp, err := http.Get(url)
 	if err != nil {
 		a.log.Warnln("Failed to send HTTP request. Reason: ", err)
 		return 0, err
 	}
+
+	if resp.StatusCode != http.StatusOK {
+		a.log.Warnln("Request failed with status code:", resp.StatusCode)
+		return 0, fmt.Errorf("request failed with status code: %d", resp.StatusCode)
+	}
+
 	if resp == nil {
 		err = errors.New("received empty response from the Token Balance API")
 		a.log.Warnln("Unable to update token balance. Reason: ", err)
@@ -700,7 +656,11 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		return 0.0, nil
 	}
 
-	var result map[string]interface{}
+	var result struct {
+		Data struct {
+			Balance int64 `json:"balance"`
+		} `json:"data"`
+	}
 
 	// Unmarshal or Decode the JSON to the interface.
 	err = json.Unmarshal(bodyBytes, &result)
@@ -708,20 +668,7 @@ func (a *WalletApplication) GetTokenBalance() (float64, error) {
 		return 0, err
 	}
 
-	a.log.Infoln(result) //TEMP
-
-	s := result["balance"]
-	if s == "" {
-		s = "0" // Empty means zero
-	}
-
-	b, ok := s.(float64)
-	if !ok {
-		err = errors.New("unable to parse balance")
-		a.log.Warnln("Unable to update token balance. Reason: ", err)
-		return 0, err
-	}
-	a.log.Infoln("Parsed the following balance: ", s)
+	b := float64(result.Data.Balance)
 
 	a.log.Infoln("Returning the following balance: ", b)
 

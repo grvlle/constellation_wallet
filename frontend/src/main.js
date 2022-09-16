@@ -1,9 +1,6 @@
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 
-// import 'babel-polyfill'
-// import firebase from 'firebase/app';
-// import 'firebase/analytics';
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router/index";
@@ -18,21 +15,6 @@ import VueSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
 import IdleVue from 'idle-vue'
 import './plugins/globalMethods';
-
-// var firebaseConfig = {
-//   apiKey: "AIzaSyBeuVGuwceS6r1yr41OSvabYhemaGGxBN0",
-//   // authDomain: "dag-faucet.firebaseapp.com",
-//   // databaseURL: "https://dag-faucet.firebaseio.com",
-//   projectId: "dag-faucet",
-//   // storageBucket: "dag-faucet.appspot.com",
-//   // messagingSenderId: "945495808290",
-//   appId: "1:945495808290:web:6e20906196c5aae42e2d7b",
-//   measurementId: "G-DRVTESXCTV"
-// };
-// // Initialize Firebase
-// firebase.initializeApp(firebaseConfig);
-// firebase.analytics();
-// window.firebase = firebase;
 
 const ONE_MINUTE = 60 * 1000;
 const FIFTEEN_MINUTES = 15 * ONE_MINUTE;

@@ -73,8 +73,8 @@ const (
 	MainnetBlockExplorerURL = "https://be-testnet.constellationnetwork.io"
 	TestnetBlockExplorerURL = "https://be-testnet.constellationnetwork.io"
 	//TODO MainnetLoadBalancerURL  = "http://lb.constellationnetwork.io:9000"
-	MainnetLoadBalancerURL = "http://lb-testnet.constellationnetwork.io:9000"
-	TestnetLoadBalancerURL = "http://lb-testnet.constellationnetwork.io:9000"
+	MainnetLoadBalancerURL = "http://lb-testnet.constellationnetwork.io:9010"
+	TestnetLoadBalancerURL = "http://lb-testnet.constellationnetwork.io:9010"
 )
 
 // WailsShutdown is called when the application is closed

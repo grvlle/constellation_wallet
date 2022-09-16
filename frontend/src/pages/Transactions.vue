@@ -142,7 +142,6 @@ import Swal from "sweetalert2/dist/sweetalert2";
 import AddressBookSearch from "../components/AddressBookSearch";
 import Pagination from "../components/Pagination";
 import Timeline from "../components/Timeline";
-import { keyStore } from "@stardust-collective/dag4-keystore";
 import { dag4 } from '@stardust-collective/dag4';
 
 export default {
@@ -317,13 +316,12 @@ export default {
                       ordinal: parseInt(tokens[0]),
                       prevHash: tokens[1],
                     };
-                    keyStore
-                      .generateTransaction(
-                        amount,
+                    dag4.account
+                      .generateSignedTransaction(
                         self.txAddress,
-                        dag4.account.keyTrio,
+                        amount,
+                        fee,
                         lastRef,
-                        fee
                       )
                       .then(
                         (tx) => {
@@ -337,7 +335,8 @@ export default {
                             }
                           });
                         },
-                        () => {
+                        (error) => {
+                          console.error(error);
                           self.txFailure(swalPopup);
                         }
                       );

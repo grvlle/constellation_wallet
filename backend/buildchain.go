@@ -2,8 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"io"
-	"net/http"
 
 	"github.com/grvlle/constellation_wallet/backend/models"
 )
@@ -171,82 +169,4 @@ type TXReference struct {
 		IsDummy bool `json:"isDummy"`
 		IsTest  bool `json:"isTest"`
 	} `json:"transactionOriginal"`
-}
-
-// rebuildTxChainState will query the blockexplorer for a transacion and write it to a.paths.PrevTXFile.
-// This will allow an imported wallet to reference the last transaction sent.
-func (a *WalletApplication) rebuildTxChainState(lastTXHash string) error {
-	a.log.Info("Sending API call to block explorer on: " + a.Network.BlockExplorer.Handles.Transactions)
-
-	resp, err := http.Get(a.Network.BlockExplorer.URL + a.Network.BlockExplorer.Handles.Transactions + lastTXHash)
-	if err != nil {
-		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
-		if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
-			a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
-			return err
-		}
-		a.LoginError("Unable to collect previous TX's from blockexplorer. Please check your internet connection.")
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.Body != nil {
-		bodyBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			a.LoginError("Unable to collect previous TX's from blockexplorer. Please try again later.")
-			a.log.Errorln("Unable to collect previous TX's from blockexplorer. Reason: ", err)
-		}
-		ok, error := a.verifyAPIResponse(bodyBytes)
-		// Blockexplorer returns below string when no previous transactions are found
-		if !ok && error != "Cannot find transaction" {
-			a.log.Errorln("API returned the following error", error)
-			// If unable to import last transaction, remove wallet from DB and logout.
-			if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
-				a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
-				return err
-			}
-			a.log.Panicln("Unable to import previous transactions") // TODO: logout user from wallet
-			a.LoginError("The wallet import failed. Please check your internet connection and try again.")
-			return err
-		}
-
-		// Parsing JSON object to TXReference ->
-		lastTX := TXReference{}
-		err = json.Unmarshal(bodyBytes, &lastTX)
-		if err != nil {
-			a.log.Errorln("Unable to fetch TX history from block explorer. Reason: ", err)
-			a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
-			return err
-		}
-		// Marshal so that we can unmarshat into tx object ->
-		b, err := json.Marshal(lastTX.TransactionOriginal)
-		if err != nil {
-			a.log.Errorln("Unable to parse last transaction hash. Reason: ", err)
-			a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
-			return err
-		}
-
-		// Populating tx object ->
-		tx := Transaction{}
-		err = json.Unmarshal(b, &tx)
-		if err != nil {
-			a.log.Errorln("Unable to parse last transaction hash. Reason: ", err)
-			a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
-			return err
-		}
-
-		// Converting to json
-		txBytes, err := json.Marshal(tx)
-		if err != nil {
-			a.log.Errorln("Unable to parse last transaction hash. Reason: ", err)
-			a.sendError("Unable to fetch TX history from block explorer. Reason: ", err)
-			return err
-		}
-
-		err = WriteToFile(a.paths.PrevTXFile, txBytes)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }

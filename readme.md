@@ -48,8 +48,7 @@ Note: node12 should be used. (It's recommended to use nvm and switch to node12)
   
 The Molly Wallet is built using a light-weight framework for Desktop Applications using Go and VueJS. [Wails](https://github.com/wailsapp/wails) is very similar to Electron but does not include the full Chromium web browser as a dependency.  
 
-Note: don't use the latest wails version, instead install an older version:
-`go install github.com/wailsapp/wails/cmd/wails@v1.8.0`
+`go install github.com/wailsapp/wails/cmd/wails@v1.16.9`
   
   
 ###### MacOS  

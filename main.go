@@ -7,8 +7,9 @@ import (
 
 	"runtime"
 
-	"github.com/leaanthony/mewn"
 	"github.com/wailsapp/wails"
+
+	_ "embed"
 
 	app "github.com/grvlle/constellation_wallet/backend"
 )
@@ -17,13 +18,16 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+//go:embed frontend/dist/app.js
+var js string
+
+//go:embed frontend/dist/app.css
+var css string
+
 func main() {
 	if runtime.GOOS != "windows" {
 		os.Setenv("PATH", "/usr/bin:/sbin") // This is neccessary when interacting with the CLI on RedHat and other linux distros
 	}
-
-	js := mewn.String("./frontend/dist/app.js")
-	css := mewn.String("./frontend/dist/app.css")
 
 	frontend := wails.CreateApp(&wails.AppConfig{
 		Width:     1280,

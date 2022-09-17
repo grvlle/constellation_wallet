@@ -9,8 +9,6 @@ import (
 	"errors"
 	"os"
 
-	"fmt"
-
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/google/uuid"
@@ -25,13 +23,6 @@ const (
 	// memory and taking approximately 1s CPU time on a modern processor.
 	scryptP = 1
 )
-
-type encryptedKeyJSONV3 struct {
-	Address string              `json:"address"`
-	Crypto  keystore.CryptoJSON `json:"crypto"`
-	Id      string              `json:"id"`
-	Version int                 `json:"version"`
-}
 
 func newKeyFromECDSA(privateKeyECDSA *ecdsa.PrivateKey) *keystore.Key {
 	id := uuid.New()
@@ -67,7 +58,6 @@ func (a *WalletApplication) loadJsonPrivateKey(pKeyFilePath, password string) (s
 }
 
 func (a *WalletApplication) generateKeyStore(privateKeyStr, password string) ([]byte, error) {
-
 	hexBytes, err := hex.DecodeString(privateKeyStr)
 	if err != nil {
 		return nil, err
@@ -85,33 +75,12 @@ func (a *WalletApplication) generateKeyStore(privateKeyStr, password string) ([]
 }
 
 func (a *WalletApplication) generateNewKeyStore(password string) ([]byte, error) {
-
 	privateKey, err := newKey()
 	if err != nil {
 		return nil, err
 	}
 
 	return keystore.EncryptKey(privateKey, password, scryptN, scryptP)
-}
-
-func (a *WalletApplication) testGenerateKeyStore(privateKey, password string) {
-	b, _ := a.generateKeyStore(privateKey, password)
-	consolePrint(b)
-}
-
-func (a *WalletApplication) testLoadJsonPrivateKey(pKeyFilePath, password string) {
-	b, err := a.loadJsonPrivateKey(pKeyFilePath, password)
-
-	if err != nil {
-		a.log.Error("ERROR - PrivateKey: ", err)
-	}
-	fmt.Printf("%s\n", b)
-}
-
-// dont do this, see above edit
-func consolePrint(b []byte) {
-	b, _ = prettyPrint(b)
-	fmt.Printf("%s\n", b)
 }
 
 func prettyPrint(b []byte) ([]byte, error) {

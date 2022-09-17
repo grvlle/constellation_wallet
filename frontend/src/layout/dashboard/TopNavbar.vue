@@ -38,12 +38,12 @@
       <!--      </button>-->
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
-          <!--          <li class="nav-item">-->
-          <!--            <div class="testnet-toggle">-->
-          <!--              <toggle-switch v-model="onTestnet" />-->
-          <!--              <p class="nav-item nav-link">MAINNET / TESTNET</p>-->
-          <!--            </div>-->
-          <!--          </li>-->
+          <li class="nav-item">
+            <div class="testnet-toggle">
+              <toggle-switch v-model="onTestnet" />
+              <p class="nav-item nav-link">TESTNET</p>
+            </div>
+          </li>
           <li class="nav-item">
             <router-link class="nav-link" to="settings">
               <settings-icon />
@@ -64,11 +64,11 @@
 
 <script>
 import { mapState } from "vuex";
-// import ToggleSwitch from "../../components/Inputs/ToggleSwitch";
+import ToggleSwitch from "../../components/Inputs/ToggleSwitch";
 
 export default {
   components: {
-    // ToggleSwitch,
+    ToggleSwitch,
   },
   computed: {
     routeName() {
@@ -127,7 +127,7 @@ export default {
 
 .testnet-toggle {
   display: flex;
-  margin-top: 2%;
+  margin-top: 8%;
   align-items: center;
 }
 

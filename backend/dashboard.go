@@ -39,11 +39,6 @@ type ChartData struct {
 	} `json:"throughput"`
 }
 
-type LastTransactionRef struct {
-	PrevHash string
-	Ordinal  int
-}
-
 type CampaignStatus struct {
 	Active bool
 }
@@ -367,8 +362,7 @@ func (a *WalletApplication) sendCampaignClaim() {
 }
 
 func (a *WalletApplication) GetLastAcceptedTransactionRef() string {
-
-	url := a.Network.URL + "/transaction/last-ref/" + a.wallet.Address
+	url := a.Network.URL + "/transactions/last-reference/" + a.wallet.Address
 
 	a.log.Infoln("GetLastAcceptedTransactionRef: ", url)
 
@@ -376,11 +370,13 @@ func (a *WalletApplication) GetLastAcceptedTransactionRef() string {
 	if err != nil {
 		a.log.Warnln("API called failed, please send the request again. Reason: ", err)
 		a.sendWarning("API called failed, please send the request again.")
+		return ""
 	}
 
 	defer resp.Body.Close()
-
-	if resp.Body == nil {
+	if resp.StatusCode != http.StatusOK {
+		a.log.Warnln("API called failed, please send the request again. Reason: status code ", resp.StatusCode)
+		a.sendWarning("API called failed, please send the request again.")
 		return ""
 	}
 
@@ -389,7 +385,10 @@ func (a *WalletApplication) GetLastAcceptedTransactionRef() string {
 		return ""
 	}
 
-	var result LastTransactionRef
+	var result struct {
+		Hash    string `json:"hash"`
+		Ordinal int    `json:"ordinal"`
+	}
 
 	// Unmarshal or Decode the JSON to the interface.
 	err = json.Unmarshal(bodyBytes, &result)
@@ -397,22 +396,8 @@ func (a *WalletApplication) GetLastAcceptedTransactionRef() string {
 		return ""
 	}
 
-	return strconv.Itoa(result.Ordinal) + "," + result.PrevHash
+	return strconv.Itoa(result.Ordinal) + "," + result.Hash
 }
-
-// func (a *WalletApplication) PostTransferTx(tx) {
-// 	const url string = a.Network.URL;
-//
-// 	a.log.Infoln("Test DAG requested by user for address: ", a.wallet.Address)
-//
-// 	_, err := http.Post(url + "/transaction", tx)
-// 	if err != nil {
-// 		a.log.Warnln("API called failed, please send the request again. Reason: ", err)
-// 		a.sendWarning("API called failed, please send the request again.")
-// 	}
-//
-// 	a.updateTokenBalance()
-// }
 
 // pricePoller polls the min-api.cryptocompare REST API for DAG token value.
 // Once polled, it'll Emit the token value to Dashboard.vue for full token

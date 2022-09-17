@@ -1,7 +1,6 @@
 package app
 
 import (
-	"encoding/json"
 	"io"
 	"os"
 	"os/user"
@@ -24,21 +23,9 @@ type WalletApplication struct {
 	DB         *gorm.DB
 	killSignal chan struct{}
 	Network    struct {
-		URL     string
-		Handles struct {
-			Send        string // Takes TX Object, returns TX Hash (200)
-			Transaction string // Takes TX Object, returns TX Hash (200)
-			Balance     string // Polls the wallets available balance
-		}
+		URL           string
 		BlockExplorer struct {
-			URL     string
-			Handles struct {
-				Transactions string // Takes TX Hash, returns TX info
-				Checkpoints  string // Takes Checkpoint block hash, returns checkpoint block info
-				Snapshots    string // Takes SnapshotHash, returns info
-				CollectTX    string // Takes DAG address, returns tx objects
-
-			}
+			URL string
 		}
 	}
 	paths struct {
@@ -82,10 +69,12 @@ const (
 	ServiceSeed  = "molly-wallet-seed"
 	ServicePKey  = "molly-wallet-pkey"
 
-	MainnetBlockExplorerURL = "https://block-explorer.constellationnetwork.io"
-	TestnetBlockExplorerURL = "https://api-be.exchanges.constellationnetwork.io"
-	MainnetLoadBalancerURL  = "http://lb.constellationnetwork.io:9000"
-	TestnetLoadBalancerURL  = "http://lb.exchanges.constellationnetwork.io:9000"
+	//TODO MainnetBlockExplorerURL = "https://be.constellationnetwork.io"
+	MainnetBlockExplorerURL = "https://be-testnet.constellationnetwork.io"
+	TestnetBlockExplorerURL = "https://be-testnet.constellationnetwork.io"
+	//TODO MainnetLoadBalancerURL  = "http://lb.constellationnetwork.io:9000"
+	MainnetLoadBalancerURL = "http://lb-testnet.constellationnetwork.io:9010"
+	TestnetLoadBalancerURL = "http://lb-testnet.constellationnetwork.io:9010"
 )
 
 // WailsShutdown is called when the application is closed
@@ -185,37 +174,14 @@ func (a *WalletApplication) initDirectoryStructure() error {
 
 // initMainnetConnection populates the WalletApplication struct with mainnet data
 func (a *WalletApplication) initMainnetConnection() {
-	a.Network.URL = MainnetLoadBalancerURL // Temp
-
-	a.Network.Handles.Send = "/send"
-	a.Network.Handles.Transaction = "/transaction"
-	a.Network.Handles.Balance = "/address/"
-
+	a.Network.URL = MainnetLoadBalancerURL
 	a.Network.BlockExplorer.URL = MainnetBlockExplorerURL
-	a.Network.BlockExplorer.Handles.Transactions = "/transactions/"
-	a.Network.BlockExplorer.Handles.Checkpoints = "/checkpoint-block/"
-	a.Network.BlockExplorer.Handles.Snapshots = "/snapshot/"
-	// a.Network.BlockExplorer.Handles.CollectTX = "/transactions?sender="
 }
 
 // APIError reported by the blockexplerer/loadbalancer are reported in the following format
 // {"error": "Cannot find transactions for sender"}
 type APIError struct {
 	Error string
-}
-
-// verifyAPIResponse takes API response converted to a byte array and checks if the API returned
-// an error. If it did, it'll return the error message.
-func (a *WalletApplication) verifyAPIResponse(r []byte) (bool, string) {
-	APIErr := APIError{}
-	if string(r[3:8]) == "error" {
-		err := json.Unmarshal(r, &APIErr)
-		if err != nil {
-			a.log.Errorln("Unable to parse API error. Reason: ", err)
-		}
-		return false, APIErr.Error
-	}
-	return true, ""
 }
 
 func (a *WalletApplication) sendSuccess(msg string) {

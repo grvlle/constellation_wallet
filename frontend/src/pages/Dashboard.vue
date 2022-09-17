@@ -168,7 +168,7 @@ import Chartist from "chartist";
 import WalletCopiedNotification from "./Notifications/WalletCopied";
 import WalletCopiedFailedNotification from "./Notifications/WalletCopiedFailed";
 import TestDagRequestedNotification from "./Notifications/TestDagRequested";
-import { dagWalletAccount } from "@stardust-collective/dag-wallet-sdk";
+import { dag4 } from '@stardust-collective/dag4';
 
 export default {
   components: {
@@ -194,14 +194,14 @@ export default {
       let dateNum = Date.now();
       let dateStr = calcTime(-8);
       window.backend.WalletApplication.RegisterCampaign(
-        dagWalletAccount.keyTrio.publicKey.substring(2),
+        dag4.account.keyTrio.publicKey.substring(2),
         dateNum.toString(),
         dateStr
       ).then((result) => {
         if (result) {
           this.overlay = false;
           this.$Progress.finish();
-          this.campaignClaimAddr = dagWalletAccount.keyTrio.address;
+          this.campaignClaimAddr = dag4.account.keyTrio.address;
           this.addNotificationDialog(
             "top",
             "right",

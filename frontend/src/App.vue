@@ -271,7 +271,6 @@ export default {
     window.wails.Events.On("campaign_claim", address => {
       this.$store.commit('wallet/setCampaignClaim', address);
     });
-
   }
 };
 </script>

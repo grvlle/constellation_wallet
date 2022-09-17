@@ -11,7 +11,7 @@ import (
 // UploadImage will forward the image path of the selected image.
 func (a *WalletApplication) UploadImage() string {
 	filePath := a.RT.Dialog.SelectFile()
-	if (filePath == "") {
+	if filePath == "" {
 		return "Cancel"
 	}
 

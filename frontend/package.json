@@ -9,7 +9,8 @@
     "serve2": "vue-cli-service serve --host 0.0.0.0"
   },
   "dependencies": {
-    "@stardust-collective/dag4": "^1.2.1",
+    "@peculiar/webcrypto": "^1.4.0",
+    "@stardust-collective/dag4": "^1.2.2-beta.2",
     "@sweetalert2/theme-bootstrap-4": "^3.2.0",
     "@wailsapp/runtime": "^1.1.1",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",

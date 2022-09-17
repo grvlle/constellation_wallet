@@ -1,3 +1,5 @@
+import './shim';
+
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 

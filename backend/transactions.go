@@ -112,18 +112,17 @@ func (a *WalletApplication) PrepareTransaction(amount int64, fee int64, address 
 }
 
 func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
-	todo := "TODO"
+	url := a.Network.URL + "/transactions"
 
-	a.log.Info("Attempting to communicate with mainnet on: " + todo)
-	/* TEMPORARILY COMMENTED OUT */
-	a.log.Warnln("TX Ordinal:", tx.Edge.Data.LastTxRef.Ordinal)
+	a.log.Info("Attempting to put transaction in network by sending to: " + url)
+
 	bytesRepresentation, err := json.Marshal(tx)
 	if err != nil {
 		a.log.Errorln("Unable to parse JSON data for transaction", err)
 		a.sendError("Unable to parse JSON data for transaction", err)
 		return false, ""
 	}
-	resp, err := http.Post(todo, "application/json", bytes.NewBuffer(bytesRepresentation))
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
 		a.sendError("Unable to send request to mainnet. Please check your internet connection. Reason: ", err)
@@ -131,36 +130,41 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode != http.StatusOK {
 		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
-			a.log.Errorln(string(bodyBytes))
-			a.log.Errorln("Failed to read the response body. Reason: ", err)
+			a.log.Errorln(err)
 		}
+		bodyString := string(bodyBytes)
+		a.sendError("Unable to communicate with network. Reason: "+bodyString, err)
+		a.log.Errorln(fmt.Sprintf("Unable to put TX on the network. HTTP Code: %d - %s", resp.StatusCode, bodyString))
 
-		bodyString := string(bodyBytes[1:65])
-		a.log.Infoln("The bytesize of the request body: ", len(bodyBytes))
-		if len(bodyBytes) == 66 {
-			a.log.Info("Transaction Hash: ", bodyString)
-			a.TxPending(bodyString)
-			a.log.Infoln("Transaction has been successfully sent to the network.")
-			a.sendSuccess("Transaction successfully sent!")
-			return true, bodyString
-		}
-		a.log.Warn(bodyString)
-		a.sendWarning("Unable to put transaction on the network. Reason: " + bodyString)
 		return false, ""
 	}
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		a.log.Errorln(err)
+		a.log.Errorln("Failed to read the response body")
+		a.log.Errorln("Failed to read the response body. Reason: ", err)
 	}
-	bodyString := string(bodyBytes)
-	a.sendError("Unable to communicate with mainnet. Reason: "+bodyString, err)
-	a.log.Errorln(fmt.Sprintf("Unable to put TX on the network. HTTP Code: %d - %s", resp.StatusCode, bodyString))
 
-	return false, ""
+	var result struct {
+		Hash string `json:"hash"`
+	}
+
+	if err := json.Unmarshal(bodyBytes, &result); err != nil || len(result.Hash) == 0 {
+		a.log.Errorln("Failed to read the response body")
+		a.log.Errorln("Failed to read the response body. Reason: ", err)
+	}
+
+	hash := result.Hash
+
+	a.log.Info("Transaction Hash: ", hash)
+	a.TxPending(hash)
+	a.log.Infoln("Transaction has been successfully sent to the network.")
+	a.sendSuccess("Transaction successfully sent!")
+
+	return true, hash
 }
 
 /* Note: Called from frontend to post a generated TX to the network */

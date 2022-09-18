@@ -138,7 +138,8 @@ func (a *WalletApplication) CreateOrInitWalletV2(address string) bool {
 
 	a.wallet = models.Wallet{
 		WalletAlias: address, //PrimaryKey
-		Address:     address}
+		Address:     address,
+	}
 
 	a.RT.Events.Emit("wallet_keys", a.wallet.Address)
 

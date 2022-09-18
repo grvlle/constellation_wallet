@@ -15,46 +15,21 @@ import (
 
 // Transaction contains all tx information
 type Transaction struct {
-	Edge struct {
-		ObservationEdge struct {
-			Parents []struct {
-				HashReference string `json:"hashReference"`
-				HashType      string `json:"hashType"`
-				BaseHash      string `json:"baseHash"`
-			} `json:"parents"`
-			Data struct {
-				HashReference string `json:"hashReference"`
-				HashType      string `json:"hashType"`
-				BaseHash      string `json:"baseHash"`
-			} `json:"data"`
-		} `json:"observationEdge"`
-		SignedObservationEdge struct {
-			SignatureBatch struct {
-				Hash       string `json:"hash"`
-				Signatures []struct {
-					Signature string `json:"signature"`
-					ID        struct {
-						Hex string `json:"hex"`
-					} `json:"id"`
-				} `json:"signatures"`
-			} `json:"signatureBatch"`
-		} `json:"signedObservationEdge"`
-		Data struct {
-			Amount    int64 `json:"amount"`
-			LastTxRef struct {
-				PrevHash string `json:"prevHash"`
-				Ordinal  int    `json:"ordinal"`
-			} `json:"lastTxRef"`
-			Fee  int64 `json:"fee,omitempty"`
-			Salt int64 `json:"salt"`
-		} `json:"data"`
-	} `json:"edge"`
-	LastTxRef struct {
-		PrevHash string `json:"prevHash"`
-		Ordinal  int    `json:"ordinal"`
-	} `json:"lastTxRef"`
-	IsDummy bool `json:"isDummy"`
-	IsTest  bool `json:"isTest"`
+	Value struct {
+		Source      string `json:"source"`
+		Destination string `json:"destination"`
+		Amount      int64  `json:"amount"`
+		Fee         int64  `json:"fee"`
+		Parent      struct {
+			Hash    string `json:"hash"`
+			Ordinal int    `json:"ordinal"`
+		} `json:"parent"`
+		Salt string `json:"salt"`
+	} `json:"value"`
+	Proofs []struct {
+		Id        string `json:"id"`
+		Signature string `json:"signature"`
+	} `json:"proofs"`
 }
 
 /* Send a transaction */
@@ -122,6 +97,7 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 		a.sendError("Unable to parse JSON data for transaction", err)
 		return false, ""
 	}
+
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
@@ -169,22 +145,19 @@ func (a *WalletApplication) putTXOnNetwork(tx *Transaction) (bool, string) {
 
 /* Note: Called from frontend to post a generated TX to the network */
 func (a *WalletApplication) SendTransaction2(txJson string) bool {
-
 	a.postTransaction(txJson)
 
 	return !a.TransactionFailed
 }
 
 func (a *WalletApplication) sendTransaction(txFile string) *models.TXHistory {
-
 	txObject := a.loadTXFromFile(txFile)
 
 	return a.postTransaction(txObject)
 }
 
 func (a *WalletApplication) postTransaction(txObject string) *models.TXHistory {
-
-	tx := &Transaction{}
+	var tx Transaction
 
 	bytes := []byte(txObject)
 	err := json.Unmarshal(bytes, &tx)
@@ -195,14 +168,14 @@ func (a *WalletApplication) postTransaction(txObject string) *models.TXHistory {
 	}
 
 	// Put TX object on network time.Now().Unix(), time.Now().Format("Jan _2 15:04:05")
-	TXSuccessfullyPutOnNetwork, hash := a.putTXOnNetwork(tx)
+	TXSuccessfullyPutOnNetwork, hash := a.putTXOnNetwork(&tx)
 
 	if TXSuccessfullyPutOnNetwork {
 		txData := &models.TXHistory{
-			Amount:      tx.Edge.Data.Amount,
-			Source:      tx.Edge.ObservationEdge.Parents[0].HashReference,
-			Destination: tx.Edge.ObservationEdge.Parents[1].HashReference,
-			Fee:         tx.Edge.Data.Fee,
+			Amount:      tx.Value.Amount,
+			Source:      tx.Value.Source,
+			Destination: tx.Value.Destination,
+			Fee:         tx.Value.Fee,
 			Hash:        hash,
 			Timestamp:   time.Now().Format(time.RFC3339),
 			Status:      "Pending",
@@ -216,10 +189,10 @@ func (a *WalletApplication) postTransaction(txObject string) *models.TXHistory {
 	}
 
 	txData := &models.TXHistory{
-		Amount:      tx.Edge.Data.Amount,
-		Source:      tx.Edge.ObservationEdge.Parents[0].HashReference,
-		Destination: tx.Edge.ObservationEdge.Parents[1].HashReference,
-		Fee:         tx.Edge.Data.Fee,
+		Amount:      tx.Value.Amount,
+		Source:      tx.Value.Source,
+		Destination: tx.Value.Destination,
+		Fee:         tx.Value.Fee,
 		Hash:        hash,
 		Timestamp:   time.Now().Format(time.RFC3339),
 		Status:      "Error",
@@ -280,53 +253,44 @@ func (a *WalletApplication) loadTXFromFile(txFile string) string {
 	return txObjects
 }
 
-/* Query TX */
-
-// TxProcessed will query the last transaction. If no answer is returned, it means it's processed and the
-// method will return true.
+// TxProcessed will query the last transaction.
 func (a *WalletApplication) TxProcessed(TXHash string) bool {
-	todo := "TODO"
+	url := a.Network.URL + "/transactions/last-reference/" + a.wallet.WalletAlias
 
-	a.log.Info("Communicating with mainnet on: " + todo)
+	a.log.Info("Get last transaction reference: " + url)
 
-	resp, err := http.Get(todo)
+	resp, err := http.Get(url)
 	if err != nil {
 		a.log.Errorln("Failed to send HTTP request. Reason: ", err)
-		if err := a.DB.Model(&a.wallet).Where("wallet_alias = ?", a.wallet.WalletAlias).Delete(&a.wallet).Error; err != nil {
-			a.log.Errorln("Unable to delete wallet upon failed import. Reason: ", err)
-			return false
-		}
-		a.log.Errorln("Unable to verify transaction status. Please check your internet connection.")
 		return false
 	}
 	defer resp.Body.Close()
 
-	if resp.Body == nil {
-		return false
-	}
-
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
+		a.log.Errorln("Failed to read response body: ", err)
 		return false
 	}
 
-	// Declared an empty interface
-	var result map[string]interface{}
+	var result struct {
+		Hash    string `json:"hash"`
+		Ordinal int    `json:"ordinal"`
+	}
 
 	// Unmarshal or Decode the JSON to the interface.
 	err = json.Unmarshal(bodyBytes, &result)
 	if err != nil {
+		a.log.Errorln("Failed to unmarshal response body: ", err)
 		return false
 	}
 
-	if result["cbBaseHash"] != nil {
-		a.log.Infoln("CheckPoint Hash :", result["cbBaseHash"])
-		return true
+	if len(result.Hash) == 0 {
+		return false
 	}
 
-	// null response means it's snapshotted
-	return string(bodyBytes) == "null"
+	a.log.Infoln("CheckPoint Hash :", result.Hash)
 
+	return true
 }
 
 type txStatus struct {

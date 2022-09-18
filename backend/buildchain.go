@@ -83,8 +83,8 @@ func (a *WalletApplication) formTXChain(amount int64, fee int64, address string,
 
 func (a *WalletApplication) determineBlockOrder(ptxObj, ltxObj *Transaction) string {
 	// The higher ordinal will always be the TX carrying the TX Ref.
-	a.log.Info("Last TX Ordinal: ", ltxObj.LastTxRef.Ordinal, " Previous TX Ordinal: ", ptxObj.LastTxRef.Ordinal)
-	if ltxObj.LastTxRef.Ordinal > ptxObj.LastTxRef.Ordinal {
+	a.log.Info("Last TX Ordinal: ", ltxObj.Value.Parent.Ordinal, " Previous TX Ordinal: ", ptxObj.Value.Parent.Ordinal)
+	if ltxObj.Value.Parent.Ordinal > ptxObj.Value.Parent.Ordinal {
 		return a.paths.PrevTXFile
 	}
 	return a.paths.LastTXFile

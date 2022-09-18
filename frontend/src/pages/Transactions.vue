@@ -312,10 +312,16 @@ export default {
                     self.txFailure(swalPopup);
                   } else {
                     const tokens = result.split(",");
+                    
                     const lastRef = {
                       ordinal: parseInt(tokens[0]),
-                      prevHash: tokens[1],
+                      hash: tokens[1],
                     };
+
+                    dag4.account.connect({
+                      networkVersion: '2.0',    
+                    });
+
                     dag4.account
                       .generateSignedTransaction(
                         self.txAddress,
@@ -325,6 +331,7 @@ export default {
                       )
                       .then(
                         (tx) => {
+                          console.log(JSON.stringify(tx));
                           window.backend.WalletApplication.SendTransaction2(
                             JSON.stringify(tx)
                           ).then((success) => {
